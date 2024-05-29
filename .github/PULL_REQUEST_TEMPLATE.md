@@ -11,5 +11,5 @@ Closes #XXX
 
 ## Checklist
 - [ ] The code includes tests if relevant
-<!-- Only check this off if you have actually done a self-review! DO NOT request any review from others until you have done your self-review! -->
 - [ ] I have *actually* self-reviewed my changes and done QA
+<!-- Only check this off if you have actually done a self-review! DO NOT request any review from others until you have done your self-review! -->
