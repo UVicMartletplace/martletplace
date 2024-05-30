@@ -1,0 +1,14 @@
+# Global owners
+* @UVicMartletplace/ResOps
+
+# Folder specific team ownership
+/.github/                  @UVicMartletplace/ResOps
+/apps/algorithm/recommend/ @christianbookout @arunalex62
+/apps/algorithm/search/    @GDeane @emilasuska
+/apps/backend/             @UVicMartletplace/Backend
+/apps/data/                @UVicMartletplace/ResOps
+/apps/frontend/            @UVicMartletplace/Frontend
+/apps/proxy/               @UVicMartletplace/ResOps
+
+# Specific filetype ownership
+**/Dockerfile @UVicMartletplace/ResOps
