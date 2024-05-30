@@ -3,8 +3,8 @@
 
 # Folder specific team ownership
 /.github/                  @UVicMartletplace/ResOps
-/apps/algorithm/recommend/ @UVicMartletplace/Algorithms/Recommend
-/apps/algorithm/search/    @UVicMartletplace/Algorithms/Search
+/apps/algorithm/recommend/ @christianbookout @arunalex62
+/apps/algorithm/search/    @GDeane @emilasuska
 /apps/backend/             @UVicMartletplace/Backend
 /apps/data/                @UVicMartletplace/ResOps
 /apps/frontend/            @UVicMartletplace/Frontend
