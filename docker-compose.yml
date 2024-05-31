@@ -9,3 +9,12 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment: []
     ports: [ 8221:8221 ]
+
+  user:
+    build: apps/backend/user
+    container_name: martletplace_user
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/user/src:/app/src ]
+    environment: []
+    ports: [ 8211:8211 ]
