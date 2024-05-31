@@ -1,0 +1,11 @@
+version: '2.2'
+
+services:
+  user:
+    build: apps/backend/user
+    container_name: martletplace_user
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/user/src:/app/src ]
+    environment: []
+    ports: [ 8211:8211 ]
