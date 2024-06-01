@@ -2,10 +2,10 @@ version: '2.2'
 
 services:
   search:
-    build: apps/algorithm/search
+    build: apps/algorithm/recommend
     container_name: martletplace_search
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/algorithm/search/src:/app/src ]
+    volumes: [ ./apps/algorithm/recommend/src:/app/src ]
     environment: []
-    ports: [ 8221:8221 ]
+    ports: [ 8222:8222 ]
