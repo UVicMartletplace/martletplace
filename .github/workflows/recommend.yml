@@ -10,7 +10,7 @@ env:
 
 defaults:
   run:
-    working-directory: apps/algorithm/Recommend
+    working-directory: apps/algorithm/recommend
 
 jobs:
   lint:
@@ -21,7 +21,7 @@ jobs:
 
       - uses: chartboost/ruff-action@v1
         with:
-          src: "./apps/algorithm/Recommend"
+          src: "./apps/algorithm/recommend"
           args: 'check'
 
   format:
@@ -32,7 +32,7 @@ jobs:
 
       - uses: chartboost/ruff-action@v1
         with:
-          src: "./apps/algorithm/Recommend"
+          src: "./apps/algorithm/recommend"
           args: 'format --check'
 
   test:
