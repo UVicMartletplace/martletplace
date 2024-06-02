@@ -9,3 +9,13 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment: []
     ports: [ 8221:8221 ]
+
+  database:
+    build: apps/data/database
+    container_name: martletplace_database
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports: [ 8310:8310 ]
