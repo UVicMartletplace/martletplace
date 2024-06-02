@@ -1,11 +1,11 @@
 version: '2.2'
 
 services:
-  search:
-    build: apps/algorithm/search
-    container_name: martletplace_search
+  listing:
+    build: apps/backend/listing
+    container_name: martletplace_listing
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/algorithm/search/src:/app/src ]
+    volumes: [ ./apps/backend/listing/src:/app/src ]
     environment: []
-    ports: [ 8221:8221 ]
+    ports: [ 8212:8212 ]
