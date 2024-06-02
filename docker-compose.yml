@@ -1,9 +1,9 @@
 version: '2.2'
 
 services:
-  search:
+  recommend:
     build: apps/algorithm/recommend
-    container_name: martletplace_search
+    container_name: martletplace_recommend
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/algorithm/recommend/src:/app/src ]
