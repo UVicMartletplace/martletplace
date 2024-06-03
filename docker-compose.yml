@@ -87,4 +87,4 @@ services:
       - POSTGRESQL_DATABASE=martletplace
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
-    ports: [ 8300:8300 ]
+    ports: [ 8300:8300, 8301:8301 ]

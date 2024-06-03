@@ -15,6 +15,10 @@ USER root
 ENV PGBOUNCER_PORT=8300
 ENV PGBOUNCER_DATABASE=martletplace
 
-RUN mkdir /datalayer
+RUN apt update && apt install -y supervisor
 
-COPY --from=build /build/target/release/datalayer /datalayer/datalayer
+COPY supervisord.conf /etc/supervisord.conf
+
+COPY --from=build /build/target/release/datalayer /datalayer
+
+ENTRYPOINT ["/bin/sh", "-c", "supervisord"]
