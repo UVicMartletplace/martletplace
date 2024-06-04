@@ -27,3 +27,12 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment: []
     ports: [ 8221:8221 ]
+
+  recommend:
+    build: apps/algorithm/recommend
+    container_name: martletplace_recommend
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/algorithm/recommend/src:/app/src ]
+    environment: []
+    ports: [ 8222:8222 ]
