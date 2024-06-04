@@ -34,8 +34,7 @@ class ListingSummary(BaseModel):
     sellerID: str = Field(..., example="A23F29039B23")
     sellerName: str = Field(..., example="John Doe")
     title: str = Field(..., example="Used Calculus Textbook")
-    description: str = Field(...,
-                             example="No wear and tear, drop-off available.")
+    description: str = Field(..., example="No wear and tear, drop-off available.")
     price: float = Field(..., example=50)
     dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
     imageUrl: str = Field(..., example="image URL for first Image")
@@ -46,12 +45,11 @@ class Listing(BaseModel):
     sellerId: str = Field(..., example="seller456")
     sellerName: str = Field(..., example="billybobjoe")
     title: str = Field(..., example="High-Performance Laptop")
-    description: str = Field(...,
-                             example="A powerful laptop suitable for gaming "
-                                     "and professional use.")
+    description: str = Field(
+        ..., example="A powerful laptop suitable for gaming " "and professional use."
+    )
     price: float = Field(..., example=450.00)
-    location: dict = Field(...,
-                           example={"latitude": 45.4215, "longitude": -75.6972})
+    location: dict = Field(..., example={"latitude": 45.4215, "longitude": -75.6972})
     status: str = Field(..., example="AVAILABLE")
     dateCreated: str = Field(..., example="2024-05-22T10:30:00Z")
     imageUrl: str = Field(..., example="https://example.com/image1.jpg")
@@ -59,11 +57,17 @@ class Listing(BaseModel):
 
 @app.get("/api/search", response_model=List[ListingSummary])
 async def search(
-        authorization: str, query: str, latitude: float,
-        longitude: float, page: int, limit: int,
-        minPrice: float = None, maxPrice: float = None,
-        status: str = "AVAILABLE", searchType: str = "LISTINGS",
-        sort: str = "RELEVANCE"
+    authorization: str,
+    query: str,
+    latitude: float,
+    longitude: float,
+    page: int,
+    limit: int,
+    minPrice: float = None,
+    maxPrice: float = None,
+    status: str = "AVAILABLE",
+    searchType: str = "LISTINGS",
+    sort: str = "RELEVANCE",
 ):
     # actual logic will go here
 
@@ -77,7 +81,7 @@ async def search(
             "description": "No wear and tear, drop-off available.",
             "price": 50,
             "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image"
+            "imageUrl": "image URL for first Image",
         },
         {
             "listingID": "A23F29039B24",
@@ -87,8 +91,8 @@ async def search(
             "description": "No wear and tear, drop-off available.",
             "price": 40,
             "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image"
-        }
+            "imageUrl": "image URL for first Image",
+        },
     ]
 
 
