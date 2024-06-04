@@ -84,4 +84,4 @@ async def search_term(authorization: str, search_term: str):
 async def review_add(authorization: str, review: Review):
     # actual logic will go here
 
-    return {"message": "Review added successfully."}
+    return {"message": "Review recorded successfully."}
