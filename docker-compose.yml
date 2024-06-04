@@ -28,6 +28,15 @@ services:
     environment: []
     ports: [ 8212:8212 ]
 
+  review:
+    build: apps/backend/review
+    container_name: martletplace_review
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/review/src:/app/src ]
+    environment: []
+    ports: [ 8213:8213 ]
+
   search:
     build: apps/algorithm/search
     container_name: martletplace_search
