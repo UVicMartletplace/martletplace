@@ -15,4 +15,7 @@ export default defineConfig({
     host: true,
     port: 8101,
   },
+  build: {
+    sourcemap: "hidden"
+  }
 })

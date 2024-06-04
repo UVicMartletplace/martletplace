@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Fontend
+coverage
+.nyc_output
+/.idea/
