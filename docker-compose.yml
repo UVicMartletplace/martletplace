@@ -37,6 +37,15 @@ services:
     environment: []
     ports: [ 8213:8213 ]
 
+  message:
+    build: apps/backend/message
+    container_name: martletplace_message
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/message/src:/app/src ]
+    environment: []
+    ports: [ 8214:8214 ]
+
   search:
     build: apps/algorithm/search
     container_name: martletplace_search
