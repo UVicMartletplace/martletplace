@@ -1,4 +1,4 @@
-name: User
+name: Review
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
 
 defaults:
   run:
-    working-directory: apps/backend/user
+    working-directory: apps/backend/review
 
 jobs:
   lint:

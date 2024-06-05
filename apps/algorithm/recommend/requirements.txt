@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+
+## Dev Dependencies
+ruff
+pytest
+bandit
