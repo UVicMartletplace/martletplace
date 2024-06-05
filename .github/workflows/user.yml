@@ -70,9 +70,4 @@ jobs:
       - name: Nodejs Scan
         uses: ajinabraham/njsscan-action@master
         with:
-          args: './apps/backend/user --sarif --output results.sarif || true'
-
-      - name: Upload scan report
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: results.sarif
+          args: './apps/backend/user'
