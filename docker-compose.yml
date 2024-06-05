@@ -16,7 +16,8 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/backend/user/src:/app/src ]
-    environment: []
+    environment:
+      - DB_URL=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8211:8211 ]
 
   listing:
@@ -25,7 +26,8 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/backend/listing/src:/app/src ]
-    environment: []
+    environment:
+      - DB_URL=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8212:8212 ]
 
   review:
@@ -34,7 +36,8 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/backend/review/src:/app/src ]
-    environment: []
+    environment:
+      - DB_URL=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8213:8213 ]
 
   message:
@@ -43,7 +46,8 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/backend/message/src:/app/src ]
-    environment: []
+    environment:
+      - DB_URL=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8214:8214 ]
 
   search:
