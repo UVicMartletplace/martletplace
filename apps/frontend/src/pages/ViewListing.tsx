@@ -1,7 +1,5 @@
-import React from "react";
-
-const ViewListing: React.FC = () => {
-  return <h1>View Listing</h1>;
+const ViewListing = () => {
+  return <h1>ViewListing</h1>;
 };
 
 export default ViewListing;

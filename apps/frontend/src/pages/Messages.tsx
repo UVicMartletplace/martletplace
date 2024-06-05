@@ -1,6 +1,4 @@
-import React from "react";
-
-const Messages: React.FC = () => {
+const Messages = () => {
   return <h1>Messages</h1>;
 };
 
