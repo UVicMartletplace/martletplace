@@ -64,7 +64,7 @@ services:
     environment: []
     ports: [ 8222:8222 ]
 
- database:
+  database:
     build: apps/data/database
     container_name: martletplace_database
     restart: unless-stopped
