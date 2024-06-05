@@ -1,4 +1,4 @@
-name: Check linked issues
+name: PR
 
 on:
   pull_request_target:
@@ -6,13 +6,11 @@ on:
 
 jobs:
   check_pull_requests:
+    name: Linked Issue
     runs-on: ubuntu-latest
-    name: Check linked issues
     permissions:
       issues: read
-      pull-requests: write
     steps:
       - uses: nearform-actions/github-action-check-linked-issues@v1
-        id: check-linked-issues
         with:
           comment: false
