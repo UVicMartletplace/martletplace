@@ -4,7 +4,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import Login from "./pages/Login.tsx";
+import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import CreateAccount from "./pages/CreateAccount";
 import Homepage from "./pages/Homepage";
@@ -24,9 +24,9 @@ function App() {
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/create-listing" element={<CreateListing />} />
-        <Route path="/edit-listing/:id" element={<EditListing />} />
+        <Route path="/edit-listing" element={<EditListing />} />
         <Route path="/account" element={<Account />} />
-        <Route path="/view-listing/:id" element={ViewListing} />
+        <Route path="/view-listing" element={<ViewListing />} />
         <Route path="/messages" element={<Messages />} />
       </Routes>
     </Router>
