@@ -73,3 +73,18 @@ services:
     environment:
       - POSTGRES_PASSWORD=johuigytfrdcv
     ports: [ 8310:8310 ]
+
+  datalayer:
+    build: apps/data/datalayer
+    container_name: martletplace_datalayer
+    restart: unless-stopped
+    depends_on:
+      - database
+    volumes: []
+    environment:
+      - POSTGRESQL_USERNAME=martletplace
+      - POSTGRESQL_PASSWORD=johuigytfrdcv
+      - POSTGRESQL_DATABASE=martletplace
+      - POSTGRESQL_HOST=database
+      - POSTGRESQL_PORT=8310
+    ports: [ 8300:8300 ]
