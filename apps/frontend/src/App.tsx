@@ -18,15 +18,22 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/homepage" element={<Homepage />} />
-        <Route path="/create-listing" element={<CreateListing />} />
-        <Route path="/edit-listing" element={<EditListing />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/view-listing" element={<ViewListing />} />
+        {/* If not logged in redirect to login page */}
+        <Route path="/" element={<Homepage />} />
+
+        {/* If full URL is `/user/:id` then it would show another users profile,
+        otherwise show the current users account. */}
+        <Route path="/user" element={<Account />} />
+        <Route path="/user/login" element={<Login />} />
+        <Route path="/user/resetpassword" element={<ForgotPassword />} />
+        <Route path="/user/signup" element={<CreateAccount />} />
+
+        <Route path="/listing/new" element={<CreateListing />} />
+        {/* TODO: change full url to `/listing/edit/:id` */}
+        <Route path="/listing/edit" element={<EditListing />} />
+        {/* TODO: change full url to `/listing/view/:id` */}
+        <Route path="/listing/view" element={<ViewListing />} />
+
         <Route path="/messages" element={<Messages />} />
       </Routes>
     </Router>
