@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import CreateAccount from "./pages/CreateAccount";
@@ -22,7 +17,7 @@ function App() {
         <Route path="/" element={<Homepage />} />
 
         {/* If full URL is `/user/:id` then it would show another users profile,
-        otherwise show the current users account. */}
+        otherwise current users profile is shown. */}
         <Route path="/user" element={<Account />} />
         <Route path="/user/login" element={<Login />} />
         <Route path="/user/resetpassword" element={<ForgotPassword />} />
