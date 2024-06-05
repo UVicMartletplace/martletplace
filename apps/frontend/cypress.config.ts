@@ -13,7 +13,7 @@ export default defineConfig({
   },
 
   component: {
-    specPattern: "tests/**/*.cy.(ts|tsx)",
+    specPattern: "tests/component_tests/*.cy.(ts|tsx)",
 
     supportFile: "cypress/support/component.ts",
     devServer: {
