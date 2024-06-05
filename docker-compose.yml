@@ -56,7 +56,8 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/algorithm/search/src:/app/src ]
-    environment: []
+    environment:
+      - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
     ports: [ 8221:8221 ]
 
   recommend:
@@ -77,6 +78,17 @@ services:
     environment:
       - POSTGRES_PASSWORD=johuigytfrdcv
     ports: [ 8310:8310 ]
+
+  elasticsearch:
+    build: apps/data/elasticsearch
+    container_name: martletplace_elasticsearch
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - ELASTIC_PASSWORD=serxdfcghjfc
+    ports: [ 8311:8311 ]
+    mem_limit: 1GB
 
   datalayer:
     build: apps/data/datalayer
