@@ -1,0 +1,2 @@
+http.port: 8311
+network.host: 0.0.0.0
