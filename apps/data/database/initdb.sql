@@ -15,7 +15,6 @@ CREATE TABLE UserTable (
     name VARCHAR,
     bio TEXT,
     profile_pic_url VARCHAR,
-    location VARCHAR,
     joining_date TIMESTAMP DEFAULT NOW(),
     listings_sold INTEGER[],
     listings_purchased INTEGER[]
@@ -56,7 +55,7 @@ CREATE TABLE RatingTable (
 CREATE TABLE UserPreferencesTable (
     user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     listing_id INTEGER REFERENCES ListingTable(listing_id),
-    weight INTEGER,
+    weight decimal,
     date_modified TIMESTAMP,
     PRIMARY KEY (user_id, listing_id)
 );
