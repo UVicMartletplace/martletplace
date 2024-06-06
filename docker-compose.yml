@@ -16,8 +16,39 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/backend/user/src:/app/src ]
-    environment: []
+    environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8211:8211 ]
+
+  listing:
+    build: apps/backend/listing
+    container_name: martletplace_listing
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/listing/src:/app/src ]
+    environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
+    ports: [ 8212:8212 ]
+
+  review:
+    build: apps/backend/review
+    container_name: martletplace_review
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/review/src:/app/src ]
+    environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
+    ports: [ 8213:8213 ]
+
+  message:
+    build: apps/backend/message
+    container_name: martletplace_message
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/message/src:/app/src ]
+    environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
+    ports: [ 8214:8214 ]
 
   search:
     build: apps/algorithm/search
@@ -25,5 +56,51 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/algorithm/search/src:/app/src ]
-    environment: []
+    environment:
+      - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
     ports: [ 8221:8221 ]
+
+  recommend:
+    build: apps/algorithm/recommend
+    container_name: martletplace_recommend
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/algorithm/recommend/src:/app/src ]
+    environment: []
+    ports: [ 8222:8222 ]
+
+  database:
+    build: apps/data/database
+    container_name: martletplace_database
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - POSTGRES_PASSWORD=johuigytfrdcv
+    ports: [ 8310:8310 ]
+
+  elasticsearch:
+    build: apps/data/elasticsearch
+    container_name: martletplace_elasticsearch
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - ELASTIC_PASSWORD=serxdfcghjfc
+    ports: [ 8311:8311 ]
+    mem_limit: 1GB
+
+  datalayer:
+    build: apps/data/datalayer
+    container_name: martletplace_datalayer
+    restart: unless-stopped
+    depends_on:
+      - database
+    volumes: []
+    environment:
+      - POSTGRESQL_USERNAME=martletplace
+      - POSTGRESQL_PASSWORD=johuigytfrdcv
+      - POSTGRESQL_DATABASE=martletplace
+      - POSTGRESQL_HOST=database
+      - POSTGRESQL_PORT=8310
+    ports: [ 8300:8300, 8301:8301 ]

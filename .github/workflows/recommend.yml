@@ -1,0 +1,70 @@
+name: Recommend
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+defaults:
+  run:
+    working-directory: apps/algorithm/recommend
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: chartboost/ruff-action@v1
+        with:
+          src: "./apps/algorithm/recommend"
+          args: 'check'
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: chartboost/ruff-action@v1
+        with:
+          src: "./apps/algorithm/recommend"
+          args: 'format --check'
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Test
+        run: pytest
+
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Test
+        run: bandit -c .bandit -ll -ii -n 3 -a file -r src/
+
