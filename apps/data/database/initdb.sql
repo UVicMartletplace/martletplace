@@ -53,16 +53,16 @@ CREATE TABLE RatingTable (
 );
 
 CREATE TABLE UserPreferencesTable (
+    user_pref_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     listing_id INTEGER REFERENCES ListingTable(listing_id),
     weight decimal,
-    date_modified TIMESTAMP,
-    PRIMARY KEY (user_id, listing_id)
+    date_modified TIMESTAMP
 );
 
 CREATE TABLE SearchHistoryTable (
+    search_id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     search_date TIMESTAMP NOT NULL,
     search_term VARCHAR NOT NULL,
-    PRIMARY KEY (user_id, search_date)
 );
