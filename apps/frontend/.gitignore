@@ -26,4 +26,4 @@ dist-ssr
 # Frontend
 coverage
 .nyc_output
-/.idea/
+.idea/
