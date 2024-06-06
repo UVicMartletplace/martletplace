@@ -5,7 +5,8 @@ CREATE TYPE LOCATION_TYPE AS (
     longitude float
 );
 
--- Create User table
+-- Creating Tables:
+
 CREATE TABLE UserTable (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL,
@@ -20,7 +21,6 @@ CREATE TABLE UserTable (
     listings_purchased INTEGER[]
 );
 
--- Create Listing table
 CREATE TABLE ListingTable (
     listing_id SERIAL PRIMARY KEY,
     seller_id INTEGER REFERENCES UserTable(user_id),
@@ -34,7 +34,6 @@ CREATE TABLE ListingTable (
     image_urls TEXT[]
 );
 
--- Create Message table
 CREATE TABLE MessageTable (
     message_id SERIAL PRIMARY KEY,
     sender_id INTEGER REFERENCES UserTable(user_id),
@@ -44,29 +43,26 @@ CREATE TABLE MessageTable (
     date_created TIMESTAMP DEFAULT NOW()
 );
 
--- Create Rating table
 CREATE TABLE RatingTable (
     rating_id SERIAL PRIMARY KEY,
     listing_id INTEGER REFERENCES ListingTable(listing_id),
-    user_id INTEGER REFERENCES UserTable(user_id),
+    user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     review TEXT,
-    rating_value INTEGER NOT NULL,
+    rating_value INTEGER DEFAULT 0,
     date_created TIMESTAMP DEFAULT NOW(),
     date_modified TIMESTAMP
 );
 
--- Create UserPreferences table
 CREATE TABLE UserPreferencesTable (
-    user_id INTEGER REFERENCES UserTable(user_id),
+    user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     listing_id INTEGER REFERENCES ListingTable(listing_id),
     weight INTEGER,
     date_modified TIMESTAMP,
     PRIMARY KEY (user_id, listing_id)
 );
 
--- Create SearchHistory table
 CREATE TABLE SearchHistoryTable (
-    user_id INTEGER REFERENCES UserTable(user_id),
+    user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     search_date TIMESTAMP NOT NULL,
     search_term VARCHAR NOT NULL,
     PRIMARY KEY (user_id, search_date)
