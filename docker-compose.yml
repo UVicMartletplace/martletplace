@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: 
-      - apps/data/database:/initdb.sql
+      - ./apps/data/database/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     environment:
       - POSTGRES_PASSWORD=johuigytfrdcv
     ports: [ 8310:8310 ]
