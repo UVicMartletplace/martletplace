@@ -74,7 +74,8 @@ services:
     container_name: martletplace_database
     restart: unless-stopped
     depends_on: []
-    volumes: []
+    volumes: 
+      - apps/data/database:/initdb.sql
     environment:
       - POSTGRES_PASSWORD=johuigytfrdcv
     ports: [ 8310:8310 ]
