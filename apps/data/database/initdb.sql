@@ -6,7 +6,7 @@ CREATE TYPE LOCATION_TYPE AS (
 );
 
 -- Create User table
-CREATE TABLE User (
+CREATE TABLE UserTable (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
@@ -15,58 +15,58 @@ CREATE TABLE User (
     bio TEXT,
     profile_pic_url VARCHAR,
     location VARCHAR,
-    joining_date TIMESTAMP DEFAULT NOW,
+    joining_date TIMESTAMP DEFAULT NOW(),
     listings_sold INTEGER[],
     listings_purchased INTEGER[]
 );
 
 -- Create Listing table
-CREATE TABLE Listing (
+CREATE TABLE ListingTable (
     listing_id SERIAL PRIMARY KEY,
-    seller_id INTEGER REFERENCES User(user_id),
+    seller_id INTEGER REFERENCES UserTable(user_id),
     title VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
     price INTEGER NOT NULL,
     location LOCATION_TYPE,
-    status status_type,
-    date_created TIMESTAMP DEFAULT NOW,
+    status STATUS_TYPE,
+    date_created TIMESTAMP DEFAULT NOW(),
     date_modified TIMESTAMP,
     image_urls TEXT[]
 );
 
 -- Create Message table
-CREATE TABLE Message (
+CREATE TABLE MessageTable (
     message_id SERIAL PRIMARY KEY,
-    sender_id INTEGER REFERENCES User(user_id),
-    receiver_id INTEGER REFERENCES User(user_id),
-    listing_id INTEGER REFERENCES Listing(listing_id),
+    sender_id INTEGER REFERENCES UserTable(user_id),
+    receiver_id INTEGER REFERENCES UserTable(user_id),
+    listing_id INTEGER REFERENCES ListingTable(listing_id),
     message_body TEXT NOT NULL,
-    date_created TIMESTAMP DEFAULT NOW
+    date_created TIMESTAMP DEFAULT NOW()
 );
 
 -- Create Rating table
-CREATE TABLE Rating (
+CREATE TABLE RatingTable (
     rating_id SERIAL PRIMARY KEY,
-    listing_id INTEGER REFERENCES Listing(listing_id),
-    user_id INTEGER REFERENCES User(user_id),
+    listing_id INTEGER REFERENCES ListingTable(listing_id),
+    user_id INTEGER REFERENCES UserTable(user_id),
     review TEXT,
     rating_value INTEGER NOT NULL,
-    date_created TIMESTAMP DEFAULT NOW,
+    date_created TIMESTAMP DEFAULT NOW(),
     date_modified TIMESTAMP
 );
 
 -- Create UserPreferences table
-CREATE TABLE UserPreferences (
-    user_id INTEGER REFERENCES User(user_id),
-    listing_id INTEGER REFERENCES Listing(listing_id),
+CREATE TABLE UserPreferencesTable (
+    user_id INTEGER REFERENCES UserTable(user_id),
+    listing_id INTEGER REFERENCES ListingTable(listing_id),
     weight INTEGER,
     date_modified TIMESTAMP,
     PRIMARY KEY (user_id, listing_id)
 );
 
 -- Create SearchHistory table
-CREATE TABLE SearchHistory (
-    user_id INTEGER REFERENCES User(user_id),
+CREATE TABLE SearchHistoryTable (
+    user_id INTEGER REFERENCES UserTable(user_id),
     search_date TIMESTAMP NOT NULL,
     search_term VARCHAR NOT NULL,
     PRIMARY KEY (user_id, search_date)

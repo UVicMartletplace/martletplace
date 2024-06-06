@@ -78,6 +78,7 @@ services:
       - ./apps/data/database/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     environment:
       - POSTGRES_PASSWORD=johuigytfrdcv
+      - POSTGRES_DB=martletplace
     ports: [ 8310:8310 ]
 
   elasticsearch:
