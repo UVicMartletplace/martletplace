@@ -86,7 +86,7 @@ const CreateAccount = () => {
     }
 
     // Temporary navigation to homepage until backend is ready: ticket #141
-    // navigate("/");
+    navigate("/");
   };
 
   return (
