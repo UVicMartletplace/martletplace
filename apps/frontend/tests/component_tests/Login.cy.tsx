@@ -76,9 +76,9 @@ describe("<Login />", () => {
     // cy.location("pathname").should("eq", "/user/login");
 
     // Check if the error message is displayed
-    cy.contains("Login unsuccessful. Please check your credentials.").should(
-      "be.visible"
-    );
+    cy.contains(
+      "Login unsuccessful. Invalid username and password combination"
+    ).should("be.visible");
   });
 
   it("shows forget password link", () => {

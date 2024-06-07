@@ -26,7 +26,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Login unsuccessful. Please check your credentials.");
+      setError("Login unsuccessful. Invalid username and password combination");
     }
 
     // Temporary navigation to homepage until backend is ready: ticket #140
