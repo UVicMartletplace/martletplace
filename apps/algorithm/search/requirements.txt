@@ -1,5 +1,6 @@
 fastapi
 pydantic
+elasticsearch
 uvicorn[standard]
 
 ## Dev Dependencies

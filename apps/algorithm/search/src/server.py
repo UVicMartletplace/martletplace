@@ -1,10 +1,20 @@
+import os
 from enum import Enum
-from typing import List
+from typing import List, Dict, Any
 
-from fastapi import FastAPI
+from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 app = FastAPI()
+
+# Elasticsearch client
+es_endpoint = os.getenv("ES_ENDPOINT")
+es = Elasticsearch(
+    [es_endpoint],
+    verify_certs=False
+)
 
 
 # define enums
@@ -15,7 +25,7 @@ class Status(str, Enum):
 
 class SearchType(str, Enum):
     LISTINGS = "LISTINGS"
-    SELLERS = "SELLERS"
+    USERS = "USERS"
 
 
 class Sort(str, Enum):
@@ -69,31 +79,83 @@ async def search(
     searchType: str = "LISTINGS",
     sort: str = "RELEVANCE",
 ):
-    # actual logic will go here
+    try:
+        sort_options = {
+            "RELEVANCE": "_score",
+            "PRICE_ASC": "price:asc",
+            "PRICE_DESC": "price:desc",
+            "LISTED_TIME_ASC": "dateCreated:asc",
+            "LISTED_TIME_DESC": "dateCreated:desc",
+            "DISTANCE_ASC": "_geo_distance",
+            "DISTANCE_DESC": "_geo_distance"
+        }
 
-    # This is a dummy response
-    return [
-        {
-            "listingID": "A23F29039B23",
-            "sellerID": "A23F29039B23",
-            "sellerName": "John Doe",
-            "title": "Used Calculus Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 50,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
-        },
-        {
-            "listingID": "A23F29039B24",
-            "sellerID": "A23F29039B24",
-            "sellerName": "Jane Doe",
-            "title": "Used Physics Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 40,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
-        },
-    ]
+        # Construct the search body based on the searchType
+        if searchType == "LISTINGS":
+            must_conditions = [
+                {"multi_match": {"query": query, "fields": ["title", "description"]}},
+                {"match": {"status": status}}
+            ]
+        elif searchType == "USERS":
+            must_conditions = [{"match": {"sellerName": query}}]
+        else:
+            raise HTTPException(status_code=400, detail="Invalid searchType")
+
+        search_body: Dict[str, Any] = {
+            "from": (page - 1) * limit,
+            "size": limit,
+            "query": {
+                "bool": {
+                    "must": must_conditions,
+                    "filter": []
+                }
+            },
+            "sort": [
+                {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
+            ]
+        }
+
+        if minPrice is not None or maxPrice is not None:
+            price_range = {}
+            if minPrice is not None:
+                price_range["gte"] = minPrice
+            if maxPrice is not None:
+                price_range["lte"] = maxPrice
+            search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
+
+        if "DISTANCE" in sort:
+            search_body["sort"] = [
+                {
+                    "_geo_distance": {
+                        "location": {"lat": latitude, "lon": longitude},
+                        "order": "asc" if sort == "DISTANCE_ASC" else "desc",
+                        "unit": "km"
+                    }
+                }
+            ]
+
+        response = es.search(index="my-new-index", body=search_body)
+
+        results = [
+            {
+                "listingID": hit["_source"]["listingId"],
+                "sellerID": hit["_source"]["sellerId"],
+                "sellerName": hit["_source"]["sellerName"],
+                "title": hit["_source"]["title"],
+                "description": hit["_source"]["description"],
+                "price": hit["_source"]["price"],
+                "dateCreated": hit["_source"]["dateCreated"],
+                "imageUrl": hit["_source"]["imageUrl"],
+            }
+            for hit in response["hits"]["hits"]
+        ]
+
+        return results
+
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="Index not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/search/reindex/listing-created")
