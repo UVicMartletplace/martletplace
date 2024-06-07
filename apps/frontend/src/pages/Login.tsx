@@ -1,10 +1,12 @@
 import { useState, FormEvent } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
-import { colors } from "../styles/colors";
 import { useNavigate } from "react-router-dom";
+import { useStyles } from "../styles/pageStyles"; // Adjust the path as necessary
+// import axios from "axios";
 
 const Login = () => {
+  const classes = useStyles();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -24,48 +26,24 @@ const Login = () => {
     //   console.error('Login failed:', error);
     // }
 
-    navigate("/"); // Temporary navigation
+    // Temporary navigation
+    navigate("/");
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100vw",
-        height: "100vh",
-      }}
-    >
-      <Box sx={{ mb: 2 }}>
-        <img
-          src={martletPlaceLogo}
-          alt="MartletPlace Logo"
-          style={{ width: "100px" }}
-        />
-      </Box>
-      <Typography
-        variant="h4"
-        component="h1"
-        color={colors.martletplaceBlack}
-        gutterBottom
-      >
+    <Box sx={classes.loginAndCreateBox}>
+      <img
+        src={martletPlaceLogo}
+        alt="MartletPlace Logo"
+        style={{ width: "100px", marginBottom: "16px" }}
+      />
+      <Typography variant="h4" component="h1" gutterBottom>
         University of Victoria
       </Typography>
       <Typography variant="h4" component="h1" gutterBottom>
         MartletPlace
       </Typography>
-      <Box
-        component="form"
-        onSubmit={handleLogin}
-        sx={{
-          width: "300px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <Box component="form" onSubmit={handleLogin} sx={classes.form}>
         <TextField
           label="Username/Email"
           variant="outlined"
@@ -85,42 +63,13 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: colors.martletplaceNavyBlue,
-            "&:hover": { backgroundColor: colors.martletplaceBlueHover },
-            textTransform: "none",
-            fontSize: "16px",
-            padding: "10px 0",
-            width: "40%",
-          }}
-        >
+        <Button type="submit" variant="contained" fullWidth sx={classes.button}>
           Login
         </Button>
-        <Link
-          href="/user/resetpassword"
-          underline="hover"
-          sx={{
-            mt: 2,
-            color: colors.martletplaceBlack,
-            "&:hover": { color: colors.martletplaceBlueHover },
-          }}
-        >
+        <Link href="/user/resetpassword" underline="hover" sx={classes.link}>
           Forgot Password?
         </Link>
-        <Link
-          href="/user/signup"
-          underline="hover"
-          sx={{
-            mt: 1,
-            color: colors.martletplaceBlack,
-            "&:hover": { color: colors.martletplaceBlueHover },
-          }}
-        >
+        <Link href="/user/signup" underline="hover" sx={classes.link}>
           New? Create an Account
         </Link>
       </Box>
