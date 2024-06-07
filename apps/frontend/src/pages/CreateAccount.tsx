@@ -20,19 +20,15 @@ const CreateAccount = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const isFormEmpty = !email || !name || !username || !password;
+  const isFormIncomplete = !email || !name || !username || !password;
 
   const navigate = useNavigate();
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Regex for UVic email validation
-    const emailFormat = /^[^@]+@uvic\.ca$/;
 
     // Regex for username validation
     const usernameFormat = /^[a-zA-Z]{1,20}$/;
@@ -40,15 +36,6 @@ const CreateAccount = () => {
     // Regex for password validation
     const passwordFormat =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
-
-    if (!emailFormat.test(email)) {
-      // Add or update an error state for email validation
-      setEmailError("Email must be a valid UVic email address.");
-      return;
-    } else {
-      // Clear email error if valid
-      setEmailError("");
-    }
 
     if (!usernameFormat.test(username)) {
       // Add or update an error state for username validation
@@ -72,7 +59,7 @@ const CreateAccount = () => {
     try {
       const response = await axios.post("/api/user", {
         username,
-        name, // Assuming 'name' is required as same as 'username'
+        name,
         email,
         password,
       });
@@ -99,10 +86,10 @@ const CreateAccount = () => {
         />
       </Box>
       <Typography variant="h4" component="h1" gutterBottom>
-        University of Victoria
+        MartletPlace
       </Typography>
       <Typography variant="h4" component="h1" gutterBottom>
-        MartletPlace
+        Signup
       </Typography>
       <Box component="form" onSubmit={handleCreateAccount} sx={classes.form}>
         <TextField
@@ -114,18 +101,15 @@ const CreateAccount = () => {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          error={!!emailError}
         />
-        {emailError && <FormHelperText error>{emailError}</FormHelperText>}
         <TextField
-          label="Full Name"
+          label="Display Name"
           variant="outlined"
           required
           fullWidth
           margin="normal"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          error={!!emailError}
           name="fullName"
         />
         <TextField
@@ -183,7 +167,7 @@ const CreateAccount = () => {
           variant="contained"
           fullWidth
           sx={classes.button}
-          disabled={isFormEmpty}
+          disabled={isFormIncomplete}
         >
           Create Account
         </Button>

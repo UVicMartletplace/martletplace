@@ -11,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const isFormEmpty = !username || !password;
+  const isFormIncomplete = !username || !password;
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ const Login = () => {
         username,
         password,
       });
-      if (response.data.success) {
+      if (response.status === 201) {
         navigate("/");
       }
     } catch (error) {
@@ -41,10 +41,10 @@ const Login = () => {
         style={{ width: "100px", marginBottom: "16px" }}
       />
       <Typography variant="h4" component="h1" gutterBottom>
-        University of Victoria
+        MartletPlace
       </Typography>
       <Typography variant="h4" component="h1" gutterBottom>
-        MartletPlace
+        Login
       </Typography>
       <Box component="form" onSubmit={handleLogin} sx={classes.form}>
         <TextField
@@ -72,7 +72,7 @@ const Login = () => {
           variant="contained"
           fullWidth
           sx={classes.button}
-          disabled={isFormEmpty}
+          disabled={isFormIncomplete}
         >
           Login
         </Button>
