@@ -10,7 +10,11 @@
     "format": "prettier --write ./src",
     "format:ci": "prettier --check ./src",
     "test": "cypress run --component",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test-coverage-simple": "cypress run --component && npx nyc report --reporter=text-summary",
+    "test-coverage-html": "cypress run --component && npx nyc report --reporter=html && ECHO See coverage/index.html for coverage",
+    "coverage-last": "nyc report --reporter=text-summary",
+    "test-e2e-coverage": "cypress run && npx nyc report --reporter=text-summary"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
