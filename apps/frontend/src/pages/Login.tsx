@@ -3,30 +3,33 @@ import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles"; // Adjust the path as necessary
-// import axios from "axios";
+import axios from "axios";
 
 const Login = () => {
   const classes = useStyles();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isFormEmpty = !username || !password;
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
 
-    // Uncomment below code when backend is ready
-    // try {
-    //   const response = await axios.post('/api/login', { username, password });
-    //   if (response.data.success) {
-    //     navigate("/");
-    //   }
-    // } catch (error) {
-    //   console.error('Login failed:', error);
-    // }
+    try {
+      const response = await axios.post("/api/user/", {
+        username,
+        password,
+      });
+      if (response.data.success) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Login unsuccessful. Please check your credentials.");
+    }
 
-    // Temporary navigation
+    // Temporary navigation to homepage until backend is ready: ticket #141
     navigate("/");
   };
 
@@ -63,7 +66,14 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit" variant="contained" fullWidth sx={classes.button}>
+        {error && <Typography color="error">{error}</Typography>}
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={classes.button}
+          disabled={isFormEmpty}
+        >
           Login
         </Button>
         <Link href="/user/resetpassword" underline="hover" sx={classes.link}>
