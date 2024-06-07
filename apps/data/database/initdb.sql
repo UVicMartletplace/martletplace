@@ -1,3 +1,9 @@
+CREATE FUNCTION trigger_update_modified()
+RETURNS TRIGGER AS $$ BEGIN
+  NEW.modified_at = clock_timestamp();
+  RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+
 CREATE TYPE STATUS_TYPE AS ENUM ('AVAILABLE', 'SOLD', 'REMOVED');
 
 CREATE TYPE LOCATION_TYPE AS (
@@ -5,65 +11,81 @@ CREATE TYPE LOCATION_TYPE AS (
     longitude float
 );
 
--- Creating Tables:
-
-CREATE TABLE UserTable (
+CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    username VARCHAR NOT NULL,
-    email VARCHAR NOT NULL,
+    username VARCHAR NOT NULL UNIQUE,
+    email VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL,
     name VARCHAR,
     bio TEXT,
     profile_pic_url VARCHAR,
-    date_created TIMESTAMP DEFAULT NOW(),
-    listings_sold INTEGER[],
-    listings_purchased INTEGER[],
-    verified BOOLEAN
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE ListingTable (
+CREATE TRIGGER users_modified_at BEFORE UPDATE ON users
+FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+
+
+CREATE TABLE listings (
     listing_id SERIAL PRIMARY KEY,
-    seller_id INTEGER REFERENCES UserTable(user_id),
+    seller_id INTEGER NOT NULL REFERENCES users(user_id),
+    buyer_id INTEGER REFERENCES users(user_id),
     title VARCHAR NOT NULL,
-    description VARCHAR,
     price INTEGER NOT NULL,
-    location LOCATION_TYPE,
-    status STATUS_TYPE,
-    date_created TIMESTAMP DEFAULT NOW(),
-    date_modified TIMESTAMP,
-    image_urls TEXT[]
+    location LOCATION_TYPE NOT NULL,
+    status STATUS_TYPE NOT NULL,
+    description VARCHAR,
+    image_urls TEXT[],
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE MessageTable (
+CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings
+FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+
+
+CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
-    sender_id INTEGER REFERENCES UserTable(user_id),
-    receiver_id INTEGER REFERENCES UserTable(user_id),
-    listing_id INTEGER REFERENCES ListingTable(listing_id),
+    sender_id INTEGER NOT NULL REFERENCES users(user_id),
+    receiver_id INTEGER NOT NULL REFERENCES users(user_id),
+    listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     message_body TEXT NOT NULL,
-    date_created TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE ReviewTable (
+
+CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
-    listing_id INTEGER REFERENCES ListingTable(listing_id),
-    user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
+    listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     review TEXT,
-    rating_value INTEGER,
-    date_created TIMESTAMP DEFAULT NOW(),
-    date_modified TIMESTAMP
+    rating_value INTEGER NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE UserPreferencesTable (
+CREATE TRIGGER reviews_modified_at BEFORE UPDATE ON reviews
+FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+
+
+CREATE TABLE user_preferences (
     user_pref_id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
-    listing_id INTEGER REFERENCES ListingTable(listing_id),
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     weight decimal,
-    date_modified TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE SearchHistoryTable (
+CREATE TRIGGER user_preferences_modified_at BEFORE UPDATE ON user_preferences
+FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+
+
+CREATE TABLE user_searches (
     search_id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
-    search_date TIMESTAMP NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     search_term VARCHAR NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
