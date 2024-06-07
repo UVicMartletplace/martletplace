@@ -1,4 +1,4 @@
-CREATE TYPE STATUS_TYPE AS ENUM ('AVAILABLE', 'SOLD');
+CREATE TYPE STATUS_TYPE AS ENUM ('AVAILABLE', 'SOLD', 'REMOVED');
 
 CREATE TYPE LOCATION_TYPE AS (
     latitude float,
@@ -15,16 +15,17 @@ CREATE TABLE UserTable (
     name VARCHAR,
     bio TEXT,
     profile_pic_url VARCHAR,
-    joining_date TIMESTAMP DEFAULT NOW(),
+    date_created TIMESTAMP DEFAULT NOW(),
     listings_sold INTEGER[],
-    listings_purchased INTEGER[]
+    listings_purchased INTEGER[],
+    verified BOOLEAN
 );
 
 CREATE TABLE ListingTable (
     listing_id SERIAL PRIMARY KEY,
     seller_id INTEGER REFERENCES UserTable(user_id),
     title VARCHAR NOT NULL,
-    description VARCHAR NOT NULL,
+    description VARCHAR,
     price INTEGER NOT NULL,
     location LOCATION_TYPE,
     status STATUS_TYPE,
@@ -42,12 +43,12 @@ CREATE TABLE MessageTable (
     date_created TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE RatingTable (
-    rating_id SERIAL PRIMARY KEY,
+CREATE TABLE ReviewTable (
+    review_id SERIAL PRIMARY KEY,
     listing_id INTEGER REFERENCES ListingTable(listing_id),
     user_id INTEGER REFERENCES UserTable(user_id) ON DELETE CASCADE,
     review TEXT,
-    rating_value INTEGER DEFAULT 0,
+    rating_value INTEGER,
     date_created TIMESTAMP DEFAULT NOW(),
     date_modified TIMESTAMP
 );
