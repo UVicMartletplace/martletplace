@@ -15,7 +15,8 @@ describe("<CreateAccount />", () => {
 
     // Check if the form contains the necessary input fields
     cy.get('input[type="email"]').should("be.visible");
-    cy.get('input[type="text"]').should("be.visible");
+    cy.get("input[name=fullName]").should("be.visible");
+    cy.get("input[name=username]").should("be.visible");
     cy.get('input[type="password"]').should("be.visible");
     cy.get('button[type="submit"]').should("be.visible");
   });
@@ -23,6 +24,7 @@ describe("<CreateAccount />", () => {
   it("allows typing into the input fields", () => {
     // Test data
     const testEmail = "test@uvic.ca";
+    const testName = "Test User";
     const testUsername = "testuser";
     const testPassword = "testpassword";
 
@@ -30,7 +32,10 @@ describe("<CreateAccount />", () => {
     cy.get('input[type="email"]')
       .type(testEmail)
       .should("have.value", testEmail);
-    cy.get('input[type="text"]')
+    cy.get("input[name=fullName]")
+      .type(testName)
+      .should("have.value", testName);
+    cy.get("input[name=username]")
       .type(testUsername)
       .should("have.value", testUsername);
     cy.get('input[type="password"]')
@@ -47,7 +52,8 @@ describe("<CreateAccount />", () => {
 
     // Type into the input fields
     cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get('input[type="text"]').type("testuser");
+    cy.get("input[name=fullName]").type("Test User");
+    cy.get("input[name=username]").type("testuser");
     cy.get('input[type="password"]').type("Test123@");
 
     // Ensure the button is not disabled
@@ -71,7 +77,8 @@ describe("<CreateAccount />", () => {
 
     // Type into the input fields
     cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get('input[type="text"]').type("testuser");
+    cy.get("input[name=fullName]").type("Test User");
+    cy.get("input[name=username]").type("testuser");
     cy.get('input[type="password"]').type("Test123@");
 
     // Ensure the button is not disabled
@@ -86,8 +93,10 @@ describe("<CreateAccount />", () => {
     // Uncomment below once backend is ready: ticket #141
     // cy.location("pathname").should("eq", "/user/signup");
 
-    // Optionally check for the presence of an error message
-    cy.contains("An unexpected error occurred").should("be.visible");
+    // Check for window alert
+    cy.on("window:alert", (str) => {
+      expect(str).to.equal("Failed to create account. Please try again.");
+    });
   });
 
   it("shows create account link", () => {
@@ -96,37 +105,64 @@ describe("<CreateAccount />", () => {
       .and("have.attr", "href", "/user/login");
   });
 
-  it("prevents submission when username is missing", () => {
-    cy.get('input[type="email"]').type("test@uvic.ca");
+  it("prevents submission when email is missing", () => {
+    // Type into the input fields
+    cy.get("input[name=fullName]").type("Test User");
+    cy.get("input[name=username]").type("testuser");
     cy.get('input[type="password"]').type("testpassword");
+
+    // Ensure the button is disabled
+    cy.get('button[type="submit"]').should("be.disabled");
+  });
+
+  it("prevents submission when name is missing", () => {
+    // Type into the input fields
+    cy.get('input[type="email"]').type("test@uvic.ca");
+    cy.get("input[name=username]").type("testuser");
+    cy.get('input[type="password"]').type("testpassword");
+
+    // Ensure the button is disabled
+    cy.get('button[type="submit"]').should("be.disabled");
+  });
+
+  it("prevents submission when username is missing", () => {
+    // Type into the input fields
+    cy.get('input[type="email"]').type("test@uvic.ca");
+    cy.get("input[name=fullName]").type("Test User");
+    cy.get('input[type="password"]').type("Test123@");
+
+    // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
   });
 
   it("prevents submission when password is missing", () => {
+    // Type into the input fields
     cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get('input[type="text"]').type("testuser");
-    cy.get('button[type="submit"]').should("be.disabled");
-  });
+    cy.get("input[name=fullName]").type("Test User");
+    cy.get("input[name=username]").type("testuser");
 
-  it("prevents submission when email is missing", () => {
-    cy.get('input[type="text"]').type("testuser");
-    cy.get('input[type="password"]').type("testpassword");
+    // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
   });
 
   it("prevents submission when email is invalid", () => {
+    // Type into the input fields
+    cy.get("input[name=fullName]").type("Test User");
     cy.get('input[type="email"]').type("test@gmail.com");
-    cy.get('input[type="text"]').type("testuser");
+    cy.get("input[name=username]").type("testuser");
     cy.get('input[type="password"]').type("testpassword");
 
+    // Ensure the button is disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
 
+    // Check for the presence of an error message
     cy.contains("Email must be a valid UVic email address.").should(
       "be.visible"
     );
   });
 
   it("prevents submission when all fields are empty", () => {
+    // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
   });
 });

@@ -8,7 +8,7 @@ export const useStyles = () => ({
     alignItems: "center",
     justifyContent: "center",
     width: "100vw",
-    height: "100vh",
+    height: "30%",
   },
   form: {
     width: "300px",

@@ -75,7 +75,7 @@ describe("<Login />", () => {
     // Uncomment below once backend is ready: ticket #140
     // cy.location("pathname").should("eq", "/user/login");
 
-    // Optionally check for the presence of an error message
+    // Check if the error message is displayed
     cy.contains("Login unsuccessful. Please check your credentials.").should(
       "be.visible"
     );
@@ -94,12 +94,18 @@ describe("<Login />", () => {
   });
 
   it("prevents submission when username is missing", () => {
+    // Type into the input fields
     cy.get('input[type="password"]').type("testpassword");
+
+    // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
   });
 
   it("prevents submission when password is missing", () => {
+    // Type into the input fields
     cy.get('input[type="text"]').type("testuser");
+
+    // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
   });
 
