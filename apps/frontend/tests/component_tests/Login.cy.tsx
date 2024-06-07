@@ -20,6 +20,7 @@ describe("<Login />", () => {
   });
 
   it("allows typing into the input fields", () => {
+    // Test data
     const testUsername = "testuser";
     const testPassword = "testpassword";
 
@@ -34,11 +35,12 @@ describe("<Login />", () => {
 
   it("submits the form and navigates on successful login", () => {
     // Stubbing network request for login as successful
-    cy.intercept("POST", "/api/user/", {
+    cy.intercept("POST", "/api/login", {
       statusCode: 200,
       body: { success: true },
     }).as("loginRequest");
 
+    // Type into the input fields
     cy.get('input[type="text"]').type("testuser");
     cy.get('input[type="password"]').type("testpassword");
 
@@ -54,11 +56,12 @@ describe("<Login />", () => {
 
   it("does not navigate on unsuccessful login", () => {
     // Stubbing network request for login as unsuccessful
-    cy.intercept("POST", "/api/user/", {
+    cy.intercept("POST", "/api/login", {
       statusCode: 401, // Use an appropriate status code for failed login
       body: { success: false, message: "Invalid credentials" },
     }).as("loginFailRequest");
 
+    // Type into the input fields
     cy.get('input[type="text"]').type("wronguser");
     cy.get('input[type="password"]').type("wrongpassword");
 
@@ -69,8 +72,8 @@ describe("<Login />", () => {
     cy.wait("@loginFailRequest").its("response.statusCode").should("eq", 401);
 
     // Check if navigation has not occurred, implying the user is still on the login page
-    // Uncomment below once backend is ready: ticket #141
-    // cy.location("pathname").should("eq", "/login");
+    // Uncomment below once backend is ready: ticket #140
+    // cy.location("pathname").should("eq", "/user/login");
 
     // Optionally check for the presence of an error message
     cy.contains("Login unsuccessful. Please check your credentials.").should(

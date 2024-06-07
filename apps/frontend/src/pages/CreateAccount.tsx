@@ -11,7 +11,7 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
 
 const CreateAccount = () => {
   const classes = useStyles();
@@ -20,6 +20,7 @@ const CreateAccount = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const isFormEmpty = !username || !password || !email;
   const navigate = useNavigate();
 
   const handleCreateAccount = async (e: React.FormEvent) => {
@@ -49,31 +50,24 @@ const CreateAccount = () => {
       setPasswordError("");
     }
 
-    console.log("Email:", email);
-    console.log("Username:", username);
-    console.log("Password:", password);
+    try {
+      const response = await axios.post("/api/user", {
+        username,
+        name: username, // Assuming 'name' is required as same as 'username'
+        email,
+        password,
+      });
+      if (response.status === 201) {
+        console.log("User created successfully", response.data);
+        // Perform any actions after successful account creation, like redirecting to login page
+      }
+    } catch (error) {
+      console.error("Failed to create account", error);
+      // Handle server errors here
+      setPasswordError("An unexpected error occurred");
+    }
 
-    //  Uncomment below code when backend is ready
-    //  try {
-    //   const response = await axios.post("/api/user", {
-    //     username,
-    //     name: username, // Assuming 'name' is required as same as 'username'
-    //     email,
-    //     password,
-    //   });
-    //   if (response.status === 201) {
-    //     console.log("User created successfully", response.data);
-    //     // Perform any actions after successful account creation, like redirecting to login page
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to create account", error.response.data);
-    //   // Handle server errors here
-    //   setPasswordError(
-    //     error.response.data.error || "An unexpected error occurred"
-    //   );
-    // }
-
-    // Temporary navigation
+    // Temporary navigation to homepage until backend is ready: ticket #141
     navigate("/");
   };
 
@@ -95,6 +89,7 @@ const CreateAccount = () => {
       <Box component="form" onSubmit={handleCreateAccount} sx={classes.form}>
         <TextField
           label="Email, must be a valid UVic email"
+          type="email"
           variant="outlined"
           required
           fullWidth
@@ -149,7 +144,13 @@ const CreateAccount = () => {
           1 number
           <br />1 special character
         </Typography>
-        <Button type="submit" variant="contained" fullWidth sx={classes.button}>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={classes.button}
+          disabled={isFormEmpty}
+        >
           Create Account
         </Button>
         <Typography

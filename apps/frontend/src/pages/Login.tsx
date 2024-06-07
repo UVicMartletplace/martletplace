@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/user/", {
+      const response = await axios.post("/api/login", {
         username,
         password,
       });
@@ -29,7 +29,7 @@ const Login = () => {
       setError("Login unsuccessful. Please check your credentials.");
     }
 
-    // Temporary navigation to homepage until backend is ready: ticket #141
+    // Temporary navigation to homepage until backend is ready: ticket #140
     navigate("/");
   };
 
