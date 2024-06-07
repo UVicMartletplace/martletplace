@@ -145,6 +145,20 @@ describe("<CreateAccount />", () => {
     cy.get('button[type="submit"]').should("be.disabled");
   });
 
+  it("prevents submission when email is invalid", () => {
+    // Type into the input fields
+    cy.get('input[type="email"]').type("test@gmail.com");
+    cy.get("input[name=fullName]").type("Test User");
+    cy.get("input[name=username]").type("testuser");
+    cy.get('input[type="password"]').type("Test123@");
+
+    // Ensure the button is not disabled
+    cy.get('button[type="submit"]').should("not.be.disabled").click();
+
+    // Check if the error message is displayed
+    cy.contains("Please enter a valid UVic email.").should("be.visible");
+  });
+
   it("prevents submission when all fields are empty", () => {
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");

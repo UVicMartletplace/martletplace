@@ -20,6 +20,7 @@ const CreateAccount = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -37,10 +38,16 @@ const CreateAccount = () => {
     const passwordFormat =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
 
+    // Check if email is a valid UVic email
+    if (!email.endsWith("@uvic.ca")) {
+      setEmailError("Please enter a valid UVic email.");
+      return;
+    }
+
     if (!usernameFormat.test(username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters.",
+        "Username must be between 1 and 20 characters and only contain letters."
       );
       return;
     } else {
@@ -101,7 +108,9 @@ const CreateAccount = () => {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={!!emailError}
         />
+        {emailError && <FormHelperText error>{emailError}</FormHelperText>}
         <TextField
           label="Display Name"
           variant="outlined"
