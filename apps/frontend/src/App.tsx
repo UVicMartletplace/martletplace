@@ -8,8 +8,10 @@ import EditListing from "./pages/EditListing";
 import Account from "./pages/Account";
 import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
+import axios from "axios";
 
 function App() {
+  axios.create();
   return (
     <Router>
       <Routes>
@@ -27,7 +29,7 @@ function App() {
         {/* TODO: change full url to `/listing/edit/:id` */}
         <Route path="/listing/edit" element={<EditListing />} />
         {/* TODO: change full url to `/listing/view/:id` */}
-        <Route path="/listing/view" element={<ViewListing />} />
+        <Route path="/listing/view/:id" element={<ViewListing />} />
 
         <Route path="/messages" element={<Messages />} />
       </Routes>
