@@ -2,6 +2,12 @@ import { BrowserRouter } from "react-router-dom";
 import CreateAccount from "../../src/pages/CreateAccount";
 
 describe("<CreateAccount />", () => {
+  const testEmail = "test@uvic.ca";
+  const testName = "Test User";
+  const testUsername = "testuser";
+  const testPassword = "Test1234@";
+  const invalidEmail = "test@gmail.com";
+
   beforeEach(() => {
     cy.mount(
       <BrowserRouter>
@@ -22,12 +28,6 @@ describe("<CreateAccount />", () => {
   });
 
   it("allows typing into the input fields", () => {
-    // Test data
-    const testEmail = "test@uvic.ca";
-    const testName = "Test User";
-    const testUsername = "testuser";
-    const testPassword = "testpassword";
-
     // Type into the input fields
     cy.get('input[type="email"]')
       .type(testEmail)
@@ -51,10 +51,10 @@ describe("<CreateAccount />", () => {
     }).as("createAccountRequest");
 
     // Type into the input fields
-    cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get("input[name=fullName]").type("Test User");
-    cy.get("input[name=username]").type("testuser");
-    cy.get('input[type="password"]').type("Test123@");
+    cy.get('input[type="email"]').type(testEmail);
+    cy.get("input[name=fullName]").type(testName);
+    cy.get("input[name=username]").type(testUsername);
+    cy.get('input[type="password"]').type(testPassword);
 
     // Ensure the button is not disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
@@ -76,10 +76,10 @@ describe("<CreateAccount />", () => {
     }).as("createAccountFailRequest");
 
     // Type into the input fields
-    cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get("input[name=fullName]").type("Test User");
-    cy.get("input[name=username]").type("testuser");
-    cy.get('input[type="password"]').type("Test123@");
+    cy.get('input[type="email"]').type(testEmail);
+    cy.get("input[name=fullName]").type(testName);
+    cy.get("input[name=username]").type(testUsername);
+    cy.get('input[type="password"]').type(testPassword);
 
     // Ensure the button is not disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
@@ -107,9 +107,9 @@ describe("<CreateAccount />", () => {
 
   it("prevents submission when email is missing", () => {
     // Type into the input fields
-    cy.get("input[name=fullName]").type("Test User");
-    cy.get("input[name=username]").type("testuser");
-    cy.get('input[type="password"]').type("testpassword");
+    cy.get("input[name=fullName]").type(testName);
+    cy.get("input[name=username]").type(testUsername);
+    cy.get('input[type="password"]').type(testPassword);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -117,9 +117,9 @@ describe("<CreateAccount />", () => {
 
   it("prevents submission when name is missing", () => {
     // Type into the input fields
-    cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get("input[name=username]").type("testuser");
-    cy.get('input[type="password"]').type("testpassword");
+    cy.get('input[type="email"]').type(testEmail);
+    cy.get("input[name=username]").type(testUsername);
+    cy.get('input[type="password"]').type(testPassword);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -127,9 +127,9 @@ describe("<CreateAccount />", () => {
 
   it("prevents submission when username is missing", () => {
     // Type into the input fields
-    cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get("input[name=fullName]").type("Test User");
-    cy.get('input[type="password"]').type("Test123@");
+    cy.get('input[type="email"]').type(testEmail);
+    cy.get("input[name=fullName]").type(testName);
+    cy.get('input[type="password"]').type(testPassword);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -137,9 +137,9 @@ describe("<CreateAccount />", () => {
 
   it("prevents submission when password is missing", () => {
     // Type into the input fields
-    cy.get('input[type="email"]').type("test@uvic.ca");
-    cy.get("input[name=fullName]").type("Test User");
-    cy.get("input[name=username]").type("testuser");
+    cy.get('input[type="email"]').type(testEmail);
+    cy.get("input[name=fullName]").type(testName);
+    cy.get("input[name=username]").type(testUsername);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -147,10 +147,10 @@ describe("<CreateAccount />", () => {
 
   it("prevents submission when email is invalid", () => {
     // Type into the input fields
-    cy.get('input[type="email"]').type("test@gmail.com");
-    cy.get("input[name=fullName]").type("Test User");
-    cy.get("input[name=username]").type("testuser");
-    cy.get('input[type="password"]').type("Test123@");
+    cy.get('input[type="email"]').type(invalidEmail);
+    cy.get("input[name=fullName]").type(testName);
+    cy.get("input[name=username]").type(testUsername);
+    cy.get('input[type="password"]').type("testpassword");
 
     // Ensure the button is not disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
