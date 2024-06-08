@@ -1,7 +1,7 @@
 import { colors } from "./colors";
 
 export const useStyles = () => ({
-  // Login and Create page styles
+  // Login and Create Account page styles
   loginAndCreateBox: {
     display: "flex",
     flexDirection: "column",
