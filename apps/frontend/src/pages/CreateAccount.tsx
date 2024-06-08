@@ -38,12 +38,12 @@ const CreateAccount = () => {
     }
 
     // Regex for username validation
-    const usernameFormat = /^[a-zA-Z]{1,20}$/;
+    const usernameFormat = /^[a-zA-Z0-9]{1,20}$/;
 
     if (!usernameFormat.test(username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters.",
+        "Username must be between 1 and 20 characters and only contain letters or numbers."
       );
       return;
     } else {

@@ -23,8 +23,6 @@ describe("<Login />", () => {
   const testPassword = "testPassword";
 
   it("allows typing into the input fields", () => {
-    // Test data
-
     // Type into the input fields
     cy.get('input[type="text"]')
       .type(testEmail)

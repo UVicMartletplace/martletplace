@@ -135,6 +135,22 @@ describe("<CreateAccount />", () => {
     cy.get('button[type="submit"]').should("be.disabled");
   });
 
+  it("prevents submission when username is invalid format", () => {
+    // Type into the input fields
+    cy.get('input[type="email"]').type(testEmail);
+    cy.get("input[name=fullName]").type(testName);
+    cy.get("input[name=username]").type("testuser@");
+    cy.get('input[type="password"]').type(testPassword);
+
+    // Ensure the button is not disabled
+    cy.get('button[type="submit"]').should("not.be.disabled").click();
+
+    // Check if the error message is displayed
+    cy.contains(
+      "Username must be between 1 and 20 characters and only contain letters or numbers."
+    ).should("be.visible");
+  });
+
   it("prevents submission when password is missing", () => {
     // Type into the input fields
     cy.get('input[type="email"]').type(testEmail);

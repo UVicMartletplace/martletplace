@@ -2,7 +2,7 @@ import { useState, FormEvent } from "react";
 import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
-import { useStyles } from "../styles/pageStyles"; // Adjust the path as necessary
+import { useStyles } from "../styles/pageStyles";
 import axios from "axios";
 
 const Login = () => {
