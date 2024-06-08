@@ -1,9 +1,20 @@
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
+import pgPromise from 'pg-promise';
 
 const PORT = 8212;
 
 const app = express();
+const pgp = pgPromise(); // postgreSQL interface for Node.js
+const DB_ENDPOINT = process.env.DB_ENDPOINT;
+
+if (!DB_ENDPOINT) {
+  console.error("DB_ENDPOINT environment variable is not set");
+  process.exit(1);
+}
+
+const db = pgp(DB_ENDPOINT)
+
 app.use(morgan("dev"));
 app.use(express.json());
 
@@ -13,10 +24,31 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.get("/api/listing", (req: Request, res: Response) => {
-  res.send("Hello world");
-});
+// GET /api/listing/:id - Get a listing's details
+const getListingById = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running at http://0.0.0.0:${PORT}`);
-});
+  db.oneOrNone('SELECT * FROM listings WHERE listing_id = $1', [id])
+    .then(function (data) {
+      if (!data) {
+        return res.status(404).json({
+          error: 'Listing not found'
+        });
+      }
+      
+      return res.status(200).send(data);
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+};
+
+app.get("/api/listing/:id", getListingById);
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://0.0.0.0:${PORT}`);
+  });
+}
+
+export { app, getListingById };  // Exporting for testing
