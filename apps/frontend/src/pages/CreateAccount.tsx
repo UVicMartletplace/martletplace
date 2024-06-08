@@ -31,23 +31,19 @@ const CreateAccount = () => {
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Regex for username validation
-    const usernameFormat = /^[a-zA-Z]{1,20}$/;
-
-    // Regex for password validation
-    const passwordFormat =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
-
     // Check if email is a valid UVic email
     if (!email.endsWith("@uvic.ca")) {
       setEmailError("Please enter a valid UVic email.");
       return;
     }
 
+    // Regex for username validation
+    const usernameFormat = /^[a-zA-Z]{1,20}$/;
+
     if (!usernameFormat.test(username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters.",
+        "Username must be between 1 and 20 characters and only contain letters."
       );
       return;
     } else {
@@ -55,12 +51,18 @@ const CreateAccount = () => {
       setUsernameError("");
     }
 
-    if (!passwordFormat.test(password)) {
-      setPasswordError("Password does not meet the requirements.");
-      return;
-    } else {
+    if (
+      password.length >= 8 &&
+      /[a-z]/.test(password) &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[\W_]/.test(password)
+    ) {
       // Clear error message if password is valid
       setPasswordError("");
+    } else {
+      setPasswordError("Password does not meet the requirements.");
+      return;
     }
 
     try {
