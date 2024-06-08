@@ -7,18 +7,18 @@ import axios from "axios";
 
 const Login = () => {
   const classes = useStyles();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const isFormIncomplete = !username || !password;
+  const isFormIncomplete = !email || !password;
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const response = await axios.post("/api/login", {
-        username,
+        email,
         password,
       });
       if (response.status === 201) {
@@ -48,13 +48,13 @@ const Login = () => {
       </Typography>
       <Box component="form" onSubmit={handleLogin} sx={classes.form}>
         <TextField
-          label="Username/Email"
+          label="Email"
           variant="outlined"
           required
           fullWidth
           margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextField
           label="Password"

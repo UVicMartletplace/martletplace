@@ -19,7 +19,7 @@ describe("<Login />", () => {
     cy.get('button[type="submit"]').should("be.visible");
   });
 
-  const testUsername = "testUsername";
+  const testEmail = "testEmail@uvic.ca";
   const testPassword = "testPassword";
 
   it("allows typing into the input fields", () => {
@@ -27,8 +27,8 @@ describe("<Login />", () => {
 
     // Type into the input fields
     cy.get('input[type="text"]')
-      .type(testUsername)
-      .should("have.value", testUsername);
+      .type(testEmail)
+      .should("have.value", testEmail);
     cy.get('input[type="password"]')
       .type(testPassword)
       .should("have.value", testPassword);
@@ -42,7 +42,7 @@ describe("<Login />", () => {
     }).as("loginRequest");
 
     // Type into the input fields
-    cy.get('input[type="text"]').type(testUsername);
+    cy.get('input[type="text"]').type(testEmail);
     cy.get('input[type="password"]').type(testPassword);
 
     // Ensure the button is not disabled
@@ -104,7 +104,7 @@ describe("<Login />", () => {
 
   it("prevents submission when password is missing", () => {
     // Type into the input fields
-    cy.get('input[type="text"]').type(testUsername);
+    cy.get('input[type="text"]').type(testEmail);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
