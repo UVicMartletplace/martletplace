@@ -43,7 +43,7 @@ const CreateAccount = () => {
     if (!usernameFormat.test(username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters or numbers.",
+        "Username must be between 1 and 20 characters and only contain letters or numbers."
       );
       return;
     } else {
@@ -65,21 +65,21 @@ const CreateAccount = () => {
       return;
     }
 
-    try {
-      const response = await axios.post("/api/user", {
-        username,
-        name,
+    axios
+      .post("/api/user", {
         email,
         password,
-      });
-      if (response.status === 201) {
+      })
+      .then(function (response) {
+        console.log(response);
         navigate("/");
-      }
-    } catch (error) {
-      alert("Failed to create account. Please try again.");
+      })
+      .catch(function (error) {
+        console.error(error);
+        alert("Failed to create account. Please try again.");
 
-      // Handle server errors here
-    }
+        // Handle server errors here
+      });
 
     // Temporary navigation to homepage until backend is ready: ticket #141
     navigate("/");

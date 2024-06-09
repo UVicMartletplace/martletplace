@@ -16,18 +16,21 @@ const Login = () => {
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post("/api/login", {
+    axios
+      .post("/api/login", {
         email,
         password,
-      });
-      if (response.status === 201) {
+      })
+      .then(function (response) {
+        console.log(response);
         navigate("/");
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-      setError("Login unsuccessful. Invalid username and password combination");
-    }
+      })
+      .catch(function (error) {
+        console.error("Login failed:", error);
+        setError(
+          "Login unsuccessful. Invalid username and password combination"
+        );
+      });
 
     // Temporary navigation to homepage until backend is ready: ticket #140
     navigate("/");
