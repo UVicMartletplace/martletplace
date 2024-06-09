@@ -35,6 +35,9 @@ const CreateAccount = () => {
     if (!email.endsWith("@uvic.ca")) {
       setEmailError("Please enter a valid UVic email.");
       return;
+    } else {
+      // Clear email error if valid
+      setEmailError("");
     }
 
     // Regex for username validation
@@ -43,7 +46,7 @@ const CreateAccount = () => {
     if (!usernameFormat.test(username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters or numbers."
+        "Username must be between 1 and 20 characters and only contain letters or numbers.",
       );
       return;
     } else {

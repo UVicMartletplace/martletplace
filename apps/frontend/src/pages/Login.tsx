@@ -28,7 +28,7 @@ const Login = () => {
       .catch(function (error) {
         console.error("Login failed:", error);
         setError(
-          "Login unsuccessful. Invalid username and password combination"
+          "Login unsuccessful. Invalid username and password combination",
         );
       });
 
