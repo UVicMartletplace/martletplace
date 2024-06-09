@@ -5,5 +5,4 @@ export const colors = {
   martletplaceGrey: "#808080",
   martletplaceYellow: "#ffb42c",
   martletplaceWhite: "#ffffff",
-  martletplaceGreyClicked: "#E8E8E8",
 };
