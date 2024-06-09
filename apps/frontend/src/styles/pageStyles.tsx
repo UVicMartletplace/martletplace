@@ -30,4 +30,7 @@ export const useStyles = () => ({
     color: colors.martletplaceBlack,
     "&:hover": { color: colors.martletplaceBlueHover },
   },
+  horizontalRule: {
+    color: colors.martletplaceGrey
+  }
 });
