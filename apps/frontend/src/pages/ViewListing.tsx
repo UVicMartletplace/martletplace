@@ -14,6 +14,8 @@ import { useStyles } from "../styles/pageStyles.tsx";
 import { colors } from "../styles/colors.tsx";
 
 const ViewListing = () => {
+  const classes = useStyles();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [listingObject, setListingObject] = useState({
     title: "Sample Title",
@@ -54,8 +56,7 @@ const ViewListing = () => {
     const dateTimeObject = new Date(dateString);
     return dateTimeObject.toDateString();
   };
-  const classes = useStyles();
-  const navigate = useNavigate();
+
 
   // TODO Make the routing with auth work properly
   const handleNavToMessages = () => {
@@ -95,7 +96,7 @@ const ViewListing = () => {
                 Posted on: {convertDate(listingObject.dateCreated)}
               </Typography>
               <Button
-                type="submit"
+                type="button"
                 variant="contained"
                 fullWidth
                 sx={classes.button}
