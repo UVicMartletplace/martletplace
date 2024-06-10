@@ -18,7 +18,7 @@ CREATE TABLE users (
     password VARCHAR NOT NULL,
     name VARCHAR,
     bio TEXT,
-    profile_pic_url VARCHAR,
+    profile_pic_url TEXT,
     verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
