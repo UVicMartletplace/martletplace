@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { getListingById } from '../src/index';
 
-// Mocking pg-promise
 jest.mock('pg-promise', () => {
   return () => {
     return {
@@ -73,7 +72,7 @@ describe('GET /api/listing/:id', () => {
   it('should return a 404 status for an invalid ID (failing test)', async () => {
     pgp.oneOrNone.mockResolvedValue(null);
 
-    req.params = { id: '9999' };  // Initialize params with an invalid ID
+    req.params = { id: '9999' };
 
     await getListingById(req as Request, res as Response, next);
 

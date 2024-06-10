@@ -5,7 +5,7 @@ import pgPromise from 'pg-promise';
 const PORT = 8212;
 
 const app = express();
-const pgp = pgPromise(); // postgreSQL interface for Node.js
+const pgp = pgPromise();
 const DB_ENDPOINT = process.env.DB_ENDPOINT;
 
 if (!DB_ENDPOINT) {
@@ -25,10 +25,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // GET /api/listing/:id - Get a listing's details
-const getListingById = (req: Request, res: Response, next: NextFunction) => {
+const getListingById = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
-  db.oneOrNone('SELECT * FROM listings WHERE listing_id = $1', [id])
+  await db.oneOrNone('SELECT * FROM listings WHERE listing_id = $1', [id])
     .then(function (data) {
       if (!data) {
         return res.status(404).json({
@@ -51,4 +51,4 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-export { app, getListingById };  // Exporting for testing
+export { app, getListingById };
