@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
-import MultiImageUpload from "../extra_components/MultiImageUpload.tsx";
 import {colors} from "../styles/colors.tsx";
+
 
 const CreateListing = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,6 +44,9 @@ const CreateListing = () => {
         console.log(error);
         alert("Listing Creation Failed");
       });
+  };
+  const uploadImages = () => {
+    console.log("Image Upload");
   };
 
   return (
@@ -78,7 +81,18 @@ const CreateListing = () => {
               </form>
             </Grid>
             <Grid item md={6} sm={12} xs={12}>
-              <MultiImageUpload/>
+
+              <input multiple style={{display: "none"}} id={"image-input"} name={"image-input"} type={"file"} accept={"image/*"} onChange={uploadImages}/>
+              <label htmlFor={"image-input"}>
+                <span>
+                  <Button
+                      className="btn-choose"
+                      variant="outlined"
+                      component="span">
+                    Choose Image
+                  </Button>
+                </span>
+              </label>
             </Grid>
           </Grid>
           <Button
