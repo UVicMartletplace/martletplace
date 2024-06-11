@@ -11,10 +11,7 @@ app = FastAPI()
 
 # Elasticsearch client
 es_endpoint = os.getenv("ES_ENDPOINT")
-es = Elasticsearch(
-    [es_endpoint],
-    verify_certs=False
-)
+es = Elasticsearch([es_endpoint], verify_certs=False)
 
 
 # define enums
@@ -87,14 +84,14 @@ async def search(
             "LISTED_TIME_ASC": "dateCreated:asc",
             "LISTED_TIME_DESC": "dateCreated:desc",
             "DISTANCE_ASC": "_geo_distance",
-            "DISTANCE_DESC": "_geo_distance"
+            "DISTANCE_DESC": "_geo_distance",
         }
 
         # Construct the search body based on the searchType
         if searchType == "LISTINGS":
             must_conditions = [
                 {"multi_match": {"query": query, "fields": ["title", "description"]}},
-                {"match": {"status": status}}
+                {"match": {"status": status}},
             ]
         elif searchType == "USERS":
             must_conditions = [{"match": {"sellerName": query}}]
@@ -104,15 +101,10 @@ async def search(
         search_body: Dict[str, Any] = {
             "from": (page - 1) * limit,
             "size": limit,
-            "query": {
-                "bool": {
-                    "must": must_conditions,
-                    "filter": []
-                }
-            },
+            "query": {"bool": {"must": must_conditions, "filter": []}},
             "sort": [
                 {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
-            ]
+            ],
         }
 
         if minPrice is not None or maxPrice is not None:
@@ -121,7 +113,9 @@ async def search(
                 price_range["gte"] = minPrice
             if maxPrice is not None:
                 price_range["lte"] = maxPrice
-            search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
+            search_body["query"]["bool"]["filter"].append(
+                {"range": {"price": price_range}}
+            )
 
         if "DISTANCE" in sort:
             search_body["sort"] = [
@@ -129,7 +123,7 @@ async def search(
                     "_geo_distance": {
                         "location": {"lat": latitude, "lon": longitude},
                         "order": "asc" if sort == "DISTANCE_ASC" else "desc",
-                        "unit": "km"
+                        "unit": "km",
                     }
                 }
             ]
