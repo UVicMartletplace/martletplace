@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import {colors} from "../styles/colors.tsx";
+import MultiFileUpload from "../extra_components/MultiFileUpload.tsx";
 
 
 const CreateListing = () => {
@@ -45,9 +46,6 @@ const CreateListing = () => {
         alert("Listing Creation Failed");
       });
   };
-  const uploadImages = () => {
-    console.log("Image Upload");
-  };
 
   return (
     <Container>
@@ -81,18 +79,7 @@ const CreateListing = () => {
               </form>
             </Grid>
             <Grid item md={6} sm={12} xs={12}>
-
-              <input multiple style={{display: "none"}} id={"image-input"} name={"image-input"} type={"file"} accept={"image/*"} onChange={uploadImages}/>
-              <label htmlFor={"image-input"}>
-                <span>
-                  <Button
-                      className="btn-choose"
-                      variant="outlined"
-                      component="span">
-                    Choose Image
-                  </Button>
-                </span>
-              </label>
+              <MultiFileUpload/>
             </Grid>
           </Grid>
           <Button
