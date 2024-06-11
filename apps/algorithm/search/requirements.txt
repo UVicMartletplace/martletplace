@@ -7,3 +7,4 @@ uvicorn[standard]
 ruff
 pytest
 bandit
+httpx
