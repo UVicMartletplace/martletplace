@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from apps.algorithm.search.src.server import app
+from server import app
 
 client = TestClient(app)
 
