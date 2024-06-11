@@ -30,4 +30,29 @@ export const useStyles = () => ({
     color: colors.martletplaceBlack,
     "&:hover": { color: colors.martletplaceBlueHover },
   },
+
+  // Account page styles
+  drawer: {
+    width: 350,
+    flexShrink: 0,
+    "& .MuiDrawer-paper": {
+      width: 350,
+      boxSizing: "border-box",
+    },
+  },
+  listItemButton: {
+    height: 80,
+    "&:hover": {
+      backgroundColor: colors.martletplaceGreyClicked,
+    },
+  },
+  listItemText: {
+    backgroundColor: colors.martletplaceGreyClicked,
+  },
+  mainContent: {
+    flexGrow: 1,
+    bgcolor: "background.default",
+    p: 3,
+    marginLeft: "350px",
+  },
 });
