@@ -16,7 +16,7 @@ import { useStyles } from "../styles/pageStyles";
 
 const Account = () => {
   const [selectedComponent, setSelectedComponent] = useState<JSX.Element>(
-    <YourProfile />
+    <YourProfile />,
   );
   const [selectedItem, setSelectedItem] = useState<string>("Your Profile");
   const styles = useStyles();
