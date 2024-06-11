@@ -2,25 +2,22 @@ import { ListItemButton, ListItemText, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 
-interface AccountSidebarItemsProps {
+interface AccountSidebarItemProps {
   path: string;
   itemName: string;
-  selectedItem: string;
-  setSelectedItem: (itemName: string) => void;
+  selected: boolean;
 }
 
-const AccountSidebarItems = ({
+const AccountSidebarItem = ({
   path,
   itemName,
-  selectedItem,
-  setSelectedItem,
-}: AccountSidebarItemsProps) => {
+  selected,
+}: AccountSidebarItemProps) => {
   const styles = useStyles();
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(path);
-    setSelectedItem(itemName);
   };
 
   return (
@@ -28,10 +25,9 @@ const AccountSidebarItems = ({
       onClick={handleClick}
       sx={{
         ...styles.listItemButton,
-        backgroundColor:
-          selectedItem === itemName
-            ? styles.listItemText.backgroundColor
-            : "transparent",
+        backgroundColor: selected
+          ? styles.listItemText.backgroundColor
+          : "transparent",
       }}
     >
       <ListItemText
@@ -41,4 +37,4 @@ const AccountSidebarItems = ({
   );
 };
 
-export default AccountSidebarItems;
+export default AccountSidebarItem;

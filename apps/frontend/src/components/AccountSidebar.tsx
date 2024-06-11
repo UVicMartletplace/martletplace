@@ -7,33 +7,26 @@ import {
   Typography,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { useStyles } from "../styles/pageStyles";
-import AccountSidebarItems from "./AccountSidebarItems";
+import AccountSidebarItem from "./AccountSidebarItem";
 
 const AccountSidebar = () => {
   const styles = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedItem, setSelectedItem] = useState<string>("");
 
-  useEffect(() => {
-    // Set the selected item based on the current path
+  const selectedItem = (() => {
     switch (location.pathname) {
       case "/user":
-        setSelectedItem("My Profile");
-        break;
+        return "My Profile";
       case "/user/listings":
-        setSelectedItem("My Listings");
-        break;
+        return "My Listings";
       case "/user/reviews":
-        setSelectedItem("My Reviews");
-        break;
+        return "My Reviews";
       default:
-        setSelectedItem("My Profile");
-        break;
+        return "My Profile";
     }
-  }, [location.pathname]);
+  })();
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -46,25 +39,22 @@ const AccountSidebar = () => {
             </Typography>
           </ListItem>
           <Divider />
-          <AccountSidebarItems
+          <AccountSidebarItem
             path="/user"
             itemName="My Profile"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
+            selected={selectedItem === "My Profile"}
           />
           <Divider />
-          <AccountSidebarItems
+          <AccountSidebarItem
             path="/user/listings"
             itemName="My Listings"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
+            selected={selectedItem === "My Listings"}
           />
           <Divider />
-          <AccountSidebarItems
+          <AccountSidebarItem
             path="/user/reviews"
             itemName="My Reviews"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
+            selected={selectedItem === "My Reviews"}
           />
           <Divider />
         </List>
