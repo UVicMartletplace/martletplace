@@ -2,11 +2,12 @@ from typing import List
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
+import tensorflow as tf
 
 app = FastAPI()
 
+model = tf.keras.models.load_model("./training/model.h5")
 
-# Define Pydantic models
 class ListingSummary(BaseModel):
     listingID: str = Field(..., example="A23F29039B23")
     sellerID: str = Field(..., example="A23F29039B23")
@@ -35,7 +36,11 @@ class Review(BaseModel):
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
 async def get_recommendations(authorization: str, page: int = 1, limit: int = 20):
-    # actual logic will go here
+    # TODO:
+    # 1. Fetch user interactions from the database
+    user_interactions = []
+    # 2. Use the interactions to generate recommendations
+    recommendations = model.predict(user_interactions)
 
     # This is a dummy response
     return [

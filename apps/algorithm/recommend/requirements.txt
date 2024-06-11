@@ -6,3 +6,5 @@ uvicorn[standard]
 ruff
 pytest
 bandit
+tensorflow
+tensorflow_recommenders
