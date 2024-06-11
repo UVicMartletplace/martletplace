@@ -33,15 +33,15 @@ export const useStyles = () => ({
 
   // Account page styles
   drawer: {
-    width: 350,
+    width: "350px",
     flexShrink: 0,
     "& .MuiDrawer-paper": {
-      width: 350,
+      width: "350px",
       boxSizing: "border-box",
     },
   },
   listItemButton: {
-    height: 80,
+    height: "80px",
     "&:hover": {
       backgroundColor: colors.martletplaceGreyClicked,
     },

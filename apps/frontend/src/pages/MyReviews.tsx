@@ -1,12 +1,19 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import AccountSidebar from "../components/AccountSidebar";
 
 const MyReviews = () => {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
+
   return (
     <>
-      <AccountSidebar />
-      <Box>
-        <Typography variant="h5" component="h1" paddingLeft="600px">
+      {isDesktop && <AccountSidebar />}
+      <Box sx={{}}>
+        <Typography
+          variant="h5"
+          component="h1"
+          paddingLeft={isDesktop ? "600px" : "0"}
+        >
           My Reviews
         </Typography>
       </Box>

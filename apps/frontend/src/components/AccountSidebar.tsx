@@ -4,13 +4,12 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemButton,
-  ListItemText,
   Typography,
 } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useStyles } from "../styles/pageStyles";
+import AccountSidebarItems from "./AccountSidebarItems";
 
 const AccountSidebar = () => {
   const styles = useStyles();
@@ -36,70 +35,37 @@ const AccountSidebar = () => {
     }
   }, [location.pathname]);
 
-  const handleListItemClick = (path: string, itemName: string) => {
-    navigate(path);
-    setSelectedItem(itemName);
-  };
-
   return (
     <Box sx={{ display: "flex" }}>
       <Drawer variant="permanent" sx={styles.drawer}>
         <Divider />
         <List>
-          <ListItem onClick={() => handleListItemClick("/user", "My Profile")}>
-            <ListItemText
-              primary={
-                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                  Account
-                </Typography>
-              }
-            />
+          <ListItem onClick={() => navigate("/user")}>
+            <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+              Account
+            </Typography>
           </ListItem>
           <Divider />
-          <ListItemButton
-            onClick={() => handleListItemClick("/user", "My Profile")}
-            sx={{
-              ...styles.listItemButton,
-              backgroundColor:
-                selectedItem === "My Profile"
-                  ? styles.listItemText.backgroundColor
-                  : "transparent",
-            }}
-          >
-            <ListItemText
-              primary={<Typography variant="h5">My Profile</Typography>}
-            />
-          </ListItemButton>
+          <AccountSidebarItems
+            path="/user"
+            itemName="My Profile"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
           <Divider />
-          <ListItemButton
-            onClick={() => handleListItemClick("/user/listings", "My Listings")}
-            sx={{
-              ...styles.listItemButton,
-              backgroundColor:
-                selectedItem === "My Listings"
-                  ? styles.listItemText.backgroundColor
-                  : "transparent",
-            }}
-          >
-            <ListItemText
-              primary={<Typography variant="h5">My Listings</Typography>}
-            />
-          </ListItemButton>
+          <AccountSidebarItems
+            path="/user/listings"
+            itemName="My Listings"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
           <Divider />
-          <ListItemButton
-            onClick={() => handleListItemClick("/user/reviews", "My Reviews")}
-            sx={{
-              ...styles.listItemButton,
-              backgroundColor:
-                selectedItem === "My Reviews"
-                  ? styles.listItemText.backgroundColor
-                  : "transparent",
-            }}
-          >
-            <ListItemText
-              primary={<Typography variant="h5">My Reviews</Typography>}
-            />
-          </ListItemButton>
+          <AccountSidebarItems
+            path="/user/reviews"
+            itemName="My Reviews"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
           <Divider />
         </List>
       </Drawer>
