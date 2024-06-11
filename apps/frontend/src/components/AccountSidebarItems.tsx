@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { ListItemButton, ListItemText, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
