@@ -16,7 +16,7 @@ import { useStyles } from "../styles/pageStyles";
 
 const Account = () => {
   const [selectedComponent, setSelectedComponent] = useState<JSX.Element>(
-    <YourProfile />,
+    <YourProfile />
   );
   const [selectedItem, setSelectedItem] = useState<string>("Your Profile");
   const styles = useStyles();
@@ -92,7 +92,7 @@ const Account = () => {
           <Divider />
         </List>
       </Drawer>
-      <Box component="main" sx={styles.mainContent}>
+      <Box component="main" sx={styles.accountBox}>
         {selectedComponent}
       </Box>
     </Box>

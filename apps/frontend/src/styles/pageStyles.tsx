@@ -49,7 +49,7 @@ export const useStyles = () => ({
   listItemText: {
     backgroundColor: colors.martletplaceGreyClicked,
   },
-  mainContent: {
+  accountBox: {
     flexGrow: 1,
     bgcolor: "background.default",
     p: 3,
