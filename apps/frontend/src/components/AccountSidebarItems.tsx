@@ -9,12 +9,12 @@ interface AccountSidebarItemsProps {
   setSelectedItem: (itemName: string) => void;
 }
 
-const AccountSidebarItems: React.FC<AccountSidebarItemsProps> = ({
+const AccountSidebarItems = ({
   path,
   itemName,
   selectedItem,
   setSelectedItem,
-}) => {
+}: AccountSidebarItemsProps) => {
   const styles = useStyles();
   const navigate = useNavigate();
 
