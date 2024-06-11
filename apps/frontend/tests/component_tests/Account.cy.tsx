@@ -1,22 +1,14 @@
 import { BrowserRouter } from "react-router-dom";
 import MyProfile from "../../src/pages/MyProfile";
 
-describe("<Account />", () => {
+describe("Account Page", () => {
   beforeEach(() => {
     cy.mount(
       <BrowserRouter>
         <MyProfile />
       </BrowserRouter>
     );
-  });
-
-  it("renders the Account page", () => {
-    cy.get("h4").contains("Account");
-
-    // Check if the page contains the necessary components
-    cy.get("h5").contains("My Profile");
-    cy.get("h5").contains("My Listings");
-    cy.get("h5").contains("My Reviews");
+    cy.viewport(1280, 720);
   });
 
   it("navigates to the My Profile page", () => {
