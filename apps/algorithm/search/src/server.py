@@ -75,9 +75,9 @@ async def search(
     limit: int = 20,
     minPrice: float = None,
     maxPrice: float = None,
-    status: str = "AVAILABLE",
-    searchType: str = "LISTINGS",
-    sort: str = "RELEVANCE",
+    status: Status = "AVAILABLE",
+    searchType: SearchType = "LISTINGS",
+    sort: Sort = "RELEVANCE",
 ):
     try:
         sort_options = {
