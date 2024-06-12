@@ -8,12 +8,14 @@ const MyProfile = () => {
   return (
     <>
       {isDesktop && <AccountSidebar selectedItem="My Profile" />}
-      <Box>
-        <Typography
-          variant="h5"
-          component="h1"
-          paddingLeft={isDesktop ? "600px" : "0"}
-        >
+      <Box
+        sx={{
+          paddingLeft: isDesktop ? "400px" : "0",
+          display: "flex",
+          height: "100vh",
+        }}
+      >
+        <Typography variant="h5" component="h1">
           My Profile
         </Typography>
       </Box>
