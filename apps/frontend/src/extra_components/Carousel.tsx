@@ -45,9 +45,9 @@ const Carousel = ({ imageURLs }: props) => {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
-      padding: "10px",
-      margin: "10px",
-      width:"80%"
+      padding: "5%",
+      margin: "5%",
+      width: "85%"
     }}
     >
       <Grid
