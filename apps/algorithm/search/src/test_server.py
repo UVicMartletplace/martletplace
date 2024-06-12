@@ -242,3 +242,46 @@ def test_search_with_user_search():
             "imageUrl": "https://example.com/image1.jpg"
         }
     ]
+
+
+def test_search_with_sorting():
+    es.index(index=TEST_INDEX, id="abc123", body={
+        "listingId": "abc123",
+        "sellerId": "seller456",
+        "sellerName": "billybobjoe",
+        "title": "High-Performance Laptop",
+        "description": "A powerful laptop suitable for gaming and professional use.",
+        "price": 450.00,
+        "location": {"latitude": 45.4215, "longitude": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-05-22T10:30:00Z",
+        "imageUrl": "https://example.com/image1.jpg"
+    })
+    es.index(index=TEST_INDEX, id="def456", body={
+        "listingId": "def456",
+        "sellerId": "seller789",
+        "sellerName": "janedoe",
+        "title": "Used Textbook",
+        "description": "Lightly used textbook for sale.",
+        "price": 30.00,
+        "location": {"latitude": 40.7128, "longitude": -74.0060},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image2.jpg"
+    })
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "for",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "PRICE_ASC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) > 0
+    assert results[0]["price"] == 30.00  # Assuming the sorting is correct
