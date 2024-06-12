@@ -16,7 +16,7 @@ import MultiFileUpload from "../extra_components/MultiFileUpload.tsx";
 
 const CreateListing = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [newListingObject, _setNewListingObject] = useState({
+  const [newListingObject, setNewListingObject] = useState({
     listing: {
       title: "",
       description: "",
@@ -33,7 +33,24 @@ const CreateListing = () => {
     },
   });
 
+  const getUserLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setNewListingObject(prevState => ({
+        ...prevState,
+        listing: {
+          ...prevState.listing,
+          location: {
+            ...prevState.listing.location,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          }
+        }
+      }))
+    });
+  }
+
   const sendPostToCreateListing = () => {
+    getUserLocation()
     console.log("SENDING", newListingObject);
     _axios_instance
       .post("/listing", newListingObject)
@@ -60,6 +77,13 @@ const CreateListing = () => {
                     id="field-title"
                     label="Title"
                     sx={{ m: "10px" }}
+                    onChange={(event) => setNewListingObject(prevState => ({
+                      ...prevState,
+                      listing: {
+                        ...prevState.listing,
+                        title: event.target.value
+                      }
+                    }))}
                   />
                   <TextField
                     id="field-description"
@@ -68,18 +92,32 @@ const CreateListing = () => {
                     sx={{ m: "10px", display: "flex" }}
                     rows={10}
                     multiline
+                    onChange={(event) => setNewListingObject(prevState => ({
+                      ...prevState,
+                      listing: {
+                        ...prevState.listing,
+                        description: event.target.value
+                      }
+                    }))}
                   />
                   <TextField
                     id="field-price"
                     label="Price"
                     type="number"
                     sx={{ m: "10px" }}
+                    onChange={(event) => setNewListingObject(prevState => ({
+                      ...prevState,
+                      listing: {
+                        ...prevState.listing,
+                        price: parseFloat(event.target.value)
+                      }
+                    }))}
                   />
                 </FormControl>
               </form>
             </Grid>
             <Grid item md={6} sm={12} xs={12}>
-              <MultiFileUpload/>
+              <MultiFileUpload listingObject={newListingObject} setListingObject={setNewListingObject}/>
             </Grid>
           </Grid>
           <Button

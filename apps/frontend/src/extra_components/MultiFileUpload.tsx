@@ -2,8 +2,28 @@ import {useState} from "react";
 import axios from "axios";
 import {Box, Button, Typography} from "@mui/material";
 
+interface Image {
+  url: string;
+}
 
-const MultiFileUpload = () => {
+interface Location {
+  latitude: number;
+  longitude: number;
+}
+
+interface Listing {
+  title: string;
+  description: string;
+  price: number;
+  location: Location;
+  images: Image[];
+}
+
+interface NewListingObject {
+  listing: Listing;
+}
+
+const MultiFileUpload = (listingObject: NewListingObject, setListingObject: void) => {
   const [_images, setImages] = useState(<img/>);
   const [localImageUrls, setLocalImageUrls] = useState<string[]>();
   const [file, setFile] = useState<File | null>()
@@ -20,7 +40,7 @@ const MultiFileUpload = () => {
   }
 
   const getFileNames = (fileList: FileList | null) => {
-    let temp_file_list:string[] = []
+    let temp_file_list: string[] = []
     if (fileList) {
       for (let i = 0; i < fileList.length; i++) {
           const file = fileList[i] as File; // Cast to File
@@ -28,6 +48,17 @@ const MultiFileUpload = () => {
           reader.onload = () => {
               const imageDataURL = reader.result as string;
               console.log(file.name);
+              setListingObject(prevState => ({
+                ...prevState,
+                listing: {
+                  ...prevState.listing,
+                  location: {
+                    ...prevState.listing.location,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                  }
+                }
+              }))
               setImages(<img src={imageDataURL} width="100%" />);
               temp_file_list.push(imageDataURL)
           };
