@@ -114,3 +114,31 @@ def test_search_with_price_range():
             "imageUrl": "https://example.com/image1.jpg"
         }
     ]
+
+def test_search_with_price_range_fail():
+    es.index(index=TEST_INDEX, id="abc123", body={
+        "listingId": "abc123",
+        "sellerId": "seller456",
+        "sellerName": "billybobjoe",
+        "title": "High-Performance Laptop",
+        "description": "A powerful laptop suitable for gaming and professional use.",
+        "price": 450.00,
+        "location": {"latitude": 45.4215, "longitude": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-05-22T10:30:00Z",
+        "imageUrl": "https://example.com/image1.jpg"
+    })
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "minPrice": 100.00,
+            "maxPrice": 400.00,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == []
