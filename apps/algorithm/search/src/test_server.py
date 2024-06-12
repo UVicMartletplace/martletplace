@@ -15,4 +15,4 @@ def test_search_listings():
         },
     )
     assert response.status_code == 500
-    assert response.json() == []  # No listings found
+    assert response.json() == []

@@ -9,12 +9,10 @@ from pydantic import BaseModel, Field
 
 app = FastAPI()
 
-# Elasticsearch client
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
 
 
-# define enums
 class Status(str, Enum):
     AVAILABLE = "AVAILABLE"
     SOLD = "SOLD"
@@ -35,7 +33,6 @@ class Sort(str, Enum):
     DISTANCE_DESC = "DISTANCE_DESC"
 
 
-# Define Pydantic models
 class ListingSummary(BaseModel):
     listingID: str = Field(..., example="A23F29039B23")
     sellerID: str = Field(..., example="A23F29039B23")
@@ -87,7 +84,6 @@ async def search(
             "DISTANCE_DESC": "_geo_distance",
         }
 
-        # Construct the search body based on the searchType
         if searchType == "LISTINGS":
             must_conditions = [
                 {"multi_match": {"query": query, "fields": ["title", "description"]}},
