@@ -78,10 +78,10 @@ async def search(
 
         sort_options = {
             "RELEVANCE": "_score",
-            "PRICE_ASC": "price:asc",
-            "PRICE_DESC": "price:desc",
-            "LISTED_TIME_ASC": "dateCreated:asc",
-            "LISTED_TIME_DESC": "dateCreated:desc",
+            "PRICE_ASC": "price",
+            "PRICE_DESC": "price",
+            "LISTED_TIME_ASC": "dateCreated",
+            "LISTED_TIME_DESC": "dateCreated",
             "DISTANCE_ASC": "_geo_distance",
             "DISTANCE_DESC": "_geo_distance",
         }
@@ -100,9 +100,7 @@ async def search(
             "from": (page - 1) * limit,
             "size": limit,
             "query": {"bool": {"must": must_conditions, "filter": []}},
-            "sort": [
-                {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
-            ],
+            "sort": [],
         }
 
         if minPrice is not None or maxPrice is not None:
@@ -116,7 +114,7 @@ async def search(
             )
 
         if "DISTANCE" in sort:
-            search_body["sort"] = [
+            search_body["sort"].append(
                 {
                     "_geo_distance": {
                         "location": {"lat": latitude, "lon": longitude},
@@ -124,7 +122,11 @@ async def search(
                         "unit": "km",
                     }
                 }
-            ]
+            )
+        else:
+            search_body["sort"].append(
+                {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
+            )
 
         response = es.search(index=INDEX, body=search_body)
 
