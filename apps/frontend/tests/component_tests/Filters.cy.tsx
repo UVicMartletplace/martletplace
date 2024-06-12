@@ -1,8 +1,16 @@
 import Filters from "../../src/components/filters";
 import { mount } from "cypress/react";
 
+interface SearchObject {
+  minPrice?: number;
+  maxPrice?: number;
+  status: string;
+  searchType: string;
+}
+
 describe("<Filters />", () => {
-  let onFilterChangeStub: any;
+  let onFilterChangeStub: (filters: Partial<SearchObject>) => void;
+
   const mountFilters = () => {
     mount(<Filters onFilterChange={onFilterChangeStub} />);
   };
