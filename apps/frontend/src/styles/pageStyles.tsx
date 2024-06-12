@@ -1,4 +1,3 @@
-import { height } from "@mui/system";
 import { colors } from "./colors";
 
 export const useStyles = () => ({

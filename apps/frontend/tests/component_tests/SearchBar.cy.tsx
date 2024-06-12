@@ -1,4 +1,3 @@
-import SearchBar from "../../src/components/searchBar";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import Homepage from "../../src/pages/Homepage";
 import Messages from "../../src/pages/Messages";

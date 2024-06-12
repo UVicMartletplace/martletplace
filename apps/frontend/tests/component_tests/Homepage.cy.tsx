@@ -1,4 +1,3 @@
-import React from "react";
 import { mount } from "cypress/react";
 import Homepage from "../../src/pages/Homepage";
 import { BrowserRouter as Router } from "react-router-dom";

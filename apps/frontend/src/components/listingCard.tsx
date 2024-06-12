@@ -1,4 +1,5 @@
 import { Grid, Button, Typography } from "@mui/material";
+import PropTypes from "prop-types";
 
 interface ListingObject {
   listingID: string;
@@ -91,6 +92,19 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
       </Grid>
     </Grid>
   );
+};
+
+ListingCard.propTypes = {
+  listing: PropTypes.shape({
+    listingID: PropTypes.string.isRequired,
+    sellerID: PropTypes.string.isRequired,
+    sellerName: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    dateCreated: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default ListingCard;

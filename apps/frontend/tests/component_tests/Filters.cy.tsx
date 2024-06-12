@@ -1,4 +1,3 @@
-import React from "react";
 import Filters from "../../src/components/filters";
 import { mount } from "cypress/react";
 

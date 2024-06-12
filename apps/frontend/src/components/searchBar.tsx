@@ -78,7 +78,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
     if (sortBy !== "") {
       handleSearch();
     }
-  }, [sortBy]);
+  }, [sortBy, handleSearch]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {

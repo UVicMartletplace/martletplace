@@ -12,7 +12,7 @@ import {
 import { useStyles } from "../styles/pageStyles";
 import SearchBar from "../components/searchBar.tsx";
 import ListingCard from "../components/listingCard.tsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as React from "react";
 
 interface ListingObject {
@@ -32,88 +32,7 @@ const Homepage = () => {
   // Listings per page
   const listingsPerPage = 6;
 
-  const [listingObjects, setListingObjects] = useState<ListingObject[]>([
-    {
-      listingID: "A23F29039B23",
-      sellerID: "A23F29039B23",
-      sellerName: "Amy Santiago",
-      title: "Used Calculus Textbook",
-      description: "No wear and tear, drop-off available.",
-      price: 50,
-      dateCreated: "2024-05-23T15:30:00Z",
-      imageUrl: "https://picsum.photos/200/300",
-    },
-    {
-      listingID: "B34G67039C24",
-      sellerID: "B34G67039C24",
-      sellerName: "Jake Peralta",
-      title: "Advanced Physics Textbook",
-      description: "Slightly worn, no markings inside.",
-      price: 60,
-      dateCreated: "2024-04-15T14:30:00Z",
-      imageUrl: "https://picsum.photos/200/301",
-    },
-    {
-      listingID: "C45H89049D25",
-      sellerID: "C45H89049D25",
-      sellerName: "Rosa Diaz",
-      title: "Organic Chemistry Textbook",
-      description: "Brand new, still in original packaging.",
-      price: 70,
-      dateCreated: "2024-03-20T13:30:00Z",
-      imageUrl: "https://picsum.photos/200/302",
-    },
-    {
-      listingID: "D56I90159E26",
-      sellerID: "D56I90159E26",
-      sellerName: "Terry Jeffords",
-      title: "Microeconomics Textbook",
-      description: "Like new, hardly used.",
-      price: 65,
-      dateCreated: "2024-02-10T12:30:00Z",
-      imageUrl: "https://picsum.photos/200/303",
-    },
-    {
-      listingID: "E67J01269F27",
-      sellerID: "E67J01269F27",
-      sellerName: "Gina Linetti",
-      title: "Introduction to Psychology",
-      description: "A few highlights, otherwise perfect.",
-      price: 55,
-      dateCreated: "2024-01-05T11:30:00Z",
-      imageUrl: "https://picsum.photos/200/304",
-    },
-    {
-      listingID: "F78K12379G28",
-      sellerID: "F78K12379G28",
-      sellerName: "Charles Boyle",
-      title: "Anthropology 101 Textbook",
-      description: "Some dog-eared pages, but very usable.",
-      price: 45,
-      dateCreated: "2023-12-15T10:30:00Z",
-      imageUrl: "https://picsum.photos/200/305",
-    },
-    {
-      listingID: "G89L23489H29",
-      sellerID: "G89L23489H29",
-      sellerName: "Hitchcock",
-      title: "World History Textbook",
-      description: "Good condition, minimal notes inside.",
-      price: 50,
-      dateCreated: "2023-11-20T09:30:00Z",
-      imageUrl: "https://picsum.photos/200/306",
-    },
-    {
-      listingID: "H90M34599I30",
-      sellerID: "H90M34599I30",
-      sellerName: "Scully",
-      title: "Basic Algebra Textbook",
-      description: "Cover slightly damaged, content intact.",
-      price: 40,
-      dateCreated: "2023-10-18T08:30:00Z",
-      imageUrl: "https://picsum.photos/200/307",
-    },
-  ]);
+  const [listingObjects, setListingObjects] = useState<ListingObject[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -144,6 +63,95 @@ const Homepage = () => {
     // UPDATE LISTING OBJECTS
     setSearchPerformed(true);
   };
+
+  const fetchListings = async () => {
+    setListingObjects([
+      {
+        listingID: "A23F29039B23",
+        sellerID: "A23F29039B23",
+        sellerName: "Amy Santiago",
+        title: "Used Calculus Textbook",
+        description: "No wear and tear, drop-off available.",
+        price: 50,
+        dateCreated: "2024-05-23T15:30:00Z",
+        imageUrl: "https://picsum.photos/200/300",
+      },
+      {
+        listingID: "B34G67039C24",
+        sellerID: "B34G67039C24",
+        sellerName: "Jake Peralta",
+        title: "Advanced Physics Textbook",
+        description: "Slightly worn, no markings inside.",
+        price: 60,
+        dateCreated: "2024-04-15T14:30:00Z",
+        imageUrl: "https://picsum.photos/200/301",
+      },
+      {
+        listingID: "C45H89049D25",
+        sellerID: "C45H89049D25",
+        sellerName: "Rosa Diaz",
+        title: "Organic Chemistry Textbook",
+        description: "Brand new, still in original packaging.",
+        price: 70,
+        dateCreated: "2024-03-20T13:30:00Z",
+        imageUrl: "https://picsum.photos/200/302",
+      },
+      {
+        listingID: "D56I90159E26",
+        sellerID: "D56I90159E26",
+        sellerName: "Terry Jeffords",
+        title: "Microeconomics Textbook",
+        description: "Like new, hardly used.",
+        price: 65,
+        dateCreated: "2024-02-10T12:30:00Z",
+        imageUrl: "https://picsum.photos/200/303",
+      },
+      {
+        listingID: "E67J01269F27",
+        sellerID: "E67J01269F27",
+        sellerName: "Gina Linetti",
+        title: "Introduction to Psychology",
+        description: "A few highlights, otherwise perfect.",
+        price: 55,
+        dateCreated: "2024-01-05T11:30:00Z",
+        imageUrl: "https://picsum.photos/200/304",
+      },
+      {
+        listingID: "F78K12379G28",
+        sellerID: "F78K12379G28",
+        sellerName: "Charles Boyle",
+        title: "Anthropology 101 Textbook",
+        description: "Some dog-eared pages, but very usable.",
+        price: 45,
+        dateCreated: "2023-12-15T10:30:00Z",
+        imageUrl: "https://picsum.photos/200/305",
+      },
+      {
+        listingID: "G89L23489H29",
+        sellerID: "G89L23489H29",
+        sellerName: "Hitchcock",
+        title: "World History Textbook",
+        description: "Good condition, minimal notes inside.",
+        price: 50,
+        dateCreated: "2023-11-20T09:30:00Z",
+        imageUrl: "https://picsum.photos/200/306",
+      },
+      {
+        listingID: "H90M34599I30",
+        sellerID: "H90M34599I30",
+        sellerName: "Scully",
+        title: "Basic Algebra Textbook",
+        description: "Cover slightly damaged, content intact.",
+        price: 40,
+        dateCreated: "2023-10-18T08:30:00Z",
+        imageUrl: "https://picsum.photos/200/307",
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    fetchListings();
+  }, []);
 
   return (
     <Box sx={classes.HomePageBox}>
