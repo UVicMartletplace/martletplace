@@ -75,7 +75,6 @@ const CreateListing = () => {
     // In order to make sure that
     const success = await uploadImages();
     getUserLocation();
-    console.log("SENDING", newListingObject);
     //console.log("Image Successful", imageUploadSuccessful)
     if (success && newListingObject.listing.location.latitude !== 0) {
       console.log("Sent Listing Object", newListingObject)
@@ -126,7 +125,6 @@ const CreateListing = () => {
                 },
               }
             );
-            console.log("Request return", response.data.url);
             returnedImageURL.push({ url: response.data.url });
             newListingObject.listing.images.push({url: response.data.url});
           } catch (error) {
