@@ -64,7 +64,12 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 
   const handleApplyFilters = () => {
     // Pass the current filter values to the parent component only when "Apply Filters" button is clicked
-    onFilterChange({ minPrice, maxPrice, status, searchType: type });
+    onFilterChange({
+      minPrice: minPrice === "" ? undefined : minPrice,
+      maxPrice: maxPrice === "" ? undefined : maxPrice,
+      status,
+      searchType: type,
+    });
   };
 
   const handleClearFilters = () => {
@@ -73,8 +78,8 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     setStatus("");
     setType("LISTING");
     onFilterChange({
-      minPrice: 0,
-      maxPrice: 100000,
+      minPrice: undefined,
+      maxPrice: undefined,
       status: "",
       searchType: "",
     });
