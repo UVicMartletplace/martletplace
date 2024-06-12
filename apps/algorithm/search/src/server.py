@@ -42,18 +42,20 @@ class ListingSummary(BaseModel):
     price: float = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "listingID": "A23F29039B23",
-            "sellerID": "A23F29039B23",
-            "sellerName": "John Doe",
-            "title": "Used Calculus Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 50,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "listingID": "A23F29039B23",
+                "sellerID": "A23F29039B23",
+                "sellerName": "John Doe",
+                "title": "Used Calculus Textbook",
+                "description": "No wear and tear, drop-off available.",
+                "price": 50,
+                "dateCreated": "2024-05-23T15:30:00Z",
+                "imageUrl": "image URL for first Image",
+            }
         }
-    })
+    )
 
 
 class Listing(BaseModel):
@@ -67,20 +69,22 @@ class Listing(BaseModel):
     status: str = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "listingId": "abc123",
-            "sellerId": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
-            "status": "AVAILABLE",
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg"
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "listingId": "abc123",
+                "sellerId": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450.00,
+                "location": {"latitude": 45.4215, "longitude": -75.6972},
+                "status": "AVAILABLE",
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
         }
-    })
+    )
 
 
 @app.get("/api/search", response_model=List[ListingSummary])
