@@ -44,13 +44,13 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 
   const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMinPrice(
-      event.target.value === "" ? "" : parseFloat(event.target.value)
+      event.target.value === "" ? "" : parseFloat(event.target.value),
     );
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMaxPrice(
-      event.target.value === "" ? "" : parseFloat(event.target.value)
+      event.target.value === "" ? "" : parseFloat(event.target.value),
     );
   };
 
