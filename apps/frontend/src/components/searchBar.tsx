@@ -10,7 +10,7 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import message from "../images/message.png";
 import filter from "../images/filter.png";
 import { useStyles } from "../styles/pageStyles";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, useCallback } from "react";
 import Filters from "./filters";
 import { useNavigate } from "react-router-dom";
 import * as React from "react";
@@ -64,7 +64,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
     setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
   };
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     const searchObject: SearchObject = {
       ...filters,
       query: searchInput,
@@ -73,7 +73,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
     console.log("Search Object:", searchObject);
     onSearch();
     // API CALL HERE???
-  };
+  }, [filters, searchInput, sortBy, onSearch]);
+
   useEffect(() => {
     if (sortBy !== "") {
       handleSearch();
