@@ -7,6 +7,8 @@ from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+INDEX = "test-index"
+
 app = FastAPI()
 
 es_endpoint = os.getenv("ES_ENDPOINT")
@@ -124,7 +126,7 @@ async def search(
                 }
             ]
 
-        response = es.search(index="my-new-index", body=search_body)
+        response = es.search(index=INDEX, body=search_body)
 
         results = [
             {
