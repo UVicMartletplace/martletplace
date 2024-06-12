@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 app = FastAPI()
 
@@ -34,29 +34,53 @@ class Sort(str, Enum):
 
 
 class ListingSummary(BaseModel):
-    listingID: str = Field(..., example="A23F29039B23")
-    sellerID: str = Field(..., example="A23F29039B23")
-    sellerName: str = Field(..., example="John Doe")
-    title: str = Field(..., example="Used Calculus Textbook")
-    description: str = Field(..., example="No wear and tear, drop-off available.")
-    price: float = Field(..., example=50)
-    dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
-    imageUrl: str = Field(..., example="image URL for first Image")
+    listingID: str = Field(...)
+    sellerID: str = Field(...)
+    sellerName: str = Field(...)
+    title: str = Field(...)
+    description: str = Field(...)
+    price: float = Field(...)
+    dateCreated: str = Field(...)
+    imageUrl: str = Field(...)
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "listingID": "A23F29039B23",
+            "sellerID": "A23F29039B23",
+            "sellerName": "John Doe",
+            "title": "Used Calculus Textbook",
+            "description": "No wear and tear, drop-off available.",
+            "price": 50,
+            "dateCreated": "2024-05-23T15:30:00Z",
+            "imageUrl": "image URL for first Image",
+        }
+    })
 
 
 class Listing(BaseModel):
-    listingId: str = Field(..., example="abc123")
-    sellerId: str = Field(..., example="seller456")
-    sellerName: str = Field(..., example="billybobjoe")
-    title: str = Field(..., example="High-Performance Laptop")
-    description: str = Field(
-        ..., example="A powerful laptop suitable for gaming " "and professional use."
-    )
-    price: float = Field(..., example=450.00)
-    location: dict = Field(..., example={"latitude": 45.4215, "longitude": -75.6972})
-    status: str = Field(..., example="AVAILABLE")
-    dateCreated: str = Field(..., example="2024-05-22T10:30:00Z")
-    imageUrl: str = Field(..., example="https://example.com/image1.jpg")
+    listingId: str = Field(...)
+    sellerId: str = Field(...)
+    sellerName: str = Field(...)
+    title: str = Field(...)
+    description: str = Field(...)
+    price: float = Field(...)
+    location: dict = Field(...)
+    status: str = Field(...)
+    dateCreated: str = Field(...)
+    imageUrl: str = Field(...)
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "listingId": "abc123",
+            "sellerId": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg"
+        }
+    })
 
 
 @app.get("/api/search", response_model=List[ListingSummary])
