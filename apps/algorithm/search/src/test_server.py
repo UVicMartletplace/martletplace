@@ -17,12 +17,13 @@ es = Elasticsearch([es_endpoint], verify_certs=False)
 def setup_and_teardown_index(monkeypatch):
     monkeypatch.setenv("ES_INDEX", TEST_INDEX)
 
-    es.indices.create(index=TEST_INDEX, ignore=400)
+    es.options(ignore_status=[400]).indices.create(index=TEST_INDEX)
+
     es.indices.refresh(index=TEST_INDEX)
 
     yield
 
-    es.indices.delete(index=TEST_INDEX, ignore=[400, 404])
+    es.options(ignore_status=[400, 404]).indices.delete(index=TEST_INDEX)
 
 
 def test_search_no_listings():
