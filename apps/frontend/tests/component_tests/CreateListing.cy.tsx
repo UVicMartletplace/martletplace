@@ -5,7 +5,7 @@ describe('<CreateListing />', () => {
     cy.mount(
       <CreateListing/>
     );
-    cy.intercept("POST", "api/image", {url: "https://picsum.photos/200/300"}).as("uploadImages");
+    cy.viewport(1280, 720);
   })
 
   it('renders', () => {
@@ -61,7 +61,12 @@ describe('<CreateListing />', () => {
     cy.intercept('POST', '/api/listing', {
       statusCode: 201,
       body: listingObject
-    }).as("getPost");
+    }).as("createListing");
+    cy.intercept("POST", "/api/images", {
+      statusCode: 201,
+      url: "https://picsum.photos/200/300"
+    }).as("uploadImages");
+
 
     cy.get("#submit-button").click()
     cy.on('window:alert', (message) => {
@@ -149,16 +154,32 @@ describe('<CreateListing />', () => {
       ],
     }}
 
-    cy.intercept("POST", "/listing", {listingObject}).as("createListing");
+    cy.intercept('POST', '/api/listing', {
+      statusCode: 201,
+      body: listingObject
+    }).as("createListing");
+    cy.intercept("POST", "/api/images", {
+      statusCode: 201,
+      body: {url: "https://picsum.photos/200/300"}
+    }).as("uploadImages");
 
     cy.get("#field-title").type("Title Here");
     cy.get("#field-description").type("Description Here");
     cy.get("#field-price").type("19.20");
 
+
+    cy.get('#image-input').attachFile([
+      '../../src/images/test_image1.jpg',
+      '../../src/images/test_image2.jpg',
+      '../../src/images/test_image3.jpg'
+    ]);
+
     cy.get("#submit-button").click();
 
-    cy.wait('@postRequest').then((interception) => {
+    cy.wait('@createListing').then((interception) => {
       const requestBody = interception.request.body;
+      console.log("Request Body", requestBody);
+      console.log("Expected Body", expectedListing)
       expect(requestBody).to.deep.equal(expectedListing);
     })});
 

@@ -2,9 +2,6 @@ import ViewListing from "../../src/pages/ViewListing.tsx";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import Messages from "../../src/pages/Messages.tsx";
 
-
-
-
 describe('<ViewListing/>', () => {
   beforeEach(() => {
     const listingObject = {
@@ -52,7 +49,7 @@ describe('<ViewListing/>', () => {
 
 
   it("should increment the image and change the visibility", () => {
-    // Mount the component
+
     cy.get("img").should("have.length", 5);
     for (let x = 1; x<5; x++){
 
