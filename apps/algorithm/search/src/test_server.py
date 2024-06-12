@@ -14,5 +14,6 @@ def test_search_listings():
             "longitude": -75.6972,
         },
     )
-    assert response.status_code == 500
+    assert response.status_code == 200
     assert response.json() == []
+
