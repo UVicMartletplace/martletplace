@@ -7,7 +7,7 @@ const MyProfile = () => {
 
   return (
     <>
-      {isDesktop && <AccountSidebar />}
+      {isDesktop && <AccountSidebar selectedItem="My Profile" />}
       <Box>
         <Typography
           variant="h5"

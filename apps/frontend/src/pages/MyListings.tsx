@@ -7,7 +7,7 @@ const MyListings = () => {
 
   return (
     <>
-      {isDesktop && <AccountSidebar />}
+      {isDesktop && <AccountSidebar selectedItem="My Listings" />}
       <Box>
         <Typography
           variant="h5"

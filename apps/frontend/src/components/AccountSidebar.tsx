@@ -6,27 +6,13 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 import AccountSidebarItem from "./AccountSidebarItem";
 
-const AccountSidebar = () => {
+const AccountSidebar = ({ selectedItem }: { selectedItem: string }) => {
   const styles = useStyles();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const selectedItem = (() => {
-    switch (location.pathname) {
-      case "/user":
-        return "My Profile";
-      case "/user/listings":
-        return "My Listings";
-      case "/user/reviews":
-        return "My Reviews";
-      default:
-        return "My Profile";
-    }
-  })();
 
   return (
     <Box sx={{ display: "flex" }}>

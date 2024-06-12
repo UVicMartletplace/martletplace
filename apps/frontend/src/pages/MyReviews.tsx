@@ -7,7 +7,7 @@ const MyReviews = () => {
 
   return (
     <>
-      {isDesktop && <AccountSidebar />}
+      {isDesktop && <AccountSidebar selectedItem="My Reviews" />}
       <Box sx={{}}>
         <Typography
           variant="h5"
