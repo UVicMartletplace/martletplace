@@ -12,8 +12,12 @@ es = Elasticsearch([es_endpoint], verify_certs=False)
 
 
 @pytest.fixture(scope="function", autouse=True)
-def setup_and_teardown_index():
+def setup_and_teardown_index(monkeypatch):
     index_name = "test-index"
+
+    # Set the environment variable for the index name
+    monkeypatch.setenv("ES_INDEX", index_name)
+
     es.indices.create(index=index_name, ignore=400)
 
     es.index(index=index_name, id="abc123", body={

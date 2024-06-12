@@ -7,8 +7,6 @@ from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-INDEX = "test-index"
-
 app = FastAPI()
 
 es_endpoint = os.getenv("ES_ENDPOINT")
@@ -76,6 +74,8 @@ async def search(
     sort: Sort = "RELEVANCE",
 ):
     try:
+        INDEX = os.getenv("ES_INDEX", "index")
+
         sort_options = {
             "RELEVANCE": "_score",
             "PRICE_ASC": "price:asc",
