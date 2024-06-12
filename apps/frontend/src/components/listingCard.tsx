@@ -1,5 +1,4 @@
-import { Grid, Button, Typography, Box } from "@mui/material";
-import { useStyles } from "../styles/pageStyles";
+import { Grid, Button, Typography } from "@mui/material";
 
 interface ListingObject {
   listingID: string;
@@ -27,8 +26,6 @@ const convertDate = (dateString: string) => {
 };
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
-  const classes = useStyles();
-
   return (
     <Grid
       container
