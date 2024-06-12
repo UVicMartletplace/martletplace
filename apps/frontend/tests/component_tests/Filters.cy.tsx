@@ -2,8 +2,7 @@ import Filters from "../../src/components/filters";
 import { mount } from "cypress/react";
 
 describe("<Filters />", () => {
-  let onFilterChangeStub: Cypress.Stub;
-
+  let onFilterChangeStub: any;
   const mountFilters = () => {
     mount(<Filters onFilterChange={onFilterChangeStub} />);
   };

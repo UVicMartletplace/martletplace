@@ -1,7 +1,7 @@
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import Homepage from "../../src/pages/Homepage";
 import Messages from "../../src/pages/Messages";
-import Account from "../../src/pages/Account";
+import MyProfile from "../../src/pages/MyProfile";
 
 describe("<SearchBar />", () => {
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("<SearchBar />", () => {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/messages" element={<Messages />} />\
-          <Route path="/user" element={<Account />} />
+          <Route path="/user" element={<MyProfile />} />
         </Routes>
       </MemoryRouter>
     );
