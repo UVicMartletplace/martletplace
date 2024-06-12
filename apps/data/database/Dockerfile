@@ -1,7 +1,6 @@
 FROM postgres:16-alpine
 
-ENV POSTGRES_USER=martletplace
-
 COPY ./postgresql.conf /etc/postgresql.conf
+COPY ./initdb.sql /docker-entrypoint-initdb.d/initdb.sql
 
 CMD [ "-c", "config_file=/etc/postgresql.conf" ]
