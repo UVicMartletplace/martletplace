@@ -173,3 +173,33 @@ def test_search_with_too_high_price_range_fail():
     )
     assert response.status_code == 200
     assert response.json() == []
+
+
+def test_search_with_invalid_search_type():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "searchType": "INVALID",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "enum",
+                "loc": [
+                    "query",
+                    "searchType"
+                ],
+                "msg": "Input should be 'LISTINGS' or 'USERS'",
+                "input": "INVALID",
+                "ctx": {
+                    "expected": "'LISTINGS' or 'USERS'"
+                }
+            }
+        ]
+    }
