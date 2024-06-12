@@ -38,6 +38,7 @@ interface NewListingObject {
 const CreateListing = () => {
   const [images, setImages] = useState<string[]>([]);
 
+  // This newListingObject bundles all the listing data for upload to the server
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
     listing: {
@@ -52,6 +53,7 @@ const CreateListing = () => {
     },
   });
 
+  // Gets the user location, and adds it to the listing object
   const getUserLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
       setNewListingObject((prevState) => ({
@@ -68,12 +70,14 @@ const CreateListing = () => {
     });
   };
 
+  // Updates and sends the newListingObject, to the server via post under /api/listing
   const sendPostToCreateListing = async () => {
+    // In order to make sure that
     const success = await uploadImages();
     getUserLocation();
     console.log("SENDING", newListingObject);
     //console.log("Image Successful", imageUploadSuccessful)
-    if (success) {
+    if (success && newListingObject.listing.location.latitude !== 0) {
       console.log("Sent Listing Object", newListingObject)
       _axios_instance
       .post("/listing", newListingObject)
@@ -85,15 +89,30 @@ const CreateListing = () => {
         console.log("Response to error", error);
         alert("Listing Creation Failed");
       });
-    } else {
+    } if (!success) {
       alert("Images failed to upload, please try again later")
+    }else {
+      // Currently this is added to catch if the location is not set, we could default this to the location of the university instead
+      alert("Error occured when creating a listing, you may need to enable location permissions for this site")
     }
-
   };
 
+  // This function makes sure that the passed in url is a base64 data string
+  const isImageValid = (url: string) => {
+    try {
+      return url.startsWith("data");
+    } catch (error) {
+      if (error === TypeError && url === undefined){
+        return true;
+      }
+      return false;
+    }
+  };
+
+  // Uploads the images to the s3 server, this is handled seperately
+  // This may need to be modified to use File objects instead of the file strings
   const uploadImages = async () => {
     const returnedImageURL: URLObject[] = [];
-
     try {
       await Promise.all(
         images.map(async (image) => {
@@ -115,15 +134,14 @@ const CreateListing = () => {
           }
         })
       );
-
-
-
       return true;
     } catch (error) {
       console.error("Error uploading images:", error);
       return false;
     }
   };
+
+  // Upload button html
   const buttonHTML = (
     <span style={{ textAlign: "center" }}>
       <Button
@@ -142,17 +160,6 @@ const CreateListing = () => {
       </Button>
     </span>
   );
-
-  const isImageValid = (url: string) => {
-    try {
-      return url.startsWith("data");
-    } catch (error) {
-      if (error === TypeError && url === undefined){
-          return true;
-      }
-      return false;
-    }
-  };
 
   return (
     <Container>

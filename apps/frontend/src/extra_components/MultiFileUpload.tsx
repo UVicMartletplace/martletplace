@@ -8,22 +8,25 @@ interface Props {
   htmlForButton: ReactElement<any, any>;
 }
 
+// Note the single upload has not been properly tested
 const MultiFileUpload = (props: Props) => {
+  // I don't know why this can't be removed, but if it does, then the images don't show
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_images, setImages] = useState(<img />);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_file, setFile] = useState<File | null>();
 
+  // Gets the file strings from the uploaded FileList
   const getFileNames = (fileList: FileList | null) => {
+    // Clears the passed images value, so that only the currently uploaded images are added
     props.setPassedImages([]);
     if (fileList) {
+      // Iterates through the FileList and gets all the base64 strings from the uploads
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i] as File;
-        //console.log("Our files", file);
         const reader = new FileReader();
         reader.onload = () => {
           const imageDataURL = reader.result as string;
-          //console.log(imageDataURL);
           props.setPassedImages((prevItems) => [
             ...(prevItems || []),
             imageDataURL,
@@ -33,7 +36,6 @@ const MultiFileUpload = (props: Props) => {
         reader.readAsDataURL(file);
       }
     }
-    console.log("Passed images", props.passedImages);
   };
 
   return (
