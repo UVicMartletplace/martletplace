@@ -1,3 +1,4 @@
+import { height } from "@mui/system";
 import { colors } from "./colors";
 
 export const useStyles = () => ({
@@ -10,6 +11,12 @@ export const useStyles = () => ({
     width: "100vw",
     height: "30%",
   },
+  HomePageBox: {
+    flexDirection: "column",
+    alignItems: "top",
+    justifyContent: "top",
+    width: "99.3vw",
+  },
   form: {
     width: "300px",
     display: "flex",
@@ -17,17 +24,79 @@ export const useStyles = () => ({
     alignItems: "center",
   },
   button: {
-    mt: 2,
+    mt: 1,
     backgroundColor: colors.martletplaceNavyBlue,
     "&:hover": { backgroundColor: colors.martletplaceBlueHover },
     textTransform: "none",
     fontSize: "16px",
     padding: "10px 0",
-    width: "60%",
+    width: "100%",
+  },
+  buttonOutline: {
+    mt: 1,
+    outline: "1px solid #001647",
+    backgroundColor: "white",
+    color: colors.martletplaceNavyBlue,
+    "&:hover": { backgroundColor: "#808080" },
+    textTransform: "none",
+    fontSize: "16px",
+    padding: "10px 0",
+    width: "100%",
+  },
+  yellowButton: {
+    backgroundColor: colors.martletplaceYellow,
+    "&:hover": { backgroundColor: "orange" },
+  },
+  whiteButton: {
+    backgroundColor: "white",
+    outline: "1px solid #808080",
+    "&:hover": {
+      backgroundColor: colors.martletplaceGrey,
+      outline: "1px solid grey",
+    },
+  },
+  homepageButton: {
+    color: colors.martletplaceBlack,
+    fontSize: "1.2em",
+    backgroundColor: "transparent",
+    boxShadow: "none",
+    textTransform: "none",
+    outline: "none",
+    "&:hover": {
+      boxShadow: "none",
+      textTransform: "none",
+      outline: "none",
+      backgroundColor: "transparent",
+    },
+    "&:focus": {
+      backgroundColor: "transparent",
+      boxShadow: "none",
+      outline: "none",
+      transform: "none",
+    },
+    "&:active": {
+      backgroundColor: "transparent",
+      boxShadow: "none",
+      outline: "none",
+      transform: "none",
+    },
+    padding: "0",
   },
   link: {
     mt: 2,
     color: colors.martletplaceBlack,
     "&:hover": { color: colors.martletplaceBlueHover },
+  },
+
+  searchBar: {
+    borderColor: colors.martletplaceGrey,
+  },
+  searchGrid: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100vw",
+    height: "30%",
   },
 });
