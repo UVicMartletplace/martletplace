@@ -8,6 +8,6 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts", "tests"],
+  "include": ["src/**/*.ts", "src/tests/*.ts"],
   "exclude": ["node_modules"]
 }
