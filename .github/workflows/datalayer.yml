@@ -21,7 +21,7 @@ jobs:
           components: clippy
 
       - name: Lint
-        run: cargo clippy --all-targets --all-features
+        run: RUSTFLAGS="-Dwarnings" cargo clippy --all-targets --all-features
 
   format:
     name: Format
