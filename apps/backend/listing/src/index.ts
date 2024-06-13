@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
-import pgPromise from 'pg-promise';
+import pgPromise from "pg-promise";
 
 const PORT = 8212;
 
@@ -13,7 +13,7 @@ if (!DB_ENDPOINT) {
   process.exit(1);
 }
 
-const db = pgp(DB_ENDPOINT)
+const db = pgp(DB_ENDPOINT);
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -25,17 +25,23 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // GET /api/listing/:id - Get a listing's details
-const getListingById = async (req: Request, res: Response, next: NextFunction) => {
+const getListingById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  // TODO: AUTH
   const { id } = req.params;
-
-  await db.oneOrNone('SELECT * FROM listings WHERE listing_id = $1', [id])
+  //TODO: make subquery
+  await db
+    .oneOrNone("SELECT * FROM listings WHERE listing_id = $1", [id])
     .then(function (data) {
       if (!data) {
         return res.status(404).json({
-          error: 'Listing not found'
+          error: "Listing not found",
         });
       }
-      
+
       return res.status(200).send(data);
     })
     .catch(function (err) {
@@ -45,7 +51,7 @@ const getListingById = async (req: Request, res: Response, next: NextFunction) =
 
 app.get("/api/listing/:id", getListingById);
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
     console.log(`Server running at http://0.0.0.0:${PORT}`);
   });
