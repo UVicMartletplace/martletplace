@@ -55,21 +55,12 @@ const CreateListing = () => {
   // Gets the user location, and adds it to the listing object
   const getUserLocation = useCallback(async () => {
     try {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            newListingObject.listing.location.longitude = position.coords.longitude;
-            newListingObject.listing.location.latitude = position.coords.latitude;
-            resolve(true);
-          },
-          (error) => {
-            console.error('Error getting location:', error);
-            reject(false);
-          }
-        );
+      navigator.geolocation.getCurrentPosition((position) =>{
+        newListingObject.listing.location.longitude = position.coords.longitude;
+        newListingObject.listing.location.latitude = position.coords.latitude;
       });
+      return true;
     } catch (error) {
-      console.error('Error in getUserLocation:', error);
       return false;
     }
   }, [newListingObject.listing.location]);

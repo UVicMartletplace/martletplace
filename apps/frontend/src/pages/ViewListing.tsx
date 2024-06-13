@@ -3,11 +3,12 @@ import {
   Card,
   CardContent,
   Container,
-  Grid, Link,
+  Grid,
+  Link,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import _axios_instance from "../_axios_instance.tsx";
 import Carousel from "../extra_components/Carousel.tsx";
 import { useStyles } from "../styles/pageStyles.tsx";
@@ -57,11 +58,10 @@ const ViewListing = () => {
     return dateTimeObject.toDateString();
   };
 
-
   // TODO Make the routing with auth work properly
   const handleNavToMessages = () => {
     navigate("/messages");
-  }
+  };
 
   return (
     <Container>
@@ -77,7 +77,13 @@ const ViewListing = () => {
               <Typography variant={"body1"}>
                 {listingObject.description}
               </Typography>
-              <hr style={{border: "none", height: "1px", backgroundColor: colors.martletplaceGrey}} />
+              <hr
+                style={{
+                  border: "none",
+                  height: "1px",
+                  backgroundColor: colors.martletplaceGrey,
+                }}
+              />
               <Typography variant={"body1"}>
                 Price:{" "}
                 {listingObject.price !== 0
@@ -85,10 +91,11 @@ const ViewListing = () => {
                   : "Free"}
               </Typography>
               <Typography variant={"body1"}>
-                Sold by: <Link >{listingObject.seller_profile.name}</Link>
+                Sold by: <Link>{listingObject.seller_profile.name}</Link>
               </Typography>
               <Typography variant={"body1"}>
-                Distance: {listingObject.distance !== 0
+                Distance:{" "}
+                {listingObject.distance !== 0
                   ? listingObject.distance + "km"
                   : "Unknown"}
               </Typography>

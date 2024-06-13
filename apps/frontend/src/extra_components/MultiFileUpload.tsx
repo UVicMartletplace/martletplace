@@ -31,7 +31,9 @@ const MultiFileUpload = (props: Props) => {
             ...(prevItems || []),
             imageDataURL,
           ]);
-          setImages(<img src={imageDataURL} width="100%" alt={"Listing Image " +i} />);
+          setImages(
+            <img src={imageDataURL} width="100%" alt={"Listing Image " + i} />,
+          );
         };
         reader.readAsDataURL(file);
       }

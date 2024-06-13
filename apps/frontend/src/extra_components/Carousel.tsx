@@ -40,14 +40,15 @@ const Carousel = ({ imageURLs }: props) => {
   }, [images]);
 
   return (
-    <Paper sx={{
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      padding: "5%",
-      margin: "5%",
-      width: "85%"
-    }}
+    <Paper
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: "5%",
+        margin: "5%",
+        width: "85%",
+      }}
     >
       <Grid
         container
@@ -102,7 +103,7 @@ const Carousel = ({ imageURLs }: props) => {
           </Box>
         </Grid>
         <Grid item sm={3}></Grid>
-        <Grid item sm={2} sx={{textAlign: "center", alignItems: "center" }}>
+        <Grid item sm={2} sx={{ textAlign: "center", alignItems: "center" }}>
           <IconButton
             onClick={handlePrevPage}
             sx={{
@@ -114,11 +115,7 @@ const Carousel = ({ imageURLs }: props) => {
             <ArrowLeftIcon />
           </IconButton>
         </Grid>
-        <Grid
-          item
-          sm={2}
-          sx={{ textAlign: "center", alignItems: "center" }}
-        >
+        <Grid item sm={2} sx={{ textAlign: "center", alignItems: "center" }}>
           <Typography id={"carousel_index"}>{currentPage + 1}</Typography>
         </Grid>
         <Grid item sm={2} sx={{ textAlign: "center", alignItems: "center" }}>

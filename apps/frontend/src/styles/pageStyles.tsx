@@ -31,7 +31,7 @@ export const useStyles = () => ({
     "&:hover": { color: colors.martletplaceBlueHover },
   },
   horizontalRule: {
-    color: colors.martletplaceGrey
+    color: colors.martletplaceGrey,
   },
   // Account page styles
   drawer: {
