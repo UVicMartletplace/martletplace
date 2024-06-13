@@ -32,7 +32,7 @@ export const useStyles = () => ({
   },
   horizontalRule: {
     color: colors.martletplaceGrey
-  }
+  },
   // Account page styles
   drawer: {
     width: "350px",
