@@ -1,4 +1,4 @@
-name: Message
+name: Backend Library
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
 
 defaults:
   run:
-    working-directory: apps/backend/message
+    working-directory: apps/backend/lib
 
 jobs:
   lint:
@@ -70,4 +70,4 @@ jobs:
       - name: Nodejs Scan
         uses: ajinabraham/njsscan-action@master
         with:
-          args: './apps/backend/message'
+          args: './apps/backend/lib'
