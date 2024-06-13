@@ -70,4 +70,4 @@ jobs:
       - name: Nodejs Scan
         uses: ajinabraham/njsscan-action@master
         with:
-          args: './apps/backend/user'
+          args: './apps/backend/review'

@@ -11,31 +11,40 @@ services:
     ports: [ 8101:8101 ]
 
   user:
-    build: apps/backend/user
+    build:
+      context: apps/backend/user
+      additional_contexts:
+        - lib=apps/backend/lib
     container_name: martletplace_user
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/user/src:/app/src ]
+    volumes: [ ./apps/backend/user/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8211:8211 ]
 
   listing:
-    build: apps/backend/listing
+    build:
+      context: apps/backend/listing
+      additional_contexts:
+        - lib=apps/backend/lib
     container_name: martletplace_listing
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/listing/src:/app/src ]
+    volumes: [ ./apps/backend/listing/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8212:8212 ]
 
   review:
-    build: apps/backend/review
+    build:
+      context: apps/backend/review
+      additional_contexts:
+        - lib=apps/backend/lib
     container_name: martletplace_review
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/review/src:/app/src ]
+    volumes: [ ./apps/backend/review/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8213:8213 ]
