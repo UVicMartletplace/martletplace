@@ -1,18 +1,18 @@
-import React, { ReactElement, SetStateAction, useState } from "react";
+import React, { SetStateAction, useState } from "react";
 import { Box } from "@mui/material";
 
 interface Props {
   passedImages: string[];
   setPassedImages: React.Dispatch<SetStateAction<string[]>>;
   multipleUpload?: boolean;
-  htmlForButton: ReactElement<any, any>;
+  htmlForButton: React.ReactNode;
 }
 
 // Note the single upload has not been properly tested
 const MultiFileUpload = (props: Props) => {
   // I don't know why this can't be removed, but if it does, then the images don't show
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_images, setImages] = useState(<img />);
+  const [_images, setImages] = useState(<img alt={""} />);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_file, setFile] = useState<File | null>();
 
@@ -31,7 +31,7 @@ const MultiFileUpload = (props: Props) => {
             ...(prevItems || []),
             imageDataURL,
           ]);
-          setImages(<img src={imageDataURL} width="100%" />);
+          setImages(<img src={imageDataURL} width="100%" alt={"Listing Image " +i} />);
         };
         reader.readAsDataURL(file);
       }

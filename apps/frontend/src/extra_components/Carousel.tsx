@@ -17,7 +17,6 @@ export interface props {
 const Carousel = ({ imageURLs }: props) => {
   const [cards, setCards] = useState<React.ReactElement[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [slideDirection, setSlideDirection] = useState<
     "right" | "left" | undefined
   >("left");

@@ -39,7 +39,6 @@ const CreateListing = () => {
   const [images, setImages] = useState<string[]>([]);
 
   // This newListingObject bundles all the listing data for upload to the server
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
     listing: {
       title: "",
@@ -64,7 +63,6 @@ const CreateListing = () => {
     } catch (error) {
       return false;
     }
-
   };
 
   // Updates and sends the newListingObject, to the server via post under /api/listing
