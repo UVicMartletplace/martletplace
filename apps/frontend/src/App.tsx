@@ -5,23 +5,25 @@ import CreateAccount from "./pages/CreateAccount";
 import Homepage from "./pages/Homepage";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
-import Account from "./pages/Account";
 import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
-import axios from "axios";
+import MyReviews from "./pages/MyReviews";
+import MyListings from "./pages/MyListings";
+import MyProfile from "./pages/MyProfile";
 
 function App() {
-  axios.create();
   return (
     <Router>
       <Routes>
         {/* If full URL is `/user/:id` then it would show another users profile,
         otherwise current users profile is shown. */}
+        <Route path="/user" element={<MyProfile />} />
+        <Route path="/user/reviews" element={<MyReviews />} />
+        <Route path="/user/listings" element={<MyListings />} />
 
         <Route path="/user/login" element={<Login />} />
         <Route path="/user/resetpassword" element={<ForgotPassword />} />
         <Route path="/user/signup" element={<CreateAccount />} />
-        <Route path="/user" element={<Account />} />
 
         <Route path="/listing/new" element={<CreateListing />} />
         {/* TODO: change full url to `/listing/edit/:id` */}
