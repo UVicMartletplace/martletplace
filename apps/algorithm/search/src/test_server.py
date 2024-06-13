@@ -77,7 +77,7 @@ def test_search_for_existing_listing():
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450,
             "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
+            "imageUrl": "https://example.com/image1.jpg"
         }
     ]
 
@@ -377,3 +377,78 @@ def test_search_with_sorting():
     assert isinstance(results, list)
     assert len(results) > 0
     assert results[0]["price"] == 30.00  # Assuming the sorting is correct
+
+
+def test_search_with_status():
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "status": "AVAILABLE",
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "listingID": "abc123",
+            "sellerID": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450,
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        }
+    ]
+
+
+def test_search_with_status_sold():
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "status": "SOLD",
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == []
