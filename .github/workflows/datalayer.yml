@@ -47,6 +47,17 @@ jobs:
       - name: Test
         run: cargo test
 
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dtolnay/rust-toolchain@1.78.0
+
+      - name: Build
+        run: cargo build
+
   security:
     name: Security
     runs-on: ubuntu-latest
