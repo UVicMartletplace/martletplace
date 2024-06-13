@@ -39,7 +39,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
   const values = [username, password, email, name, bio, profile_pic_url, false];
 
-  await db.oneOrNone(query, values)
+  await db
+    .oneOrNone(query, values)
     .then((data: User) => {
       if (!data) {
         throw new Error("User not created");
@@ -61,7 +62,8 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
       SELECT * from users where user_id = ${id}
     `;
 
-  await db.oneOrNone(query)
+  await db
+    .oneOrNone(query)
     .then((data: User) => {
       if (!data) {
         return res.status(400).send("User not found");
@@ -74,7 +76,11 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-const patchUserById = async (req: Request, res: Response, next: NextFunction) => {
+const patchUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   // TODO add JWT auth
 
   const { id } = req.params;
@@ -128,13 +134,17 @@ const patchUserById = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-const deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
+const deleteUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const authorization = req.headers.authorization;
   // Change to use auth/JWT
   // if (!authorization) {
   //   return res.status(401).send("Unauthorized");
   // }
-  const { id }  = req.params;
+  const { id } = req.params;
 
   const query = `
     DELETE FROM users
@@ -142,12 +152,13 @@ const deleteUserById = async (req: Request, res: Response, next: NextFunction) =
     RETURNING *;
   `;
 
-  await db.oneOrNone(query, [id])
+  await db
+    .oneOrNone(query, [id])
     .then((data) => {
       if (!data) {
         return res.status(404).send("User not found");
       }
-    return res.status(200).send("User deleted successfully");
+      return res.status(200).send("User deleted successfully");
     })
     .catch((err) => {
       return next(err);
@@ -182,4 +193,4 @@ interface User {
   modified_at: Date;
 }
 
-export { app, createUser, getUserById, patchUserById, deleteUserById};
+export { app, createUser, getUserById, patchUserById, deleteUserById };
