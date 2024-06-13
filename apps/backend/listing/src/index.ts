@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import pgPromise from 'pg-promise';
 
+import { run } from "../../lib/src/example";
+
 const PORT = 8212;
 
 const app = express();
@@ -27,6 +29,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
+app.get("/api/listing", (req: Request, res: Response) => {
+  run();
+  res.send("Hello world");
+});
 
   await db.oneOrNone('SELECT * FROM listings WHERE listing_id = $1', [id])
     .then(function (data) {
