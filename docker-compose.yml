@@ -58,7 +58,6 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
-      - ES_INDEX=listings
     ports: [ 8221:8221 ]
 
   recommend:
