@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../extra_components/MultiFileUpload.tsx";
@@ -19,8 +19,8 @@ interface URLObject {
   url: string;
 }
 interface LocationObject {
-  latitude: number,
-  longitude: number,
+  latitude: number;
+  longitude: number;
 }
 
 interface ListingObject {
@@ -55,7 +55,7 @@ const CreateListing = () => {
   // Gets the user location, and adds it to the listing object
   const getUserLocation = useCallback(async () => {
     try {
-      navigator.geolocation.getCurrentPosition((position) =>{
+      navigator.geolocation.getCurrentPosition((position) => {
         newListingObject.listing.location.longitude = position.coords.longitude;
         newListingObject.listing.location.latitude = position.coords.latitude;
       });
@@ -70,28 +70,32 @@ const CreateListing = () => {
     // In order to make sure that the images are retrieved before submitting
     const successImages = await uploadImages();
     let successLocation: boolean = true;
-    if (newListingObject.listing.location.latitude !== 0){
+    if (newListingObject.listing.location.latitude !== 0) {
       successLocation = false;
-      getUserLocation().then(() => {successLocation = true})
+      getUserLocation().then(() => {
+        successLocation = true;
+      });
     }
     //console.log("Image Successful", imageUploadSuccessful)
-    console.log("New Listing Object", newListingObject)
+    console.log("New Listing Object", newListingObject);
     if (successImages && successLocation) {
       _axios_instance
-      .post("/listing", newListingObject)
-      .then((response) => {
-        alert("Listing Created!");
-        console.log("Response to upload", response);
-      })
-      .catch((error) => {
-        console.log("Response to error", error);
-        alert("Listing Creation Failed");
-      });
+        .post("/listing", newListingObject)
+        .then((response) => {
+          alert("Listing Created!");
+          console.log("Response to upload", response);
+        })
+        .catch((error) => {
+          console.log("Response to error", error);
+          alert("Listing Creation Failed");
+        });
     } else if (!successImages) {
-      alert("Images failed to upload, please try again later")
-    }else {
+      alert("Images failed to upload, please try again later");
+    } else {
       // Currently this is added to catch if the location is not set, we could default this to the location of the university instead
-      alert("Error occurred when creating a listing, you may need to enable location permissions for this site")
+      alert(
+        "Error occurred when creating a listing, you may need to enable location permissions for this site",
+      );
     }
   };
 
@@ -106,7 +110,7 @@ const CreateListing = () => {
 
   // Request the user's location on load
   useEffect(() => {
-    getUserLocation().then(r => console.log(r));
+    getUserLocation().then((r) => console.log(r));
   }, [getUserLocation]);
 
   // Uploads the images to the s3 server, this is handled seperately
@@ -123,13 +127,13 @@ const CreateListing = () => {
                 headers: {
                   "Content-Type": "multipart/form-data",
                 },
-              }
+              },
             );
-            newListingObject.listing.images.push({url: response.data.url});
+            newListingObject.listing.images.push({ url: response.data.url });
           } catch (error) {
             console.error("Error uploading image:", error);
           }
-        })
+        }),
       );
       return true;
     } catch (error) {
