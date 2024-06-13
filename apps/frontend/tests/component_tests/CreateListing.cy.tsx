@@ -62,6 +62,7 @@ describe('<CreateListing />', () => {
       statusCode: 201,
       body: listingObject
     }).as("createListing");
+
     cy.intercept("POST", "/api/images", {
       statusCode: 201,
       url: "https://picsum.photos/200/300"

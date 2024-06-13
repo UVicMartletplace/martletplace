@@ -33,6 +33,7 @@ describe('<ViewListing/>', () => {
         </Routes>
       </MemoryRouter>
     );
+    cy.viewport(1280, 720)
 
   })
   it("should render the listing details correctly", () => {
