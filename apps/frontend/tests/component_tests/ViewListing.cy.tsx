@@ -38,6 +38,9 @@ describe('<ViewListing/>', () => {
   })
   it("should render the listing details correctly", () => {
 
+  })
+  it("should render the listing details correctly", () => {
+
     // Assertions to verify the rendered content
     cy.contains("Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!").should("be.visible");
     cy.contains("Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!").should("be.visible");
