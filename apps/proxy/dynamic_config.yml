@@ -1,0 +1,61 @@
+http:
+  routers:
+    to-frontend:
+      entryPoints: [web, websecure]
+      rule: "PathPrefix(`/`)"
+      service: frontend
+      priority: 100
+    to-user:
+      rule: "PathPrefix(`/api/user`)"
+      service: user
+      priority: 200
+    to-listing:
+      rule: "PathPrefix(`/api/listing`)"
+      service: listing
+      priority: 200
+    to-review:
+      rule: "PathPrefix(`/api/review`)"
+      service: review
+      priority: 200
+    to-message:
+      rule: "PathPrefix(`/api/messages`)"
+      service: message
+      priority: 200
+    to-search:
+      rule: "PathPrefix(`/api/search`)"
+      service: search
+      priority: 200
+    to-recommendations:
+      rule: "PathPrefix(`/api/recommendations`)"
+      service: recommendations
+      priority: 200
+
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+          - url: http://frontend:8101/
+    user:
+      loadBalancer:
+        servers:
+          - url: http://user:8211/
+    listing:
+      loadBalancer:
+        servers:
+          - url: http://listing:8212/
+    review:
+      loadBalancer:
+        servers:
+          - url: http://review:8213/
+    message:
+      loadBalancer:
+        servers:
+          - url: http://message:8214/
+    search:
+      loadBalancer:
+        servers:
+          - url: http://search:8221/
+    recommendations:
+      loadBalancer:
+        servers:
+          - url: http://recommend:8222/
