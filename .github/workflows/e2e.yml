@@ -1,0 +1,22 @@
+name: E2E
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+jobs:
+  smoketest:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Compose Build
+        run: docker compose build
+
+      - name: Docker Compose Up
+        run: docker compose up -d
+
+      - name: Docker Compose Down
+        run: docker compose down
