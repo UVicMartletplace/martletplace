@@ -93,11 +93,11 @@ describe("<CreateListing />", () => {
         location: { latitude: 0, longitude: 0 },
         description: "No wear and tear, drop-off available.",
         images: [
-          {url: "https://picsum.photos/200/300" },
-          {url: "https://picsum.photos/200/300" },
-          {url: "https://picsum.photos/200/300" }
-        ]
-      }
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+        ],
+      },
     };
 
     cy.intercept("POST", "/api/listing", {
@@ -129,9 +129,13 @@ describe("<CreateListing />", () => {
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
       // The following tests work in the GUI but not headless, I'm not sure what to do tbh
-      expect(requestBody).to.deep.equal(listingObject)
+      expect(requestBody).to.deep.equal(listingObject);
       expect(requestBody.listing.title).to.equal(listingObject.listing.title);
-      expect(requestBody.listing.images.length).to.equal(listingObject.listing.images.length);
+      expect(requestBody.listing.images.length).to.equal(
+        listingObject.listing.images.length
+      );
+
+      // testing if I can push and it works :)
     });
   });
 });
