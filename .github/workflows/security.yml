@@ -7,6 +7,7 @@ on:
 
 jobs:
   security:
+    name: Secret Detection
     runs-on: ubuntu-latest
     steps:
     - name: Secret Checkout code
