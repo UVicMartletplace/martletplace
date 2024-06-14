@@ -3,7 +3,7 @@ import CreateListing from "../../src/pages/CreateListing.tsx";
 describe("<CreateListing />", () => {
   beforeEach(() => {
     cy.mount(<CreateListing />);
-    cy.viewport(1280, 720);
+    cy.viewport(400, 600);
   });
 
   it("renders", () => {
@@ -91,6 +91,7 @@ describe("<CreateListing />", () => {
         title: "Used Calculus Textbook",
         price: 50,
         location: { latitude: 0, longitude: 0 },
+        description: "No wear and tear, drop-off available.",
         images: [
           {url: "https://picsum.photos/200/300" },
           {url: "https://picsum.photos/200/300" },
@@ -125,11 +126,12 @@ describe("<CreateListing />", () => {
     // Wait for the interception of createListing
     cy.wait("@createListing").then((interception) => {
       const requestBody = interception.request.body;
-      console.log("Request Body", requestBody);
-      console.log("Expected Body", listingObject);
+      cy.log("Request Body", requestBody);
+      cy.log("Expected Body", listingObject);
       // The following tests work in the GUI but not headless, I'm not sure what to do tbh
-      // expect(requestBody.listing.title).to.equal(listingObject.listing.title);
-      // expect(requestBody.listing.images.length).to.equal(listingObject.listing.images.length);
+      expect(requestBody).to.deep.equal(listingObject)
+      expect(requestBody.listing.title).to.equal(listingObject.listing.title);
+      expect(requestBody.listing.images.length).to.equal(listingObject.listing.images.length);
     });
   });
 });
