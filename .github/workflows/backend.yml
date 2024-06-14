@@ -71,6 +71,10 @@ jobs:
       - name: Docker Compose Up
         run: docker compose up -d ${{ matrix.service == 'lib' && 'user' || matrix.service }} datalayer database
 
+      - name: Install Dependencies
+        if: matrix.service == 'lib'
+        run: docker compose exec user npm install --prefix ../lib
+
       - name: Test
         run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
 
