@@ -1,4 +1,4 @@
-name: Listing
+name: Backend
 
 on:
   push:
@@ -8,14 +8,16 @@ on:
 env:
   NODE_VERSION: "20.x"
 
-defaults:
-  run:
-    working-directory: apps/backend/listing
-
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+    defaults:
+      run:
+        working-directory: apps/backend/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,6 +34,12 @@ jobs:
   format:
     name: Format
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+    defaults:
+      run:
+        working-directory: apps/backend/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
@@ -48,22 +56,34 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+    defaults:
+      run:
+        working-directory: apps/backend/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Docker Compose Up
-        run: docker compose up -d listing datalayer database
+        run: docker compose up -d ${{ matrix.service }} datalayer database
 
       - name: Test
-        run: docker compose exec listing npm run test:ci
+        run: docker compose exec user npm run test:ci
 
   security:
     name: Security
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+    defaults:
+      run:
+        working-directory: apps/backend/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Nodejs Scan
         uses: ajinabraham/njsscan-action@master
         with:
-          args: './apps/backend/listing'
+          args: './apps/backend/${{ matrix.service }}'

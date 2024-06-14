@@ -1,4 +1,4 @@
-name: Recommend
+name: Search
 
 on:
   push:
@@ -8,48 +8,62 @@ on:
 env:
   PYTHON_VERSION: "3.12"
 
-defaults:
-  run:
-    working-directory: apps/algorithm/recommend
-
 jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
     steps:
       - uses: actions/checkout@v4
 
       - uses: chartboost/ruff-action@v1
         with:
-          src: "./apps/algorithm/recommend"
+          src: "./apps/algorithm/${{ matrix.service }}"
           args: 'check'
 
   format:
     name: Format
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
     steps:
       - uses: actions/checkout@v4
 
       - uses: chartboost/ruff-action@v1
         with:
-          src: "./apps/algorithm/recommend"
+          src: "./apps/algorithm/${{ matrix.service }}"
           args: 'format --check'
 
   test:
     name: Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
+    defaults:
+      run:
+        working-directory: apps/algorithm/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Docker Compose Up
-        run: docker compose up -d recommend datalayer database
+        run: docker compose up -d ${{ matrix.service }} datalayer elasticsearch
 
       - name: Test
-        run: docker compose exec recommend pytest
+        run: docker compose exec ${{ matrix.service }} pytest
 
   security:
     name: Security
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
+    defaults:
+      run:
+        working-directory: apps/algorithm/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
@@ -60,4 +74,3 @@ jobs:
 
       - name: Test
         run: bandit -c .bandit -ll -ii -n 3 -a file -r src/
-
