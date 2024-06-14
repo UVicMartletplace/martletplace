@@ -9,6 +9,7 @@ services:
     volumes: [ ./apps/frontend/src:/app/src ]
     environment: []
     ports: [ 8101:8101 ]
+    networks: [ proxy-frontend ]
 
   proxy:
     build: apps/proxy
@@ -18,6 +19,7 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
+    networks: [ proxy-frontend, proxy-user, proxy-listing, proxy-review, proxy-message, proxy-search, proxy-recommend ]
 
   user:
     build:
@@ -31,6 +33,7 @@ services:
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8211:8211 ]
+    networks: [ proxy-user, user-datalayer ]
 
   listing:
     build:
@@ -44,6 +47,7 @@ services:
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8212:8212 ]
+    networks: [ proxy-listing, listing-datalayer ]
 
   review:
     build:
@@ -57,6 +61,7 @@ services:
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8213:8213 ]
+    networks: [ proxy-review, review-datalayer ]
 
   message:
     build: apps/backend/message
@@ -67,6 +72,7 @@ services:
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     ports: [ 8214:8214 ]
+    networks: [ proxy-message, message-datalayer ]
 
   search:
     build: apps/algorithm/search
@@ -77,6 +83,7 @@ services:
     environment:
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
     ports: [ 8221:8221 ]
+    networks: [ proxy-search, search-datalayer ]
 
   recommend:
     build: apps/algorithm/recommend
@@ -86,29 +93,7 @@ services:
     volumes: [ ./apps/algorithm/recommend/src:/app/src ]
     environment: []
     ports: [ 8222:8222 ]
-
-  database:
-    build: apps/data/database
-    container_name: martletplace_database
-    restart: unless-stopped
-    depends_on: []
-    volumes: [ ./apps/data/database/populatedb.sql:/docker-entrypoint-initdb.d/populatedb.sql ]
-    environment:
-      - POSTGRES_USER=martletplace
-      - POSTGRES_PASSWORD=johuigytfrdcv
-      - POSTGRES_DB=martletplace
-    ports: [ 8310:8310 ]
-
-  elasticsearch:
-    build: apps/data/elasticsearch
-    container_name: martletplace_elasticsearch
-    restart: unless-stopped
-    depends_on: []
-    volumes: []
-    environment:
-      - ELASTIC_PASSWORD=serxdfcghjfc
-    ports: [ 8311:8311 ]
-    mem_limit: 1GB
+    networks: [ proxy-recommend, recommend-datalayer ]
 
   datalayer:
     build: apps/data/datalayer
@@ -124,3 +109,49 @@ services:
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
     ports: [ 8300:8300, 8301:8301 ]
+    networks: [ datalayer-database, datalayer-elasticsearch, datalayer-cache, datalayer-blob ]
+
+  database:
+    build: apps/data/database
+    container_name: martletplace_database
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/data/database/populatedb.sql:/docker-entrypoint-initdb.d/populatedb.sql ]
+    environment:
+      - POSTGRES_USER=martletplace
+      - POSTGRES_PASSWORD=johuigytfrdcv
+      - POSTGRES_DB=martletplace
+    ports: [ 8310:8310 ]
+    networks: [ datalayer-database ]
+
+  elasticsearch:
+    build: apps/data/elasticsearch
+    container_name: martletplace_elasticsearch
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - ELASTIC_PASSWORD=serxdfcghjfc
+    ports: [ 8311:8311 ]
+    networks: [ datalayer-elasticsearch, search-datalayer ]
+    mem_limit: 1GB
+
+
+networks:
+  proxy-frontend:
+  proxy-user:
+  proxy-listing:
+  proxy-review:
+  proxy-message:
+  proxy-search:
+  proxy-recommend:
+  user-datalayer:
+  listing-datalayer:
+  review-datalayer:
+  message-datalayer:
+  search-datalayer:
+  recommend-datalayer:
+  datalayer-database:
+  datalayer-elasticsearch:
+  datalayer-cache:
+  datalayer-blob:
