@@ -10,6 +10,15 @@ services:
     environment: []
     ports: [ 8101:8101 ]
 
+  proxy:
+    build: apps/proxy
+    container_name: martletplace_proxy
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/proxy:/app ]
+    environment: []
+    ports: [ 80:80, 443:443 ]
+
   user:
     build:
       context: apps/backend/user
