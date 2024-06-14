@@ -133,7 +133,7 @@ services:
     environment:
       - ELASTIC_PASSWORD=serxdfcghjfc
     ports: [ 8311:8311 ]
-    networks: [ datalayer-elasticsearch ]
+    networks: [ datalayer-elasticsearch, search-datalayer ]
     mem_limit: 1GB
 
 
