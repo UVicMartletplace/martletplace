@@ -2,8 +2,8 @@
   "name": "martletplace-listing",
   "version": "0.1.0",
   "scripts": {
-    "test": "jest --watchAll",
-    "test:ci": "jest --ci",
+    "test": "jest --watchAll src/",
+    "test:ci": "jest --ci src/",
     "lint": "eslint src/**/*.ts",
     "format": "prettier src/ --write",
     "format:ci": "prettier src/ --check"
