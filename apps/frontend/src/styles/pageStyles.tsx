@@ -161,7 +161,7 @@ export const useStyles = () => ({
   },
   // Messages page styles
   messagesBox: {
-    height: "100%",
+    height: "calc(100vh - 4rem)",
   },
   messagesSidebar: {
     width: "10rem",
@@ -172,7 +172,7 @@ export const useStyles = () => ({
   messagesMainBox: {
     // Contains both the messages and the send box
     width: "100%",
-    height: "100%",
+    height: "calc(100% - 4rem)",
     // display: "flex",
     // alignItems: "center",
     // justifyContent: "flex-end",
@@ -183,7 +183,6 @@ export const useStyles = () => ({
     },
   },
   messagesMessagesBox: {
-    height: "100%",
     overflow: "scroll",
     display: "flex",
     flexDirection: "column-reverse" as "column-reverse",
@@ -191,6 +190,7 @@ export const useStyles = () => ({
     gap: "1rem",
   },
   messagesSendBox: {
+    height: "4rem",
     borderTop: "2px solid",
     borderColor: colors.martletplaceGrey,
     color: colors.martletplaceGrey,
