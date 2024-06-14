@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Docker Compose Up
-        run: docker compose up -d search datalayer database
+        run: docker compose up -d search datalayer elasticsearch
 
       - name: Test
         run: docker compose exec search pytest
