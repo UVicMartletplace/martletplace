@@ -10,11 +10,11 @@ jobs:
     name: Secret Detection
     runs-on: ubuntu-latest
     steps:
-    - name: Secret Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Secret Scanning
+
+    - name: Trufflehog Scan
       uses: trufflesecurity/trufflehog@main
       with:
         extra_args: --only-verified
