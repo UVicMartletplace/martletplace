@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         service: [user, listing, review, message, lib]
+      fail-fast: false
     defaults:
       run:
         working-directory: apps/backend/${{ matrix.service }}
@@ -37,6 +38,7 @@ jobs:
     strategy:
       matrix:
         service: [user, listing, review, message, lib]
+      fail-fast: false
     defaults:
       run:
         working-directory: apps/backend/${{ matrix.service }}
@@ -59,6 +61,7 @@ jobs:
     strategy:
       matrix:
         service: [user, listing, review, message, lib]
+      fail-fast: false
     defaults:
       run:
         working-directory: apps/backend/${{ matrix.service }}
@@ -66,10 +69,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Docker Compose Up
-        run: docker compose up -d ${{ matrix.service }} datalayer database
+        run: docker compose up -d ${{ matrix.service == 'lib' && 'user' || matrix.service }} datalayer database
 
       - name: Test
-        run: docker compose exec user npm run test:ci
+        run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
 
   security:
     name: Security
@@ -77,9 +80,7 @@ jobs:
     strategy:
       matrix:
         service: [user, listing, review, message, lib]
-    defaults:
-      run:
-        working-directory: apps/backend/${{ matrix.service }}
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
 
