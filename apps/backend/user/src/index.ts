@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 
+import { run } from "../../lib/src/example";
+
 const PORT = 8211;
 
 const app = express();
@@ -14,6 +16,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get("/api/user", (req: Request, res: Response) => {
+  run();
   res.send("Hello world");
 });
 

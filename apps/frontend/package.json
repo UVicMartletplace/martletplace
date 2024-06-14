@@ -9,20 +9,30 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write ./src",
     "format:ci": "prettier --check ./src",
-    "test": "vitest",
-    "preview": "vite preview"
+    "test": "cypress run --component",
+    "preview": "vite preview",
+    "test-coverage-simple": "cypress run --component && npx nyc report --reporter=text-summary",
+    "test-coverage-html": "cypress run --component && npx nyc report --reporter=html && ECHO See coverage/index.html for coverage",
+    "coverage-last": "nyc report --reporter=text-summary",
+    "test-e2e-coverage": "cypress run && npx nyc report --reporter=text-summary"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.19",
+    "axios": "^1.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.39",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "cypress": "^13.11.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -33,6 +43,6 @@
     "prettier": "3.2.5",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
-    "vitest": "^1.6.0"
+    "vite-plugin-istanbul": "^6.0.2"
   }
 }

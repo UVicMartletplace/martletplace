@@ -5,9 +5,11 @@ import CreateAccount from "./pages/CreateAccount";
 import Homepage from "./pages/Homepage";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
-import Account from "./pages/Account";
 import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
+import MyReviews from "./pages/MyReviews";
+import MyListings from "./pages/MyListings";
+import MyProfile from "./pages/MyProfile";
 
 function App() {
   return (
@@ -18,7 +20,10 @@ function App() {
 
         {/* If full URL is `/user/:id` then it would show another users profile,
         otherwise current users profile is shown. */}
-        <Route path="/user" element={<Account />} />
+        <Route path="/user" element={<MyProfile />} />
+        <Route path="/user/reviews" element={<MyReviews />} />
+        <Route path="/user/listings" element={<MyListings />} />
+
         <Route path="/user/login" element={<Login />} />
         <Route path="/user/resetpassword" element={<ForgotPassword />} />
         <Route path="/user/signup" element={<CreateAccount />} />
