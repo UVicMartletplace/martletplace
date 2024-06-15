@@ -88,10 +88,7 @@ const Carousel = ({ imageURLs }: props) => {
                 }}
                 id={"carousel_img_box"}
               >
-                <Slide
-                  direction={slideDirection}
-                  in={currentPage === index}
-                >
+                <Slide direction={slideDirection} in={currentPage === index}>
                   <img
                     src={imageURLs[index]}
                     style={{

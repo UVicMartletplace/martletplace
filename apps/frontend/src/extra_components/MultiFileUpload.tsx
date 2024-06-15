@@ -43,7 +43,7 @@ const MultiFileUpload = (props: Props) => {
   return (
     <Box>
       <input
-        style={{display: "none"}}
+        style={{ display: "none" }}
         id={"image-input"}
         name={"image-input"}
         type={"file"}
@@ -56,7 +56,7 @@ const MultiFileUpload = (props: Props) => {
       />
       <label
         htmlFor={"image-input"}
-        style={{textAlign: "inherit", display: "inherit"}}
+        style={{ textAlign: "inherit", display: "inherit" }}
       >
         {props.htmlForButton}
       </label>

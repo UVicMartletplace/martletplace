@@ -1,7 +1,17 @@
-import {Box, Button, Card, CardContent, Container, FormControl, Grid, TextField, Typography,} from "@mui/material";
-import {ChangeEvent, FormEventHandler, useState} from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  FormControl,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { ChangeEvent, FormEventHandler, useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
-import {colors} from "../styles/colors.tsx";
+import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../extra_components/MultiFileUpload.tsx";
 import Carousel from "../extra_components/Carousel.tsx";
 
@@ -36,15 +46,16 @@ const CreateListing = () => {
       price: 0,
       location: {
         latitude: 48.463302,
-        longitude: -123.310800,
+        longitude: -123.3108,
       },
       images: [],
     },
   });
 
-
   // Updates and sends the newListingObject, to the server via post under /api/listing
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (submissionEvent) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (
+    submissionEvent,
+  ) => {
     submissionEvent.preventDefault();
     // In order to make sure that the images are retrieved before submitting
     const successImages: boolean = await asyncListingImageWrapper();
@@ -69,56 +80,67 @@ const CreateListing = () => {
     }
   };
 
-  const updateNewListingPayload = (key: keyof ListingObject, value: string | number | LocationObject) => {
+  const updateNewListingPayload = (
+    key: keyof ListingObject,
+    value: string | number | LocationObject,
+  ) => {
     if (["title", "description", "price", "location", "images"].includes(key)) {
-      setNewListingObject(prevState => ({
+      setNewListingObject((prevState) => ({
         ...prevState,
         listing: {
           ...prevState.listing,
-          [key]: value
-        }
+          [key]: value,
+        },
       }));
       return newListingObject.listing[key] === value;
     }
   };
 
   const asyncListingImageWrapper = async (): Promise<boolean> => {
-  try {
-    const imagesObjectArray = await asyncUploadImages();
-    if (imagesObjectArray) {
-      const tempListingObject = newListingObject;
-      tempListingObject.listing.images = imagesObjectArray
-      setNewListingObject(prevState => ({...prevState, tempListingObject}));
-      return true;
-    } else {
+    try {
+      const imagesObjectArray = await asyncUploadImages();
+      if (imagesObjectArray) {
+        const tempListingObject = newListingObject;
+        tempListingObject.listing.images = imagesObjectArray;
+        setNewListingObject((prevState) => ({
+          ...prevState,
+          tempListingObject,
+        }));
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error uploading images:", error);
       return false;
     }
-  } catch (error) {
-    console.error('Error uploading images:', error);
-    return false;
-  }};
-
+  };
 
   const updateListingTitle = (event: ChangeEvent<HTMLInputElement>) => {
     // Handle
     updateNewListingPayload("title", event.target.value);
-  }
+  };
 
-  const updateListingDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const updateListingDescription = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     // Handle
-    updateNewListingPayload("description", event.target.value)
-  }
+    updateNewListingPayload("description", event.target.value);
+  };
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     // Handle
-    const priceValue:number = +event.target.value;
-    updateNewListingPayload("price", priceValue >= 0 ? priceValue : priceValue * -1);
-  }
+    const priceValue: number = +event.target.value;
+    updateNewListingPayload(
+      "price",
+      priceValue >= 0 ? priceValue : priceValue * -1,
+    );
+  };
 
   // Gets the user location, and adds it to the listing object
   const updateListingLocation = () => {
     try {
-      const currentLocation: LocationObject = {latitude: 0, longitude: 0}
+      const currentLocation: LocationObject = { latitude: 0, longitude: 0 };
       navigator.geolocation.getCurrentPosition((position) => {
         const currentLatitude = position.coords.latitude;
         const currentLongitude = position.coords.longitude;
@@ -127,30 +149,29 @@ const CreateListing = () => {
           currentLocation.longitude = currentLongitude;
         }
       });
-      updateNewListingPayload("location", currentLocation)
+      updateNewListingPayload("location", currentLocation);
       return true;
     } catch (error) {
       return false;
     }
   };
 
-   const asyncListingLocationWrapper = async (): Promise<boolean> => {
+  const asyncListingLocationWrapper = async (): Promise<boolean> => {
     try {
       return updateListingLocation();
     } catch (error) {
       return false;
     }
-  }
+  };
 
   // This function makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
     try {
       return url.startsWith("data:image/");
     } catch (error) {
-      return false
+      return false;
     }
   };
-
 
   // Uploads the images to the s3 server, this is handled separately
   // This may need to be modified to use File objects instead of the file strings
@@ -182,7 +203,6 @@ const CreateListing = () => {
       return false;
     }
   };
-
 
   // Upload button html
   const buttonHTML = (
