@@ -2,8 +2,8 @@ import Filters from "../../src/components/filters";
 import { mount } from "cypress/react";
 
 interface SearchObject {
-  minPrice?: number;
-  maxPrice?: number;
+  minPrice?: number | null;
+  maxPrice?: number | null;
   status: string;
   searchType: string;
 }
