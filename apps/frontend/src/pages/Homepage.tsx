@@ -48,12 +48,12 @@ const Homepage = () => {
   // Get the listings for the current page
   const displayedListings = listingObjects.slice(
     (currentPage - 1) * listingsPerPage,
-    currentPage * listingsPerPage
+    currentPage * listingsPerPage,
   );
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    page: number
+    page: number,
   ) => {
     setCurrentPage(page);
   };

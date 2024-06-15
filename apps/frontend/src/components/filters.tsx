@@ -43,13 +43,13 @@ const Filters = ({ onFilterChange }: FiltersProps) => {
 
   const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMinPrice(
-      event.target.value === "" ? null : parseFloat(event.target.value)
+      event.target.value === "" ? null : parseFloat(event.target.value),
     );
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMaxPrice(
-      event.target.value === "" ? null : parseFloat(event.target.value)
+      event.target.value === "" ? null : parseFloat(event.target.value),
     );
   };
 
