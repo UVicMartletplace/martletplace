@@ -131,6 +131,5 @@ describe("<CreateListing />", () => {
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
     });
-
   });
 });
