@@ -78,8 +78,8 @@ describe("<Filters />", () => {
     cy.get("#type-select").should("have.value", "");
 
     cy.get("@onFilterChangeStub").should("have.been.calledWith", {
-      minPrice: undefined,
-      maxPrice: undefined,
+      minPrice: null,
+      maxPrice: null,
       status: "",
       searchType: "",
     });
