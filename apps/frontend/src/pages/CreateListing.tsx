@@ -1,21 +1,11 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  FormControl,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import {Box, Button, Card, CardContent, Container, FormControl, Grid, TextField, Typography,} from "@mui/material";
+import {ChangeEvent, FormEventHandler, useState} from "react";
 import _axios_instance from "../_axios_instance.tsx";
-import { colors } from "../styles/colors.tsx";
+import {colors} from "../styles/colors.tsx";
 import MultiFileUpload from "../extra_components/MultiFileUpload.tsx";
 import Carousel from "../extra_components/Carousel.tsx";
 
-interface URLObject {
+interface ImageURLObject {
   url: string;
 }
 interface LocationObject {
@@ -28,7 +18,7 @@ interface ListingObject {
   description: string;
   price: number;
   location: LocationObject;
-  images: URLObject[];
+  images: ImageURLObject[];
 }
 
 interface NewListingObject {
@@ -36,7 +26,7 @@ interface NewListingObject {
 }
 
 const CreateListing = () => {
-  const [images, setImages] = useState<string[]>([]);
+  const [listingImages, setListingImages] = useState<string[]>([]);
 
   // This newListingObject bundles all the listing data for upload to the server
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
@@ -45,48 +35,28 @@ const CreateListing = () => {
       description: "",
       price: 0,
       location: {
-        latitude: 0.0,
-        longitude: 0.0,
+        latitude: 48.463302,
+        longitude: -123.310800,
       },
       images: [],
     },
   });
 
-  // Gets the user location, and adds it to the listing object
-  const getUserLocation = useCallback(async () => {
-    try {
-      navigator.geolocation.getCurrentPosition((position) => {
-        newListingObject.listing.location.longitude = position.coords.longitude;
-        newListingObject.listing.location.latitude = position.coords.latitude;
-      });
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }, [newListingObject.listing.location]);
 
   // Updates and sends the newListingObject, to the server via post under /api/listing
-  const sendPostToCreateListing = async () => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (submissionEvent) => {
+    submissionEvent.preventDefault();
     // In order to make sure that the images are retrieved before submitting
-    const successImages = await uploadImages();
-    let successLocation: boolean = true;
-    if (newListingObject.listing.location.latitude !== 0) {
-      successLocation = false;
-      getUserLocation().then(() => {
-        successLocation = true;
-      });
-    }
-    //console.log("Image Successful", imageUploadSuccessful)
-    console.log("New Listing Object", newListingObject);
+    const successImages: boolean = await asyncListingImageWrapper();
+    const successLocation: boolean = await asyncListingLocationWrapper();
+
     if (successImages && successLocation) {
       _axios_instance
         .post("/listing", newListingObject)
-        .then((response) => {
+        .then(() => {
           alert("Listing Created!");
-          console.log("Response to upload", response);
         })
-        .catch((error) => {
-          console.log("Response to error", error);
+        .catch(() => {
           alert("Listing Creation Failed");
         });
     } else if (!successImages) {
@@ -99,26 +69,96 @@ const CreateListing = () => {
     }
   };
 
-  // This function makes sure that the passed in url is a base64 data string
-  const isImageValid = (url: string) => {
-    try {
-      return url.startsWith("data");
-    } catch (error) {
-      return error === TypeError && url === undefined;
+  const updateNewListingPayload = (key: keyof ListingObject, value: string | number | LocationObject) => {
+    if (["title", "description", "price", "location", "images"].includes(key)) {
+      setNewListingObject(prevState => ({
+        ...prevState,
+        listing: {
+          ...prevState.listing,
+          [key]: value
+        }
+      }));
+      return newListingObject.listing[key] === value;
     }
   };
 
-  // Request the user's location on load
-  useEffect(() => {
-    getUserLocation().then((r) => console.log(r));
-  }, [getUserLocation]);
+  const asyncListingImageWrapper = async (): Promise<boolean> => {
+  try {
+    const imagesObjectArray = await asyncUploadImages();
+    if (imagesObjectArray) {
+      const tempListingObject = newListingObject;
+      tempListingObject.listing.images = imagesObjectArray
+      setNewListingObject(prevState => ({...prevState, tempListingObject}));
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Error uploading images:', error);
+    return false;
+  }};
 
-  // Uploads the images to the s3 server, this is handled seperately
+
+  const updateListingTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    // Handle
+    updateNewListingPayload("title", event.target.value);
+  }
+
+  const updateListingDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    // Handle
+    updateNewListingPayload("description", event.target.value)
+  }
+
+  const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
+    // Handle
+    const priceValue:number = +event.target.value;
+    updateNewListingPayload("price", priceValue >= 0 ? priceValue : priceValue * -1);
+  }
+
+  // Gets the user location, and adds it to the listing object
+  const updateListingLocation = () => {
+    try {
+      const currentLocation: LocationObject = {latitude: 0, longitude: 0}
+      navigator.geolocation.getCurrentPosition((position) => {
+        const currentLatitude = position.coords.latitude;
+        const currentLongitude = position.coords.longitude;
+        if (currentLatitude !== 0 && currentLongitude !== 0) {
+          currentLocation.latitude = currentLatitude;
+          currentLocation.longitude = currentLongitude;
+        }
+      });
+      updateNewListingPayload("location", currentLocation)
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+   const asyncListingLocationWrapper = async (): Promise<boolean> => {
+    try {
+      return updateListingLocation();
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // This function makes sure that the passed in url is a base64 data string
+  const isImageValid = (url: string) => {
+    try {
+      return url.startsWith("data:image/");
+    } catch (error) {
+      return false
+    }
+  };
+
+
+  // Uploads the images to the s3 server, this is handled separately
   // This may need to be modified to use File objects instead of the file strings
-  const uploadImages = async () => {
+  const asyncUploadImages = async () => {
+    const retrievedImages: ImageURLObject[] = [];
     try {
       await Promise.all(
-        images.map(async (image) => {
+        listingImages.map(async (image) => {
           try {
             const response = await _axios_instance.post(
               "/images",
@@ -129,18 +169,20 @@ const CreateListing = () => {
                 },
               },
             );
-            newListingObject.listing.images.push({ url: response.data.url });
+            retrievedImages.push({ url: response.data.url });
           } catch (error) {
-            console.error("Error uploading image:", error);
+            console.error("Error uploading images:", error);
+            return false;
           }
         }),
       );
-      return true;
+      return retrievedImages;
     } catch (error) {
       console.error("Error uploading images:", error);
       return false;
     }
   };
+
 
   // Upload button html
   const buttonHTML = (
@@ -170,59 +212,36 @@ const CreateListing = () => {
           <Grid container spacing={1}>
             <Grid item md={6} sm={12} xs={12}>
               <Box>
-                <form noValidate autoComplete="off">
+                <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                   <FormControl sx={{ width: "100%", padding: "10px" }}>
                     <TextField
                       id="field-title"
                       label="Title"
                       sx={{ m: "10px" }}
-                      onChange={(event) =>
-                        setNewListingObject((prevState) => ({
-                          ...prevState,
-                          listing: {
-                            ...prevState.listing,
-                            title: event.target.value,
-                          },
-                        }))
-                      }
+                      multiline
+                      rows={1}
+                      onChange={updateListingTitle}
                     />
                     <TextField
                       id="field-description"
                       label="Description"
-                      type={"text"}
+                      type="text"
                       sx={{ m: "10px", display: "flex" }}
                       rows={10}
                       multiline
-                      onChange={(event) =>
-                        setNewListingObject((prevState) => ({
-                          ...prevState,
-                          listing: {
-                            ...prevState.listing,
-                            description: event.target.value,
-                          },
-                        }))
-                      }
+                      onChange={updateListingDescription}
                     />
                     <TextField
                       id="field-price"
                       label="Price(CAD)"
                       type="number"
                       sx={{ m: "10px" }}
-                      onChange={(event) =>
-                        setNewListingObject((prevState) => ({
-                          ...prevState,
-                          listing: {
-                            ...prevState.listing,
-                            price: parseFloat(event.target.value),
-                          },
-                        }))
-                      }
+                      multiline
+                      rows={1}
+                      InputProps={{ inputProps: { min: 0 } }}
+                      onChange={updateListingPrice}
                     />
                   </FormControl>
-                </form>
-              </Box>
-              <Grid container sx={{ padding: "10px" }}>
-                <Grid item sm={12}>
                   <Box sx={{ display: "flex" }}>
                     <Button
                       type="submit"
@@ -239,21 +258,19 @@ const CreateListing = () => {
                         padding: "10px 20px",
                         margin: "10px",
                       }}
-                      onClick={sendPostToCreateListing}
                       id={"submit-button"}
                     >
                       Create Listing
                     </Button>
                     <MultiFileUpload
-                      passedImages={images}
-                      setPassedImages={setImages}
+                      passedImages={listingImages}
+                      setPassedImages={setListingImages}
                       multipleUpload={true}
                       htmlForButton={buttonHTML}
                     />
                   </Box>
-                </Grid>
-                <Grid item sm={4}></Grid>
-              </Grid>
+                </form>
+              </Box>
             </Grid>
             <Grid item lg={6} xs={12}>
               <Box>
@@ -261,12 +278,12 @@ const CreateListing = () => {
                   Image Preview
                 </Typography>
                 <Box sx={{ padding: "10px" }}>
-                  {!isImageValid(images[0]) ? (
+                  {!isImageValid(listingImages[0]) ? (
                     <Typography sx={{ paddingLeft: "10px" }} variant={"body2"}>
                       No images uploaded yet
                     </Typography>
                   ) : (
-                    <Carousel imageURLs={images} />
+                    <Carousel imageURLs={listingImages} />
                   )}
                 </Box>
               </Box>

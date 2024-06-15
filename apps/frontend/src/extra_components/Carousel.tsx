@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import {
   Box,
   IconButton,
@@ -21,8 +21,8 @@ const Carousel = ({ imageURLs }: props) => {
     "right" | "left" | undefined
   >("left");
 
-  const images: React.ReactElement[] = useMemo(() => {
-    return Array.from({ length: imageURLs.length }, (_, i) => <Card key={i} />);
+  const images: ReactElement[] = useMemo(() => {
+    return imageURLs.map((_, i) => <Card key={i} />);
   }, [imageURLs]);
 
   const handleNextPage = () => {
@@ -31,7 +31,7 @@ const Carousel = ({ imageURLs }: props) => {
   };
 
   const handlePrevPage = () => {
-    setSlideDirection("left");
+    setSlideDirection("right");
     setCurrentPage((prevPage) => prevPage - 1);
   };
 
@@ -59,8 +59,8 @@ const Carousel = ({ imageURLs }: props) => {
           alignContent: "center",
           justifyContent: "center",
           width: "100%",
-          height: "50vh",
-          my: "1vh",
+          height: "350px",
+          my: "10px",
         }}
       >
         <Grid item sm={12} sx={{ height: "100%", width: "100%" }}>
@@ -84,10 +84,14 @@ const Carousel = ({ imageURLs }: props) => {
                   textAlign: "center",
                   display: currentPage === index ? "block" : "none",
                   p: "10px",
+                  overflow: "hidden",
                 }}
                 id={"carousel_img_box"}
               >
-                <Slide direction={slideDirection} in={currentPage === index}>
+                <Slide
+                  direction={slideDirection}
+                  in={currentPage === index}
+                >
                   <img
                     src={imageURLs[index]}
                     style={{

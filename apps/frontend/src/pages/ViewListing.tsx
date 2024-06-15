@@ -70,9 +70,7 @@ const ViewListing = () => {
           <Grid container spacing={2}>
             <Grid item sm={12} md={12} lg={6}>
               <Typography variant={"h2"}>
-                {listingObject !== null
-                  ? listingObject.title
-                  : "Title not received"}
+                {listingObject?.title ?? "Title not received"}
               </Typography>
               <Typography variant={"body1"}>
                 {listingObject.description}

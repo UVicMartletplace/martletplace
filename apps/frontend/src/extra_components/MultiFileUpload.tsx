@@ -42,35 +42,21 @@ const MultiFileUpload = (props: Props) => {
 
   return (
     <Box>
-      {props.multipleUpload ? (
-        <input
-          style={{ display: "none" }}
-          id={"image-input"}
-          name={"image-input"}
-          type={"file"}
-          accept={"image/*"}
-          multiple
-          onChange={(e) => {
-            setFile(e.target.files?.[0]);
-            getFileNames(e.target.files);
-          }}
-        />
-      ) : (
-        <input
-          style={{ display: "none" }}
-          id={"image-input"}
-          name={"image-input"}
-          type={"file"}
-          accept={"image/*"}
-          onChange={(e) => {
-            setFile(e.target.files?.[0]);
-            getFileNames(e.target.files);
-          }}
-        />
-      )}
+      <input
+        style={{display: "none"}}
+        id={"image-input"}
+        name={"image-input"}
+        type={"file"}
+        accept={"image/*"}
+        multiple={props.multipleUpload}
+        onChange={(e) => {
+          setFile(e.target.files?.[0]);
+          getFileNames(e.target.files);
+        }}
+      />
       <label
         htmlFor={"image-input"}
-        style={{ textAlign: "inherit", display: "inherit" }}
+        style={{textAlign: "inherit", display: "inherit"}}
       >
         {props.htmlForButton}
       </label>
