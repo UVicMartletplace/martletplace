@@ -17,8 +17,8 @@ import * as React from "react";
 
 interface SearchObject {
   query: string;
-  minPrice: number;
-  maxPrice: number;
+  minPrice: number | null;
+  maxPrice: number | null;
   status: string;
   searchType: string;
   latitude: number;
@@ -41,8 +41,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
   const [searchInput, setSearchInput] = useState("");
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
-    minPrice: 0,
-    maxPrice: 100000,
+    minPrice: null,
+    maxPrice: null,
     status: "AVAILABLE",
     searchType: "LISTING",
     latitude: 0,
@@ -130,7 +130,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
       }}
     >
       <Grid item>
-        {isSmallPage ? (
+        {isSmallPage && (
           <Button
             variant="contained"
             sx={classes.homepageButton}
@@ -143,8 +143,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
             />
             MartletPlace
           </Button>
-        ) : (
-          <></>
         )}
       </Grid>
       <Grid item xs={6}>

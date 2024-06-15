@@ -13,14 +13,13 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
-import * as React from "react";
+import { useState, ChangeEvent } from "react";
 import { colors } from "../styles/colors";
-import { ChangeEvent } from "react";
 
 interface SearchObject {
   query: string;
-  minPrice: number;
-  maxPrice: number;
+  minPrice: number | null;
+  maxPrice: number | null;
   status: string;
   searchType: string;
   latitude: number;
@@ -34,23 +33,23 @@ interface FiltersProps {
   onFilterChange: (filters: Partial<SearchObject>) => void;
 }
 
-const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
+const Filters = ({ onFilterChange }: FiltersProps) => {
   const classes = useStyles();
 
-  const [minPrice, setMinPrice] = React.useState<number | "">("");
-  const [maxPrice, setMaxPrice] = React.useState<number | "">("");
-  const [status, setStatus] = React.useState<string>("");
-  const [type, setType] = React.useState<string>("LISTING");
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [status, setStatus] = useState<string>("");
+  const [type, setType] = useState<string>("LISTING");
 
   const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMinPrice(
-      event.target.value === "" ? "" : parseFloat(event.target.value),
+      event.target.value === "" ? null : parseFloat(event.target.value)
     );
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMaxPrice(
-      event.target.value === "" ? "" : parseFloat(event.target.value),
+      event.target.value === "" ? null : parseFloat(event.target.value)
     );
   };
 
@@ -65,16 +64,16 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   const handleApplyFilters = () => {
     // Pass the current filter values to the parent component only when "Apply Filters" button is clicked
     onFilterChange({
-      minPrice: minPrice === "" ? undefined : minPrice,
-      maxPrice: maxPrice === "" ? undefined : maxPrice,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
       status,
       searchType: type,
     });
   };
 
   const handleClearFilters = () => {
-    setMinPrice("");
-    setMaxPrice("");
+    setMinPrice(null);
+    setMaxPrice(null);
     setStatus("");
     setType("LISTING");
     onFilterChange({
@@ -107,7 +106,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Min"
-            value={minPrice}
+            value={minPrice !== null ? minPrice : ""}
             onChange={handleMinPriceChange}
             type="number"
           />
@@ -118,7 +117,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Max"
-            value={maxPrice}
+            value={maxPrice !== null ? maxPrice : ""}
             onChange={handleMaxPriceChange}
             type="number"
           />
@@ -172,7 +171,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             fontSize: "16px",
             padding: "13px 0",
             align: "center",
-            margin: "22px 0px 0px 0px",
+            marginTop: "30px",
             width: "100%",
           }}
         >
@@ -186,7 +185,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           display: "flex",
           flexDirection: "row",
           gap: "10px",
-          marginBottom: "2vh",
+          marginBottom: "15px",
           alignItems: "center",
           justifyContent: "center",
         }}

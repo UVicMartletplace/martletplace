@@ -14,7 +14,9 @@ export const useStyles = () => ({
     flexDirection: "column",
     alignItems: "top",
     justifyContent: "top",
-    width: "99.3vw",
+    width: "100vw",
+    margin: "0px",
+    padding: "0px",
   },
   form: {
     width: "300px",

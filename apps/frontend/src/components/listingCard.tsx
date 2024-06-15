@@ -26,7 +26,7 @@ const convertDate = (dateString: string) => {
   return dateTimeObject.toDateString();
 };
 
-const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
+const ListingCard = ({ listing }: ListingCardProps) => {
   return (
     <Grid
       container
@@ -47,7 +47,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           justifyContent: "center",
           alignSelf: "center",
           overflow: "hidden",
-          borderRadius: "8px 8px 8px 8px",
+          borderRadius: "8px",
         }}
       >
         <img
@@ -57,7 +57,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
             width: "100%",
             height: "auto",
             objectFit: "cover",
-            borderRadius: "8px 8px 8px 8px",
+            borderRadius: "8px",
           }}
         />
       </Grid>

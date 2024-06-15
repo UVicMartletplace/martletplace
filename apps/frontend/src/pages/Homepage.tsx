@@ -48,12 +48,12 @@ const Homepage = () => {
   // Get the listings for the current page
   const displayedListings = listingObjects.slice(
     (currentPage - 1) * listingsPerPage,
-    currentPage * listingsPerPage,
+    currentPage * listingsPerPage
   );
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    page: number,
+    page: number
   ) => {
     setCurrentPage(page);
   };
@@ -183,7 +183,7 @@ const Homepage = () => {
           >
             Results ({listingObjects.length})
           </Typography>
-          <FormControl sx={{ minWidth: "20vw" }}>
+          <FormControl sx={{ minWidth: "25%" }}>
             <Select onChange={handleSortBy} displayEmpty>
               <FormHelperText>Sort By</FormHelperText>
               <MenuItem value={"RELEVANCE"}>Relevance</MenuItem>
@@ -205,7 +205,6 @@ const Homepage = () => {
           <Box
             sx={{
               borderBottom: "1px solid #808080",
-              fontSize: "1.3em",
             }}
           >
             <Typography variant="h6" component="h3" gutterBottom>
