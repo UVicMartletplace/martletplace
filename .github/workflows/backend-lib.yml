@@ -1,4 +1,4 @@
-name: Listing
+name: Backend Library
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
 
 defaults:
   run:
-    working-directory: apps/backend/listing
+    working-directory: apps/backend/lib
 
 jobs:
   lint:
@@ -51,11 +51,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Docker Compose Up
-        run: docker compose up -d listing datalayer database
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Test
-        run: docker compose exec listing npm run test:ci
+        run: npm run test:ci
 
   security:
     name: Security
@@ -66,4 +70,4 @@ jobs:
       - name: Nodejs Scan
         uses: ajinabraham/njsscan-action@master
         with:
-          args: './apps/backend/listing'
+          args: './apps/backend/lib'

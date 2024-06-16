@@ -13,7 +13,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.get("/api/message", (req: Request, res: Response) => {
+app.get("/api/messages", (req: Request, res: Response) => {
   res.send("Hello world");
 });
 
