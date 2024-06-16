@@ -204,12 +204,11 @@ const CreateListing = () => {
   const asyncUploadImages = async (): Promise<ImageURLObject[] | false> => {
     const retrievedImages: ImageURLObject[] = [];
     // Create an array of promises for image uploads
-    const uploadPromises = listingImageBinaries.map(async (image) => {
+    const uploadPromises = listingImageBinaries.map(async (imageBinary) => {
       try {
         // Attempt to upload the image
         const response = await _axios_instance.post(
-          "/images",
-          { image },
+          "/images", imageBinary ,
           {
             headers: {
               "Content-Type": "multipart/form-data",
