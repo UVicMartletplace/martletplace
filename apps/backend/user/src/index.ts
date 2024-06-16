@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import pgPromise from "pg-promise";
+import { User } from "./models/user";
 
 const PORT = 8211;
 
@@ -180,17 +181,5 @@ app.delete("/api/user/:id", deleteUserById);
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
-
-interface User {
-  user_id: number;
-  username: string;
-  email: string;
-  name: string;
-  bio: string;
-  profile_pic_url: string;
-  verified: boolean;
-  created_at: Date;
-  modified_at: Date;
-}
 
 export { app, createUser, getUserById, patchUserById, deleteUserById };
