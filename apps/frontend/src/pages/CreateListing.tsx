@@ -38,6 +38,7 @@ interface NewListingObject {
 
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
+  const [listingImageBinaries, setListingImageBinaries] = useState<string[]>([])
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
     "This field is required",
@@ -63,7 +64,7 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-
+    console.log("Listing Image Binaries", listingImageBinaries);
     if (!priceError && !titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
@@ -199,37 +200,46 @@ const CreateListing = () => {
     }
   };
 
-  // Uploads the images to the s3 server, this is handled separately
-  // This may need to be modified to use File objects instead of the file strings
-  const asyncUploadImages = async () => {
+  // Uploads the images to the S3 server, this is handled separately
+  const asyncUploadImages = async (): Promise<ImageURLObject[] | false> => {
     const retrievedImages: ImageURLObject[] = [];
-    const uploadPromises = listingImages.map(async (image) => {
+    // Create an array of promises for image uploads
+    const uploadPromises = listingImageBinaries.map(async (image) => {
       try {
+        // Attempt to upload the image
         const response = await _axios_instance.post(
           "/images",
-          { image: image },
+          { image },
           {
             headers: {
               "Content-Type": "multipart/form-data",
-            },
-          },
+            }
+          }
         );
+        // Return the URL of the uploaded image on success
         return { url: response.data.url };
       } catch (error) {
-        console.error("Error uploading images:", error);
+        // Log error and return null on failure
+        console.error("Error uploading image:", error);
         return null; // Indicate failure with null
       }
     });
 
     try {
+      // Wait for all upload promises to resolve
       const results = await Promise.all(uploadPromises);
+
+      // Filter successful uploads and add to retrievedImages
       results.forEach((result) => {
         if (result) {
           retrievedImages.push(result);
         }
       });
+
+      // Return the list of successfully uploaded images
       return retrievedImages;
     } catch (error) {
+      // Handle any errors that occurred during the uploading process
       console.error("Error in uploading image process:", error);
       return false;
     }
@@ -325,6 +335,8 @@ const CreateListing = () => {
                       setPassedImages={setListingImages}
                       multipleUpload={true}
                       htmlForButton={buttonHTML}
+                      imageBinary={listingImageBinaries}
+                      setImageBinaries={setListingImageBinaries}
                     />
                   </Box>
                 </form>
