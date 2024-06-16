@@ -3,24 +3,24 @@ import tensorflow as tf
 import numpy as np
 
 # Confirms if your computer is ideally using a GPU-accelerated version of TensorFlow.
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))
 
-data = pd.read_csv('data.csv')
+data = pd.read_csv("data.csv")
 
-target_columns = ['title', 'description', 'price']
-data['combined_features'] = data[target_columns].astype(str).apply(' '.join, axis=1)
+target_columns = ["title", "description", "price"]
+data["combined_features"] = data[target_columns].astype(str).apply(" ".join, axis=1)
 
 tokenizer = tf.keras.preprocessing.text.Tokenizer()
-tokenizer.fit_on_texts(data['combined_features'])
+tokenizer.fit_on_texts(data["combined_features"])
 vocab_size = len(tokenizer.word_index) + 1
 
-sequences = tokenizer.texts_to_sequences(data['combined_features'])
+sequences = tokenizer.texts_to_sequences(data["combined_features"])
 padded_sequences = tf.keras.preprocessing.sequence.pad_sequences(sequences)
 
 tfidf_matrix = np.zeros((len(data), vocab_size))
 
 for i, seq in enumerate(sequences):
-    print("iteration: " + str(i) +" out of: " + str(len(sequences)))
+    print("iteration: " + str(i) + " out of: " + str(len(sequences)))
     word_freq = dict(zip(*np.unique(seq, return_counts=True)))
     doc_len = len(seq)
     for word, freq in word_freq.items():
@@ -32,9 +32,11 @@ tfidf_tensor = tf.convert_to_tensor(tfidf_matrix, dtype=tf.float32)
 
 normalized_vectors = tf.nn.l2_normalize(tfidf_tensor, axis=1)
 
-cosine_similarity_matrix = tf.matmul(normalized_vectors, normalized_vectors, transpose_b=True)
+cosine_similarity_matrix = tf.matmul(
+    normalized_vectors, normalized_vectors, transpose_b=True
+)
 
 cosine_similarity_matrix = cosine_similarity_matrix.numpy()
 
-np.save('cosine_similarity_matrix.npy', cosine_similarity_matrix)
-data.to_csv('processed_data.csv', index=False)
+np.save("cosine_similarity_matrix.npy", cosine_similarity_matrix)
+data.to_csv("processed_data.csv", index=False)
