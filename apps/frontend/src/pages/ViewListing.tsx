@@ -10,28 +10,23 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import _axios_instance from "../_axios_instance.tsx";
-import Carousel from "../extra_components/Carousel.tsx";
+import Carousel from "../components/Carousel.tsx";
 import { useStyles } from "../styles/pageStyles.tsx";
 import { colors } from "../styles/colors.tsx";
 
 const ViewListing = () => {
   const classes = useStyles();
+  const [listingReceived, setListingReceived] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const [listingObject, setListingObject] = useState({
-    title: "Sample Title",
-    description: "Sample Description",
+    title: "Sorry This Listing Cannot Be Loaded",
+    description: "Please Try again Later",
     price: 0,
     seller_profile: { name: "John Smith" },
     dateCreated: "2024-05-23T15:30:00Z",
-    distance: 4.2,
-    images: [
-      { url: "https://picsum.photos/1200/400" },
-      { url: "https://picsum.photos/1200/600" },
-      { url: "https://picsum.photos/1200/1200" },
-      { url: "https://picsum.photos/600/1200" },
-      { url: "https://picsum.photos/400/1200" },
-    ],
+    distance: 0,
+    images: [{ url: "https://picsum.photos/1200/400" }],
   });
 
   // Load the listing from the api given an ID
@@ -40,6 +35,7 @@ const ViewListing = () => {
       .get("/listing/" + id)
       .then((response) => {
         setListingObject(response.data);
+        setListingReceived(true);
       })
       .catch((error) => {
         console.log(error);
@@ -65,7 +61,14 @@ const ViewListing = () => {
 
   return (
     <Container>
-      <Card sx={{ height: "100%", width: "100%" }}>
+      {!listingReceived ? <Typography>No Listing Received</Typography> : null}
+      <Card
+        sx={{
+          height: "100%",
+          width: "100%",
+          display: listingReceived ? "block" : "none",
+        }}
+      >
         <CardContent>
           <Grid container spacing={2}>
             <Grid item sm={12} md={12} lg={6}>

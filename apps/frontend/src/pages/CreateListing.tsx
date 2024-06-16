@@ -5,6 +5,7 @@ import {
   CardContent,
   Container,
   FormControl,
+  FormHelperText,
   Grid,
   TextField,
   Typography,
@@ -12,8 +13,8 @@ import {
 import { ChangeEvent, FormEventHandler, useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
-import MultiFileUpload from "../extra_components/MultiFileUpload.tsx";
-import Carousel from "../extra_components/Carousel.tsx";
+import MultiFileUpload from "../components/MultiFileUpload.tsx";
+import Carousel from "../components/Carousel.tsx";
 
 interface ImageURLObject {
   url: string;
@@ -37,6 +38,11 @@ interface NewListingObject {
 
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
+  const [priceError, setPriceError] = useState<string>("");
+  const [titleError, setTitleError] = useState<string>(
+    "This field is required",
+  );
+  const [sent, setSent] = useState(false);
 
   // This newListingObject bundles all the listing data for upload to the server
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
@@ -57,26 +63,33 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    // In order to make sure that the images are retrieved before submitting
-    const successImages: boolean = await asyncListingImageWrapper();
-    const successLocation: boolean = await asyncListingLocationWrapper();
 
-    if (successImages && successLocation) {
-      _axios_instance
-        .post("/listing", newListingObject)
-        .then(() => {
-          alert("Listing Created!");
-        })
-        .catch(() => {
-          alert("Listing Creation Failed");
-        });
-    } else if (!successImages) {
-      alert("Images failed to upload, please try again later");
-    } else {
-      // Currently this is added to catch if the location is not set, we could default this to the location of the university instead
-      alert(
-        "Error occurred when creating a listing, you may need to enable location permissions for this site",
-      );
+    if (!priceError && !titleError && !sent) {
+      // In order to make sure that the images are retrieved before submitting
+      const successImages: boolean = await asyncListingImageWrapper();
+      const successLocation: boolean = await asyncListingLocationWrapper();
+
+      if (successImages && successLocation) {
+        _axios_instance
+          .post("/listing", newListingObject)
+          .then(() => {
+            alert("Listing Created!");
+            setSent(true);
+          })
+          .catch(() => {
+            alert("Listing Creation Failed");
+            setSent(false);
+          });
+      } else if (!successImages) {
+        alert("Images failed to upload, please try again later");
+        setSent(false);
+      } else {
+        // Currently this is added to catch if the location is not set, we could default this to the location of the university instead
+        alert(
+          "Error occurred when creating a listing, you may need to enable location permissions for this site",
+        );
+        setSent(false);
+      }
     }
   };
 
@@ -118,6 +131,11 @@ const CreateListing = () => {
 
   const updateListingTitle = (event: ChangeEvent<HTMLInputElement>) => {
     // Handle
+    if (!event.target.value) {
+      setTitleError("This field is required");
+    } else {
+      setTitleError("");
+    }
     updateNewListingPayload("title", event.target.value);
   };
 
@@ -130,11 +148,19 @@ const CreateListing = () => {
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     // Handle
-    const priceValue: number = +event.target.value;
-    updateNewListingPayload(
-      "price",
-      priceValue >= 0 ? priceValue : priceValue * -1,
-    );
+    const regex = /^\d+(.\d{1,2})?$/;
+    if (!regex.test(event.target.value)) {
+      setPriceError(
+        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+      );
+    } else {
+      setPriceError("");
+      const priceValue: number = +event.target.value;
+      updateNewListingPayload(
+        "price",
+        priceValue >= 0 ? priceValue : priceValue * -1,
+      );
+    }
   };
 
   // Gets the user location, and adds it to the listing object
@@ -177,29 +203,34 @@ const CreateListing = () => {
   // This may need to be modified to use File objects instead of the file strings
   const asyncUploadImages = async () => {
     const retrievedImages: ImageURLObject[] = [];
+    const uploadPromises = listingImages.map(async (image) => {
+      try {
+        const response = await _axios_instance.post(
+          "/images",
+          { image: image },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        return { url: response.data.url };
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        return null; // Indicate failure with null
+      }
+    });
+
     try {
-      await Promise.all(
-        listingImages.map(async (image) => {
-          try {
-            const response = await _axios_instance.post(
-              "/images",
-              { image: image },
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              },
-            );
-            retrievedImages.push({ url: response.data.url });
-          } catch (error) {
-            console.error("Error uploading images:", error);
-            return false;
-          }
-        }),
-      );
+      const results = await Promise.all(uploadPromises);
+      results.forEach((result) => {
+        if (result) {
+          retrievedImages.push(result);
+        }
+      });
       return retrievedImages;
     } catch (error) {
-      console.error("Error uploading images:", error);
+      console.error("Error in uploading image process:", error);
       return false;
     }
   };
@@ -238,10 +269,14 @@ const CreateListing = () => {
                       id="field-title"
                       label="Title"
                       sx={{ m: "10px" }}
-                      multiline
                       rows={1}
                       onChange={updateListingTitle}
+                      required
+                      error={!!titleError}
                     />
+                    {titleError && (
+                      <FormHelperText error>{titleError}</FormHelperText>
+                    )}
                     <TextField
                       id="field-description"
                       label="Description"
@@ -256,11 +291,14 @@ const CreateListing = () => {
                       label="Price(CAD)"
                       type="number"
                       sx={{ m: "10px" }}
-                      multiline
                       rows={1}
                       InputProps={{ inputProps: { min: 0 } }}
                       onChange={updateListingPrice}
+                      error={!!priceError}
                     />
+                    {priceError && (
+                      <FormHelperText error>{priceError}</FormHelperText>
+                    )}
                   </FormControl>
                   <Box sx={{ display: "flex" }}>
                     <Button

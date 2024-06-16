@@ -26,9 +26,7 @@ function App() {
         <Route path="/user/signup" element={<CreateAccount />} />
 
         <Route path="/listing/new" element={<CreateListing />} />
-        {/* TODO: change full url to `/listing/edit/:id` */}
         <Route path="/listing/edit/:id" element={<EditListing />} />
-        {/* TODO: change full url to `/listing/view/:id` */}
         <Route path="/listing/view/:id" element={<ViewListing />} />
         {/* TODO: Give path a listing ID?*/}
         <Route path="/messages" element={<Messages />} />
