@@ -1,26 +1,40 @@
+import pandas as pd
 import tensorflow as tf
-from index import load_data, preprocess_data
-from model import RecommenderModel
+import numpy as np
 
-# Load and preprocess data
-data = load_data()
-dataset = preprocess_data(data)
+# Confirms if your computer is ideally using a GPU-accelerated version of TensorFlow.
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-# Define and compile model
-user_vocab = data["user_id"].unique()
-item_vocab = data["product_id"].unique()
-model = RecommenderModel(user_vocab, item_vocab)
+data = pd.read_csv('data.csv')
 
-# Build the model by providing the input shape
-model.build(
-    input_shape={"user_id": tf.TensorShape([None]), "item_id": tf.TensorShape([None])}
-)
+target_columns = ['title', 'description', 'price']
+data['combined_features'] = data[target_columns].astype(str).apply(' '.join, axis=1)
 
-# Compile the model
-model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=0.1))
+tokenizer = tf.keras.preprocessing.text.Tokenizer()
+tokenizer.fit_on_texts(data['combined_features'])
+vocab_size = len(tokenizer.word_index) + 1
 
-# Train the model
-model.fit(dataset, epochs=500)
+sequences = tokenizer.texts_to_sequences(data['combined_features'])
+padded_sequences = tf.keras.preprocessing.sequence.pad_sequences(sequences)
 
-# Save the model
-model.save("saved_model/recommender_model")
+tfidf_matrix = np.zeros((len(data), vocab_size))
+
+for i, seq in enumerate(sequences):
+    print("iteration: " + str(i) +" out of: " + str(len(sequences)))
+    word_freq = dict(zip(*np.unique(seq, return_counts=True)))
+    doc_len = len(seq)
+    for word, freq in word_freq.items():
+        tf_value = freq / doc_len
+        idf_value = np.log(len(data) / (1 + sum([1 for s in sequences if word in s])))
+        tfidf_matrix[i, word] = tf_value * idf_value
+
+tfidf_tensor = tf.convert_to_tensor(tfidf_matrix, dtype=tf.float32)
+
+normalized_vectors = tf.nn.l2_normalize(tfidf_tensor, axis=1)
+
+cosine_similarity_matrix = tf.matmul(normalized_vectors, normalized_vectors, transpose_b=True)
+
+cosine_similarity_matrix = cosine_similarity_matrix.numpy()
+
+np.save('cosine_similarity_matrix.npy', cosine_similarity_matrix)
+data.to_csv('processed_data.csv', index=False)
