@@ -95,4 +95,4 @@ jobs:
 
       - run: pip install guarddog
 
-      - run: guarddog verify "apps/algorithm/${{ matrix.service }}/requirements.txt" --exclude-rules repository_integrity_mismatch
+      - run: guarddog pypi verify "apps/algorithm/${{ matrix.service }}/requirements.txt" --exclude-rules repository_integrity_mismatch

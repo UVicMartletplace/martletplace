@@ -109,4 +109,4 @@ jobs:
 
       - run: pip install guarddog
 
-      - run: guarddog verify "apps/backend/${{ matrix.service }}/package.json" --exclude-rules repository_integrity_mismatch
+      - run: guarddog npm verify "apps/backend/${{ matrix.service }}/package.json" --exclude-rules repository_integrity_mismatch
