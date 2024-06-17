@@ -14,6 +14,7 @@ import { useState, ChangeEvent, useEffect, useCallback } from "react";
 import Filters from "./filters";
 import { useNavigate } from "react-router-dom";
 import * as React from "react";
+import _axios_instance from "../_axios_instance.tsx";
 
 interface SearchObject {
   query: string;
@@ -29,7 +30,7 @@ interface SearchObject {
 }
 
 interface SearchBarProps {
-  onSearch: () => void;
+  onSearch: (searchObject: SearchObject) => void;
   sortBy: string;
 }
 
@@ -37,8 +38,26 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
+  const handleMessageRoute = () => {
+    navigate("/messages");
+  };
+
+  const handleAccountRoute = () => {
+    navigate("/user");
+  };
+
+  const handleReload = () => {
+    navigate("/");
+    window.location.reload();
+  };
+
+  const handleListingRoute = () => {
+    navigate("/listing/view");
+  };
+
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [initialSearch, setInitialSearch] = useState("RELEVANCE");
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -49,7 +68,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
     longitude: 0,
     sort: "RELEVANCE",
     page: 1,
-    limit: 20,
+    limit: 6,
   });
 
   const toggleFilters = () => {
@@ -70,38 +89,26 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
       query: searchInput,
       sort: sortBy,
     };
-    console.log("Search Object:", searchObject);
-    onSearch();
-    // API CALL HERE???
-  }, [filters, searchInput, sortBy, onSearch]);
+    onSearch(searchObject);
+  }, [filters, searchInput, sortBy]);
 
   useEffect(() => {
-    if (sortBy !== "") {
-      handleSearch();
+    if (sortBy !== initialSearch) {
+      const searchObject: SearchObject = {
+        ...filters,
+        query: searchInput,
+        sort: sortBy,
+        page: 1,
+      };
+      setInitialSearch("");
+      onSearch(searchObject);
     }
-  }, [sortBy, handleSearch]);
+  }, [sortBy]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleSearch();
     }
-  };
-
-  const handleMessageRoute = () => {
-    navigate("/messages");
-  };
-
-  const handleAccountRoute = () => {
-    navigate("/user");
-  };
-
-  const handleReload = () => {
-    navigate("/");
-    window.location.reload();
-  };
-
-  const handleListingRoute = () => {
-    navigate("/listing/view");
   };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

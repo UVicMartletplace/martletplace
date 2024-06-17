@@ -87,7 +87,7 @@ const Filters = ({ onFilterChange }: FiltersProps) => {
   const isDesktop = useMediaQuery("(min-width:850px)");
 
   return (
-    <Grid container xs={isDesktop ? 5 : 10}>
+    <Grid item container xs={isDesktop ? 5 : 10}>
       <Typography variant="h6" component="h3" m={1}>
         Filters
       </Typography>
