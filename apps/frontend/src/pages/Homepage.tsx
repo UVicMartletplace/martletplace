@@ -7,13 +7,14 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  FormHelperText,
+  InputLabel,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
 import SearchBar from "../components/searchBar.tsx";
 import ListingCard from "../components/listingCard.tsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as React from "react";
+import _axios_instance from "../_axios_instance.tsx";
 
 interface ListingObject {
   listingID: string;
@@ -26,131 +27,90 @@ interface ListingObject {
   imageUrl: string;
 }
 
+interface SearchObject {
+  query: string;
+  minPrice: number | null;
+  maxPrice: number | null;
+  status: string;
+  searchType: string;
+  latitude: number;
+  longitude: number;
+  sort: string;
+  page: number;
+  limit: number;
+}
+
 const Homepage = () => {
   const classes = useStyles();
 
   // Listings per page
-  const listingsPerPage = 6;
-
   const [listingObjects, setListingObjects] = useState<ListingObject[]>([]);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [sortBy, setSortBy] = React.useState<string>(""); // Add this state
+  const [sortBy, setSortBy] = React.useState<string>("RELEVANCE");
+  const [totalItems, setTotalItems] = useState(0);
+  const [searchObject, setSearchObject] = useState<SearchObject>({
+    query: "",
+    minPrice: null,
+    maxPrice: null,
+    status: "AVAILABLE",
+    searchType: "LISTING",
+    latitude: 0,
+    longitude: 0,
+    sort: "RELEVANCE",
+    page: 1,
+    limit: 6,
+  });
+  const initialRender = useRef(true);
 
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
   };
 
   // Calculate the total number of pages
-  const totalPages = Math.ceil(listingObjects.length / listingsPerPage);
-
-  // Get the listings for the current page
-  const displayedListings = listingObjects.slice(
-    (currentPage - 1) * listingsPerPage,
-    currentPage * listingsPerPage,
-  );
+  const [totalPages, setTotalPages] = useState(10);
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    page: number,
+    currentPage: number
   ) => {
-    setCurrentPage(page);
+    setCurrentPage(currentPage);
+    console.log("Page:", currentPage);
+    const tempSearchObejct = { ...searchObject, page: currentPage };
+    handleSearch(tempSearchObejct);
   };
 
-  const handleSearch = () => {
-    //FETCH API DATA??
-    // UPDATE LISTING OBJECTS
+  const handleSearch = (searchObject: SearchObject) => {
+    setSearchObject(searchObject);
+    console.log("Search Object:", searchObject);
+    _axios_instance
+      .get("/search", { params: { searchObject } })
+      .then((response) => {
+        setListingObjects(response.data.listings);
+        setTotalPages(Math.ceil(response.data.totalListings / 6));
+        setTotalItems(response.data.totalListings);
+      })
+      .catch((error) => {
+        console.error("Error fetching listings:", error);
+      });
     setSearchPerformed(true);
   };
 
-  const fetchListings = async () => {
-    setListingObjects([
-      {
-        listingID: "A23F29039B23",
-        sellerID: "A23F29039B23",
-        sellerName: "Amy Santiago",
-        title: "Used Calculus Textbook",
-        description: "No wear and tear, drop-off available.",
-        price: 50,
-        dateCreated: "2024-05-23T15:30:00Z",
-        imageUrl: "https://picsum.photos/200/300",
-      },
-      {
-        listingID: "B34G67039C24",
-        sellerID: "B34G67039C24",
-        sellerName: "Jake Peralta",
-        title: "Advanced Physics Textbook",
-        description: "Slightly worn, no markings inside.",
-        price: 60,
-        dateCreated: "2024-04-15T14:30:00Z",
-        imageUrl: "https://picsum.photos/200/301",
-      },
-      {
-        listingID: "C45H89049D25",
-        sellerID: "C45H89049D25",
-        sellerName: "Rosa Diaz",
-        title: "Organic Chemistry Textbook",
-        description: "Brand new, still in original packaging.",
-        price: 70,
-        dateCreated: "2024-03-20T13:30:00Z",
-        imageUrl: "https://picsum.photos/200/302",
-      },
-      {
-        listingID: "D56I90159E26",
-        sellerID: "D56I90159E26",
-        sellerName: "Terry Jeffords",
-        title: "Microeconomics Textbook",
-        description: "Like new, hardly used.",
-        price: 65,
-        dateCreated: "2024-02-10T12:30:00Z",
-        imageUrl: "https://picsum.photos/200/303",
-      },
-      {
-        listingID: "E67J01269F27",
-        sellerID: "E67J01269F27",
-        sellerName: "Gina Linetti",
-        title: "Introduction to Psychology",
-        description: "A few highlights, otherwise perfect.",
-        price: 55,
-        dateCreated: "2024-01-05T11:30:00Z",
-        imageUrl: "https://picsum.photos/200/304",
-      },
-      {
-        listingID: "F78K12379G28",
-        sellerID: "F78K12379G28",
-        sellerName: "Charles Boyle",
-        title: "Anthropology 101 Textbook",
-        description: "Some dog-eared pages, but very usable.",
-        price: 45,
-        dateCreated: "2023-12-15T10:30:00Z",
-        imageUrl: "https://picsum.photos/200/305",
-      },
-      {
-        listingID: "G89L23489H29",
-        sellerID: "G89L23489H29",
-        sellerName: "Hitchcock",
-        title: "World History Textbook",
-        description: "Good condition, minimal notes inside.",
-        price: 50,
-        dateCreated: "2023-11-20T09:30:00Z",
-        imageUrl: "https://picsum.photos/200/306",
-      },
-      {
-        listingID: "H90M34599I30",
-        sellerID: "H90M34599I30",
-        sellerName: "Scully",
-        title: "Basic Algebra Textbook",
-        description: "Cover slightly damaged, content intact.",
-        price: 40,
-        dateCreated: "2023-10-18T08:30:00Z",
-        imageUrl: "https://picsum.photos/200/307",
-      },
-    ]);
-  };
-
   useEffect(() => {
-    fetchListings();
+    //called on page load
+    if (initialRender.current) {
+      initialRender.current = false;
+      console.log("Fetching Recomendations...");
+      _axios_instance
+        .get("/recomendations", { params: { page: 1, limit: 24 } })
+        .then((response) => {
+          setListingObjects(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching listings:", error);
+        });
+      setSearchPerformed(false);
+    }
   }, []);
 
   return (
@@ -181,11 +141,11 @@ const Homepage = () => {
             gutterBottom
             sx={{ margin: "10px" }}
           >
-            Results ({listingObjects.length})
+            Results ({totalItems})
           </Typography>
           <FormControl sx={{ minWidth: "25%" }}>
-            <Select onChange={handleSortBy} displayEmpty>
-              <FormHelperText>Sort By</FormHelperText>
+            <InputLabel sx={{ background: "white" }}>Sort By</InputLabel>
+            <Select value={sortBy} onChange={handleSortBy}>
               <MenuItem value={"RELEVANCE"}>Relevance</MenuItem>
               <MenuItem value={"PRICE_ASC"}>Price Ascending</MenuItem>
               <MenuItem value={"PRICE_DESC"}>Price Descending</MenuItem>
@@ -224,7 +184,7 @@ const Homepage = () => {
         spacing={0}
         key="grid-listings"
       >
-        {displayedListings.map((listing) => (
+        {listingObjects.map((listing) => (
           <ListingCard key={listing.listingID} listing={listing} />
         ))}
       </Grid>
