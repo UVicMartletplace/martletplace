@@ -38,7 +38,9 @@ interface NewListingObject {
 
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
-  const [listingImageBinaries, setListingImageBinaries] = useState<string[]>([])
+  const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
+    [],
+  );
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
     "This field is required",
@@ -207,14 +209,11 @@ const CreateListing = () => {
     const uploadPromises = listingImageBinaries.map(async (imageBinary) => {
       try {
         // Attempt to upload the image
-        const response = await _axios_instance.post(
-          "/images", imageBinary ,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            }
-          }
-        );
+        const response = await _axios_instance.post("/images", imageBinary, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         // Return the URL of the uploaded image on success
         return { url: response.data.url };
       } catch (error) {

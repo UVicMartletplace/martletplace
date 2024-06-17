@@ -34,11 +34,11 @@ const MultiFileUpload = (props: Props) => {
             ...(prevItems || []),
             imageDataURL,
           ]);
-          const data=(imageDataURL).split(',')[1];
+          const data = imageDataURL.split(",")[1];
           props.setImageBinaries((prevItems) => [
             ...(prevItems || []),
             atob(data),
-          ])
+          ]);
 
           setImages(
             <img src={imageDataURL} width="100%" alt={"Listing Image " + i} />,
