@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES6",
     "module": "commonjs",
-    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node", "jest"]
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
-  "include": ["src/**/*.ts", "tests"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "jest.config.ts", "jest.setup.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -2,10 +2,6 @@ import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import pgPromise from "pg-promise";
 
-import { run } from "../../lib/src/example";
-
-import { run } from "../../lib/src/example";
-
 const PORT = 8212;
 
 const app = express();
