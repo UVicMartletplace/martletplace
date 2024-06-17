@@ -49,7 +49,6 @@ describe('GET /api/listing/:id', () => {
   });
 });
 
-// Example of using supertest to test the actual API endpoint
 describe('GET /api/listing/:id (integration test)', () => {
   it('should return data for valid listing id (1)', async () => {
     const response = await request(app).get('/api/listing/1');
