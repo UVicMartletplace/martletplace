@@ -58,8 +58,8 @@ jobs:
       - name: Test
         run: docker compose exec ${{ matrix.service }} pytest
 
-  security:
-    name: Security
+  sast:
+    name: Static Code Anaylysis Security
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -78,3 +78,21 @@ jobs:
 
       - name: Test
         run: bandit -c .bandit -ll -ii -n 3 -a file -r src/
+
+  guarddog:
+    name: Supply Chain Security
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - run: pip install guarddog
+
+      - run: guarddog verify "apps/algorithm/${{ matrix.service }}/requirements.txt" --exclude-rules repository_integrity_mismatch

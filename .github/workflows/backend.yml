@@ -78,8 +78,8 @@ jobs:
       - name: Test
         run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
 
-  security:
-    name: Security
+  sast:
+    name: Static Code Anaylysis Security
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -92,3 +92,21 @@ jobs:
         uses: ajinabraham/njsscan-action@master
         with:
           args: './apps/backend/${{ matrix.service }}'
+
+  guarddog:
+    name: Supply Chain Security
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - run: pip install guarddog
+
+      - run: guarddog verify "apps/backend/${{ matrix.service }}/package.json" --exclude-rules repository_integrity_mismatch
