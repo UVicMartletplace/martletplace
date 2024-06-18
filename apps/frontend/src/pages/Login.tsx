@@ -3,37 +3,55 @@ import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
-import axios from "axios";
+import Cookies from "js-cookie";
+import { useUser, getDefaultUser } from "../UserContext";
+// --- Uncomment these exports and remove getDefaultUser when backend auth is implemented ---
+// import axios from "axios";
+// import { jwtDecode } from "jwt-decode";
+
+// interface User {
+//   id: string;
+//   username: string;
+//   name: string;
+// }
 
 const Login = () => {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const isFormIncomplete = !email || !password;
+  const { setUser } = useUser();
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    axios
-      .post("/api/login", {
-        email,
-        password,
-      })
-      .then(function (response) {
-        console.log(response);
-        navigate("/");
-      })
-      .catch(function (error) {
-        console.error("Login failed:", error);
-        setError(
-          "Login unsuccessful. Invalid username and password combination",
-        );
-      });
+    try {
+      // --- Delete this when backend auth is implemented ---
+      const mockUser = getDefaultUser();
+      setUser(mockUser);
 
-    // Temporary navigation to homepage until backend is ready: ticket #140
-    navigate("/");
+      const mockToken = btoa(JSON.stringify(mockUser));
+      const mockJwtToken = `mockHeader.${mockToken}.mockSignature`;
+      Cookies.set("token", mockJwtToken, { expires: 1, sameSite: "strict" });
+
+      // --- Uncomment everything below when backend auth is implemented ---
+      // // TODO: Email and password format validation (for front end)
+      // const response = await axios.post("/api/login", {
+      //   email,
+      //   password
+      // });
+      // const token = response.data.token;
+      // Cookies.set("token", token, { sameSite: "strict", expires: 1 });
+      // const decoded: User = jwtDecode<User>(token);
+      // setUser(decoded);
+
+      navigate("/");
+    } catch (error) {
+      // TODO: handle 401 error vs other errors differently
+      setError("Login unsuccessful. Please try again later.");
+    }
   };
 
   return (

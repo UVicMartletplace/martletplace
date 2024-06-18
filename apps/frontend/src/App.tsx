@@ -10,33 +10,118 @@ import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
 import MyProfile from "./pages/MyProfile";
+import { UserProvider } from "./UserContext";
+import PrivateRoute from "./components/Auth/PrivateRoute";
+import AuthRoute from "./components/Auth/AuthRoute";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* If not logged in redirect to login page */}
-        <Route path="/" element={<Homepage />} />
+    <UserProvider>
+      <Router>
+        <Routes>
+          {/* Auth Routes */}
+          <Route
+            path="/user/login"
+            element={
+              <AuthRoute>
+                <Login />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/user/resetpassword"
+            element={
+              <AuthRoute>
+                <ForgotPassword />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/user/signup"
+            element={
+              <AuthRoute>
+                <CreateAccount />
+              </AuthRoute>
+            }
+          />
 
-        {/* If full URL is `/user/:id` then it would show another users profile,
-        otherwise current users profile is shown. */}
-        <Route path="/user" element={<MyProfile />} />
-        <Route path="/user/reviews" element={<MyReviews />} />
-        <Route path="/user/listings" element={<MyListings />} />
+          {/* Private Routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Homepage />
+              </PrivateRoute>
+            }
+          />
 
-        <Route path="/user/login" element={<Login />} />
-        <Route path="/user/resetpassword" element={<ForgotPassword />} />
-        <Route path="/user/signup" element={<CreateAccount />} />
-
-        <Route path="/listing/new" element={<CreateListing />} />
-        {/* TODO: change full url to `/listing/edit/:id` */}
-        <Route path="/listing/edit" element={<EditListing />} />
-        {/* TODO: change full url to `/listing/view/:id` */}
-        <Route path="/listing/view" element={<ViewListing />} />
-
-        <Route path="/messages" element={<Messages />} />
-      </Routes>
-    </Router>
+          <Route
+            path="/user"
+            element={
+              <PrivateRoute>
+                <MyProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/profile"
+            element={
+              <PrivateRoute>
+                <MyProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/reviews"
+            element={
+              <PrivateRoute>
+                <MyReviews />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/listings"
+            element={
+              <PrivateRoute>
+                <MyListings />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/listing/new"
+            element={
+              <PrivateRoute>
+                <CreateListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/listing/edit"
+            element={
+              <PrivateRoute>
+                <EditListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/listing/view"
+            element={
+              <PrivateRoute>
+                <ViewListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <PrivateRoute>
+                <Messages />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </UserProvider>
   );
 }
 
