@@ -119,7 +119,7 @@ def test_search_for_multiple_listings():
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"lat": 40.7128, "lon": -74.0060},
+            "location": {"lat": 45.4528, "lon": -75.7060},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "imageUrl": "https://example.com/image2.jpg",
