@@ -80,7 +80,7 @@ class Listing(BaseModel):
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
                 "price": 450.00,
-                "location": {"latitude": 45.4215, "longitude": -75.6972},
+                "location": {"lat": 45.4215, "lon": -75.6972},
                 "status": "AVAILABLE",
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
@@ -154,6 +154,15 @@ async def search(
             search_body["query"]["bool"]["filter"].append(
                 {"range": {"price": price_range}}
             )
+
+        search_body["query"]["bool"]["filter"].append(
+            {
+                "geo_distance": {
+                    "distance": "5km",
+                    "location": {"lat": latitude, "lon": longitude},
+                }
+            }
+        )
 
         if "DISTANCE" in sort:
             search_body["sort"].append(
