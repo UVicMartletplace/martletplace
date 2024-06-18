@@ -78,7 +78,9 @@ services:
     build: apps/algorithm/search
     container_name: martletplace_search
     restart: unless-stopped
-    depends_on: []
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
