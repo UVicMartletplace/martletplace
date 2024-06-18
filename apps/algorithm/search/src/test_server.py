@@ -578,6 +578,31 @@ def test_search_with_user_search_negative():
     assert response.json() == []
 
 
+def test_search_with_invalid_search_type():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "searchType": "INVALID",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "enum",
+                "loc": ["query", "searchType"],
+                "msg": "Input should be 'LISTINGS' or 'USERS'",
+                "input": "INVALID",
+                "ctx": {"expected": "'LISTINGS' or 'USERS'"},
+            }
+        ]
+    }
+
+
 def test_only_return_results_within_5km_of_location():
     es.index(
         index=TEST_INDEX,
@@ -706,31 +731,6 @@ def test_search_with_out_of_bounds_longitude():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "longitude must be between -180 and 180"}
-
-
-def test_search_with_invalid_search_type():
-    response = client.get(
-        "/api/search",
-        params={
-            "authorization": "Bearer testtoken",
-            "query": "laptop",
-            "latitude": 45.4315,
-            "longitude": -75.6972,
-            "searchType": "INVALID",
-        },
-    )
-    assert response.status_code == 422
-    assert response.json() == {
-        "detail": [
-            {
-                "type": "enum",
-                "loc": ["query", "searchType"],
-                "msg": "Input should be 'LISTINGS' or 'USERS'",
-                "input": "INVALID",
-                "ctx": {"expected": "'LISTINGS' or 'USERS'"},
-            }
-        ]
-    }
 
 
 def test_search_with_sorting_by_price_asc():
