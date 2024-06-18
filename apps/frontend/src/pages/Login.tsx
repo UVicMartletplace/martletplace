@@ -56,7 +56,7 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       // TODO: handle 401 error vs other errors differently
-      setError("Login unsuccessful. Please try again later.");
+      setError("Login unsuccessful. Invalid username and password combination");
     }
   };
 
