@@ -332,7 +332,7 @@ def test_search_min_price_higher_than_max_price_fail():
         },
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "minPrice cannot be higher than maxPrice"}
+    assert response.json() == {"detail": "minPrice cannot be greater than maxPrice"}
 
 
 def test_search_with_invalid_search_type():

@@ -108,6 +108,10 @@ async def search(
             raise HTTPException(status_code=422, detail="minPrice cannot be negative")
         if maxPrice is not None and maxPrice < 0:
             raise HTTPException(status_code=422, detail="maxPrice cannot be negative")
+        if minPrice is not None and maxPrice is not None and minPrice > maxPrice:
+            raise HTTPException(
+                status_code=422, detail="minPrice cannot be greater than maxPrice"
+            )
 
         INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
