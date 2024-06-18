@@ -289,6 +289,20 @@ def test_search_with_too_high_price_range_fail():
     assert response.json() == []
 
 
+def test_search_with_negative_min_price_fail():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "minPrice": -500.00
+        },
+    )
+    assert response.status_code == 422
+
+
 def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
