@@ -680,7 +680,7 @@ def test_search_with_missing_longitude():
     }
 
 
-def test_search_with_invalid_latitude():
+def test_search_with_out_of_bounds_latitude():
     response = client.get(
         "/api/search",
         params={
@@ -691,14 +691,7 @@ def test_search_with_invalid_latitude():
         },
     )
     assert response.status_code == 422
-    assert response.json() == {
-        "detail": {
-            "loc": ["query", "latitude"],
-            "msg": "ensure this value is less than or equal to 90",
-            "type": "value_error.number.not_le",
-            "ctx": {"limit_value": 90},
-        }
-    }
+    assert response.json() == {"detail": "latitude must be between -90 and 90"}
 
 
 def test_search_with_invalid_search_type():
