@@ -694,6 +694,20 @@ def test_search_with_out_of_bounds_latitude():
     assert response.json() == {"detail": "latitude must be between -90 and 90"}
 
 
+def test_search_with_out_of_bounds_longitude():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -195.6972,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "longitude must be between -180 and 180"}
+
+
 def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
