@@ -96,7 +96,7 @@ function App() {
             }
           />
           <Route
-            path="/listing/edit"
+            path="/listing/edit/:id"
             element={
               <PrivateRoute>
                 <EditListing />
@@ -104,7 +104,7 @@ function App() {
             }
           />
           <Route
-            path="/listing/view"
+            path="/listing/view/:id"
             element={
               <PrivateRoute>
                 <ViewListing />
