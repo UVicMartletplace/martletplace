@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 import Cookies from "js-cookie";
 import useUser from "../hooks/useUser";
-// --- Uncomment these exports and remove getDefaultUser when backend auth is implemented ---
-// import axios from "axios";
+import axios from "axios";
+// --- Uncomment this import and remove getDefaultUser when backend auth is implemented ---
 // import { jwtDecode } from "jwt-decode";
 import { getDefaultUser } from "../MockUserUtils";
 
@@ -37,6 +37,11 @@ const Login = () => {
       const mockJwtToken = `mockHeader.${mockToken}.mockSignature`;
       Cookies.set("token", mockJwtToken, { expires: 1, sameSite: "strict" });
 
+      // right now this is here just for the cypress tests
+      await axios.post("/api/login", {
+          email,
+          password
+        });
       // --- Uncomment everything below when backend auth is implemented ---
       // // TODO: Email and password format validation (for front end)
       // const response = await axios.post("/api/login", {
