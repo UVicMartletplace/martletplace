@@ -39,9 +39,9 @@ const Login = () => {
 
       // right now this is here just for the cypress tests
       await axios.post("/api/login", {
-          email,
-          password
-        });
+        email,
+        password,
+      });
       // --- Uncomment everything below when backend auth is implemented ---
       // // TODO: Email and password format validation (for front end)
       // const response = await axios.post("/api/login", {
