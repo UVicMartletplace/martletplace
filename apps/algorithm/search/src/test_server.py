@@ -661,7 +661,7 @@ def test_search_with_invalid_search_type():
     }
 
 
-def test_search_with_sorting():
+def test_search_with_sorting_by_PRICE_ASC():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -688,7 +688,7 @@ def test_search_with_sorting():
             "title": "Used Textbook",
             "description": "Lightly used textbook for sale.",
             "price": 30.00,
-            "location": {"lat": 40.7128, "lon": -74.0060},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "imageUrl": "https://example.com/image2.jpg",
@@ -709,4 +709,4 @@ def test_search_with_sorting():
     results = response.json()
     assert isinstance(results, list)
     assert len(results) > 0
-    assert results[0]["price"] == 30.00  # Assuming the sorting is correct
+    assert results[0]["price"] == 30.00
