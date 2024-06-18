@@ -104,6 +104,9 @@ async def search(
     sort: Sort = "RELEVANCE",
 ):
     try:
+        if minPrice is not None and minPrice < 0:
+            raise HTTPException(status_code=422, detail="minPrice cannot be negative")
+
         INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
         sort_options = {
@@ -178,8 +181,6 @@ async def search(
 
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Index not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/search/reindex/listing-created")
