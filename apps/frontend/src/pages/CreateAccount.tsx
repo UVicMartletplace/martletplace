@@ -12,11 +12,12 @@ import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useUser, getDefaultUser } from "../UserContext";
+import { useUser } from "../UserContext";
 // --- Uncomment these imports and delete getDefaultUser when backend auth is implemented ---
 // import axios from "axios";
 // import Cookies from "js-cookie";
 // import { jwtDecode } from "jwt-decode";
+import { getDefaultUser } from "../MockUserUtils";
 
 const CreateAccount = () => {
   const classes = useStyles();

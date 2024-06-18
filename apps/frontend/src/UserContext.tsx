@@ -65,12 +65,3 @@ export const useUser = (): UserContextType => {
   }
   return context;
 };
-
-// --- Delete everything below when backend auth is implemented ---
-const defaultUser: User = {
-  id: "123",
-  username: "defaultUser",
-  name: "Default User",
-};
-
-export const getDefaultUser = () => defaultUser;

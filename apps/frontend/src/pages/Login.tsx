@@ -4,10 +4,11 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 import Cookies from "js-cookie";
-import { useUser, getDefaultUser } from "../UserContext";
+import { useUser } from "../UserContext";
 // --- Uncomment these exports and remove getDefaultUser when backend auth is implemented ---
 // import axios from "axios";
 // import { jwtDecode } from "jwt-decode";
+import { getDefaultUser } from "../MockUserUtils";
 
 // interface User {
 //   id: string;
