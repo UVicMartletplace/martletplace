@@ -8,7 +8,7 @@ services:
     depends_on: []
     volumes: [ ./apps/frontend/src:/app/src ]
     environment: []
-    ports: [ 8101:8101 ]
+    #ports: [ 8101:8101 ]
     networks: [ proxy-frontend ]
 
   proxy:
@@ -32,7 +32,7 @@ services:
     volumes: [ ./apps/backend/user/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    ports: [ 8211:8211 ]
+    #ports: [ 8211:8211 ]
     networks: [ proxy-user, user-datalayer ]
 
   listing:
@@ -46,7 +46,7 @@ services:
     volumes: [ ./apps/backend/listing/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    ports: [ 8212:8212 ]
+    #ports: [ 8212:8212 ]
     networks: [ proxy-listing, listing-datalayer ]
 
   review:
@@ -60,7 +60,7 @@ services:
     volumes: [ ./apps/backend/review/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    ports: [ 8213:8213 ]
+    #ports: [ 8213:8213 ]
     networks: [ proxy-review, review-datalayer ]
 
   message:
@@ -71,7 +71,7 @@ services:
     volumes: [ ./apps/backend/message/src:/app/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    ports: [ 8214:8214 ]
+    #ports: [ 8214:8214 ]
     networks: [ proxy-message, message-datalayer ]
 
   search:
@@ -84,7 +84,7 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
-    ports: [ 8221:8221 ]
+    #ports: [ 8221:8221 ]
     networks: [ proxy-search, search-datalayer ]
 
   recommend:
@@ -94,7 +94,7 @@ services:
     depends_on: []
     volumes: [ ./apps/algorithm/recommend/src:/app/src ]
     environment: []
-    ports: [ 8222:8222 ]
+    #ports: [ 8222:8222 ]
     networks: [ proxy-recommend, recommend-datalayer ]
 
   datalayer:
@@ -110,7 +110,7 @@ services:
       - POSTGRESQL_DATABASE=martletplace
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
-    ports: [ 8300:8300, 8301:8301 ]
+    #ports: [ 8300:8300, 8301:8301 ]
     networks: [ datalayer-database, datalayer-elasticsearch, datalayer-cache, datalayer-blob ]
 
   database:
@@ -123,7 +123,7 @@ services:
       - POSTGRES_USER=martletplace
       - POSTGRES_PASSWORD=johuigytfrdcv
       - POSTGRES_DB=martletplace
-    ports: [ 8310:8310 ]
+    #ports: [ 8310:8310 ]
     networks: [ datalayer-database ]
 
   elasticsearch:
@@ -134,7 +134,7 @@ services:
     volumes: []
     environment:
       - ELASTIC_PASSWORD=serxdfcghjfc
-    ports: [ 8311:8311 ]
+    #ports: [ 8311:8311 ]
     networks: [ datalayer-elasticsearch, search-datalayer ]
     mem_limit: 1GB
 
