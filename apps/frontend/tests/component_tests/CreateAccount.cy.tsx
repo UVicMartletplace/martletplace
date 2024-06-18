@@ -3,7 +3,7 @@ import CreateAccount from "../../src/pages/CreateAccount";
 
 describe("<CreateAccount />", () => {
   const testEmail = "test@uvic.ca";
-  const testName = "Test User";
+  const testName = "Default User";
   const testUsername = "testuser";
   const testPassword = "Test1234@";
   const invalidEmail = "test@gmail.com";
@@ -66,6 +66,12 @@ describe("<CreateAccount />", () => {
 
     // Check if navigation occurred as expected
     cy.location("pathname").should("eq", "/");
+
+    // Set url to /user/profile
+    cy.visit("/user/profile");
+
+    // Check if user name is displayed
+    cy.get("h4").contains("Default User");
   });
 
   it("does not navigate on unsuccessful account creation", () => {
