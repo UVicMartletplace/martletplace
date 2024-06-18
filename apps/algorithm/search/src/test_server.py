@@ -680,6 +680,27 @@ def test_search_with_missing_longitude():
     }
 
 
+def test_search_with_invalid_latitude():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 95.4315,
+            "longitude": -75.6972,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": {
+            "loc": ["query", "latitude"],
+            "msg": "ensure this value is less than or equal to 90",
+            "type": "value_error.number.not_le",
+            "ctx": {"limit_value": 90},
+        }
+    }
+
+
 def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
