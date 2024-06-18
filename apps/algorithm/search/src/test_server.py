@@ -636,6 +636,56 @@ def test_only_return_results_within_5km_of_location():
     ]
 
 
+def test_search_with_missing_latitude():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "longitude": -75.6972,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "missing",
+                "loc": [
+                    "query",
+                    "latitude"
+                ],
+                "msg": "Field required",
+                "input": None
+            }
+        ]
+    }
+
+
+def test_search_with_missing_longitude():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "missing",
+                "loc": [
+                    "query",
+                    "longitude"
+                ],
+                "msg": "Field required",
+                "input": None
+            }
+        ]
+    }
+
+
 def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
