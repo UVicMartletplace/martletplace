@@ -13,8 +13,8 @@ import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import useUser from "../hooks/useUser";
+import axios from "axios";
 // --- Uncomment these imports and delete getDefaultUser when backend auth is implemented ---
-// import axios from "axios";
 // import Cookies from "js-cookie";
 // import { jwtDecode } from "jwt-decode";
 import { getDefaultUser } from "../MockUserUtils";
@@ -80,6 +80,13 @@ const CreateAccount = () => {
       const mockJwtToken = `mockHeader.${mockToken}.mockSignature`;
       Cookies.set("token", mockJwtToken, { expires: 1, sameSite: "strict" });
 
+      // right now this is here only to keep the test functionality
+      await axios.post("/api/user", {
+        name,
+        username,
+        email,
+        password,
+      });
       // --- Uncomment everything below when backend auth is implemented ---
       // const response = await axios.post("/api/user", {
       //  name,
