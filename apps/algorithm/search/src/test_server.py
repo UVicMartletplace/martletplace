@@ -569,6 +569,65 @@ def test_search_with_user_search_negative():
     assert response.json() == []
 
 
+def test_only_return_results_within_5km_of_location():
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"latitude": 40.7128, "longitude": -74.0060},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+        }
+    )
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "listingID": "abc123",
+            "sellerID": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450,
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        }
+    ]
+
+
+
 def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
