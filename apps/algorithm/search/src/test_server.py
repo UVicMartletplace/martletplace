@@ -453,6 +453,31 @@ def test_search_with_status_sold():
     ]
 
 
+def test_search_with_invalid_status():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "status": "SPAGHETTI",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "enum",
+                "loc": ["query", "status"],
+                "msg": "Input should be 'AVAILABLE' or 'SOLD'",
+                "input": "SPAGHETTI",
+                "ctx": {"expected": "'AVAILABLE' or 'SOLD'"},
+            }
+        ]
+    }
+
+
 def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
@@ -570,6 +595,3 @@ def test_search_with_sorting():
     assert isinstance(results, list)
     assert len(results) > 0
     assert results[0]["price"] == 30.00  # Assuming the sorting is correct
-
-
-
