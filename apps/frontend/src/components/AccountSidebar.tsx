@@ -9,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 import AccountSidebarItem from "./AccountSidebarItem";
-import { useUser } from "../UserContext";
+import useUser from "../hooks/useUser";
 
 const AccountSidebar = ({ selectedItem }: { selectedItem: string }) => {
   const styles = useStyles();

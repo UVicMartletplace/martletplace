@@ -4,7 +4,7 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 import Cookies from "js-cookie";
-import { useUser } from "../UserContext";
+import useUser from "../hooks/useUser";
 // --- Uncomment these exports and remove getDefaultUser when backend auth is implemented ---
 // import axios from "axios";
 // import { jwtDecode } from "jwt-decode";

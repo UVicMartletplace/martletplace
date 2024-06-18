@@ -12,7 +12,7 @@ import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useUser } from "../UserContext";
+import useUser from "../hooks/useUser";
 // --- Uncomment these imports and delete getDefaultUser when backend auth is implemented ---
 // import axios from "axios";
 // import Cookies from "js-cookie";

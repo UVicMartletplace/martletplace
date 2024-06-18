@@ -10,7 +10,7 @@ import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
 import MyProfile from "./pages/MyProfile";
-import { UserProvider } from "./UserContext";
+import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AuthRoute from "./components/Auth/AuthRoute";
 
