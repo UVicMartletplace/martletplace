@@ -297,7 +297,7 @@ def test_search_with_negative_min_price_fail():
             "query": "laptop",
             "latitude": 45.4315,
             "longitude": -75.6972,
-            "minPrice": -500.00
+            "minPrice": -500.00,
         },
     )
     assert response.status_code == 422
@@ -312,11 +312,27 @@ def test_search_with_negative_max_price_fail():
             "query": "laptop",
             "latitude": 45.4315,
             "longitude": -75.6972,
-            "maxPrice": -500.00
+            "maxPrice": -500.00,
         },
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "maxPrice cannot be negative"}
+
+
+def test_search_min_price_higher_than_max_price_fail():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "minPrice": 500.00,
+            "maxPrice": 100.00,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "minPrice cannot be higher than maxPrice"}
 
 
 def test_search_with_invalid_search_type():
