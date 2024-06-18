@@ -27,3 +27,4 @@ dist-ssr
 coverage
 .nyc_output
 .idea/
+cypress/screenshots
