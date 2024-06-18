@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { User, UserContextType } from "./types";
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
