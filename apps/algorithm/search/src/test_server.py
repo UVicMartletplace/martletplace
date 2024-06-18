@@ -733,6 +733,75 @@ def test_search_with_out_of_bounds_longitude():
     assert response.json() == {"detail": "longitude must be between -180 and 180"}
 
 
+def test_search_with_sorting_by_relevance():
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": "wally",
+            "sellerName": "wally monga",
+            "title": "Used Textbook",
+            "description": "Lightly used laptop textbook for sale.",
+            "price": 300.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image3.jpg",
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable laptop for laptop gaming laptop and professional laptop use.",
+            "price": 450.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="ghi789",
+        body={
+            "listingId": "ghi789",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Textbook ",
+            "description": "Lightly used laptop laptop laptop textbook for sale.",
+            "price": 30.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "RELEVANCE",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) > 0
+    assert results[0]["listingID"] == "def456"
+    assert results[1]["listingID"] == "ghi789"
+    assert results[2]["listingID"] == "abc123"
+
+
 def test_search_with_sorting_by_price_asc():
     es.index(
         index=TEST_INDEX,
