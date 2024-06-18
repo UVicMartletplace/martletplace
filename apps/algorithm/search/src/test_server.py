@@ -661,7 +661,7 @@ def test_search_with_invalid_search_type():
     }
 
 
-def test_search_with_sorting_by_PRICE_ASC():
+def test_search_with_sorting_by_price_asc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -712,7 +712,7 @@ def test_search_with_sorting_by_PRICE_ASC():
     assert results[0]["price"] == 30.00
 
 
-def test_search_with_sorting_by_PRICE_DESC():
+def test_search_with_sorting_by_price_desc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
