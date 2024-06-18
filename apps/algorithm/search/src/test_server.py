@@ -650,12 +650,9 @@ def test_search_with_missing_latitude():
         "detail": [
             {
                 "type": "missing",
-                "loc": [
-                    "query",
-                    "latitude"
-                ],
+                "loc": ["query", "latitude"],
                 "msg": "Field required",
-                "input": None
+                "input": None,
             }
         ]
     }
@@ -675,12 +672,9 @@ def test_search_with_missing_longitude():
         "detail": [
             {
                 "type": "missing",
-                "loc": [
-                    "query",
-                    "longitude"
-                ],
+                "loc": ["query", "longitude"],
                 "msg": "Field required",
-                "input": None
+                "input": None,
             }
         ]
     }
