@@ -1,12 +1,15 @@
 import { BrowserRouter } from "react-router-dom";
 import MyProfile from "../../src/pages/MyProfile";
+import TestProviders from "../utils/TestProviders";
 
 describe("Account Page", () => {
   beforeEach(() => {
     cy.mount(
-      <BrowserRouter>
-        <MyProfile />
-      </BrowserRouter>
+      <TestProviders>
+        <BrowserRouter>
+          <MyProfile />
+        </BrowserRouter>
+      </TestProviders>
     );
     cy.viewport(1280, 720);
   });

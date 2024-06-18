@@ -1,5 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import CreateAccount from "../../src/pages/CreateAccount";
+import TestProviders from "../utils/TestProviders";
 
 describe("<CreateAccount />", () => {
   const testEmail = "test@uvic.ca";
@@ -10,9 +11,11 @@ describe("<CreateAccount />", () => {
 
   beforeEach(() => {
     cy.mount(
-      <BrowserRouter>
-        <CreateAccount />
-      </BrowserRouter>
+      <TestProviders>
+        <BrowserRouter>
+          <CreateAccount />
+        </BrowserRouter>
+      </TestProviders>
     );
   });
 
