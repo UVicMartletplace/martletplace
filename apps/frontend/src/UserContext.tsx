@@ -7,19 +7,7 @@ import {
 } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-
-interface User {
-  id: string;
-  username: string;
-  name: string;
-}
-
-interface UserContextType {
-  user: User | null;
-  setUser: (user: User) => void;
-  logout: () => void;
-  loading: boolean;
-}
+import { User, UserContextType } from "./types";
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
