@@ -131,7 +131,10 @@ async def search(
                 {"match": {"status": status}},
             ]
         elif searchType == "USERS":
-            must_conditions = [{"match": {"sellerName": query}}]
+            must_conditions = [
+                {"match": {"sellerName": query}},
+                {"match": {"status": status}},
+            ]
         else:
             raise HTTPException(status_code=400, detail="Invalid searchType")
 
