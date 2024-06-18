@@ -1,5 +1,7 @@
 FROM node:20
 
+RUN apt-get update && apt-get install -y xvfb
+
 WORKDIR /app/service
 
 COPY package*.json ./
