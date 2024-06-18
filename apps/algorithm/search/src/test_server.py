@@ -83,34 +83,6 @@ def test_search_for_existing_listing():
     ]
 
 
-def test_search_empty_query():
-    response = client.get(
-        "/api/search",
-        params={
-            "authorization": "Bearer testtoken",
-            "query": "",
-            "latitude": 45.4315,
-            "longitude": -75.6972,
-        },
-    )
-    assert response.status_code == 200
-    assert response.json() == []
-
-
-def test_search_with_special_characters_in_query():
-    response = client.get(
-        "/api/search",
-        params={
-            "authorization": "Bearer testtoken",
-            "query": "laptop!@#$%^&*()_+",
-            "latitude": 45.4315,
-            "longitude": -75.6972,
-        },
-    )
-    assert response.status_code == 200
-    assert response.json() == []
-
-
 def test_search_for_multiple_listings():
     es.index(
         index=TEST_INDEX,
@@ -177,6 +149,34 @@ def test_search_for_multiple_listings():
             "imageUrl": "https://example.com/image1.jpg",
         },
     ]
+
+
+def test_search_empty_query():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_search_with_special_characters_in_query():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop!@#$%^&*()_+",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == []
 
 
 def test_search_with_price_range():
