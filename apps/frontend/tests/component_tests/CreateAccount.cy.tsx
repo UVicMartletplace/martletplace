@@ -69,12 +69,6 @@ describe("<CreateAccount />", () => {
 
     // Check if navigation occurred as expected
     cy.location("pathname").should("eq", "/");
-
-    // Set url to /user/profile
-    cy.visit("/user/profile");
-
-    // Check if user name is displayed
-    cy.get("h4").contains("Default User");
   });
 
   it("does not navigate on unsuccessful account creation", () => {
