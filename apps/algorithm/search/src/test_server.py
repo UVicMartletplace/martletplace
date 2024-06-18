@@ -61,7 +61,7 @@ def test_search_for_existing_listing():
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"lat": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "imageUrl": "https://example.com/image1.jpg",
@@ -73,7 +73,7 @@ def test_search_for_existing_listing():
         params={
             "authorization": "Bearer testtoken",
             "query": "laptop",
-            "lat": 45.4315,
+            "latitude": 45.4315,
             "longitude": -75.6972,
         },
     )
