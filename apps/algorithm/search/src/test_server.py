@@ -352,6 +352,22 @@ def test_search_with_status():
             "imageUrl": "https://example.com/image1.jpg",
         },
     )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"latitude": 40.7128, "longitude": -74.0060},
+            "status": "SOLD",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
@@ -374,7 +390,7 @@ def test_search_with_status():
             "price": 450,
             "dateCreated": "2024-05-22T10:30:00Z",
             "imageUrl": "https://example.com/image1.jpg",
-        }
+        },
     ]
 
 
@@ -395,6 +411,22 @@ def test_search_with_status_sold():
             "imageUrl": "https://example.com/image1.jpg",
         },
     )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"latitude": 40.7128, "longitude": -74.0060},
+            "status": "SOLD",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
@@ -407,7 +439,18 @@ def test_search_with_status_sold():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == [
+        {
+            "listingID": "def456",
+            "sellerID": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200,
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    ]
 
 
 def test_search_with_invalid_search_type():
