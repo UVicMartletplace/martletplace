@@ -520,6 +520,22 @@ def test_search_with_user_search():
             "imageUrl": "https://example.com/image1.jpg",
         },
     )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"latitude": 40.7128, "longitude": -74.0060},
+            "status": "SOLD",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
