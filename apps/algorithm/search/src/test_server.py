@@ -1110,3 +1110,32 @@ def test_search_with_sorting_by_distance_desc():
     assert len(results) > 0
     assert results[0]["listingID"] == "def456"
     assert results[1]["listingID"] == "abc123"
+
+
+def test_search_with_invalid_sorting_criteria():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "INVALID_SORT",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "enum",
+                "loc": ["query", "sort"],
+                "msg": "Input should be 'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', "
+                "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
+                "input": "INVALID_SORT",
+                "ctx": {
+                    "expected": "'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', 'LISTED_TIME_DESC', "
+                    "'DISTANCE_ASC' or 'DISTANCE_DESC'"
+                },
+            }
+        ]
+    }
