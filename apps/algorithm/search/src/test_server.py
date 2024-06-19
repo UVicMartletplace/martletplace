@@ -1218,3 +1218,42 @@ def test_search_with_pagination():
     assert len(results) == 5
     assert results[0]["listingID"] == "listing10"
     assert results[4]["listingID"] == "listing14"
+
+
+def test_search_with_missing_pagination_parameters():
+    listings = [
+        {
+            "listingId": f"listing{i}",
+            "sellerId": f"seller{i}",
+            "sellerName": f"seller_name{i}",
+            "title": f"Item {i}",
+            "description": f"Description of item {i}",
+            "price": 100 + i,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
+            "imageUrl": f"https://example.com/image{i}.jpg",
+        }
+        for i in range(21)
+    ]
+
+    for listing in listings:
+        es.index(index=TEST_INDEX, id=listing["listingId"], body=listing)
+    es.indices.refresh(index=TEST_INDEX)
+
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "PRICE_ASC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) == 20
+    assert results[0]["listingID"] == "listing0"
+    assert results[19]["listingID"] == "listing19"
