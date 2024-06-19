@@ -56,12 +56,8 @@ const updateListing = async (
       description: updatedListing.description,
       price: updatedListing.price,
       location: {
-        latitude: parseFloat(
-          updatedListing.location.split(",")[0].replace("(", ""),
-        ),
-        longitude: parseFloat(
-          updatedListing.location.split(",")[1].replace(")", ""),
-        ),
+        latitude: location.latitude,
+        longitude: location.longitude,
       },
       status: updatedListing.status,
       dateCreated: updatedListing.created_at,
