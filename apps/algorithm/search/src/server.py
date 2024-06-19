@@ -1,11 +1,13 @@
 from enum import Enum
 from typing import List
+import requests
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 app = FastAPI()
 
+elasticsearch_auth = ('elastic', 'serxdfcghjfc')
 
 # define enums
 class Status(str, Enum):
@@ -95,23 +97,43 @@ async def search(
         },
     ]
 
+@app.get("/api/listing/{listing_id}")
+async def get_listing(listing_id: str):
+    # Return the listing object.
+    listing = requests.get(
+        f'https://elasticsearch:8311/listing/_doc/{listing_id}',
+        auth=elasticsearch_auth,
+        verify=False).json()
 
-@app.post("/api/search/reindex/listing-created")
-async def reindex_listing_created(authorization: str, listing: Listing):
-    # actual logic will go here
-
-    return {"message": "Listing added successfully."}
-
-
-@app.patch("/api/search/reindex/listing-edited")
-async def reindex_listing_edited(authorization: str, listing: Listing):
-    # actual logic will go here
-
-    return {"message": "Listing edited successfully."}
+    return listing
 
 
-@app.delete("/api/search/reindex/listing-deleted")
-async def reindex_listing_deleted(authorization: str, listingId: str):
-    # actual logic will go here
+@app.post("/api/listing")
+async def post_listing(listing: Listing):
+    # Add a new document to the search engine.
 
-    return {"message": "Listing deleted successfully."}
+    # Return the new listing id.
+    return {"message": "Created a new listing"}
+
+
+@app.put("/api/listing/{listing_id}")
+async def put_listing(listing_id: str, listing: Listing):
+    # Replace an existing document in the search engine.
+
+    # Nothing to return.
+    return {"message": "Replaced the existing listing"}
+
+
+@app.patch("/api/listing/{listing_id}")
+async def patch_listing(listing_id: str, listing: Listing):
+    # Modify a subset of fields in an existing document in the search engine.
+
+    # Nothing to return.
+    return {"message": "Updated the existing listing"}
+
+
+@app.delete("/api/listing/{listing_id}")
+async def delete_listing(listing_id: str):
+    # Delete the existing document from the search engine.
+
+    return {"message": "Deleted the listing"}
