@@ -4,7 +4,7 @@
   "scripts": {
     "start": "nodemon src/index.ts",
     "test": "cypress run",
-    "test:ci": "cypress run",
+    "test:ci": "cypress run --headless",
     "lint": "eslint src/**/*.ts",
     "format": "prettier src/ --write",
     "format:ci": "prettier src/ --check"

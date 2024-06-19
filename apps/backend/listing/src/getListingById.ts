@@ -32,7 +32,8 @@ const getListingById = async (
         l.location,
         l.status,
         l.created_at AS "dateCreated",
-        l.modified_at AS "dateModified"
+        l.modified_at AS "dateModified",
+        l.distance AS "distance"
       FROM 
         listings l
       JOIN 
@@ -81,7 +82,6 @@ const getListingById = async (
 
     listing.reviews = reviews;
     listing.images = images.map((image) => ({ url: image.url }));
-    listing.distance = 5; // placeholder for distance, calculate if needed
 
     return res.status(200).json(listing);
   } catch (err) {
