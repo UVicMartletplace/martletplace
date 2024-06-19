@@ -6,8 +6,9 @@ const getListingById = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>,
+  db: IDatabase<object>,
 ) => {
+  //TODO: AUTHENTICATION
   const { id } = req.params;
 
   if (!id) {
