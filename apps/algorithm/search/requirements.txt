@@ -2,12 +2,9 @@ fastapi
 pydantic
 elasticsearch
 uvicorn[standard]
-asyncpg
-databases
 
 ## Dev Dependencies
 ruff
 pytest
 bandit
 httpx
-pytest-asyncio

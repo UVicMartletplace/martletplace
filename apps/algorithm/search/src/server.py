@@ -2,33 +2,17 @@ import os
 from enum import Enum
 from typing import List, Dict, Any
 
-from databases import Database
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException
 from pydantic import ConfigDict, BaseModel, Field
 
-# This will be the user id of the user who is logged in TODO: get this from authorization token
-user_id = "test-user"
-
-# db_endpoint = os.getenv("DB_ENDPOINT")
-# database = Database(db_endpoint)
+DEFAULT_INDEX = "listings"
 
 app = FastAPI()
 
-DEFAULT_INDEX = "listings"
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
-
-
-# @app.on_event("startup")
-# async def startup():
-#     await database.connect()
-#
-#
-# @app.on_event("shutdown")
-# async def shutdown():
-#     await database.disconnect()
 
 
 class Status(str, Enum):
@@ -233,13 +217,6 @@ async def search(
             }
             for hit in response["hits"]["hits"]
         ]
-
-        # query_insert = "INSERT INTO user_searches (user_id, search_term) VALUES (:user_id, :search_term)"
-        # values = {
-        #     "user_id": user_id,
-        #     "search_term": query,
-        # }
-        # await database.execute(query_insert, values)
 
         return results
 

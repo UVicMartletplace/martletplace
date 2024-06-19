@@ -14,18 +14,6 @@ es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
 
 
-@pytest.fixture(scope="session")
-def anyio_backend():
-    return "asyncio"
-
-
-# @pytest.fixture(scope="session", autouse=True)
-# async def setup_database():
-#     await database.connect()
-#     yield
-#     await database.disconnect()
-
-
 @pytest.fixture(scope="function", autouse=True)
 def setup_and_teardown_index(monkeypatch):
     monkeypatch.setenv("ES_INDEX", TEST_INDEX)
@@ -48,8 +36,7 @@ def setup_and_teardown_index(monkeypatch):
     es.options(ignore_status=[400, 404]).indices.delete(index=TEST_INDEX)
 
 
-@pytest.mark.asyncio
-async def test_search_no_listings():
+def test_search_no_listings():
     response = client.get(
         "/api/search",
         params={
@@ -63,8 +50,7 @@ async def test_search_no_listings():
     assert response.json() == []
 
 
-@pytest.mark.asyncio
-async def test_search_for_existing_listing():
+def test_search_for_existing_listing():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -106,8 +92,7 @@ async def test_search_for_existing_listing():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_for_multiple_listings():
+def test_search_for_multiple_listings():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -175,8 +160,7 @@ async def test_search_for_multiple_listings():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_empty_query():
+def test_search_empty_query():
     response = client.get(
         "/api/search",
         params={
@@ -190,8 +174,7 @@ async def test_search_empty_query():
     assert response.json() == []
 
 
-@pytest.mark.asyncio
-async def test_search_with_special_characters_in_query():
+def test_search_with_special_characters_in_query():
     response = client.get(
         "/api/search",
         params={
@@ -205,8 +188,7 @@ async def test_search_with_special_characters_in_query():
     assert response.json() == []
 
 
-@pytest.mark.asyncio
-async def test_search_with_price_range():
+def test_search_with_price_range():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -250,8 +232,7 @@ async def test_search_with_price_range():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_with_too_low_price_range_fail():
+def test_search_with_too_low_price_range_fail():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -284,8 +265,7 @@ async def test_search_with_too_low_price_range_fail():
     assert response.json() == []
 
 
-@pytest.mark.asyncio
-async def test_search_with_too_high_price_range_fail():
+def test_search_with_too_high_price_range_fail():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -318,8 +298,7 @@ async def test_search_with_too_high_price_range_fail():
     assert response.json() == []
 
 
-@pytest.mark.asyncio
-async def test_search_with_negative_min_price_fail():
+def test_search_with_negative_min_price_fail():
     response = client.get(
         "/api/search",
         params={
@@ -334,8 +313,7 @@ async def test_search_with_negative_min_price_fail():
     assert response.json() == {"detail": "minPrice cannot be negative"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_negative_max_price_fail():
+def test_search_with_negative_max_price_fail():
     response = client.get(
         "/api/search",
         params={
@@ -350,8 +328,7 @@ async def test_search_with_negative_max_price_fail():
     assert response.json() == {"detail": "maxPrice cannot be negative"}
 
 
-@pytest.mark.asyncio
-async def test_search_min_price_higher_than_max_price_fail():
+def test_search_min_price_higher_than_max_price_fail():
     response = client.get(
         "/api/search",
         params={
@@ -367,8 +344,7 @@ async def test_search_min_price_higher_than_max_price_fail():
     assert response.json() == {"detail": "minPrice cannot be greater than maxPrice"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_status():
+def test_search_with_status():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -427,8 +403,7 @@ async def test_search_with_status():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_with_status_sold():
+def test_search_with_status_sold():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -487,8 +462,7 @@ async def test_search_with_status_sold():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_with_invalid_status():
+def test_search_with_invalid_status():
     response = client.get(
         "/api/search",
         params={
@@ -513,8 +487,7 @@ async def test_search_with_invalid_status():
     }
 
 
-@pytest.mark.asyncio
-async def test_search_with_user_search():
+def test_search_with_user_search():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -573,8 +546,7 @@ async def test_search_with_user_search():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_with_user_search_negative():
+def test_search_with_user_search_negative():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -606,8 +578,7 @@ async def test_search_with_user_search_negative():
     assert response.json() == []
 
 
-@pytest.mark.asyncio
-async def test_search_with_invalid_search_type():
+def test_search_with_invalid_search_type():
     response = client.get(
         "/api/search",
         params={
@@ -632,8 +603,7 @@ async def test_search_with_invalid_search_type():
     }
 
 
-@pytest.mark.asyncio
-async def test_only_return_results_within_5km_of_location():
+def test_only_return_results_within_5km_of_location():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -691,8 +661,7 @@ async def test_only_return_results_within_5km_of_location():
     ]
 
 
-@pytest.mark.asyncio
-async def test_search_with_missing_latitude():
+def test_search_with_missing_latitude():
     response = client.get(
         "/api/search",
         params={
@@ -714,8 +683,7 @@ async def test_search_with_missing_latitude():
     }
 
 
-@pytest.mark.asyncio
-async def test_search_with_missing_longitude():
+def test_search_with_missing_longitude():
     response = client.get(
         "/api/search",
         params={
@@ -737,8 +705,7 @@ async def test_search_with_missing_longitude():
     }
 
 
-@pytest.mark.asyncio
-async def test_search_with_out_of_bounds_latitude():
+def test_search_with_out_of_bounds_latitude():
     response = client.get(
         "/api/search",
         params={
@@ -752,8 +719,7 @@ async def test_search_with_out_of_bounds_latitude():
     assert response.json() == {"detail": "latitude must be between -90 and 90"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_out_of_bounds_longitude():
+def test_search_with_out_of_bounds_longitude():
     response = client.get(
         "/api/search",
         params={
@@ -767,8 +733,7 @@ async def test_search_with_out_of_bounds_longitude():
     assert response.json() == {"detail": "longitude must be between -180 and 180"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_relevance():
+def test_search_with_sorting_by_relevance():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -837,8 +802,7 @@ async def test_search_with_sorting_by_relevance():
     assert results[2]["listingID"] == "abc123"
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_price_asc():
+def test_search_with_sorting_by_price_asc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -889,8 +853,7 @@ async def test_search_with_sorting_by_price_asc():
     assert results[0]["price"] == 30.00
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_price_desc():
+def test_search_with_sorting_by_price_desc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -941,8 +904,7 @@ async def test_search_with_sorting_by_price_desc():
     assert results[0]["price"] == 450.00
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_listed_time_asc():
+def test_search_with_sorting_by_listed_time_asc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -994,8 +956,7 @@ async def test_search_with_sorting_by_listed_time_asc():
     assert results[1]["listingID"] == "def456"
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_listed_time_desc():
+def test_search_with_sorting_by_listed_time_desc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1047,8 +1008,7 @@ async def test_search_with_sorting_by_listed_time_desc():
     assert results[1]["listingID"] == "abc123"
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_distance_asc():
+def test_search_with_sorting_by_distance_asc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1100,8 +1060,7 @@ async def test_search_with_sorting_by_distance_asc():
     assert results[1]["listingID"] == "def456"
 
 
-@pytest.mark.asyncio
-async def test_search_with_sorting_by_distance_desc():
+def test_search_with_sorting_by_distance_desc():
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1153,8 +1112,7 @@ async def test_search_with_sorting_by_distance_desc():
     assert results[1]["listingID"] == "abc123"
 
 
-@pytest.mark.asyncio
-async def test_search_with_invalid_sorting_criteria():
+def test_search_with_invalid_sorting_criteria():
     response = client.get(
         "/api/search",
         params={
@@ -1183,8 +1141,7 @@ async def test_search_with_invalid_sorting_criteria():
     }
 
 
-@pytest.mark.asyncio
-async def test_search_with_pagination():
+def test_search_with_pagination():
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1263,8 +1220,7 @@ async def test_search_with_pagination():
     assert results[4]["listingID"] == "listing14"
 
 
-@pytest.mark.asyncio
-async def test_search_with_missing_pagination_parameters():
+def test_search_with_missing_pagination_parameters():
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1303,8 +1259,7 @@ async def test_search_with_missing_pagination_parameters():
     assert results[19]["listingID"] == "listing19"
 
 
-@pytest.mark.asyncio
-async def test_search_with_negative_page_number():
+def test_search_with_negative_page_number():
     response = client.get(
         "/api/search",
         params={
@@ -1320,8 +1275,7 @@ async def test_search_with_negative_page_number():
     assert response.json() == {"detail": "page cannot be zero or negative"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_zero_page_number():
+def test_search_with_zero_page_number():
     response = client.get(
         "/api/search",
         params={
@@ -1337,8 +1291,7 @@ async def test_search_with_zero_page_number():
     assert response.json() == {"detail": "page cannot be zero or negative"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_negative_limit():
+def test_search_with_negative_limit():
     response = client.get(
         "/api/search",
         params={
@@ -1354,8 +1307,7 @@ async def test_search_with_negative_limit():
     assert response.json() == {"detail": "limit cannot be zero or negative"}
 
 
-@pytest.mark.asyncio
-async def test_search_with_zero_limit():
+def test_search_with_zero_limit():
     response = client.get(
         "/api/search",
         params={
