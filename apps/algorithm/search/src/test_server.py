@@ -1257,3 +1257,45 @@ def test_search_with_missing_pagination_parameters():
     assert len(results) == 20
     assert results[0]["listingID"] == "listing0"
     assert results[19]["listingID"] == "listing19"
+
+
+def test_search_with_negative_page_number():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": -1,
+            "limit": 5,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "page cannot be negative"}
+
+
+def test_search_with_negative_limit():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": 1,
+            "limit": -5,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "greater_than",
+                "loc": ["query", "limit"],
+                "msg": "Limit must be greater than 0",
+                "input": -5,
+                "ctx": {"gt": 0},
+            }
+        ]
+    }
