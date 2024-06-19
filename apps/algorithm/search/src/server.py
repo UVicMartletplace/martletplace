@@ -159,7 +159,7 @@ async def search(
                 {"match": {"status": status}},
             ]
         else:
-            raise HTTPException(status_code=400, detail="Invalid searchType")
+            raise HTTPException(status_code=422, detail="Invalid searchType")
 
         search_body: Dict[str, Any] = {
             "from": (page - 1) * limit,
