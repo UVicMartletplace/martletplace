@@ -38,8 +38,7 @@ CREATE TABLE listings (
     description VARCHAR,
     image_urls TEXT [],
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    modified_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    distance FLOAT DEFAULT 5.0
+    modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings

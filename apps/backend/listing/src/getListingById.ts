@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IDatabase } from "pg-promise";
+import { getDistance } from 'geolib';
 
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (
@@ -8,11 +9,16 @@ const getListingById = async (
   next: NextFunction,
   db: IDatabase<object>,
 ) => {
-  //TODO: AUTHENTICATION
+  // TODO: AUTHENTICATION
   const { id } = req.params;
+  const { user_location } = req.body;
 
   if (!id) {
     return res.status(400).json({ error: "Listing ID is required" });
+  }
+
+  if (!user_location || !user_location.latitude || !user_location.longitude) {
+    return res.status(400).json({ error: "User location is required" });
   }
 
   try {
@@ -32,8 +38,7 @@ const getListingById = async (
         l.location,
         l.status,
         l.created_at AS "dateCreated",
-        l.modified_at AS "dateModified",
-        l.distance AS "distance"
+        l.modified_at AS "dateModified"
       FROM 
         listings l
       JOIN 
@@ -47,6 +52,12 @@ const getListingById = async (
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
+
+    const listingLocation = listing.location;
+    const distance = getDistance(
+      { latitude: user_location.latitude, longitude: user_location.longitude },
+      { latitude: listingLocation.latitude, longitude: listingLocation.longitude }
+    ) / 1000; // Convert meters to kilometers
 
     const reviewsQuery = `
       SELECT 
@@ -82,6 +93,7 @@ const getListingById = async (
 
     listing.reviews = reviews;
     listing.images = images.map((image) => ({ url: image.url }));
+    listing.distance = distance;
 
     return res.status(200).json(listing);
   } catch (err) {
