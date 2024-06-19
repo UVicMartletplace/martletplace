@@ -17,11 +17,7 @@ const updateListing = async (
 
   const { title, description, price, location, images } = listing;
 
-  if (!title || !description || !price || !location || !images) {
-    return res.status(400).json({ error: "missing parameter in request" });
-  }
-
-  if (!location.latitude || !location.longitude) {
+  if (!title || !description || !price || !location || !images || !location.latitude || !location.longitude) {
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
