@@ -111,7 +111,7 @@ services:
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
     #ports: [ 8300:8300, 8301:8301 ]
-    networks: [ datalayer-database, datalayer-elasticsearch, datalayer-cache, datalayer-blob ]
+    networks: [ datalayer-database, datalayer-elasticsearch, datalayer-cache, datalayer-blob, user-datalayer, listing-datalayer, review-datalayer, message-datalayer, search-datalayer, recommend-datalayer ]
 
   database:
     build: apps/data/database
