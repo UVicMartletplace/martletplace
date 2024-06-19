@@ -903,6 +903,7 @@ def test_search_with_sorting_by_price_desc():
     assert len(results) > 0
     assert results[0]["price"] == 450.00
 
+
 def test_search_with_sorting_by_listed_time_asc():
     es.index(
         index=TEST_INDEX,
