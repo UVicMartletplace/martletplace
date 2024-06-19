@@ -2,13 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import { IDatabase } from "pg-promise";
 
 // POST /api/listing - Create a new listing
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createListing = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>,
+  db: IDatabase<object>,
 ) => {
+  // TODO: AUTHENTICATION
+  const userID = 1;
   const { listing } = req.body;
 
   if (!listing) {
@@ -17,7 +18,11 @@ const createListing = async (
 
   const { title, description, price, location, images } = listing;
 
-  if (!location || !location.latitude || !location.longitude) {
+  if (!title || !description || !price || !location || !images) {
+    return res.status(400).json({ error: "missing parameter in request" });
+  }
+
+  if (!location.latitude || !location.longitude) {
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -26,7 +31,7 @@ const createListing = async (
   try {
     const createdListing = await db.one(
       `INSERT INTO listings (title, description, price, location, image_urls, status, created_at, modified_at, seller_id)
-       VALUES ($1, $2, $3, $4, $5, 'AVAILABLE', NOW(), NOW(), 1)
+       VALUES ($1, $2, $3, $4, $5, 'AVAILABLE', NOW(), NOW(), $6)
        RETURNING *`,
       [
         title,
@@ -34,18 +39,20 @@ const createListing = async (
         price,
         formattedLocation,
         images.map((image: { url: string }) => image.url),
+        userID,
       ],
+    );
+
+    const sellerProfile = await db.one(
+      `SELECT user_id AS "userID", username, name, bio, profile_pic_url AS "profilePictureUrl"
+       FROM users
+       WHERE user_id = $1`,
+      [userID],
     );
 
     const responseListing = {
       listingID: createdListing.listing_id,
-      seller_profile: {
-        userID: 1, // assuming seller ID is 1 for now
-        username: "hubert123", // example username
-        name: "Bartholomew Hubert", // example name
-        bio: "I love stuff", // example bio
-        profilePictureUrl: "https://example.com/image.png", // example profile picture URL
-      },
+      seller_profile: sellerProfile,
       title: createdListing.title,
       description: createdListing.description,
       price: createdListing.price,
@@ -60,7 +67,7 @@ const createListing = async (
       status: createdListing.status,
       dateCreated: createdListing.created_at,
       dateModified: createdListing.modified_at,
-      reviews: [], // assuming no reviews on new listing
+      reviews: [],
       images: createdListing.image_urls.map((url: string) => ({ url })),
     };
 

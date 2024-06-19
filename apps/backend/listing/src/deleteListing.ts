@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import { IDatabase } from "pg-promise";
 
 // DELETE /api/listing/:id - Delete a listing
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const deleteListing = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>,
+  db: IDatabase<object>,
 ) => {
+  //TODO: AUTHENTICATION
   const { id } = req.params;
 
   if (!id) {

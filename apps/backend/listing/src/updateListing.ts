@@ -2,12 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import { IDatabase } from "pg-promise";
 
 // PATCH /api/listing/:id - Update an existing listing
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const updateListing = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>,
+  db: IDatabase<object>,
 ) => {
   const { id } = req.params;
   const { listing, status } = req.body;
@@ -18,7 +17,11 @@ const updateListing = async (
 
   const { title, description, price, location, images } = listing;
 
-  if (!location || !location.latitude || !location.longitude) {
+  if (!title || !description || !price || !location || !images) {
+    return res.status(400).json({ error: "missing parameter in request" });
+  }
+
+  if (!location.latitude || !location.longitude) {
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
