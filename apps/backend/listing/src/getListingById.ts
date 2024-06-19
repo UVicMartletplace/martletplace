@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IDatabase } from "pg-promise";
-import { getDistance } from 'geolib';
+import { getDistance } from "geolib";
 
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (
@@ -53,11 +53,28 @@ const getListingById = async (
       return res.status(404).json({ error: "Listing not found" });
     }
 
-    const listingLocation = listing.location;
-    const distance = getDistance(
-      { latitude: user_location.latitude, longitude: user_location.longitude },
-      { latitude: listingLocation.latitude, longitude: listingLocation.longitude }
-    ) / 1000; // Convert meters to kilometers
+    console.log(listing.location);
+    const listingLocationStr = listing.location;
+
+    const [latitudeStr, longitudeStr] = listingLocationStr
+      .slice(1, -1)
+      .split(",");
+    const listingLocation = {
+      latitude: parseFloat(latitudeStr),
+      longitude: parseFloat(longitudeStr),
+    };
+
+    const distance =
+      getDistance(
+        {
+          latitude: user_location.latitude,
+          longitude: user_location.longitude,
+        },
+        {
+          latitude: listingLocation.latitude,
+          longitude: listingLocation.longitude,
+        },
+      ) / 1000;
 
     const reviewsQuery = `
       SELECT 

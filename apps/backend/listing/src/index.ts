@@ -35,10 +35,8 @@ app.delete("/api/listing/:id", (req, res, next) =>
   deleteListing(req, res, next, db),
 );
 
-
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
-
 
 export { app, db };
