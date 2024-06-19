@@ -1152,7 +1152,7 @@ def test_search_with_pagination():
             "price": 100 + i,
             "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
-            "dateCreated": f"2024-06-{i+1:02d}T12:00:00Z",
+            "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "imageUrl": f"https://example.com/image{i}.jpg",
         }
         for i in range(15)
@@ -1272,7 +1272,23 @@ def test_search_with_negative_page_number():
         },
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "page cannot be negative"}
+    assert response.json() == {"detail": "page cannot be zero or negative"}
+
+
+def test_search_with_zero_page_number():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": 0,
+            "limit": 5,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "page cannot be zero or negative"}
 
 
 def test_search_with_negative_limit():
@@ -1288,4 +1304,20 @@ def test_search_with_negative_limit():
         },
     )
     assert response.status_code == 422
-    assert response.json() == {"detail": "limit cannot be negative"}
+    assert response.json() == {"detail": "limit cannot be zero or negative"}
+
+
+def test_search_with_zero_limit():
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": 1,
+            "limit": 0,
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "limit cannot be zero or negative"}

@@ -112,6 +112,14 @@ async def search(
             raise HTTPException(
                 status_code=422, detail="longitude must be between -180 and 180"
             )
+        if page <= 0:
+            raise HTTPException(
+                status_code=422, detail="page cannot be zero or negative"
+            )
+        if limit <= 0:
+            raise HTTPException(
+                status_code=422, detail="limit cannot be zero or negative"
+            )
         if minPrice is not None and minPrice < 0:
             raise HTTPException(status_code=422, detail="minPrice cannot be negative")
         if maxPrice is not None and maxPrice < 0:
