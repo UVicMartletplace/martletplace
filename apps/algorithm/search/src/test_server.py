@@ -1139,3 +1139,82 @@ def test_search_with_invalid_sorting_criteria():
             }
         ]
     }
+
+
+def test_search_with_pagination():
+    listings = [
+        {
+            "listingId": f"listing{i}",
+            "sellerId": f"seller{i}",
+            "sellerName": f"seller_name{i}",
+            "title": f"Item {i}",
+            "description": f"Description of item {i}",
+            "price": 100 + i,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": f"2024-06-{i+1:02d}T12:00:00Z",
+            "imageUrl": f"https://example.com/image{i}.jpg",
+        }
+        for i in range(15)
+    ]
+
+    for listing in listings:
+        es.index(index=TEST_INDEX, id=listing["listingId"], body=listing)
+    es.indices.refresh(index=TEST_INDEX)
+
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": 1,
+            "limit": 5,
+            "sort": "PRICE_ASC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) == 5
+    assert results[0]["listingID"] == "listing0"
+    assert results[4]["listingID"] == "listing4"
+
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": 2,
+            "limit": 5,
+            "sort": "PRICE_ASC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) == 5
+    assert results[0]["listingID"] == "listing5"
+    assert results[4]["listingID"] == "listing9"
+
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "Item",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "page": 3,
+            "limit": 5,
+            "sort": "PRICE_ASC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) == 5
+    assert results[0]["listingID"] == "listing10"
+    assert results[4]["listingID"] == "listing14"
