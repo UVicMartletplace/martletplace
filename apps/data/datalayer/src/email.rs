@@ -10,7 +10,7 @@ struct Email {
 }
 
 pub fn email_router() -> Router {
-    Router::new().route("/", post(email_handler))
+    Router::new().route("/api/email", post(email_handler))
 }
 
 async fn email_handler(Json(email): Json<Email>) -> StatusCode {
@@ -41,7 +41,7 @@ mod tests {
 
         let response = app
             .oneshot(
-                Request::post("/")
+                Request::post("/api/email")
                     .header(http::header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
                     .body(Body::from(serde_json::to_vec(&email).unwrap()))
                     .unwrap(),

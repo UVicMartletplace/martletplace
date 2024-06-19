@@ -19,7 +19,14 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
-    networks: [ proxy-frontend, proxy-user, proxy-listing, proxy-review, proxy-message, proxy-search, proxy-recommend ]
+    networks: 
+      - proxy-frontend
+      - proxy-user
+      - proxy-listing
+      - proxy-review
+      - proxy-message
+      - proxy-search
+      - proxy-recommend
 
   user:
     build:
@@ -32,7 +39,8 @@ services:
     volumes: [ ./apps/backend/user/src:/app/service/src ]
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    #ports: [ 8211:8211 ]
+      - EMAIL_ENDPOINT=http://datalayer:8302/api/email
+    # ports: [ 8211:8211 ]
     networks: [ proxy-user, user-datalayer ]
 
   listing:
@@ -111,7 +119,17 @@ services:
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
     #ports: [ 8300:8300, 8301:8301 ]
-    networks: [ datalayer-database, datalayer-elasticsearch, datalayer-cache, datalayer-blob, user-datalayer, listing-datalayer, review-datalayer, message-datalayer, search-datalayer, recommend-datalayer ]
+    networks:
+      - datalayer-database
+      - datalayer-elasticsearch
+      - datalayer-cache
+      - datalayer-blob
+      - user-datalayer
+      - listing-datalayer
+      - review-datalayer
+      - message-datalayer
+      - search-datalayer
+      - recommend-datalayer
 
   database:
     build: apps/data/database
