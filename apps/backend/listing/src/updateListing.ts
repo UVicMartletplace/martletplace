@@ -7,7 +7,7 @@ const updateListing = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>
+  db: IDatabase<any>,
 ) => {
   const { id } = req.params;
   const { listing, status } = req.body;
@@ -43,8 +43,8 @@ const updateListing = async (
         formattedLocation,
         images.map((image: { url: string }) => image.url),
         status,
-        id
-      ]
+        id,
+      ],
     );
 
     if (!updatedListing) {
@@ -57,13 +57,17 @@ const updateListing = async (
       description: updatedListing.description,
       price: updatedListing.price,
       location: {
-        latitude: parseFloat(updatedListing.location.split(',')[0].replace('(', '')),
-        longitude: parseFloat(updatedListing.location.split(',')[1].replace(')', ''))
+        latitude: parseFloat(
+          updatedListing.location.split(",")[0].replace("(", ""),
+        ),
+        longitude: parseFloat(
+          updatedListing.location.split(",")[1].replace(")", ""),
+        ),
       },
       status: updatedListing.status,
       dateCreated: updatedListing.created_at,
       dateModified: updatedListing.modified_at,
-      images: updatedListing.image_urls.map((url: string) => ({ url }))
+      images: updatedListing.image_urls.map((url: string) => ({ url })),
     };
 
     return res.status(200).json(responseListing);

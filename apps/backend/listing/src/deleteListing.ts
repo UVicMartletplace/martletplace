@@ -7,7 +7,7 @@ const deleteListing = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>
+  db: IDatabase<any>,
 ) => {
   const { id } = req.params;
 
@@ -19,7 +19,7 @@ const deleteListing = async (
     const result = await db.result(
       `DELETE FROM listings
        WHERE listing_id = $1`,
-      [id]
+      [id],
     );
 
     if (result.rowCount === 0) {

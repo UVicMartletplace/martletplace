@@ -7,7 +7,7 @@ const createListing = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>
+  db: IDatabase<any>,
 ) => {
   const { listing } = req.body;
 
@@ -33,8 +33,8 @@ const createListing = async (
         description,
         price,
         formattedLocation,
-        images.map((image: { url: string }) => image.url)
-      ]
+        images.map((image: { url: string }) => image.url),
+      ],
     );
 
     const responseListing = {
@@ -44,20 +44,24 @@ const createListing = async (
         username: "hubert123", // example username
         name: "Bartholomew Hubert", // example name
         bio: "I love stuff", // example bio
-        profilePictureUrl: "https://example.com/image.png" // example profile picture URL
+        profilePictureUrl: "https://example.com/image.png", // example profile picture URL
       },
       title: createdListing.title,
       description: createdListing.description,
       price: createdListing.price,
       location: {
-        latitude: parseFloat(createdListing.location.split(',')[0].replace('(', '')),
-        longitude: parseFloat(createdListing.location.split(',')[1].replace(')', ''))
+        latitude: parseFloat(
+          createdListing.location.split(",")[0].replace("(", ""),
+        ),
+        longitude: parseFloat(
+          createdListing.location.split(",")[1].replace(")", ""),
+        ),
       },
       status: createdListing.status,
       dateCreated: createdListing.created_at,
       dateModified: createdListing.modified_at,
-      reviews: [], // assuming no reviews on new listing  
-      images: createdListing.image_urls.map((url: string) => ({ url }))
+      reviews: [], // assuming no reviews on new listing
+      images: createdListing.image_urls.map((url: string) => ({ url })),
     };
 
     return res.status(201).json({ listing: responseListing });

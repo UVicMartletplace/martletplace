@@ -6,7 +6,7 @@ const getListingById = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  db: IDatabase<any>
+  db: IDatabase<any>,
 ) => {
   const { id } = req.params;
 
@@ -75,11 +75,11 @@ const getListingById = async (
 
     const [reviews, images] = await Promise.all([
       db.any(reviewsQuery, [id]),
-      db.any(imagesQuery, [id])
+      db.any(imagesQuery, [id]),
     ]);
 
     listing.reviews = reviews;
-    listing.images = images.map(image => ({ url: image.url }));
+    listing.images = images.map((image) => ({ url: image.url }));
     listing.distance = 5; // placeholder for distance, calculate if needed
 
     return res.status(200).json(listing);
