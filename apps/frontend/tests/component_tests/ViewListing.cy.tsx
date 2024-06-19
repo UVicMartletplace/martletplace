@@ -1,6 +1,6 @@
 import ViewListing from "../../src/pages/ViewListing.tsx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import Messages from "../../src/pages/Messages.tsx";
+import Messages from "../../src/pages/messages/Messages.tsx";
 
 describe("<ViewListing/>", () => {
   beforeEach(() => {
