@@ -1288,14 +1288,4 @@ def test_search_with_negative_limit():
         },
     )
     assert response.status_code == 422
-    assert response.json() == {
-        "detail": [
-            {
-                "type": "greater_than",
-                "loc": ["query", "limit"],
-                "msg": "Limit must be greater than 0",
-                "input": -5,
-                "ctx": {"gt": 0},
-            }
-        ]
-    }
+    assert response.json() == {"detail": "limit cannot be negative"}
