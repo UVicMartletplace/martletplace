@@ -84,6 +84,7 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     #ports: [ 8221:8221 ]
     networks: [ proxy-search, search-datalayer ]
 
