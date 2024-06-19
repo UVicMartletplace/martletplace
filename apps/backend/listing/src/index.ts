@@ -16,11 +16,6 @@ app.use(express.json());
 const pgp = pgPromise();
 const DB_ENDPOINT = process.env.DB_ENDPOINT || "";
 
-if (!DB_ENDPOINT && process.env.NODE_ENV !== "test") {
-  console.error("DB_ENDPOINT environment variable is not set");
-  process.exit(1);
-}
-
 const db = pgp(DB_ENDPOINT);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -40,10 +35,10 @@ app.delete("/api/listing/:id", (req, res, next) =>
   deleteListing(req, res, next, db),
 );
 
-if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, () => {
-    console.log(`Server running at http://0.0.0.0:${PORT}`);
-  });
-}
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://0.0.0.0:${PORT}`);
+});
+
 
 export { app, db };
