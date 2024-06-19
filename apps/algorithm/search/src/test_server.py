@@ -1058,3 +1058,55 @@ def test_search_with_sorting_by_distance_asc():
     assert len(results) > 0
     assert results[0]["listingID"] == "abc123"
     assert results[1]["listingID"] == "def456"
+
+
+def test_search_with_sorting_by_distance_desc():
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": "seller456",
+            "sellerName": "billybobjoe",
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "imageUrl": "https://example.com/image1.jpg",
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"lat": 45.4528, "lon": -75.7060},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        params={
+            "authorization": "Bearer testtoken",
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "DISTANCE_DESC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, list)
+    assert len(results) > 0
+    assert results[0]["listingID"] == "def456"
+    assert results[1]["listingID"] == "abc123"
