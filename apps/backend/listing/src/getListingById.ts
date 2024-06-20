@@ -14,10 +14,12 @@ const getListingById = async (
   const { user_location } = req.body;
 
   if (!id) {
+    console.log("missing listing id parameter in request");
     return res.status(400).json({ error: "Listing ID is required" });
   }
 
   if (!user_location || !user_location.latitude || !user_location.longitude) {
+    console.log("request body empty");
     return res.status(400).json({ error: "User location is required" });
   }
 
@@ -114,6 +116,7 @@ const getListingById = async (
 
     return res.status(200).json(listing);
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };

@@ -13,6 +13,7 @@ const createListing = async (
   const { listing } = req.body;
 
   if (!listing) {
+    console.log("request body empty");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -27,6 +28,7 @@ const createListing = async (
     !location.latitude ||
     !location.longitude
   ) {
+    console.log("missing parameter in request")
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -73,6 +75,7 @@ const createListing = async (
 
     return res.status(201).json({ listing: responseListing });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
