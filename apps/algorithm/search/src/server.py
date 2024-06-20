@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import ConfigDict, BaseModel, Field
 
 DEFAULT_INDEX = "listings"
+DISTANCE_TO_SEARCH_WITHIN = "5km"
 
 app = FastAPI()
 
@@ -168,7 +169,7 @@ async def search(
     search_body["query"]["bool"]["filter"].append(
         {
             "geo_distance": {
-                "distance": "5km",
+                "distance": DISTANCE_TO_SEARCH_WITHIN,
                 "location": {"lat": latitude, "lon": longitude},
             }
         }
