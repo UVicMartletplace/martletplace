@@ -18,7 +18,7 @@ es = Elasticsearch([es_endpoint], verify_certs=False)
 def setup_and_teardown_index(monkeypatch):
     monkeypatch.setenv("ES_INDEX", TEST_INDEX)
 
-    es.options(ignore_status=[400]).indices.create(
+    es.indices.create(
         index=TEST_INDEX,
         body={
             "mappings": {
@@ -33,7 +33,7 @@ def setup_and_teardown_index(monkeypatch):
 
     yield
 
-    es.options(ignore_status=[400, 404]).indices.delete(index=TEST_INDEX)
+    es.options(ignore_status=[404]).indices.delete(index=TEST_INDEX)
 
 
 def test_search_no_listings():
