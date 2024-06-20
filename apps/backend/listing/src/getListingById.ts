@@ -4,12 +4,12 @@ import { getDistance } from "geolib";
 
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (
+  // TODO: AUTHENTICATION
   req: Request,
   res: Response,
   next: NextFunction,
   db: IDatabase<object>,
 ) => {
-  // TODO: AUTHENTICATION
   const { id } = req.params;
   const { user_location } = req.body;
 
@@ -40,7 +40,8 @@ const getListingById = async (
         l.location,
         l.status,
         l.created_at AS "dateCreated",
-        l.modified_at AS "dateModified"
+        l.modified_at AS "dateModified",
+        l.image_urls
       FROM 
         listings l
       JOIN 
@@ -55,7 +56,6 @@ const getListingById = async (
       return res.status(404).json({ error: "Listing not found" });
     }
 
-    console.log(listing.location);
     const listingLocationStr = listing.location;
 
     const [latitudeStr, longitudeStr] = listingLocationStr
@@ -96,23 +96,13 @@ const getListingById = async (
         r.listing_id = $1
     `;
 
-    const imagesQuery = `
-      SELECT 
-        unnest(l.image_urls) AS "url"
-      FROM 
-        listings l
-      WHERE 
-        l.listing_id = $1
-    `;
-
-    const [reviews, images] = await Promise.all([
-      db.any(reviewsQuery, [id]),
-      db.any(imagesQuery, [id]),
-    ]);
+    const reviews = await db.any(reviewsQuery, [id]);
 
     listing.reviews = reviews;
-    listing.images = images.map((image) => ({ url: image.url }));
+    listing.images = listing.image_urls.map((url: string) => ({ url }));
     listing.distance = distance;
+
+    delete listing.image_urls;
 
     return res.status(200).json(listing);
   } catch (err) {
