@@ -27,7 +27,7 @@ const createListing = async (
     !location.latitude ||
     !location.longitude
   ) {
-    console.log("missing parameter in request")
+    console.log("missing parameter in request");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 

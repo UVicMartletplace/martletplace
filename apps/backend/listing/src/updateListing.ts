@@ -1,4 +1,4 @@
-import { Request, Response} from "express";
+import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 
 // PATCH /api/listing/:id - Update an existing listing
@@ -76,7 +76,7 @@ const updateListing = async (
 
     return res.status(200).json(responseListing);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };

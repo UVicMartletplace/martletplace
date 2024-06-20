@@ -1,4 +1,4 @@
-import { Request, Response} from "express";
+import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 
 // DELETE /api/listing/:id - Delete a listing

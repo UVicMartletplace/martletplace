@@ -1,4 +1,4 @@
-import { Request, Response} from "express";
+import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import { getDistance } from "geolib";
 

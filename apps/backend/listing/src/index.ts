@@ -24,16 +24,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.get("/api/listing/:id", (req, res) =>
-  getListingById(req, res, db),
-);
+app.get("/api/listing/:id", (req, res) => getListingById(req, res, db));
 app.post("/api/listing", (req, res) => createListing(req, res, db));
-app.patch("/api/listing/:id", (req, res) =>
-  updateListing(req, res, db),
-);
-app.delete("/api/listing/:id", (req, res) =>
-  deleteListing(req, res, db),
-);
+app.patch("/api/listing/:id", (req, res) => updateListing(req, res, db));
+app.delete("/api/listing/:id", (req, res) => deleteListing(req, res, db));
 
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
