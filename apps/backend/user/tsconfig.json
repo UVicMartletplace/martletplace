@@ -6,8 +6,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node", "jest"]
+    "types": ["node", "cypress"]
   },
-  "include": ["src/**/*.ts", "src/tests/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
