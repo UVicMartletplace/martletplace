@@ -16,6 +16,7 @@ function App() {
     <Router>
       <Routes>
         {/* If not logged in redirect to login page */}
+        <Route path="/:query" element={<Homepage />} />
         <Route path="/" element={<Homepage />} />
 
         {/* If full URL is `/user/:id` then it would show another users profile,

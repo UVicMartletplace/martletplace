@@ -13,7 +13,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { colors } from "../styles/colors";
 
 interface SearchObject {
@@ -30,10 +30,11 @@ interface SearchObject {
 }
 
 interface FiltersProps {
+  filters: SearchObject;
   onFilterChange: (filters: Partial<SearchObject>) => void;
 }
 
-const Filters = ({ onFilterChange }: FiltersProps) => {
+const Filters = ({ filters, onFilterChange }: FiltersProps) => {
   const classes = useStyles();
 
   const [minPrice, setMinPrice] = useState<number | null>(null);
@@ -83,6 +84,14 @@ const Filters = ({ onFilterChange }: FiltersProps) => {
       searchType: "",
     });
   };
+
+  useEffect(() => {
+    console.log("Filters changed");
+    setMinPrice(filters.minPrice);
+    setMaxPrice(filters.maxPrice);
+    setStatus(filters.status);
+    setType(filters.searchType);
+  }, []);
 
   const isDesktop = useMediaQuery("(min-width:850px)");
 

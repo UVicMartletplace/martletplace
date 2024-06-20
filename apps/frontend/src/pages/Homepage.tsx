@@ -15,6 +15,7 @@ import ListingCard from "../components/listingCard.tsx";
 import { useState, useEffect, useRef } from "react";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface ListingObject {
   listingID: string;
@@ -42,6 +43,7 @@ interface SearchObject {
 
 const Homepage = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   // Listings per page
   const [listingObjects, setListingObjects] = useState<ListingObject[]>([]);
@@ -65,19 +67,25 @@ const Homepage = () => {
 
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
+    console.log("Sort By:", event.target.value);
+    navigate(
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
+    );
+    setSearchObject({ ...searchObject, sort: event.target.value });
   };
 
   // Calculate the total number of pages
-  const [totalPages, setTotalPages] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
     currentPage: number
   ) => {
     setCurrentPage(currentPage);
-    console.log("Page:", currentPage);
-    const tempSearchObejct = { ...searchObject, page: currentPage };
-    handleSearch(tempSearchObejct);
+    navigate(
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
+    );
+    setSearchObject({ ...searchObject, page: currentPage });
   };
 
   const handleSearch = (searchObject: SearchObject) => {
@@ -96,22 +104,72 @@ const Homepage = () => {
     setSearchPerformed(true);
   };
 
+  const { query } = useParams();
+  const regex = /([^&=]+)=([^&]*)/g;
+
   useEffect(() => {
     //called on page load
-    if (initialRender.current) {
-      initialRender.current = false;
-      console.log("Fetching Recomendations...");
-      _axios_instance
-        .get("/recomendations", { params: { page: 1, limit: 24 } })
-        .then((response) => {
-          setListingObjects(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching listings:", error);
-        });
-      setSearchPerformed(false);
+    if (query === undefined) {
+      // nothing is being searched
+      if (initialRender.current) {
+        initialRender.current = false;
+        console.log("Fetching Recomendations...");
+        _axios_instance
+          .get("/recomendations", { params: { page: 1, limit: 24 } })
+          .then((response) => {
+            setListingObjects(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching listings:", error);
+          });
+        setSearchPerformed(false);
+      }
+    } else {
+      let match;
+      while ((match = regex.exec(query)) !== null) {
+        const key = decodeURIComponent(match[1]); // Decode key
+        let value = decodeURIComponent(match[2]); // Decode value
+
+        // Assign key-value pair to searchObject based on the key
+        switch (key) {
+          case "query":
+            searchObject.query = value;
+            break;
+          case "minPrice":
+            searchObject.minPrice = isNaN(+value) ? null : +value;
+            break;
+          case "maxPrice":
+            searchObject.maxPrice = isNaN(+value) ? null : +value;
+            break;
+          case "status":
+            searchObject.status = value;
+            break;
+          case "searchType":
+            searchObject.searchType = value;
+            break;
+          case "latitude":
+            searchObject.latitude = +value;
+            break;
+          case "longitude":
+            searchObject.longitude = +value;
+            break;
+          case "sort":
+            searchObject.sort = value;
+            break;
+          case "page":
+            searchObject.page = +value;
+            break;
+          case "limit":
+            searchObject.limit = +value;
+            break;
+          default:
+            break;
+        }
+      }
+      setSearchObject(searchObject);
+      handleSearch(searchObject);
     }
-  }, []);
+  }, [searchObject]);
 
   return (
     <Box sx={classes.HomePageBox}>
@@ -124,7 +182,7 @@ const Homepage = () => {
           padding: "10px 0",
         }}
       >
-        <SearchBar onSearch={handleSearch} sortBy={sortBy} />
+        <SearchBar />
       </Box>
       {searchPerformed ? (
         <Box

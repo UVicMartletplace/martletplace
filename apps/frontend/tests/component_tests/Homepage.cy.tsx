@@ -2,6 +2,28 @@ import Homepage from "../../src/pages/Homepage";
 import { MemoryRouter } from "react-router-dom";
 
 describe("<Homepage />", () => {
+  const recomendationsObject = [
+    {
+      listingID: "A23F29039B23",
+      sellerID: "A23F29039B23",
+      sellerName: "Amy Santiago",
+      title: "Used Calculus Textbook",
+      description: "No wear and tear, drop-off available.",
+      price: 50,
+      dateCreated: "2024-05-23T15:30:00Z",
+      imageUrl: "https://picsum.photos/200/300",
+    },
+    {
+      listingID: "B34G67039C24",
+      sellerID: "B34G67039C24",
+      sellerName: "Jake Peralta",
+      title: "Advanced Physics Textbook",
+      description: "Slightly worn, no markings inside.",
+      price: 60,
+      dateCreated: "2024-04-15T14:30:00Z",
+      imageUrl: "https://picsum.photos/200/301",
+    },
+  ];
   const listingObjects = {
     listings: [
       {
@@ -87,12 +109,17 @@ describe("<Homepage />", () => {
       body: listingObjects,
     }).as("searchListings");
 
+    cy.intercept("GET", "/api/recommendations*", {
+      statusCode: 200,
+      body: recomendationsObject,
+    }).as("getRecommendations");
+
     cy.mount(
       <MemoryRouter>
         <Homepage />
       </MemoryRouter>
     );
-    cy.viewport(1496, 720);
+    cy.viewport(1800, 720);
   });
 
   it("renders the Welcome message when no search has been performed", () => {
@@ -103,11 +130,11 @@ describe("<Homepage />", () => {
   it("renders the SearchBar component", () => {
     cy.contains("MartletPlace").should("be.visible");
     cy.get('input[placeholder="Search"]').should("be.visible");
-    cy.get("button").contains("Search").should("be.visible");
+    cy.contains("Search").should("be.visible");
   });
 
   it("sorts listings by Price Ascending", () => {
-    cy.contains("Search").click();
+    cy.get("button").contains("Search").click();
     cy.contains("Sort By").should("be.visible");
     cy.contains("Relevance").click();
     cy.contains("Price Ascending").should("be.visible");

@@ -12,7 +12,7 @@ import filter from "../images/filter.png";
 import { useStyles } from "../styles/pageStyles";
 import { useState, ChangeEvent, useEffect, useCallback } from "react";
 import Filters from "./filters";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
 
@@ -29,12 +29,7 @@ interface SearchObject {
   limit: number;
 }
 
-interface SearchBarProps {
-  onSearch: (searchObject: SearchObject) => void;
-  sortBy: string;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
+const SearchBar = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -57,7 +52,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
 
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [initialSearch, setInitialSearch] = useState("RELEVANCE");
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -83,27 +77,84 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
     setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
   };
 
-  const handleSearch = useCallback(() => {
+  const handleSearch = () => {
     const searchObject: SearchObject = {
       ...filters,
       query: searchInput,
-      sort: sortBy,
     };
-    onSearch(searchObject);
-  }, [filters, searchInput, sortBy]);
+    //put search object in the URL
+    console.log("IN THE HANDLESEARCH FUNCTION:", searchObject);
+    navigate(
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`
+    );
+    window.location.reload();
+  };
+
+  const { query } = useParams();
 
   useEffect(() => {
-    if (sortBy !== initialSearch) {
-      const searchObject: SearchObject = {
-        ...filters,
-        query: searchInput,
-        sort: sortBy,
-        page: 1,
-      };
-      setInitialSearch("");
-      onSearch(searchObject);
+    //when the page is loaded, get the search object from the URL
+    //2 cases: 1. when the page is loaded for the first time, 2. when the page is reloaded
+
+    //1. when the page is loaded for the first time
+    const searchObject: SearchObject = {
+      query: "",
+      minPrice: null,
+      maxPrice: null,
+      status: "AVAILABLE",
+      searchType: "LISTING",
+      latitude: 0,
+      longitude: 0,
+      sort: "RELEVANCE",
+      page: 1,
+      limit: 6,
+    };
+    if (!(query === undefined)) {
+      //Something was searched
+      const regex = /([^&=]+)=([^&]*)/g;
+      let match;
+      while ((match = regex.exec(query))) {
+        const key = decodeURIComponent(match[1]); // Decode key
+        let value = decodeURIComponent(match[2]); // Decode value
+        switch (key) {
+          case "query":
+            searchObject.query = value;
+            break;
+          case "minPrice":
+            searchObject.minPrice = isNaN(+value) ? null : +value;
+            break;
+          case "maxPrice":
+            searchObject.maxPrice = isNaN(+value) ? null : +value;
+            break;
+          case "status":
+            searchObject.status = value;
+            break;
+          case "searchType":
+            searchObject.searchType = value;
+            break;
+          case "latitude":
+            searchObject.latitude = parseFloat(value);
+            break;
+          case "longitude":
+            searchObject.longitude = parseFloat(value);
+            break;
+          case "sort":
+            searchObject.sort = value;
+            break;
+          case "page":
+            searchObject.page = parseInt(value);
+            break;
+          case "limit":
+            searchObject.limit = parseInt(value);
+            break;
+          default:
+            break;
+        }
+      }
     }
-  }, [sortBy]);
+    setSearchInput(searchObject.query);
+    setFilters(searchObject);
+  }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -249,7 +300,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, sortBy }) => {
         </>
       )}
 
-      {showFilters && <Filters onFilterChange={handleFilterChange} />}
+      {showFilters && (
+        <Filters filters={filters} onFilterChange={handleFilterChange} />
+      )}
     </Grid>
   );
 };
