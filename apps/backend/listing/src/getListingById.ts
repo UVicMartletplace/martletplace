@@ -54,9 +54,7 @@ const getListingById = async (
     }
 
     console.log(listing.location);
-    const listingLocationStr = listing.location;
-
-    const [latitudeStr, longitudeStr] = listingLocationStr
+    const [latitudeStr, longitudeStr] = listing.location
       .slice(1, -1)
       .split(",");
     const listingLocation = {
