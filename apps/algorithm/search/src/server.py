@@ -133,95 +133,92 @@ async def search(
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
 ):
-    try:
-        validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
+    validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
 
-        INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
-        sort_options = {
-            "RELEVANCE": "_score",
-            "PRICE_ASC": "price",
-            "PRICE_DESC": "price",
-            "LISTED_TIME_ASC": "dateCreated",
-            "LISTED_TIME_DESC": "dateCreated",
-            "DISTANCE_ASC": "_geo_distance",
-            "DISTANCE_DESC": "_geo_distance",
+    sort_options = {
+        "RELEVANCE": "_score",
+        "PRICE_ASC": "price",
+        "PRICE_DESC": "price",
+        "LISTED_TIME_ASC": "dateCreated",
+        "LISTED_TIME_DESC": "dateCreated",
+        "DISTANCE_ASC": "_geo_distance",
+        "DISTANCE_DESC": "_geo_distance",
+    }
+
+    if searchType == "LISTINGS":
+        must_conditions = [
+            {"multi_match": {"query": query, "fields": ["title", "description"]}},
+            {"match": {"status": status}},
+        ]
+    elif searchType == "USERS":
+        must_conditions = [
+            {"match": {"sellerName": query}},
+            {"match": {"status": status}},
+        ]
+    else:
+        raise HTTPException(status_code=422, detail="Invalid searchType")
+
+    search_body: Dict[str, Any] = {
+        "from": (page - 1) * limit,
+        "size": limit,
+        "query": {"bool": {"must": must_conditions, "filter": []}},
+        "sort": [],
+    }
+
+    if minPrice is not None or maxPrice is not None:
+        price_range = {}
+        if minPrice is not None:
+            price_range["gte"] = minPrice
+        if maxPrice is not None:
+            price_range["lte"] = maxPrice
+        search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
+
+    search_body["query"]["bool"]["filter"].append(
+        {
+            "geo_distance": {
+                "distance": "5km",
+                "location": {"lat": latitude, "lon": longitude},
+            }
         }
+    )
 
-        if searchType == "LISTINGS":
-            must_conditions = [
-                {"multi_match": {"query": query, "fields": ["title", "description"]}},
-                {"match": {"status": status}},
-            ]
-        elif searchType == "USERS":
-            must_conditions = [
-                {"match": {"sellerName": query}},
-                {"match": {"status": status}},
-            ]
-        else:
-            raise HTTPException(status_code=422, detail="Invalid searchType")
-
-        search_body: Dict[str, Any] = {
-            "from": (page - 1) * limit,
-            "size": limit,
-            "query": {"bool": {"must": must_conditions, "filter": []}},
-            "sort": [],
-        }
-
-        if minPrice is not None or maxPrice is not None:
-            price_range = {}
-            if minPrice is not None:
-                price_range["gte"] = minPrice
-            if maxPrice is not None:
-                price_range["lte"] = maxPrice
-            search_body["query"]["bool"]["filter"].append(
-                {"range": {"price": price_range}}
-            )
-
-        search_body["query"]["bool"]["filter"].append(
+    if "DISTANCE" in sort:
+        search_body["sort"].append(
             {
-                "geo_distance": {
-                    "distance": "5km",
+                "_geo_distance": {
                     "location": {"lat": latitude, "lon": longitude},
+                    "order": "asc" if sort == "DISTANCE_ASC" else "desc",
+                    "unit": "km",
                 }
             }
         )
+    else:
+        search_body["sort"].append(
+            {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
+        )
 
-        if "DISTANCE" in sort:
-            search_body["sort"].append(
-                {
-                    "_geo_distance": {
-                        "location": {"lat": latitude, "lon": longitude},
-                        "order": "asc" if sort == "DISTANCE_ASC" else "desc",
-                        "unit": "km",
-                    }
-                }
-            )
-        else:
-            search_body["sort"].append(
-                {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
-            )
-
+    try:
         response = es.search(index=INDEX, body=search_body)
-
-        results = [
-            {
-                "listingID": hit["_source"]["listingId"],
-                "sellerID": hit["_source"]["sellerId"],
-                "sellerName": hit["_source"]["sellerName"],
-                "title": hit["_source"]["title"],
-                "description": hit["_source"]["description"],
-                "price": hit["_source"]["price"],
-                "dateCreated": hit["_source"]["dateCreated"],
-                "imageUrl": hit["_source"]["imageUrl"],
-            }
-            for hit in response["hits"]["hits"]
-        ]
-
-        return results
-
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Index not found")
+
+    results = [
+        {
+            "listingID": hit["_source"]["listingId"],
+            "sellerID": hit["_source"]["sellerId"],
+            "sellerName": hit["_source"]["sellerName"],
+            "title": hit["_source"]["title"],
+            "description": hit["_source"]["description"],
+            "price": hit["_source"]["price"],
+            "dateCreated": hit["_source"]["dateCreated"],
+            "imageUrl": hit["_source"]["imageUrl"],
+        }
+        for hit in response["hits"]["hits"]
+    ]
+
+    return results
 
 
 @app.post("/api/search/reindex/listing-created")
