@@ -40,7 +40,7 @@ const updateListing = async (
            price = $3,
            location = $4,
            image_urls = $5,
-           status = $6,
+           status = $6
        WHERE listing_id = $7
        RETURNING *`,
       [
