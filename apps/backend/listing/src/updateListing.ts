@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response} from "express";
 import { IDatabase } from "pg-promise";
 
 // PATCH /api/listing/:id - Update an existing listing
 const updateListing = async (
   req: Request,
   res: Response,
-  next: NextFunction,
   db: IDatabase<object>,
 ) => {
   const { id } = req.params;

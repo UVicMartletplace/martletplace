@@ -24,15 +24,15 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.get("/api/listing/:id", (req, res, next) =>
-  getListingById(req, res, next, db),
+app.get("/api/listing/:id", (req, res) =>
+  getListingById(req, res, db),
 );
-app.post("/api/listing", (req, res, next) => createListing(req, res, next, db));
-app.patch("/api/listing/:id", (req, res, next) =>
-  updateListing(req, res, next, db),
+app.post("/api/listing", (req, res) => createListing(req, res, db));
+app.patch("/api/listing/:id", (req, res) =>
+  updateListing(req, res, db),
 );
-app.delete("/api/listing/:id", (req, res, next) =>
-  deleteListing(req, res, next, db),
+app.delete("/api/listing/:id", (req, res) =>
+  deleteListing(req, res, db),
 );
 
 app.listen(PORT, () => {

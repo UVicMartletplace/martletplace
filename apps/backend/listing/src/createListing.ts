@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 
 // POST /api/listing - Create a new listing
 const createListing = async (
   req: Request,
   res: Response,
-  next: NextFunction,
   db: IDatabase<object>,
 ) => {
   // TODO: AUTHENTICATION

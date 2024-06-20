@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response} from "express";
 import { IDatabase } from "pg-promise";
 
 // DELETE /api/listing/:id - Delete a listing
 const deleteListing = async (
   req: Request,
   res: Response,
-  next: NextFunction,
   db: IDatabase<object>,
 ) => {
   //TODO: AUTHENTICATION

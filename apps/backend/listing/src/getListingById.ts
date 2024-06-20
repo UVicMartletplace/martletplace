@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response} from "express";
 import { IDatabase } from "pg-promise";
 import { getDistance } from "geolib";
 
@@ -7,7 +7,6 @@ const getListingById = async (
   // TODO: AUTHENTICATION
   req: Request,
   res: Response,
-  next: NextFunction,
   db: IDatabase<object>,
 ) => {
   const { id } = req.params;
