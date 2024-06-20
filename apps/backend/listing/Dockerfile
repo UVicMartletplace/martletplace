@@ -22,6 +22,7 @@ RUN npm install
 COPY tsconfig.json ./
 COPY cypress.config.ts ./
 COPY --from=lib ./ ../lib/
-COPY src cypress ./
+COPY cypress ./cypress
+COPY src ./
 
 CMD npm start
