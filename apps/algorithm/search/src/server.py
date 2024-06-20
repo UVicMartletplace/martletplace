@@ -137,16 +137,6 @@ async def search(
 
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
-    sort_options = {
-        "RELEVANCE": "_score",
-        "PRICE_ASC": "price",
-        "PRICE_DESC": "price",
-        "LISTED_TIME_ASC": "dateCreated",
-        "LISTED_TIME_DESC": "dateCreated",
-        "DISTANCE_ASC": "_geo_distance",
-        "DISTANCE_DESC": "_geo_distance",
-    }
-
     if searchType == "LISTINGS":
         must_conditions = [
             {"multi_match": {"query": query, "fields": ["title", "description"]}},
@@ -195,6 +185,15 @@ async def search(
             }
         )
     else:
+        sort_options = {
+            "RELEVANCE": "_score",
+            "PRICE_ASC": "price",
+            "PRICE_DESC": "price",
+            "LISTED_TIME_ASC": "dateCreated",
+            "LISTED_TIME_DESC": "dateCreated",
+            "DISTANCE_ASC": "_geo_distance",
+            "DISTANCE_DESC": "_geo_distance",
+        }
         search_body["sort"].append(
             {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
         )
