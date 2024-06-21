@@ -148,7 +148,7 @@ const SearchBar = () => {
     }
     setSearchInput(searchObject.query);
     setFilters(searchObject);
-  }, [location.pathname]);
+  }, [location.pathname, query]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {

@@ -71,8 +71,8 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       maxPrice: maxPrice,
       status: status,
       searchType: type,
-      latitude,
-      longitude,
+      latitude: latitude,
+      longitude: longitude,
     });
   };
 
@@ -100,14 +100,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
         if (currentLatitude !== 0 && currentLongitude !== 0) {
           setLatitude(currentLatitude);
           setLongitude(currentLongitude);
-          onFilterChange({
-            minPrice: minPrice,
-            maxPrice: maxPrice,
-            status: status,
-            searchType: type,
-            latitude: currentLatitude,
-            longitude: currentLongitude,
-          });
+          handleApplyFilters();
           return true;
         }
       });
