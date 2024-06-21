@@ -15,7 +15,7 @@ import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 interface ImageURLObject {
   url: string;
@@ -50,6 +50,7 @@ const EditListing = () => {
     [],
   );
   const [listingValid, setListingValid] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
     listing: {
@@ -136,6 +137,7 @@ const EditListing = () => {
           .then(() => {
             alert("Listing Updated!");
             setSent(true);
+            navigate("/");
           })
           .catch(() => {
             alert("Listing Update Failed");
@@ -265,6 +267,7 @@ const EditListing = () => {
       .delete("/listing/" + id)
       .then(() => {
         alert("Listing Deleted Successfully");
+        navigate("/");
       })
       .catch((error) => {
         switch (error.response.status) {
@@ -367,7 +370,7 @@ const EditListing = () => {
                       }}
                       id={"submit-button"}
                     >
-                      Create Listing
+                      Update Listing
                     </Button>
                     <MultiFileUpload
                       passedImages={listingImages}
