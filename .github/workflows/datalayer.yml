@@ -58,8 +58,8 @@ jobs:
       - name: Build
         run: cargo build
 
-  security:
-    name: Security
+  supply:
+    name: Supply Chain Security
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
