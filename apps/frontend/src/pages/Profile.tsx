@@ -62,7 +62,7 @@ const Profile = () => {
 
   // Uploads a single image to the S3 server
   const asyncUploadSingleImage = async (
-    imageBinary: string,
+    imageBinary: string
   ): Promise<ImageURLObject | false> => {
     try {
       // Attempt to upload the image
@@ -113,7 +113,7 @@ const Profile = () => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
+    field: string
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
     setEditMode(true);
@@ -157,7 +157,7 @@ const Profile = () => {
   // TODO:
   // Uncomment once Scott's PR is merged: https://github.com/UVicMartletplace/martletplace/pull/183/files
   // Disable all text fields if !isCurrentUser
-  // Hide Save, Cancel, and Upload Porfile buttons if !isCurrentUser
+  // Hide Save, Cancel, and Upload Profile buttons if !isCurrentUser
   // Change "My Profile" to "<Name>'s Profile" if !isCurrentUser
   // Check if id is the current user's id:
   // const { user } = useUser();
