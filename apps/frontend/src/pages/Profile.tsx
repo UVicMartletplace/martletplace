@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import AccountSidebar from "../components/AccountSidebar";
 import { useStyles } from "../styles/pageStyles";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance";
 import { useParams } from "react-router-dom";
 
@@ -20,8 +20,7 @@ interface ImageURLObject {
 const Profile = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
-  const isScreenSmall = useMediaQuery(theme.breakpoints.down("lg"));
+  const isDesktop = useMediaQuery(theme.breakpoints.down("lg"));
   const { id } = useParams();
 
   const [, setImage] = useState<File | null>(null);
@@ -63,7 +62,7 @@ const Profile = () => {
   // Uploads a single image to the S3 server
   const asyncUploadSingleImage = async (
     imageBinary: string,
-  ): Promise<ImageURLObject | false> => {
+  ): Promise<ImageURLObject | null> => {
     try {
       // Attempt to upload the image
       const response = await _axios_instance.post("/images", imageBinary, {
@@ -72,12 +71,9 @@ const Profile = () => {
         },
       });
 
-      // Return the URL of the uploaded image on success
       return { url: response.data.url };
     } catch (error) {
-      // Log error and return false on failure
-      console.error("Error uploading image:", error);
-      return false;
+      return null;
     }
   };
 
@@ -112,7 +108,7 @@ const Profile = () => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: string,
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
@@ -120,7 +116,7 @@ const Profile = () => {
   };
 
   const handleSaveChanges = async () => {
-    let successImages: boolean | ImageURLObject = false;
+    let successImages: null | ImageURLObject = null;
     if (isImageUploaded) {
       try {
         const listingImageBinary = imageURL.split(",")[1];
@@ -136,9 +132,7 @@ const Profile = () => {
       try {
         await _axios_instance.patch("/user", profile);
         setOriginalProfile(profile);
-        console.log("Profile updated successfully");
       } catch (error) {
-        console.error("Error saving changes:", error);
         alert("Error saving changes. Please try again.");
       }
     } else {
@@ -176,9 +170,7 @@ const Profile = () => {
         height: "100vh",
       }}
     >
-      {isDesktop && !isScreenSmall && (
-        <AccountSidebar selectedItem="My Profile" />
-      )}
+      {!isDesktop && <AccountSidebar selectedItem="My Profile" />}
       <Typography variant={"h2"}>My Profile</Typography>
       <Avatar
         src={imageURL}
@@ -195,11 +187,11 @@ const Profile = () => {
         Upload Picture
         <input type="file" hidden onChange={handleImageUpload} />
       </Button>
-      <Box component="form" sx={{ width: "80%", maxWidth: "400px" }}>
+      <Box component="form" sx={{ mt: 2, width: "80%", maxWidth: "400px" }}>
         <TextField
           label="Username"
           variant="outlined"
-          sx={{ mt: 2, width: "100%" }}
+          sx={{ width: "100%" }}
           margin="normal"
           value={profile.username}
           disabled
@@ -229,7 +221,6 @@ const Profile = () => {
           label="Bio"
           variant="outlined"
           sx={{ width: "100%" }}
-          margin="normal"
           multiline
           rows={4}
           value={profile.bio}
@@ -241,7 +232,7 @@ const Profile = () => {
           variant="contained"
           sx={classes.saveButton}
           onClick={handleSaveChanges}
-          id={"save_button"}
+          id="save_button"
           disabled={!editMode}
         >
           Save
@@ -251,7 +242,7 @@ const Profile = () => {
           variant="contained"
           sx={classes.cancelButton}
           onClick={handleCancelChanges}
-          id={"cancel_button"}
+          id="cancel_button"
           disabled={!editMode}
         >
           Cancel
