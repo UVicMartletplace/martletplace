@@ -33,7 +33,9 @@ const listingObject = {
         }
       ],
       images: [
-        { url: "https://example.com/image" }
+        {url: "https://picsum.photos/200/300" },
+          {url: "https://picsum.photos/200/300" },
+          {url: "https://picsum.photos/200/300" }
       ],
       distance: 4.2
     };
@@ -49,15 +51,14 @@ describe('<EditListing />', () => {
       </MemoryRouter>,
     );
     cy.viewport(1280, 720);
-  });
-
-  it('renders', () => {
-    // see: https://on.cypress.io/mounting-react
-
     cy.intercept("GET", "/api/listing/1", {
       statusCode: 200,
       body: listingObject,
     }).as("getListing");
+  });
+
+  it('renders', () => {
+    // see: https://on.cypress.io/mounting-react
 
     cy.intercept("PATCH", "/api/listing/1", {
       statusCode: 200,
@@ -65,4 +66,106 @@ describe('<EditListing />', () => {
 
     cy.contains("Edit Listing").should("be.visible");
   })
+
+  it("Edits the listing correctly", () => {
+    const patchObject = {
+      listing: {
+        title: "This is a bad textbook like the one used with SENG 474",
+        price: 0,
+        location: { latitude: 48.463302, longitude: -123.310800 },
+        description: "I do not like this textbook",
+        images: [
+          {url: "https://picsum.photos/200/300" },
+          {url: "https://picsum.photos/200/300" },
+          {url: "https://picsum.photos/200/300" }
+        ],
+        status: "AVAILABLE"
+      }
+    };
+
+    cy.intercept("PATCH", "/api/listing/1", {
+      statusCode: 200,
+    }).as("patchListing");
+
+    cy.contains("Edit Listing").should("be.visible");
+
+    cy.get("#field-description").should("have.value", listingObject.description);
+
+    cy.get("#field-description").type("HELLO")
+
+    cy.get('#field-description')
+      .should('be.visible')
+      .clear()
+      .type('I do not like this textbook')
+      .should('have.value', 'I do not like this textbook')
+
+    cy.get('#field-title')
+    .should('be.visible')
+    .clear()
+    .type('{selectall}{backspace}')
+    .type('This is a bad textbook like the one used with SENG 474')
+    .should('have.value', 'This is a bad textbook like the one used with SENG 474');
+
+    cy.get('#field-price')
+    .should('be.visible')
+    .type("{selectAll}0")
+    .should('have.value', "0");
+
+    cy.get("#submit-button").click();
+
+
+    cy.wait("@patchListing").then((interception) => {
+      const requestBody = interception.request.body;
+      cy.log("Request Body", requestBody);
+      cy.log("Expected Body", patchObject);
+      expect(requestBody).to.deep.equal(patchObject);
+    });
+  })
+
+  it("Deletes listing correctly", () => {
+    cy.intercept("DELETE", "/api/listing/1", {
+      statusCode: 200,
+    }).as("deleteListing");
+
+    cy.get("#delete-button").click()
+
+    cy.wait('@deleteListing').its('response.statusCode').should('eq', 200);
+
+  })
+
+  it("Changes Status of Listing", () => {
+    const patchObject = {
+      listing: {
+        title: "Used Calculus Textbook",
+        price: 50,
+        location: { latitude: 48.463302, longitude: -123.310800 },
+        description: "No wear and tear, drop-off available.",
+        images: [
+          {url: "https://picsum.photos/200/300" },
+          {url: "https://picsum.photos/200/300" },
+          {url: "https://picsum.photos/200/300" }
+        ],
+        status: "SOLD"
+      }
+    };
+
+    cy.intercept("PATCH", "/api/listing/1", {
+      statusCode: 200,
+    }).as("patchListing");
+
+    cy.get("#status-button").click()
+
+    cy.get("#submit-button").click();
+
+    cy.wait("@patchListing").then((interception) => {
+      const requestBody = interception.request.body;
+      cy.log("Request Body", requestBody);
+      cy.log("Expected Body", patchObject);
+      expect(requestBody).to.deep.equal(patchObject);
+    });
+
+  })
+
+
+
 })

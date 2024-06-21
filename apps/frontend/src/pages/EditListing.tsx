@@ -38,55 +38,12 @@ interface NewListingObject {
   listing: ListingObject;
 }
 
-interface SellerProfile {
-  userID: string;
-  username: string;
-  name: string;
-  bio: string;
-  profilePictureUrl: string;
-}
-
-interface Location {
-  latitude: number;
-  longitude: number;
-}
-
-interface Review {
-  listing_review_id: string;
-  reviewerName: string;
-  stars: number;
-  comment: string;
-  userID: string;
-  listingID: string;
-  dateCreated: string;
-  dateModified: string;
-}
-
-interface Image {
-  url: string;
-}
-
-interface ReceivedListing {
-  listingID: string;
-  seller_profile: SellerProfile;
-  title: string;
-  description: string;
-  price: number;
-  location: Location;
-  status: string;
-  dateCreated: string;
-  dateModified: string;
-  reviews: Review[];
-  images: Image[];
-  distance: number;
-}
-
 const EditListing = () => {
   const { id } = useParams();
   const [listingImages, setListingImages] = useState<string[]>([]);
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
-    "This field is required",
+    "",
   );
   const [sent, setSent] = useState(false);
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
@@ -107,21 +64,19 @@ const EditListing = () => {
     },
   });
 
-  const [receivedListingObject, setReceivedListingObject] = useState<ReceivedListing | null>(null);
-
   useEffect(() => {
     _axios_instance
       .get("/listing/" + id)
       .then((response) => {
-        setReceivedListingObject(response.data);
         setNewListingObject((prevState) => ({
           ...prevState,
           listing: {
             ...prevState.listing,
             title: response.data.title || "",
             description: response.data.description || "",
-            price: response.data.price || 0,
+            price: +response.data.price || 0,
             status: response.data.status || "AVAILABLE",
+            images: response.data.images || []
           },
         }));
       })
@@ -214,6 +169,7 @@ const EditListing = () => {
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     const priceValue = event.target.value;
+    console.log("PRICE VALUE:", priceValue)
     const regex = /^\d+(.\d{1,2})?$/;
     if (!regex.test(priceValue)) {
       setPriceError(
@@ -381,10 +337,9 @@ const EditListing = () => {
                       type="number"
                       sx={{ m: "10px" }}
                       rows={1}
-                      InputProps={{ inputProps: { min: 0 } }}
                       onChange={updateListingPrice}
                       error={!!priceError}
-                      value={newListingObject.listing.price}
+                      value={newListingObject.listing.price !== null && newListingObject.listing.price !== undefined ? newListingObject.listing.price : ''}
                     />
                     {priceError && (
                       <FormHelperText error>{priceError}</FormHelperText>
@@ -464,7 +419,7 @@ const EditListing = () => {
                 <Box sx={{ padding: "10px" }}>
                   {!isImageValid(listingImages[0]) ? (
                     <Typography sx={{ paddingLeft: "10px" }} variant={"body2"}>
-                      No images uploaded yet
+                      No images uploaded yet, these images will overwrite the current ones.
                     </Typography>
                   ) : (
                     <Carousel imageURLs={listingImages} />
