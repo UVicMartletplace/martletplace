@@ -9,15 +9,13 @@ import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
-import MyProfile from "./pages/MyProfile";
+import MyProfile from "./pages/Profile";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* If full URL is `/user/:id` then it would show another users profile,
-        otherwise current users profile is shown. */}
-        <Route path="/user" element={<MyProfile />} />
+        <Route path="/user/:id" element={<MyProfile />} />
         <Route path="/user/reviews" element={<MyReviews />} />
         <Route path="/user/listings" element={<MyListings />} />
 

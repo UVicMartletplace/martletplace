@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import MyProfile from "../../src/pages/MyProfile";
+import MyProfile from "../../src/pages/Profile";
 
 describe("Account Page", () => {
   beforeEach(() => {
