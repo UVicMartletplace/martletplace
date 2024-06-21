@@ -1,5 +1,8 @@
 import { Grid, Button, Typography } from "@mui/material";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import _axios_instance from "../_axios_instance.tsx";
 
 interface ListingObject {
   listingID: string;
@@ -13,20 +16,40 @@ interface ListingObject {
 }
 
 interface ListingCardProps {
+  searchPerformed: boolean;
   listing: ListingObject;
 }
 
-const priceFormatter = new Intl.NumberFormat("en-CA", {
-  style: "currency",
-  currency: "CAD",
-});
+const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
+  const navigate = useNavigate();
+  const [isGreyedOut, setIsGreyedOut] = useState(false);
 
-const convertDate = (dateString: string) => {
-  const dateTimeObject = new Date(dateString);
-  return dateTimeObject.toDateString();
-};
+  const handleListingClick = () => {
+    navigate(`/listing/${listing.listingID}`);
+  };
 
-const ListingCard = ({ listing }: ListingCardProps) => {
+  const priceFormatter = new Intl.NumberFormat("en-CA", {
+    style: "currency",
+    currency: "CAD",
+  });
+
+  const convertDate = (dateString: string) => {
+    const dateTimeObject = new Date(dateString);
+    return dateTimeObject.toDateString();
+  };
+
+  const handleNotInterested = () => {
+    setIsGreyedOut(true);
+    _axios_instance
+      .post("/recommendations/stop", { id: listing.listingID })
+      .then((response) => {
+        console.log("Successfully stopped recommendations:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error stopping recommendations:", error);
+      });
+  };
+
   return (
     <Grid
       container
@@ -35,8 +58,16 @@ const ListingCard = ({ listing }: ListingCardProps) => {
       justifyContent="flex-start"
       spacing={3}
       maxWidth={"29vw"}
-      sx={{ margin: "1.5%" }}
+      sx={{
+        margin: "1.5%",
+        cursor: "pointer",
+        background: isGreyedOut ? "#b5b5b5" : "none",
+        pointerEvents: isGreyedOut ? "none" : "auto",
+        borderRadius: "8px",
+        paddingBottom: "8px",
+      }}
       className="listing-card"
+      onClick={handleListingClick}
     >
       <Grid
         item
@@ -46,7 +77,7 @@ const ListingCard = ({ listing }: ListingCardProps) => {
           maxHeight: "40vh",
           display: "flex",
           justifyContent: "center",
-          alignSelf: "center",
+          alignSelf: "left",
           overflow: "hidden",
           borderRadius: "8px",
         }}
@@ -59,24 +90,28 @@ const ListingCard = ({ listing }: ListingCardProps) => {
             height: "auto",
             objectFit: "cover",
             borderRadius: "8px",
+            margin: "0px",
           }}
         />
       </Grid>
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "white",
-            color: "black",
-            outline: "1px solid #808080",
-            "&:hover": { backgroundColor: "#808080" },
-            textTransform: "none",
-            width: "calc(100% - 20px)",
-          }}
-        >
-          Not interested
-        </Button>
-      </Grid>
+      {searchPerformed ? null : (
+        <Grid item xs={12} sx={{ width: "100%" }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: isGreyedOut ? "#808080" : "white",
+              color: "black",
+              outline: "1px solid #808080",
+              "&:hover": { backgroundColor: "#808080" },
+              textTransform: "none",
+              width: "calc(100% - 20px)",
+            }}
+            onClick={handleNotInterested}
+          >
+            Not interested
+          </Button>
+        </Grid>
+      )}
       <Grid item xs={12} sx={{ width: "100%" }}>
         <Typography variant="body1" gutterBottom>
           {listing.title}

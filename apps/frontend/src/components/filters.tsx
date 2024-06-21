@@ -41,6 +41,8 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [status, setStatus] = useState<string>("");
   const [type, setType] = useState<string>("LISTING");
+  const [latitude, setLatitude] = useState<number>(48.463302);
+  const [longitude, setLongitude] = useState<number>(-123.3108);
 
   const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMinPrice(
@@ -69,6 +71,8 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       maxPrice: maxPrice,
       status,
       searchType: type,
+      latitude,
+      longitude,
     });
   };
 
@@ -82,15 +86,40 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       maxPrice: null,
       status: "",
       searchType: "",
+      latitude: 48.463302,
+      longitude: -123.3108,
     });
   };
 
+  // Gets the user location, returns false on failure, defaults to uvic
+  const getLocation = () => {
+    try {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const currentLatitude = position.coords.latitude;
+        const currentLongitude = position.coords.longitude;
+        if (currentLatitude !== 0 && currentLongitude !== 0) {
+          setLatitude(currentLatitude);
+          setLongitude(currentLongitude);
+          onFilterChange({
+            latitude: currentLatitude,
+            longitude: currentLongitude,
+          });
+          return true;
+        }
+      });
+      return false;
+    } catch (error) {
+      return false;
+    }
+  };
+
   useEffect(() => {
-    console.log("Filters changed");
     setMinPrice(filters.minPrice);
     setMaxPrice(filters.maxPrice);
     setStatus(filters.status);
     setType(filters.searchType);
+    setLatitude(filters.latitude);
+    setLongitude(filters.longitude);
   }, []);
 
   const isDesktop = useMediaQuery("(min-width:850px)");
@@ -172,6 +201,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
           type="submit"
           variant="contained"
           fullWidth
+          onClick={getLocation}
           sx={{
             m: 1,
             backgroundColor: colors.martletplaceNavyBlue,

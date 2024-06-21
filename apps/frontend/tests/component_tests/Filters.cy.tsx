@@ -1,13 +1,6 @@
 import Filters from "../../src/components/filters";
 import { mount } from "cypress/react";
 
-// interface SearchObject {
-//   minPrice?: number | null;
-//   maxPrice?: number | null;
-//   status: string;
-//   searchType: string;
-// }
-
 interface SearchObject {
   query: string;
   minPrice: number | null;
@@ -88,6 +81,8 @@ describe("<Filters />", () => {
       maxPrice: 500,
       status: "SOLD",
       searchType: "USER",
+      latitude: 0,
+      longitude: 0,
     });
   });
 

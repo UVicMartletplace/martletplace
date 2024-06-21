@@ -163,4 +163,17 @@ describe("<Homepage />", () => {
         cy.contains(listingObjects.listings[0].price).should("be.visible");
       });
   });
+
+  it("Test not interested button", () => {
+    cy.get(".listing-card")
+      .first()
+      .within(() => {
+        cy.get("button").contains("Not interested").click();
+      });
+
+    cy.get(".listing-card").should(
+      "have.length",
+      listingObjects.listings.length
+    );
+  });
 });

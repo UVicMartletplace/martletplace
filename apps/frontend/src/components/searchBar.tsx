@@ -58,8 +58,8 @@ const SearchBar = () => {
     maxPrice: null,
     status: "AVAILABLE",
     searchType: "LISTING",
-    latitude: 0,
-    longitude: 0,
+    latitude: 48.463302,
+    longitude: -123.3108,
     sort: "RELEVANCE",
     page: 1,
     limit: 6,
@@ -83,7 +83,6 @@ const SearchBar = () => {
       query: searchInput,
     };
     //put search object in the URL
-    console.log("IN THE HANDLESEARCH FUNCTION:", searchObject);
     navigate(
       `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
@@ -99,8 +98,8 @@ const SearchBar = () => {
       maxPrice: null,
       status: "AVAILABLE",
       searchType: "LISTING",
-      latitude: 0,
-      longitude: 0,
+      latitude: 48.463302,
+      longitude: -123.3108,
       sort: "RELEVANCE",
       page: 1,
       limit: 6,

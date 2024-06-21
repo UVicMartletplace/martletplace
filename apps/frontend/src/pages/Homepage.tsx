@@ -57,8 +57,8 @@ const Homepage = () => {
     maxPrice: null,
     status: "AVAILABLE",
     searchType: "LISTING",
-    latitude: 0,
-    longitude: 0,
+    latitude: 48.463302,
+    longitude: -123.3108,
     sort: "RELEVANCE",
     page: 1,
     limit: 6,
@@ -69,7 +69,6 @@ const Homepage = () => {
 
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
-    console.log("Sort By:", event.target.value);
     navigate(
       `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
@@ -92,7 +91,6 @@ const Homepage = () => {
 
   const handleSearch = (searchObject: SearchObject) => {
     setSearchObject(searchObject);
-    console.log("Search Object:", searchObject);
     _axios_instance
       .get("/search", { params: { searchObject } })
       .then((response) => {
@@ -108,13 +106,10 @@ const Homepage = () => {
 
   useEffect(() => {
     //called on page load
-    console.log("in the useEffect function location:", location.pathname);
-
     if (location.pathname === "/") {
       // nothing is being searched
       if (initialRender.current) {
         initialRender.current = false;
-        console.log("Fetching Recomendations...");
         _axios_instance
           .get("/recomendations", { params: { page: 1, limit: 24 } })
           .then((response) => {
@@ -126,7 +121,6 @@ const Homepage = () => {
         setSearchPerformed(false);
       }
     } else {
-      console.log("Fetching search results...");
       let match;
       while ((match = regex.exec(location.pathname)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
@@ -245,7 +239,11 @@ const Homepage = () => {
         key="grid-listings"
       >
         {listingObjects.map((listing) => (
-          <ListingCard key={listing.listingID} listing={listing} />
+          <ListingCard
+            key={listing.listingID}
+            searchPerformed={searchPerformed}
+            listing={listing}
+          />
         ))}
       </Grid>
       <Box
