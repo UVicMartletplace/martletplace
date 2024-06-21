@@ -49,6 +49,7 @@ const EditListing = () => {
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
     [],
   );
+  const [listingValid, setListingValid] = useState<boolean>(false);
 
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
     listing: {
@@ -79,6 +80,7 @@ const EditListing = () => {
             images: response.data.images || []
           },
         }));
+        setListingValid(true)
       })
       .catch((error) => {
         console.log(error);
@@ -300,7 +302,8 @@ const EditListing = () => {
 
   return (
     <Container>
-      <Card>
+      {!listingValid ? <Typography>Listing Not Valid</Typography> : null}
+      <Card sx={{display: listingValid ? "block" : "none"}}>
         <CardContent>
           <Typography variant={"h2"}>Edit Listing</Typography>
           <Grid container spacing={1}>
