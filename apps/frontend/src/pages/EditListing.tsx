@@ -43,7 +43,6 @@ const EditListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>("");
-  const [sent, setSent] = useState(false);
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
     [],
   );
@@ -81,8 +80,8 @@ const EditListing = () => {
         }));
         setListingValid(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        alert("Listing not updated successfully");
       });
   }, [id]);
 
@@ -111,11 +110,9 @@ const EditListing = () => {
           },
         }));
         return true;
-      } else {
-        return false;
       }
+      return false;
     } catch (error) {
-      console.error("Error uploading images:", error);
       return false;
     }
   };
@@ -125,30 +122,25 @@ const EditListing = () => {
   ) => {
     submissionEvent.preventDefault();
 
-    if (!priceError && !titleError && !sent) {
+    if (!priceError && !titleError) {
       const successImages: boolean = await asyncListingImageWrapper();
-      const successLocation: boolean = await asyncListingLocationWrapper();
 
-      if (successImages && successLocation) {
+      if (successImages) {
         _axios_instance
           .patch("/listing/" + id, newListingObject)
           .then(() => {
             alert("Listing Updated!");
-            setSent(true);
             navigate("/");
           })
           .catch(() => {
             alert("Listing Update Failed");
-            setSent(false);
           });
       } else if (!successImages) {
         alert("Images failed to upload, please try again later");
-        setSent(false);
       } else {
         alert(
           "Error occurred when updating the listing, you may need to enable location permissions for this site",
         );
-        setSent(false);
       }
     }
   };
@@ -171,43 +163,17 @@ const EditListing = () => {
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     const priceValue = event.target.value;
-    console.log("PRICE VALUE:", priceValue);
-    const regex = /^\d+(.\d{1,2})?$/;
+    const regex = /^\d+(\.\d{1,2})?$/;
     if (!regex.test(priceValue)) {
       setPriceError(
         "This price is not valid, please make sure the value is positive and in the form xx.xx",
       );
     } else {
       setPriceError("");
-      updateNewListingPayload("price", priceValue ? parseFloat(priceValue) : 0);
+      updateNewListingPayload("price", priceValue ? Number(priceValue) : 0);
     }
   };
 
-  const updateListingLocation = () => {
-    try {
-      const currentLocation: LocationObject = { latitude: 0, longitude: 0 };
-      navigator.geolocation.getCurrentPosition((position) => {
-        const currentLatitude = position.coords.latitude;
-        const currentLongitude = position.coords.longitude;
-        if (currentLatitude !== 0 && currentLongitude !== 0) {
-          currentLocation.latitude = currentLatitude;
-          currentLocation.longitude = currentLongitude;
-        }
-      });
-      updateNewListingPayload("location", currentLocation);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const asyncListingLocationWrapper = async (): Promise<boolean> => {
-    try {
-      return updateListingLocation();
-    } catch (error) {
-      return false;
-    }
-  };
 
   const isImageValid = (url: string) => {
     try {
@@ -228,7 +194,6 @@ const EditListing = () => {
         });
         return { url: response.data.url };
       } catch (error) {
-        console.error("Error uploading image:", error);
         return null;
       }
     });
@@ -242,7 +207,6 @@ const EditListing = () => {
       });
       return retrievedImages;
     } catch (error) {
-      console.error("Error in uploading image process:", error);
       return false;
     }
   };
@@ -262,7 +226,7 @@ const EditListing = () => {
       .delete("/listing/" + id)
       .then(() => {
         alert("Listing Deleted Successfully");
-        navigate("/");
+        navigate("/user");
       })
       .catch((error) => {
         switch (error.response.status) {
@@ -273,7 +237,7 @@ const EditListing = () => {
             alert("This listing was not found");
             break;
           default:
-            console.error("Error when deleting listing", error);
+            alert("Error occurred and listing not deleted");
         }
       });
   };
@@ -299,15 +263,15 @@ const EditListing = () => {
 
   return (
     <Container>
-      {!listingValid ? <Typography>Listing Not Valid</Typography> : null}
-      <Card sx={{ display: listingValid ? "block" : "none" }}>
+      {listingValid ?
+      <Card>
         <CardContent>
-          <Typography variant={"h2"}>Edit Listing</Typography>
+          <Typography variant="h2">Edit Listing</Typography>
           <Grid container spacing={1}>
             <Grid item md={6} sm={12} xs={12}>
               <Box>
-                <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-                  <FormControl sx={{ width: "100%", padding: "10px" }}>
+                <form autoComplete="off" onSubmit={handleSubmit}>
+                  <FormControl sx={{ width: "100%", gap: "10px" }}>
                     <TextField
                       id="field-title"
                       label="Title"
@@ -339,12 +303,7 @@ const EditListing = () => {
                       rows={1}
                       onChange={updateListingPrice}
                       error={!!priceError}
-                      value={
-                        newListingObject.listing.price !== null &&
-                        newListingObject.listing.price !== undefined
-                          ? newListingObject.listing.price
-                          : ""
-                      }
+                      value={newListingObject.listing.price ?? ""}
                     />
                     {priceError && (
                       <FormHelperText error>{priceError}</FormHelperText>
@@ -367,7 +326,7 @@ const EditListing = () => {
                           padding: "10px 20px",
                           margin: "10px",
                         }}
-                        id={"submit-button"}
+                        id="submit-button"
                       >
                         Update Listing
                       </Button>
@@ -395,7 +354,7 @@ const EditListing = () => {
                           margin: "10px",
                         }}
                         variant="contained"
-                        id={"delete-button"}
+                        id="delete-button"
                         onClick={handleDelete}
                       >
                         Delete Posting
@@ -414,7 +373,7 @@ const EditListing = () => {
                           margin: "10px",
                         }}
                         variant="contained"
-                        id={"status-button"}
+                        id="status-button"
                         onClick={handleUpdateStatus}
                       >
                         {newListingObject.listing.status === "AVAILABLE"
@@ -428,12 +387,12 @@ const EditListing = () => {
             </Grid>
             <Grid item lg={6} xs={12}>
               <Box>
-                <Typography variant={"h5"} sx={{ paddingLeft: "20px" }}>
+                <Typography variant="h5" sx={{ paddingLeft: "20px" }}>
                   Image Preview
                 </Typography>
                 <Box sx={{ padding: "10px" }}>
                   {!isImageValid(listingImages[0]) ? (
-                    <Typography sx={{ paddingLeft: "10px" }} variant={"body2"}>
+                    <Typography sx={{ paddingLeft: "10px" }} variant="body2">
                       No images uploaded yet, these images will overwrite the
                       current ones.
                     </Typography>
@@ -445,7 +404,7 @@ const EditListing = () => {
             </Grid>
           </Grid>
         </CardContent>
-      </Card>
+      </Card> : <Typography>Listing Not Valid</Typography>}
     </Container>
   );
 };
