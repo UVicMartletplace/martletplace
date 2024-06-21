@@ -43,7 +43,7 @@ const SearchBar = () => {
 
   const handleReload = () => {
     navigate("/");
-    //window.location.reload();
+    window.location.reload();
   };
 
   const handleListingRoute = () => {

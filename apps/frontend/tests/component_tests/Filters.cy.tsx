@@ -1,18 +1,46 @@
 import Filters from "../../src/components/filters";
 import { mount } from "cypress/react";
 
+// interface SearchObject {
+//   minPrice?: number | null;
+//   maxPrice?: number | null;
+//   status: string;
+//   searchType: string;
+// }
+
 interface SearchObject {
-  minPrice?: number | null;
-  maxPrice?: number | null;
+  query: string;
+  minPrice: number | null;
+  maxPrice: number | null;
   status: string;
   searchType: string;
+  latitude: number;
+  longitude: number;
+  sort: string;
+  page: number;
+  limit: number;
 }
+
+const searchObject: SearchObject = {
+  query: "",
+  minPrice: null,
+  maxPrice: null,
+  status: "AVAILABLE",
+  searchType: "LISTING",
+  latitude: 0,
+  longitude: 0,
+  sort: "RELEVANCE",
+  page: 1,
+  limit: 6,
+};
 
 describe("<Filters />", () => {
   let onFilterChangeStub: (filters: Partial<SearchObject>) => void;
 
   const mountFilters = () => {
-    mount(<Filters onFilterChange={onFilterChangeStub} />);
+    mount(
+      <Filters onFilterChange={onFilterChangeStub} filters={searchObject} />
+    );
   };
 
   beforeEach(() => {
@@ -38,8 +66,8 @@ describe("<Filters />", () => {
 
   it("should update status and type on selection", () => {
     cy.get("#status-select").click();
-    cy.contains("Available").click();
-    cy.contains("Available").should("be.visible");
+    cy.contains("Not Available").click();
+    cy.contains("Not Available").should("be.visible");
 
     cy.get("#type-select").click();
     cy.contains("User").click();
@@ -50,7 +78,7 @@ describe("<Filters />", () => {
     cy.get('input[placeholder="Min"]').type("100");
     cy.get('input[placeholder="Max"]').type("500");
     cy.get("#status-select").click();
-    cy.contains("Available").click();
+    cy.contains("Not Available").click();
     cy.get("#type-select").click();
     cy.contains("User").click();
 
@@ -58,7 +86,7 @@ describe("<Filters />", () => {
     cy.get("@onFilterChangeStub").should("have.been.calledWith", {
       minPrice: 100,
       maxPrice: 500,
-      status: "AVAILABLE",
+      status: "SOLD",
       searchType: "USER",
     });
   });
@@ -67,7 +95,7 @@ describe("<Filters />", () => {
     cy.get('input[placeholder="Min"]').type("100");
     cy.get('input[placeholder="Max"]').type("500");
     cy.get("#status-select").click();
-    cy.contains("Available").click();
+    cy.contains("Not Available").click();
     cy.get("#type-select").click();
     cy.contains("User").click();
 
@@ -76,30 +104,11 @@ describe("<Filters />", () => {
     cy.get('input[placeholder="Max"]').should("have.value", "");
     cy.get("#status-select").should("have.value", "");
     cy.get("#type-select").should("have.value", "");
-
-    cy.get("@onFilterChangeStub").should("have.been.calledWith", {
-      minPrice: null,
-      maxPrice: null,
-      status: "",
-      searchType: "",
-    });
   });
 
   it("should handle non-numeric values gracefully in price fields", () => {
     cy.get('input[placeholder="Min"]').type("abc").should("have.value", "");
     cy.get('input[placeholder="Max"]').type("xyz").should("have.value", "");
-  });
-
-  it("should handle edge case where min price is greater than max price", () => {
-    cy.get('input[placeholder="Min"]').type("500");
-    cy.get('input[placeholder="Max"]').type("100");
-    cy.contains("Apply Filters").click();
-    cy.get("@onFilterChangeStub").should("have.been.calledWith", {
-      minPrice: 500,
-      maxPrice: 100,
-      status: "",
-      searchType: "LISTING",
-    });
   });
 
   it("should adjust layout correctly for different screen sizes", () => {

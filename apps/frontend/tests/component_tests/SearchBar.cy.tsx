@@ -44,4 +44,35 @@ describe("<SearchBar />", () => {
     cy.contains("My Listing").should("be.visible");
     cy.contains("Messaging").should("be.visible");
   });
+
+  it("should navigate to messages page on message button click", () => {
+    cy.get('button img[alt="Message Icon"]').click();
+    cy.contains("Messages").should("be.visible");
+  });
+
+  it("should navigate to user profile page on account button click", () => {
+    cy.get("button").contains("Account").click();
+    cy.contains("My Profile").should("be.visible");
+  });
+
+  it("should navigate to user profile page on hamburger menu click", () => {
+    cy.viewport(700, 720); // Adjust viewport to make hamburger menu visible
+    cy.get("button").contains("=").click();
+    cy.contains("My Profile").click();
+    cy.contains("My Profile").should("be.visible");
+  });
+
+  it("updates search input values", () => {
+    cy.get('input[placeholder="Search"]').type("Test Search");
+    cy.get('input[placeholder="Search"]').should("have.value", "Test Search");
+    cy.get(":nth-child(3) > .MuiButtonBase-root").click();
+    cy.get('input[placeholder="Min"]').type("100");
+    cy.get('input[placeholder="Max"]').type("500");
+    cy.get("#status-select").click();
+    cy.contains("Not Available").click();
+    cy.get("#type-select").click();
+    cy.contains("User").click();
+    cy.contains("Apply Filters").click();
+    cy.get("button").contains("Search").click();
+  });
 });

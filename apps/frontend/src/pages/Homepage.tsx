@@ -15,7 +15,7 @@ import ListingCard from "../components/listingCard.tsx";
 import { useState, useEffect, useRef } from "react";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface ListingObject {
   listingID: string;
@@ -65,7 +65,6 @@ const Homepage = () => {
   });
   const initialRender = useRef(true);
   const location = useLocation();
-  const { query } = useParams();
   const regex = /([^&=]+)=([^&]*)/g;
 
   const handleSortBy = (event: SelectChangeEvent<string>) => {
@@ -109,7 +108,9 @@ const Homepage = () => {
 
   useEffect(() => {
     //called on page load
-    if (query === undefined) {
+    console.log("in the useEffect function location:", location.pathname);
+
+    if (location.pathname === "/") {
       // nothing is being searched
       if (initialRender.current) {
         initialRender.current = false;
@@ -125,8 +126,9 @@ const Homepage = () => {
         setSearchPerformed(false);
       }
     } else {
+      console.log("Fetching search results...");
       let match;
-      while ((match = regex.exec(query)) !== null) {
+      while ((match = regex.exec(location.pathname)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         let value = decodeURIComponent(match[2]); // Decode value
 

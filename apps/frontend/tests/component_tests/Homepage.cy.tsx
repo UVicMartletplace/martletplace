@@ -90,19 +90,6 @@ describe("<Homepage />", () => {
     totalListings: 6,
   };
 
-  const searchObject = {
-    query: "",
-    minPrice: null,
-    maxPrice: null,
-    status: "AVAILABLE",
-    searchType: "LISTING",
-    latitude: 0,
-    longitude: 0,
-    sort: "RELEVANCE",
-    page: 1,
-    limit: 6,
-  };
-
   beforeEach(() => {
     cy.intercept("GET", "/api/search*", {
       statusCode: 200,
@@ -140,8 +127,24 @@ describe("<Homepage />", () => {
     cy.contains("Search").should("be.visible");
   });
 
-  it("allows searches to be performed", () => {
-    cy.contains("Search").click();
+  it("sorts listings by Price Ascending", () => {
+    cy.get('input[placeholder="Search"]').type("Calculus Textbook{enter}");
+    cy.wait("@searchListings");
+    cy.contains("Sort By").should("be.visible");
+    cy.contains("Relevance").click();
+    cy.contains("Price Ascending").should("be.visible");
+    cy.contains("Price Descending").should("be.visible");
+    cy.contains("Relevance").should("be.visible");
+    cy.contains("Listed Time Ascending").should("be.visible");
+    cy.contains("Listed Time Descending").should("be.visible");
+    cy.contains("Distance Ascending").should("be.visible");
+    cy.contains("Distance Descending").should("be.visible");
+    cy.contains("Price Ascending").click();
+    cy.contains("Price Ascending").should("be.visible");
+  });
+
+  it("Performs a search and displays listings", () => {
+    cy.get('input[placeholder="Search"]').type("Calculus Textbook{enter}");
 
     cy.wait("@searchListings");
 
@@ -150,53 +153,14 @@ describe("<Homepage />", () => {
       "have.length",
       listingObjects.listings.length
     );
+
+    // Verify the contents of the first listing
+    cy.get(".listing-card")
+      .first()
+      .within(() => {
+        cy.contains(listingObjects.listings[0].title).should("be.visible");
+        cy.contains(listingObjects.listings[0].sellerName).should("be.visible");
+        cy.contains(listingObjects.listings[0].price).should("be.visible");
+      });
   });
-
-  // it("sorts listings by Price Ascending", () => {
-  //   cy.get("button").contains("Search").click();
-  //   cy.wait("@searchListings");
-  //   cy.contains("Sort By").should("be.visible");
-  // cy.contains("Relevance").click();
-  // cy.contains("Price Ascending").should("be.visible");
-  // cy.contains("Price Descending").should("be.visible");
-  // cy.contains("Relevance").should("be.visible");
-  // cy.contains("Listed Time Ascending").should("be.visible");
-  // cy.contains("Listed Time Descending").should("be.visible");
-  // cy.contains("Distance Ascending").should("be.visible");
-  // cy.contains("Distance Descending").should("be.visible");
-  // cy.contains("Price Ascending").click();
-  // cy.contains("Price Ascending").should("be.visible");
-  //});
-
-  // it("Performs a search and displays listings", () => {
-  //   cy.get('input[placeholder="Search"]').type("Calculus Textbook{enter}");
-
-  //   cy.wait("@searchListings")
-  //     .its("request.body")
-  //     .should("deep.equal", searchObject);
-
-  //   // Verify that listings are displayed
-  //   cy.get(".listing-card").should(
-  //     "have.length",
-  //     listingObjects.listings.length
-  //   );
-
-  //   // Verify the contents of the first listing
-  //   cy.get(".listing-card")
-  //     .first()
-  //     .within(() => {
-  //       cy.get(".listing-title").should(
-  //         "contain",
-  //         listingObjects.listings[0].title
-  //       );
-  //       cy.get(".listing-price").should(
-  //         "contain",
-  //         `$${listingObjects.listings[0].price}`
-  //       );
-  //       cy.get(".listing-description").should(
-  //         "contain",
-  //         listingObjects.listings[0].description
-  //       );
-  //     });
-  // });
 });
