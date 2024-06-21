@@ -10,12 +10,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {ChangeEvent, FormEventHandler, useEffect, useState} from "react";
+import { ChangeEvent, FormEventHandler, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface ImageURLObject {
   url: string;
@@ -42,9 +42,7 @@ const EditListing = () => {
   const { id } = useParams();
   const [listingImages, setListingImages] = useState<string[]>([]);
   const [priceError, setPriceError] = useState<string>("");
-  const [titleError, setTitleError] = useState<string>(
-    "",
-  );
+  const [titleError, setTitleError] = useState<string>("");
   const [sent, setSent] = useState(false);
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
     [],
@@ -78,10 +76,10 @@ const EditListing = () => {
             description: response.data.description || "",
             price: +response.data.price || 0,
             status: response.data.status || "AVAILABLE",
-            images: response.data.images || []
+            images: response.data.images || [],
           },
         }));
-        setListingValid(true)
+        setListingValid(true);
       })
       .catch((error) => {
         console.log(error);
@@ -173,7 +171,7 @@ const EditListing = () => {
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     const priceValue = event.target.value;
-    console.log("PRICE VALUE:", priceValue)
+    console.log("PRICE VALUE:", priceValue);
     const regex = /^\d+(.\d{1,2})?$/;
     if (!regex.test(priceValue)) {
       setPriceError(
@@ -181,10 +179,7 @@ const EditListing = () => {
       );
     } else {
       setPriceError("");
-      updateNewListingPayload(
-        "price",
-        priceValue ? parseFloat(priceValue) : 0,
-      );
+      updateNewListingPayload("price", priceValue ? parseFloat(priceValue) : 0);
     }
   };
 
@@ -283,7 +278,6 @@ const EditListing = () => {
       });
   };
 
-
   const buttonHTML = (
     <span style={{ textAlign: "center" }}>
       <Button
@@ -306,7 +300,7 @@ const EditListing = () => {
   return (
     <Container>
       {!listingValid ? <Typography>Listing Not Valid</Typography> : null}
-      <Card sx={{display: listingValid ? "block" : "none"}}>
+      <Card sx={{ display: listingValid ? "block" : "none" }}>
         <CardContent>
           <Typography variant={"h2"}>Edit Listing</Typography>
           <Grid container spacing={1}>
@@ -345,74 +339,89 @@ const EditListing = () => {
                       rows={1}
                       onChange={updateListingPrice}
                       error={!!priceError}
-                      value={newListingObject.listing.price !== null && newListingObject.listing.price !== undefined ? newListingObject.listing.price : ''}
+                      value={
+                        newListingObject.listing.price !== null &&
+                        newListingObject.listing.price !== undefined
+                          ? newListingObject.listing.price
+                          : ""
+                      }
                     />
                     {priceError && (
                       <FormHelperText error>{priceError}</FormHelperText>
                     )}
                   </FormControl>
                   <Box>
-                    <Box sx={{display: "flex"}}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      sx={{
-                        display: "inline",
-                        mt: 2,
-                        backgroundColor: colors.martletplaceNavyBlue,
-                        "&:hover": {
-                          backgroundColor: colors.martletplaceBlueHover,
-                        },
-                        textTransform: "none",
-                        fontSize: "16px",
-                        padding: "10px 20px",
-                        margin: "10px",
-                      }}
-                      id={"submit-button"}
-                    >
-                      Update Listing
-                    </Button>
-                    <MultiFileUpload
-                      passedImages={listingImages}
-                      setPassedImages={setListingImages}
-                      multipleUpload={true}
-                      htmlForButton={buttonHTML}
-                      imageBinary={listingImageBinaries}
-                      setImageBinaries={setListingImageBinaries}
-                    />
+                    <Box sx={{ display: "flex" }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceNavyBlue,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceBlueHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        id={"submit-button"}
+                      >
+                        Update Listing
+                      </Button>
+                      <MultiFileUpload
+                        passedImages={listingImages}
+                        setPassedImages={setListingImages}
+                        multipleUpload={true}
+                        htmlForButton={buttonHTML}
+                        imageBinary={listingImageBinaries}
+                        setImageBinaries={setListingImageBinaries}
+                      />
                     </Box>
                     <Box>
-                      <Button sx={{
-                        display: "inline",
-                        mt: 2,
-                        backgroundColor: colors.martletplaceRed,
-                        "&:hover": {
-                          backgroundColor: colors.martletplaceRedHover,
-                        },
-                        textTransform: "none",
-                        fontSize: "16px",
-                        padding: "10px 20px",
-                        margin: "10px",
-                      }} variant="contained" id={"delete-button"} onClick={handleDelete}
-                    >
-                      Delete Posting
-                    </Button>
-                    <Button sx={{
-                        display: "inline",
-                        mt: 2,
-                        backgroundColor: colors.martletplaceYellow,
-                        "&:hover": {
-                          backgroundColor: colors.martletplaceYellowHover,
-                        },
-                        textTransform: "none",
-                        fontSize: "16px",
-                        padding: "10px 20px",
-                        margin: "10px",
-                      }} variant="contained" id={"status-button"} onClick={handleUpdateStatus}
-                    >
-                      {newListingObject.listing.status === "AVAILABLE" ? "Mark Purchased" : "Mark Not Purchased"}
-                    </Button>
-                  </Box>
+                      <Button
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceRed,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceRedHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        variant="contained"
+                        id={"delete-button"}
+                        onClick={handleDelete}
+                      >
+                        Delete Posting
+                      </Button>
+                      <Button
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceYellow,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceYellowHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        variant="contained"
+                        id={"status-button"}
+                        onClick={handleUpdateStatus}
+                      >
+                        {newListingObject.listing.status === "AVAILABLE"
+                          ? "Mark Purchased"
+                          : "Mark Not Purchased"}
+                      </Button>
+                    </Box>
                   </Box>
                 </form>
               </Box>
@@ -425,7 +434,8 @@ const EditListing = () => {
                 <Box sx={{ padding: "10px" }}>
                   {!isImageValid(listingImages[0]) ? (
                     <Typography sx={{ paddingLeft: "10px" }} variant={"body2"}>
-                      No images uploaded yet, these images will overwrite the current ones.
+                      No images uploaded yet, these images will overwrite the
+                      current ones.
                     </Typography>
                   ) : (
                     <Carousel imageURLs={listingImages} />
