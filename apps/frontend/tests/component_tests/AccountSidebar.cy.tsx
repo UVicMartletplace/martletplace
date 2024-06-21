@@ -1,11 +1,11 @@
 import { BrowserRouter } from "react-router-dom";
-import MyProfile from "../../src/pages/Profile";
+import Profile from "../../src/pages/Profile";
 
 describe("Account Page", () => {
   beforeEach(() => {
     cy.mount(
       <BrowserRouter>
-        <MyProfile />
+        <Profile />
       </BrowserRouter>
     );
     cy.viewport(1280, 720);

@@ -1,12 +1,12 @@
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import MyProfile from "../../src/pages/Profile";
+import Profile from "../../src/pages/Profile";
 
-describe("<MyProfile />", () => {
+describe("<Profile />", () => {
   beforeEach(() => {
     cy.mount(
       <MemoryRouter initialEntries={[`/user/1`]}>
         <Routes>
-          <Route path="/user/:id" element={<MyProfile />} />
+          <Route path="/user/:id" element={<Profile />} />
         </Routes>
       </MemoryRouter>
     );

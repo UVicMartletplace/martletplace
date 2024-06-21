@@ -17,7 +17,7 @@ interface ImageURLObject {
   url: string;
 }
 
-const MyProfile = () => {
+const Profile = () => {
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
@@ -261,4 +261,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default Profile;
