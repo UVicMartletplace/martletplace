@@ -39,11 +39,11 @@ interface NewListingObject {
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
-    []
+    [],
   );
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
-    "This field is required"
+    "This field is required",
   );
   const [sent, setSent] = useState(false);
 
@@ -63,7 +63,7 @@ const CreateListing = () => {
 
   // Updates and sends the newListingObject, to the server via post under /api/listing
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (
-    submissionEvent
+    submissionEvent,
   ) => {
     submissionEvent.preventDefault();
     console.log("Listing Image Binaries", listingImageBinaries);
@@ -89,7 +89,7 @@ const CreateListing = () => {
       } else {
         // Currently this is added to catch if the location is not set, we could default this to the location of the university instead
         alert(
-          "Error occurred when creating a listing, you may need to enable location permissions for this site"
+          "Error occurred when creating a listing, you may need to enable location permissions for this site",
         );
         setSent(false);
       }
@@ -98,7 +98,7 @@ const CreateListing = () => {
 
   const updateNewListingPayload = (
     key: keyof ListingObject,
-    value: string | number | LocationObject
+    value: string | number | LocationObject,
   ) => {
     if (["title", "description", "price", "location", "images"].includes(key)) {
       setNewListingObject((prevState) => ({
@@ -143,7 +143,7 @@ const CreateListing = () => {
   };
 
   const updateListingDescription = (
-    event: ChangeEvent<HTMLTextAreaElement>
+    event: ChangeEvent<HTMLTextAreaElement>,
   ) => {
     // Handle
     updateNewListingPayload("description", event.target.value);
@@ -154,14 +154,14 @@ const CreateListing = () => {
     const regex = /^\d+(.\d{1,2})?$/;
     if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+        "This price is not valid, please make sure the value is positive and in the form xx.xx",
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       updateNewListingPayload(
         "price",
-        priceValue >= 0 ? priceValue : priceValue * -1
+        priceValue >= 0 ? priceValue : priceValue * -1,
       );
     }
   };
