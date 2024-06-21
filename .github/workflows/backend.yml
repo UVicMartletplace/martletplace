@@ -79,7 +79,7 @@ jobs:
         run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
 
   sast:
-    name: Static Code Anaylysis Security
+    name: Static Application Security Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:

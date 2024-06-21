@@ -59,7 +59,7 @@ jobs:
         run: docker compose exec ${{ matrix.service }} pytest
 
   sast:
-    name: Static Code Anaylysis Security
+    name: Static Application Security Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
