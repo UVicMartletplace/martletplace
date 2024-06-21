@@ -81,6 +81,7 @@ export const useStyles = () => ({
     padding: "10px 0",
     width: "45%",
     marginRight: "10px",
+    marginLeft: "15px",
   },
 
   cancelButton: {

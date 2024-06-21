@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Button,
+  FormHelperText,
   TextField,
   Typography,
   useMediaQuery,
@@ -35,6 +36,11 @@ const Profile = () => {
   const [originalProfile, setOriginalProfile] = useState(profile);
   const [editMode, setEditMode] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
+
+  const [usernameError, setUsernameError] = useState("");
+
+  // Regex for username validation
+  const usernameFormat = /^[a-zA-Z0-9]{1,20}$/;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,6 +120,17 @@ const Profile = () => {
   };
 
   const handleSaveChanges = async () => {
+    if (!usernameFormat.test(profile.username)) {
+      // Add or update an error state for username validation
+      setUsernameError(
+        "Username must be between 1 and 20 characters and only contain letters or numbers.",
+      );
+      return;
+    } else {
+      // Clear username error if valid
+      setUsernameError("");
+    }
+
     let successImages: null | ImageURLObject = null;
     if (isImageUploaded) {
       try {
@@ -172,7 +189,7 @@ const Profile = () => {
       <Avatar
         src={imageURL}
         alt="Profile Picture"
-        sx={{ width: 200, height: 200, mt: 2, mb: 2 }}
+        sx={{ width: 150, height: 150, mt: 2, mb: 2 }}
         id="profile_picture"
       />
       <Button
@@ -184,17 +201,23 @@ const Profile = () => {
         Upload Picture
         <input type="file" hidden onChange={handleImageUpload} />
       </Button>
-      <Box component="form" sx={{ mt: 2, width: "80%", maxWidth: "400px" }}>
+      <Box
+        component="form"
+        sx={{ mt: 2, width: "80%", maxWidth: "400px", height: "50px" }}
+      >
         <TextField
           label="Username"
           variant="outlined"
           sx={{ width: "100%" }}
           margin="normal"
           value={profile.username}
-          disabled
+          error={!!usernameError}
           onChange={(e) => handleInputChange(e, "username")}
           id="username"
         />
+        {usernameError && (
+          <FormHelperText error>{usernameError}</FormHelperText>
+        )}
         <TextField
           label="Name"
           variant="outlined"
@@ -218,6 +241,7 @@ const Profile = () => {
           label="Bio"
           variant="outlined"
           sx={{ width: "100%" }}
+          margin="normal"
           multiline
           rows={4}
           value={profile.bio}

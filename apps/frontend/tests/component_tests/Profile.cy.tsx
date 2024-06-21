@@ -208,4 +208,24 @@ describe("<Profile />", () => {
     cy.get("#save_button").invoke("attr", "disabled").should("exist");
     cy.get("#cancel_button").invoke("attr", "disabled").should("exist");
   });
+
+  // Check error for handling invalid username format
+  it("displays an error message for invalid username format", () => {
+    // Type an invalid username
+    cy.get("#username")
+      .type("invalid-username2389012839082103820198190830981903")
+      .should(
+        "have.value",
+        "invalid-username2389012839082103820198190830981903"
+      );
+
+    // Click the save button
+    cy.get("#save_button").click();
+
+    // Check if the error message is displayed
+    cy.get("p").should(
+      "contain.text",
+      "Username must be between 1 and 20 characters and only contain letters or numbers."
+    );
+  });
 });
