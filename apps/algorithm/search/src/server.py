@@ -105,7 +105,10 @@ async def get_listing(listing_id: str):
         auth=elasticsearch_auth,
         verify=False).json()
 
-    return listing
+    # Return the listing.
+    return {
+        'listing': listing['_source']
+    }
 
 
 @app.post("/api/listing")
