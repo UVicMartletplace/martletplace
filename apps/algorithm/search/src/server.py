@@ -111,14 +111,6 @@ async def get_listing(listing_id: str):
     }
 
 
-@app.post("/api/listing")
-async def post_listing(listing: Listing):
-    # Add a new document to the search engine.
-
-    # Return the new listing id.
-    return {"message": "Created a new listing"}
-
-
 @app.put("/api/listing/{listing_id}")
 async def put_listing(listing_id: str, listing: Listing):
     # Replace an existing document in the search engine.
