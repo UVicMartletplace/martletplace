@@ -62,7 +62,7 @@ const Profile = () => {
 
   // Uploads a single image to the S3 server
   const asyncUploadSingleImage = async (
-    imageBinary: string
+    imageBinary: string,
   ): Promise<ImageURLObject | false> => {
     try {
       // Attempt to upload the image
@@ -113,7 +113,7 @@ const Profile = () => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string
+    field: string,
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
     setEditMode(true);
