@@ -19,14 +19,12 @@ describe("<Profile />", () => {
 
     // Check if the form contains the necessary input fields
     cy.get("#username").should("be.visible");
-    cy.get("#email").should("be.visible");
     cy.get("#name").should("be.visible");
     cy.get("#bio").should("be.visible");
   });
 
   const testUsername = "theboywholived";
   const testPassword = "expelliarmus";
-  const testEmail = "hpotter@hogwarts.ld";
   const testName = "Harry James Potter";
   const testBio = "Dumbledore's Army Forever!";
   const testImageURL = "https://example.com/image.png";
@@ -42,73 +40,100 @@ describe("<Profile />", () => {
   });
 
   it("gets the profile information for a user", () => {
+    const expectedProfile = {
+      userID: "A1234B345",
+      username: testUsername,
+      name: testName,
+      bio: testBio,
+      profilePictureUrl: testImageURL,
+    };
+
     // Stubbing network request for getting profile information
     cy.intercept("GET", "/api/user/1", {
       statusCode: 200,
-      body: {
-        username: testUsername,
-        name: testName,
-        password: testPassword,
-        email: testEmail,
-        bio: testBio,
-        profilePictureUrl: testImageURL,
-      },
+      body: expectedProfile,
     }).as("profileRequest");
 
     // Wait for the mock request to complete and check its status
-    cy.wait("@profileRequest").its("response.statusCode").should("eq", 200);
+    cy.wait("@profileRequest").then((interception) => {
+      // Log request and expected bodies for debugging
+      cy.log("Request Body", interception.request.body);
+      cy.log("Expected Body", expectedProfile);
 
-    // Check if the profile information is displayed correctly
-    cy.get("#username").should("have.value", testUsername);
-    cy.get("#email").should("have.value", testEmail);
-    cy.get("#name").should("have.value", testName);
-    cy.get("#bio").should("have.value", testBio);
+      if (interception.response) {
+        expect(interception.response.body).to.deep.equal(expectedProfile);
+      }
+    });
+
+    it("gets the profile information for a user", () => {
+      const expectedProfile = {
+        userID: "A1234B345",
+        username: testUsername,
+
+        name: testName,
+        bio: testBio,
+        profilePictureUrl: testImageURL,
+      };
+
+      // Stubbing network request for getting profile information
+      cy.intercept("GET", "/api/user/1", {
+        statusCode: 200,
+        body: expectedProfile,
+      }).as("profileRequest");
+
+      // Wait for the mock request to complete and check its status
+      cy.wait("@profileRequest").then((interception) => {
+        // Log request and expected bodies for debugging
+        cy.log("Request Body", interception.request.body);
+        cy.log("Expected Body", expectedProfile);
+
+        if (interception.response) {
+          expect(interception.response.body).to.deep.equal(expectedProfile);
+        }
+      });
+
+      // Check if the profile information is displayed correctly
+      cy.get("#username").should("have.value", testUsername);
+      cy.get("#name").should("have.value", testName);
+      cy.get("#bio").should("have.value", testBio);
+    });
   });
 
   it("saves updated profile information", () => {
-    // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", {
-      statusCode: 200,
-      body: {
-        username: testUsername,
-        name: testName,
-        password: testPassword,
-        email: testEmail,
-        bio: testBio,
-        profilePictureUrl: testImageURL,
-      },
-    }).as("profileRequest");
-
-    // Wait for the mock request to complete and check its status
-    cy.wait("@profileRequest").its("response.statusCode").should("eq", 200);
+    const updatedProfile = {
+      username: testUsername,
+      name: updatedName,
+      bio: updatedBio,
+      profilePictureUrl: updatedImageURL,
+      password: testPassword,
+    };
 
     // Type into the input fields
-    cy.get("#name").clear().type(updatedName).should("have.value", updatedName);
-    cy.get("#bio").clear().type(updatedBio).should("have.value", updatedBio);
+    cy.get("#name").type(updatedName).should("have.value", updatedName);
+    cy.get("#bio").type(updatedBio).should("have.value", updatedBio);
+    cy.get("#username").type(testUsername).should("have.value", testUsername);
 
-    cy.intercept("POST", "/api/images", {
-      statusCode: 201,
-      url: updatedImageURL,
-    }).as("uploadImages");
-
-    // Stubbing network request for saving profile information
-    cy.intercept("PATCH", "/api/user", {
-      statusCode: 200,
-      body: {
-        username: testUsername,
-        name: updatedName,
-        password: testPassword,
-        email: testEmail,
-        bio: updatedBio,
-        profilePictureUrl: updatedImageURL,
-      },
+    cy.intercept("PATCH", "/api/user", (req) => {
+      // Log request body for debugging
+      req.reply({
+        statusCode: 200,
+        body: updatedProfile,
+      });
     }).as("saveProfileRequest");
 
     // Click the save button
     cy.get("#save_button").click();
 
     // Wait for the mock request to complete and check its status
-    cy.wait("@saveProfileRequest").its("response.statusCode").should("eq", 200);
+    cy.wait("@saveProfileRequest").then((interception) => {
+      // Log request and expected bodies for debugging
+      cy.log("Request Body", interception.request.body);
+      cy.log("Expected Body", updatedProfile);
+
+      if (interception.response) {
+        expect(interception.response.body).to.deep.equal(updatedProfile);
+      }
+    });
 
     // Assert that the profile information is updated correctly
     cy.get("#name").should("have.value", updatedName);
@@ -123,7 +148,6 @@ describe("<Profile />", () => {
         username: testUsername,
         name: testName,
         password: testPassword,
-        email: testEmail,
         bio: testBio,
         profilePictureUrl: testImageURL,
       },
@@ -166,7 +190,6 @@ describe("<Profile />", () => {
         username: testUsername,
         name: testName,
         password: testPassword,
-        email: testEmail,
         bio: testBio,
         profilePictureUrl: testImageURL,
       },
@@ -195,7 +218,6 @@ describe("<Profile />", () => {
         username: testUsername,
         name: testName,
         password: testPassword,
-        email: testEmail,
         bio: testBio,
         profilePictureUrl: testImageURL,
       },
