@@ -2,6 +2,7 @@ fastapi
 pydantic
 elasticsearch
 uvicorn[standard]
+asyncpg
 
 ## Dev Dependencies
 ruff
