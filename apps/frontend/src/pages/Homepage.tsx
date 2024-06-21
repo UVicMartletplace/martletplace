@@ -15,7 +15,7 @@ import ListingCard from "../components/listingCard.tsx";
 import { useState, useEffect, useRef } from "react";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 interface ListingObject {
   listingID: string;
@@ -64,6 +64,9 @@ const Homepage = () => {
     limit: 6,
   });
   const initialRender = useRef(true);
+  const location = useLocation();
+  const { query } = useParams();
+  const regex = /([^&=]+)=([^&]*)/g;
 
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
@@ -103,9 +106,6 @@ const Homepage = () => {
       });
     setSearchPerformed(true);
   };
-
-  const { query } = useParams();
-  const regex = /([^&=]+)=([^&]*)/g;
 
   useEffect(() => {
     //called on page load
@@ -169,7 +169,7 @@ const Homepage = () => {
       setSearchObject(searchObject);
       handleSearch(searchObject);
     }
-  }, [searchObject]);
+  }, [location.pathname]);
 
   return (
     <Box sx={classes.HomePageBox}>

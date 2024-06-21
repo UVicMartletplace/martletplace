@@ -36,6 +36,7 @@ const ListingCard = ({ listing }: ListingCardProps) => {
       spacing={3}
       maxWidth={"29vw"}
       sx={{ margin: "1.5%" }}
+      className="listing-card"
     >
       <Grid
         item

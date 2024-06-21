@@ -10,9 +10,9 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import message from "../images/message.png";
 import filter from "../images/filter.png";
 import { useStyles } from "../styles/pageStyles";
-import { useState, ChangeEvent, useEffect, useCallback } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import Filters from "./filters";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
 
@@ -43,7 +43,7 @@ const SearchBar = () => {
 
   const handleReload = () => {
     navigate("/");
-    window.location.reload();
+    //window.location.reload();
   };
 
   const handleListingRoute = () => {
@@ -87,16 +87,12 @@ const SearchBar = () => {
     navigate(
       `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
-    window.location.reload();
   };
 
   const { query } = useParams();
+  const location = useLocation();
 
   useEffect(() => {
-    //when the page is loaded, get the search object from the URL
-    //2 cases: 1. when the page is loaded for the first time, 2. when the page is reloaded
-
-    //1. when the page is loaded for the first time
     const searchObject: SearchObject = {
       query: "",
       minPrice: null,
@@ -154,7 +150,7 @@ const SearchBar = () => {
     }
     setSearchInput(searchObject.query);
     setFilters(searchObject);
-  }, []);
+  }, [location.pathname]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
