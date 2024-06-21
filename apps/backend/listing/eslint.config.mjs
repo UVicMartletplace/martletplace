@@ -8,4 +8,3 @@ export default tseslint.config(
     eslintConfigPrettier,
     ...tseslint.configs.recommended,
 );
-
