@@ -15,7 +15,7 @@ describe("<Profile />", () => {
   });
 
   it("renders the profile page", () => {
-    cy.get("h2").should("contain.text", "My Profile");
+    cy.get("h4").should("contain.text", "My Profile");
 
     // Check if the form contains the necessary input fields
     cy.get("#username").should("be.visible");

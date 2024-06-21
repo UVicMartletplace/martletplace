@@ -20,10 +20,9 @@ interface ImageURLObject {
 const Profile = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.down("lg"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const { id } = useParams();
 
-  const [, setImage] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string>("");
   const [profile, setProfile] = useState({
     name: "",
@@ -37,20 +36,19 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
 
-  // Load the user info
   useEffect(() => {
-    _axios_instance
-      .get("/user/" + id)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await _axios_instance.get("/user/" + id);
         setProfile(response.data);
         setOriginalProfile(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      } catch (error) {}
+    };
+
+    fetchData();
   }, [id]);
 
-  // This function makes sure that the passed in url is a base64 data string
+  // Makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
     try {
       return url.startsWith("data:image/");
@@ -64,7 +62,6 @@ const Profile = () => {
     imageBinary: string,
   ): Promise<ImageURLObject | null> => {
     try {
-      // Attempt to upload the image
       const response = await _axios_instance.post("/images", imageBinary, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -86,19 +83,18 @@ const Profile = () => {
 
         reader.onload = function (event) {
           const base64String = event.target?.result as string;
-          setImageURL(base64String); // Base64 string of the file contents
+          setImageURL(base64String);
 
           if (!isImageValid(base64String)) {
             alert("Invalid image type. Please upload a valid image file.");
             return;
           }
 
-          setImage(file);
           setImageURL(URL.createObjectURL(file));
           setEditMode(true);
         };
 
-        reader.readAsDataURL(file); // This will trigger the onload function above
+        reader.readAsDataURL(file);
       }
     } else {
       alert("No image selected.");
@@ -167,15 +163,14 @@ const Profile = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
       }}
     >
-      {!isDesktop && <AccountSidebar selectedItem="My Profile" />}
-      <Typography variant={"h2"}>My Profile</Typography>
+      {isDesktop && <AccountSidebar selectedItem="My Profile" />}
+      <Typography variant={"h4"}>My Profile</Typography>
       <Avatar
         src={imageURL}
         alt="Profile Picture"
-        sx={{ width: 250, height: 250, mt: 2, mb: 2 }}
+        sx={{ width: 200, height: 200, mt: 2, mb: 2 }}
         id="profile_picture"
       />
       <Button
