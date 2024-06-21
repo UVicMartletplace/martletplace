@@ -1,6 +1,6 @@
 import os
 from enum import Enum
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
@@ -120,7 +120,7 @@ def validate_search_params(
         )
 
 
-@app.get("/api/search", response_model=List[ListingSummary])
+@app.get("/api/search")
 async def search(
     authorization: str,
     query: str,
@@ -204,6 +204,7 @@ async def search(
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Index not found")
 
+    total_items = response["hits"]["total"]["value"]
     results = [
         {
             "listingID": hit["_source"]["listingId"],
@@ -218,7 +219,7 @@ async def search(
         for hit in response["hits"]["hits"]
     ]
 
-    return results
+    return {"items": results, "totalItems": total_items}
 
 
 @app.post("/api/search/reindex/listing-created")
