@@ -117,7 +117,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     setType(filters.searchType);
     setLatitude(filters.latitude);
     setLongitude(filters.longitude);
-  }, []);
+  }, [filters]);
 
   const isDesktop = useMediaQuery("(min-width:850px)");
 

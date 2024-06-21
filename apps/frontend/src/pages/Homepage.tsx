@@ -65,7 +65,6 @@ const Homepage = () => {
   });
   const initialRender = useRef(true);
   const location = useLocation();
-  const regex = /([^&=]+)=([^&]*)/g;
 
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
@@ -122,6 +121,7 @@ const Homepage = () => {
       }
     } else {
       let match;
+      let regex = /([^&=]+)=([^&]*)/g;
       while ((match = regex.exec(location.pathname)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
@@ -165,7 +165,7 @@ const Homepage = () => {
       setSearchObject(searchObject);
       handleSearch(searchObject);
     }
-  }, [location.pathname]);
+  }, [location.pathname, searchObject]);
 
   return (
     <Box sx={classes.HomePageBox}>
