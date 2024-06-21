@@ -5,7 +5,7 @@ from typing import Dict, Any
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
-from pydantic import ConfigDict, BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 DEFAULT_INDEX = "listings"
 DISTANCE_TO_SEARCH_WITHIN = "5km"
@@ -14,6 +14,18 @@ app = FastAPI()
 
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
+
+if not es.indices.exists(index=DEFAULT_INDEX):
+    es.indices.create(
+        index=DEFAULT_INDEX,
+        body={
+            "mappings": {
+                "properties": {
+                    "location": {"type": "geo_point"},
+                }
+            }
+        },
+    )
 
 
 class Status(str, Enum):
@@ -45,6 +57,7 @@ class ListingSummary(BaseModel):
     price: float = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -61,6 +74,20 @@ class ListingSummary(BaseModel):
     )
 
 
+class Location(BaseModel):
+    lat: float = Field(..., description="Latitude of the location", ge=-90, le=90)
+    lon: float = Field(..., description="Longitude of the location", ge=-180, le=180)
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "lat": 45.4215,
+                "lon": -75.6972,
+            }
+        }
+    )
+
+
 class Listing(BaseModel):
     listingId: str = Field(...)
     sellerId: str = Field(...)
@@ -68,10 +95,11 @@ class Listing(BaseModel):
     title: str = Field(...)
     description: str = Field(...)
     price: float = Field(...)
-    location: dict = Field(...)
-    status: str = Field(...)
+    location: Location = Field(...)
+    status: Status = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
