@@ -18,7 +18,8 @@ es = Elasticsearch([es_endpoint], verify_certs=False)
 def setup_and_teardown_index(monkeypatch):
     monkeypatch.setenv("ES_INDEX", TEST_INDEX)
 
-    es.indices.create(
+    es.options(ignore_status=[404]).indices.delete(index=TEST_INDEX)
+    es.options(ignore_status=[400]).indices.create(
         index=TEST_INDEX,
         body={
             "mappings": {
@@ -47,7 +48,7 @@ def test_search_no_listings():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"items": [], "totalItems": 0}
 
 
 def test_search_for_existing_listing():
@@ -78,18 +79,21 @@ def test_search_for_existing_listing():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "abc123",
-            "sellerID": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450,
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
 
 
 def test_search_for_multiple_listings():
@@ -136,28 +140,31 @@ def test_search_for_multiple_listings():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "def456",
-            "sellerID": "seller789",
-            "sellerName": "janedoe",
-            "title": "Used Laptop",
-            "description": "Lightly used laptop for sale.",
-            "price": 200,
-            "dateCreated": "2024-06-01T12:00:00Z",
-            "imageUrl": "https://example.com/image2.jpg",
-        },
-        {
-            "listingID": "abc123",
-            "sellerID": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450,
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
-        },
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "def456",
+                "sellerID": "seller789",
+                "sellerName": "janedoe",
+                "title": "Used Laptop",
+                "description": "Lightly used laptop for sale.",
+                "price": 200,
+                "dateCreated": "2024-06-01T12:00:00Z",
+                "imageUrl": "https://example.com/image2.jpg",
+            },
+            {
+                "listingID": "abc123",
+                "sellerID": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            },
+        ],
+        "totalItems": 2,
+    }
 
 
 def test_search_empty_query():
@@ -171,7 +178,7 @@ def test_search_empty_query():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"items": [], "totalItems": 0}
 
 
 def test_search_with_special_characters_in_query():
@@ -185,7 +192,7 @@ def test_search_with_special_characters_in_query():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"items": [], "totalItems": 0}
 
 
 def test_search_with_price_range():
@@ -218,18 +225,21 @@ def test_search_with_price_range():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "abc123",
-            "sellerID": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450,
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
 
 
 def test_search_with_too_low_price_range_fail():
@@ -262,7 +272,7 @@ def test_search_with_too_low_price_range_fail():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"items": [], "totalItems": 0}
 
 
 def test_search_with_too_high_price_range_fail():
@@ -295,7 +305,7 @@ def test_search_with_too_high_price_range_fail():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"items": [], "totalItems": 0}
 
 
 def test_search_with_negative_min_price_fail():
@@ -389,18 +399,21 @@ def test_search_with_status():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "abc123",
-            "sellerID": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450,
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
-        },
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
 
 
 def test_search_with_status_sold():
@@ -448,18 +461,21 @@ def test_search_with_status_sold():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "def456",
-            "sellerID": "seller789",
-            "sellerName": "janedoe",
-            "title": "Used Laptop",
-            "description": "Lightly used laptop for sale.",
-            "price": 200,
-            "dateCreated": "2024-06-01T12:00:00Z",
-            "imageUrl": "https://example.com/image2.jpg",
-        },
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "def456",
+                "sellerID": "seller789",
+                "sellerName": "janedoe",
+                "title": "Used Laptop",
+                "description": "Lightly used laptop for sale.",
+                "price": 200,
+                "dateCreated": "2024-06-01T12:00:00Z",
+                "imageUrl": "https://example.com/image2.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
 
 
 def test_search_with_invalid_status():
@@ -532,18 +548,21 @@ def test_search_with_user_search():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "abc123",
-            "sellerID": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450,
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
 
 
 def test_search_with_user_search_negative():
@@ -575,7 +594,7 @@ def test_search_with_user_search_negative():
         },
     )
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"items": [], "totalItems": 0}
 
 
 def test_search_with_invalid_search_type():
@@ -647,18 +666,21 @@ def test_only_return_results_within_5km_of_location():
         },
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "listingID": "abc123",
-            "sellerID": "seller456",
-            "sellerName": "billybobjoe",
-            "title": "High-Performance Laptop",
-            "description": "A powerful laptop suitable for gaming and professional use.",
-            "price": 450,
-            "dateCreated": "2024-05-22T10:30:00Z",
-            "imageUrl": "https://example.com/image1.jpg",
-        }
-    ]
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
 
 
 def test_search_with_missing_latitude():
@@ -795,11 +817,13 @@ def test_search_with_sorting_by_relevance():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["listingID"] == "def456"
-    assert results[1]["listingID"] == "ghi789"
-    assert results[2]["listingID"] == "abc123"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert results["items"][0]["listingID"] == "def456"
+    assert results["items"][1]["listingID"] == "ghi789"
+    assert results["items"][2]["listingID"] == "abc123"
+    assert results["totalItems"] == 3
 
 
 def test_search_with_sorting_by_price_asc():
@@ -848,9 +872,12 @@ def test_search_with_sorting_by_price_asc():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["price"] == 30.00
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["price"] == 30.00
+    assert results["totalItems"] == 2
 
 
 def test_search_with_sorting_by_price_desc():
@@ -899,9 +926,12 @@ def test_search_with_sorting_by_price_desc():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["price"] == 450.00
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["price"] == 450.00
+    assert results["totalItems"] == 2
 
 
 def test_search_with_sorting_by_listed_time_asc():
@@ -950,10 +980,13 @@ def test_search_with_sorting_by_listed_time_asc():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["listingID"] == "abc123"
-    assert results[1]["listingID"] == "def456"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["listingID"] == "abc123"
+    assert results["items"][1]["listingID"] == "def456"
+    assert results["totalItems"] == 2
 
 
 def test_search_with_sorting_by_listed_time_desc():
@@ -1002,10 +1035,13 @@ def test_search_with_sorting_by_listed_time_desc():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["listingID"] == "def456"
-    assert results[1]["listingID"] == "abc123"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["listingID"] == "def456"
+    assert results["items"][1]["listingID"] == "abc123"
+    assert results["totalItems"] == 2
 
 
 def test_search_with_sorting_by_distance_asc():
@@ -1054,10 +1090,13 @@ def test_search_with_sorting_by_distance_asc():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["listingID"] == "abc123"
-    assert results[1]["listingID"] == "def456"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["listingID"] == "abc123"
+    assert results["items"][1]["listingID"] == "def456"
+    assert results["totalItems"] == 2
 
 
 def test_search_with_sorting_by_distance_desc():
@@ -1106,10 +1145,13 @@ def test_search_with_sorting_by_distance_desc():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) > 0
-    assert results[0]["listingID"] == "def456"
-    assert results[1]["listingID"] == "abc123"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["listingID"] == "def456"
+    assert results["items"][1]["listingID"] == "abc123"
+    assert results["totalItems"] == 2
 
 
 def test_search_with_invalid_sorting_criteria():
@@ -1176,10 +1218,13 @@ def test_search_with_pagination():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) == 5
-    assert results[0]["listingID"] == "listing0"
-    assert results[4]["listingID"] == "listing4"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) == 5
+    assert results["items"][0]["listingID"] == "listing0"
+    assert results["items"][4]["listingID"] == "listing4"
+    assert results["totalItems"] == 15
 
     response = client.get(
         "/api/search",
@@ -1195,10 +1240,13 @@ def test_search_with_pagination():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) == 5
-    assert results[0]["listingID"] == "listing5"
-    assert results[4]["listingID"] == "listing9"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) == 5
+    assert results["items"][0]["listingID"] == "listing5"
+    assert results["items"][4]["listingID"] == "listing9"
+    assert results["totalItems"] == 15
 
     response = client.get(
         "/api/search",
@@ -1214,10 +1262,13 @@ def test_search_with_pagination():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) == 5
-    assert results[0]["listingID"] == "listing10"
-    assert results[4]["listingID"] == "listing14"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) == 5
+    assert results["items"][0]["listingID"] == "listing10"
+    assert results["items"][4]["listingID"] == "listing14"
+    assert results["totalItems"] == 15
 
 
 def test_search_with_missing_pagination_parameters():
@@ -1253,10 +1304,13 @@ def test_search_with_missing_pagination_parameters():
     )
     assert response.status_code == 200
     results = response.json()
-    assert isinstance(results, list)
-    assert len(results) == 20
-    assert results[0]["listingID"] == "listing0"
-    assert results[19]["listingID"] == "listing19"
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) == 20
+    assert results["items"][0]["listingID"] == "listing0"
+    assert results["items"][19]["listingID"] == "listing19"
+    assert results["totalItems"] == 21
 
 
 def test_search_with_negative_page_number():
