@@ -14,7 +14,6 @@ import { useState, ChangeEvent, useEffect } from "react";
 import Filters from "./filters";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import * as React from "react";
-import _axios_instance from "../_axios_instance.tsx";
 
 interface SearchObject {
   query: string;
@@ -110,7 +109,7 @@ const SearchBar = () => {
       let match;
       while ((match = regex.exec(query))) {
         const key = decodeURIComponent(match[1]); // Decode key
-        let value = decodeURIComponent(match[2]); // Decode value
+        const value = decodeURIComponent(match[2]); // Decode value
         switch (key) {
           case "query":
             searchObject.query = value;

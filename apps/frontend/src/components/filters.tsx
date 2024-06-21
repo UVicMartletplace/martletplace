@@ -69,7 +69,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     onFilterChange({
       minPrice: minPrice,
       maxPrice: maxPrice,
-      status,
+      status: status,
       searchType: type,
       latitude,
       longitude,
@@ -101,6 +101,10 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
           setLatitude(currentLatitude);
           setLongitude(currentLongitude);
           onFilterChange({
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            status: status,
+            searchType: type,
             latitude: currentLatitude,
             longitude: currentLongitude,
           });

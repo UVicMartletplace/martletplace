@@ -124,7 +124,7 @@ const Homepage = () => {
       let match;
       while ((match = regex.exec(location.pathname)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
-        let value = decodeURIComponent(match[2]); // Decode value
+        const value = decodeURIComponent(match[2]); // Decode value
 
         // Assign key-value pair to searchObject based on the key
         switch (key) {
