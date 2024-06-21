@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import List
 import requests
-
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 
 app = FastAPI()
@@ -113,10 +113,15 @@ async def get_listing(listing_id: str):
 
 @app.put("/api/listing/{listing_id}")
 async def put_listing(listing_id: str, listing: Listing):
-    # Replace an existing document in the search engine.
+    # Create a new document or replace an existing document in the search engine.
+    requests.post(
+        f'https://elasticsearch:8311/listing/_doc/{listing_id}',
+        json=jsonable_encoder(listing),
+        auth=elasticsearch_auth,
+        verify=False)
 
     # Nothing to return.
-    return {"message": "Replaced the existing listing"}
+    return None
 
 
 @app.patch("/api/listing/{listing_id}")
