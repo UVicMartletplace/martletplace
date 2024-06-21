@@ -22,16 +22,16 @@ const Profile = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
   const isScreenSmall = useMediaQuery(theme.breakpoints.down("lg"));
-  const { userId } = useParams();
+  const { id } = useParams();
 
   const [, setImage] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string>("");
   const [profile, setProfile] = useState({
-    name: "Harry Potter",
-    username: "theboywholived",
+    name: "",
+    username: "",
     password: "",
-    email: "hpotter@hogwarts.ld",
-    bio: "Dumbledore's Army Forever!",
+    email: "",
+    bio: "",
     profile_picture: "",
   });
   const [originalProfile, setOriginalProfile] = useState(profile);
@@ -41,7 +41,7 @@ const Profile = () => {
   // Load the user info
   useEffect(() => {
     _axios_instance
-      .get("/user/" + userId)
+      .get("/user/" + id)
       .then((response) => {
         setProfile(response.data);
         setOriginalProfile(response.data);
@@ -49,7 +49,7 @@ const Profile = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, [userId]);
+  }, [id]);
 
   // This function makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
@@ -62,7 +62,7 @@ const Profile = () => {
 
   // Uploads a single image to the S3 server
   const asyncUploadSingleImage = async (
-    imageBinary: string,
+    imageBinary: string
   ): Promise<ImageURLObject | false> => {
     try {
       // Attempt to upload the image
@@ -113,7 +113,7 @@ const Profile = () => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
+    field: string
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
     setEditMode(true);
@@ -159,10 +159,10 @@ const Profile = () => {
   // Disable all text fields if !isCurrentUser
   // Hide Save, Cancel, and Upload Porfile buttons if !isCurrentUser
   // Change "My Profile" to "<Name>'s Profile" if !isCurrentUser
-  // Check if userId is the current user's id:
+  // Check if id is the current user's id:
   // const { user } = useUser();
   // const [isCurrentUser, setIsCurrentUser] = useState(false);
-  // if (userId === user.id) {
+  // if (id === user.id) {
   //   setIsCurrentUser(true);
   // }
 
