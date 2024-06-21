@@ -42,7 +42,9 @@ const Profile = () => {
         const response = await _axios_instance.get("/user/" + id);
         setProfile(response.data);
         setOriginalProfile(response.data);
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     };
 
     fetchData();
@@ -59,7 +61,7 @@ const Profile = () => {
 
   // Uploads a single image to the S3 server
   const asyncUploadSingleImage = async (
-    imageBinary: string,
+    imageBinary: string
   ): Promise<ImageURLObject | null> => {
     try {
       const response = await _axios_instance.post("/images", imageBinary, {
@@ -105,7 +107,7 @@ const Profile = () => {
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
+    field: string
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
     setEditMode(true);
