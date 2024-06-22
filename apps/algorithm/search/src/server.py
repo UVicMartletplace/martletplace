@@ -85,7 +85,7 @@ class Listing(BaseModel):
     description: str = Field(...)
     price: float = Field(...)
     location: Location = Field(...)
-    status: str = Field(...)
+    status: Status = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
     model_config = ConfigDict(
