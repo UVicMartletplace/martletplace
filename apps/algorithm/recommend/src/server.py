@@ -1,55 +1,28 @@
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from sqlmodel import select
+from api_models import ListingSummary, Review
+from sql_models import User
+from db import get_session, AsyncSession
+from fastapi import Depends
+from recommender import Recommender
 
 app = FastAPI()
-
-
-# Define Pydantic models
-class ListingSummary(BaseModel):
-    listingID: str = Field(..., example="A23F29039B23")
-    sellerID: str = Field(..., example="A23F29039B23")
-    sellerName: str = Field(..., example="John Johnson")
-    title: str = Field(..., example="Used Calculus Textbook")
-    description: str = Field(..., example="No wear and tear, drop-off available.")
-    price: float = Field(..., example=50)
-    dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
-    imageUrl: str = Field(..., example="image URL for first Image")
-
-
-class Review(BaseModel):
-    listing_rating_id: str = Field(..., example="A23F29039B23")
-    listing_review_id: str = Field(..., example="A523F29039B23")
-    reviewerName: str = Field(..., example="John Doe")
-    stars: int = Field(..., example=5)
-    comment: str = Field(
-        ...,
-        example="Great seller, the item was exactly as described and in perfect condition.",
-    )
-    userID: str = Field(..., example="A23434B090934")
-    listingID: str = Field(..., example="A23F29039B23")
-    dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
-    dateModified: str = Field(..., example="2024-05-23T15:30:00Z")
-
+recommender = Recommender()
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
-async def get_recommendations(authorization: str, page: int = 1, limit: int = 20):
-    # actual logic will go here
-
-    # This is a dummy response
-    return [
-        {
-            "listingID": "A23F29039B23",
-            "sellerID": "A23F29039B23",
-            "sellerName": "John Johnson",
-            "title": "Used Calculus Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 50,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
-        }
-    ]
+async def get_recommendations(authorization: str, page: int = 1, limit: int = 20, session: AsyncSession = Depends(get_session)):
+    user_id = int(authorization)
+    users = await session.exec(select(User).where(User.id == user_id))
+    if not users:
+        return HTTPException(status_code=404, detail="User not found")
+    user = users.first()
+    recommendations = recommender.recommend(user.id)
+    # load recommendations into ListingSummary objects
+    
+    return []
 
 
 @app.post("/api/user-preferences/stop-suggesting-item/{id}")
