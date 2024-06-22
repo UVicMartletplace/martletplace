@@ -222,33 +222,27 @@ async def search(
         for hit in response["hits"]["hits"]
     ]
 
-@app.get("/api/listing/{listing_id}")
-async def get_listing(listing_id: str):
-    # Return the listing object.
-    listing = requests.get(
-        f'https://elasticsearch:8311/listing/_doc/{listing_id}',
-        auth=elasticsearch_auth,
-        verify=False).json()
-
-    # Return the listing.
-    return {
-        'listing': listing['_source']
-    }
+    return {"items": results, "totalItems": total_items}
 
 
-@app.put("/api/listing/{listing_id}")
-async def put_listing(listing_id: str, listing: Listing):
+@app.post("/api/search/reindex/listing-created")
+async def post_listing(listing: Listing, authorization: str = Header(None)):
     # Create a new document or replace an existing document in the search engine.
-    requests.post(
-        f'https://elasticsearch:8311/listing/_doc/{listing_id}',
-        json=jsonable_encoder(listing),
-        auth=elasticsearch_auth,
-        verify=False)
+    # requests.post(
+    #     f'https://elasticsearch:8311/listing/_doc/{listing_id}',
+    #     json=jsonable_encoder(listing),
+    #     auth=elasticsearch_auth,
+    #     verify=False)
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    if (listing.price < 0):
+        raise HTTPException(status_code=422, detail="price cannot be negative")
+
+    es.index(index=INDEX, id=listing.listingId, body=listing.dict())
     # Nothing to return.
-    return None
+    return {"message": "Listing added successfully."}
 
 @app.patch("/api/listing/{listing_id}")
-async def patch_listing(listing_id: str, listing: PartialListing):
+async def patch_listing(listing: Listing, authorization: str = Header(None)):
     # print(f'*** PATCH /api/listing/{listing_id}')
     # print('listing = ', jsonable_encoder(listing))
     # Modify a subset of fields in an existing document in the search engine.
@@ -267,7 +261,7 @@ async def patch_listing(listing_id: str, listing: PartialListing):
 
 
 @app.delete("/api/listing/{listing_id}")
-async def delete_listing(listing_id: str):
+async def delete_listing(listing_id: str, authorization: str = Header(None)):
     # Delete the existing document from the search engine.
 
     return {"message": "Deleted the listing"}
