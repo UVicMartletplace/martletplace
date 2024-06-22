@@ -9,18 +9,13 @@ import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
-import MyProfile from "./pages/MyProfile";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* If not logged in redirect to login page */}
-        <Route path="/" element={<Homepage />} />
-
-        {/* If full URL is `/user/:id` then it would show another users profile,
-        otherwise current users profile is shown. */}
-        <Route path="/user" element={<MyProfile />} />
+        <Route path="/user/:id" element={<Profile />} />
         <Route path="/user/reviews" element={<MyReviews />} />
         <Route path="/user/listings" element={<MyListings />} />
 
@@ -29,12 +24,12 @@ function App() {
         <Route path="/user/signup" element={<CreateAccount />} />
 
         <Route path="/listing/new" element={<CreateListing />} />
-        {/* TODO: change full url to `/listing/edit/:id` */}
-        <Route path="/listing/edit" element={<EditListing />} />
-        {/* TODO: change full url to `/listing/view/:id` */}
-        <Route path="/listing/view" element={<ViewListing />} />
-
+        <Route path="/listing/edit/:id" element={<EditListing />} />
+        <Route path="/listing/view/:id" element={<ViewListing />} />
+        {/* TODO: Give path a listing ID?*/}
         <Route path="/messages" element={<Messages />} />
+        {/* If not logged in redirect to login page */}
+        <Route path="/" element={<Homepage />} />
       </Routes>
     </Router>
   );

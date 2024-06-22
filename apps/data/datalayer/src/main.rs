@@ -1,39 +1,21 @@
-use axum::{routing::get, Router};
+use std::future::IntoFuture;
+
+use email::email_router;
+use example::example_router;
+
+mod email;
+mod example;
 
 #[tokio::main]
 async fn main() {
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8301").await.unwrap();
-    axum::serve(listener, app()).await.unwrap();
-}
+    let example_listener = tokio::net::TcpListener::bind("0.0.0.0:8301").await.unwrap();
+    let email_listener = tokio::net::TcpListener::bind("0.0.0.0:8302").await.unwrap();
 
-fn app() -> Router {
-    Router::new().route("/", get(|| async { "Hello, World!" }))
-}
+    let (r1, r2) = tokio::join!(
+        axum::serve(example_listener, example_router()).into_future(),
+        axum::serve(email_listener, email_router()).into_future()
+    );
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use axum::{
-        body::{to_bytes, Body},
-        extract::Request,
-        http::StatusCode,
-    };
-    use rstest::*;
-    use tower::ServiceExt;
-
-    #[rstest]
-    #[tokio::test]
-    async fn hello_world() {
-        let app = app();
-
-        let response = app
-            .oneshot(Request::get("/").body(Body::empty()).unwrap())
-            .await
-            .unwrap();
-
-        assert_eq!(response.status(), StatusCode::OK);
-
-        let body = to_bytes(response.into_body(), usize::MAX).await.unwrap();
-        assert_eq!(&body[..], b"Hello, World!");
-    }
+    r1.unwrap();
+    r2.unwrap();
 }
