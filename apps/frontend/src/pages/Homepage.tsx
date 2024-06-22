@@ -10,7 +10,6 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
-import SearchBar from "../components/searchBar.tsx";
 import ListingCard from "../components/listingCard.tsx";
 import { useState, useEffect, useRef } from "react";
 import * as React from "react";
@@ -56,7 +55,7 @@ const Homepage = () => {
     minPrice: null,
     maxPrice: null,
     status: "AVAILABLE",
-    searchType: "LISTING",
+    searchType: "LISTINGS",
     latitude: 48.463302,
     longitude: -123.3108,
     sort: "RELEVANCE",
@@ -69,7 +68,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -79,11 +78,11 @@ const Homepage = () => {
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    currentPage: number,
+    currentPage: number
   ) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
@@ -169,17 +168,6 @@ const Homepage = () => {
 
   return (
     <Box sx={classes.HomePageBox}>
-      <Box
-        sx={{
-          position: "sticky",
-          top: 0,
-          zIndex: 1000,
-          backgroundColor: "white",
-          padding: "10px 0",
-        }}
-      >
-        <SearchBar />
-      </Box>
       {searchPerformed ? (
         <Box
           sx={{

@@ -63,8 +63,8 @@ describe("<Filters />", () => {
     cy.contains("Not Available").should("be.visible");
 
     cy.get("#type-select").click();
-    cy.contains("User").click();
-    cy.contains("User").should("be.visible");
+    cy.contains("Users").click();
+    cy.contains("Users").should("be.visible");
   });
 
   it("should call onFilterChange with correct filters on Apply Filters click", () => {
@@ -73,14 +73,14 @@ describe("<Filters />", () => {
     cy.get("#status-select").click();
     cy.contains("Not Available").click();
     cy.get("#type-select").click();
-    cy.contains("User").click();
+    cy.contains("Users").click();
 
     cy.contains("Apply Filters").click();
     cy.get("@onFilterChangeStub").should("have.been.calledWith", {
       minPrice: 100,
       maxPrice: 500,
       status: "SOLD",
-      searchType: "USER",
+      searchType: "USERS",
       latitude: 0,
       longitude: 0,
     });
@@ -92,7 +92,7 @@ describe("<Filters />", () => {
     cy.get("#status-select").click();
     cy.contains("Not Available").click();
     cy.get("#type-select").click();
-    cy.contains("User").click();
+    cy.contains("Users").click();
 
     cy.contains("Clear Filter").click();
     cy.get('input[placeholder="Min"]').should("have.value", "");

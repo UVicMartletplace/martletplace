@@ -56,7 +56,7 @@ const SearchBar = () => {
     minPrice: null,
     maxPrice: null,
     status: "AVAILABLE",
-    searchType: "LISTING",
+    searchType: "LISTINGS",
     latitude: 48.463302,
     longitude: -123.3108,
     sort: "RELEVANCE",
@@ -83,7 +83,7 @@ const SearchBar = () => {
     };
     //put search object in the URL
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
   };
 
@@ -96,7 +96,7 @@ const SearchBar = () => {
       minPrice: null,
       maxPrice: null,
       status: "AVAILABLE",
-      searchType: "LISTING",
+      searchType: "LISTINGS",
       latitude: 48.463302,
       longitude: -123.3108,
       sort: "RELEVANCE",
@@ -179,6 +179,7 @@ const SearchBar = () => {
         backgroundColor: "#f5f5f5",
         boxShadow: "0px 4px 6px #808080",
         paddingBottom: "10px",
+        marginBottom: "10px",
       }}
     >
       <Grid item>

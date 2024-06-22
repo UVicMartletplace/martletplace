@@ -39,20 +39,55 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
 
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [status, setStatus] = useState<string>("");
-  const [type, setType] = useState<string>("LISTING");
+  const [status, setStatus] = useState<string>("AVAILABLE");
+  const [type, setType] = useState<string>("LISTINGS");
   const [latitude, setLatitude] = useState<number>(48.463302);
   const [longitude, setLongitude] = useState<number>(-123.3108);
+  const [priceError, setPriceError] = useState<string>("");
 
   const handleMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const regex = /^\d+(\.\d{1,2})?$/;
+    const newMinPrice = +event.target.value;
+    if (event.target.value === "") {
+      setPriceError("");
+    } else if (!regex.test(event.target.value)) {
+      setPriceError(
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+      );
+    } else if (maxPrice !== null && newMinPrice > maxPrice) {
+      setPriceError(
+        "This price is not valid, please make sure the min price is less than the max price"
+      );
+    } else {
+      setPriceError("");
+      const priceValue: number = +event.target.value;
+      setMinPrice(priceValue >= 0 ? priceValue : priceValue * -1);
+    }
     setMinPrice(
-      event.target.value === "" ? null : parseFloat(event.target.value),
+      event.target.value === "" ? null : parseFloat(event.target.value)
     );
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const regex = /^\d+(\.\d{1,2})?$/;
+    const newMaxPrice = +event.target.value;
+    if (event.target.value === "") {
+      setPriceError("");
+    } else if (!regex.test(event.target.value)) {
+      setPriceError(
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+      );
+    } else if (minPrice !== null && newMaxPrice < minPrice) {
+      setPriceError(
+        "This price is not valid, please make sure the min price is less than the max price"
+      );
+    } else {
+      setPriceError("");
+      const priceValue: number = +event.target.value;
+      setMaxPrice(priceValue >= 0 ? priceValue : priceValue * -1);
+    }
     setMaxPrice(
-      event.target.value === "" ? null : parseFloat(event.target.value),
+      event.target.value === "" ? null : parseFloat(event.target.value)
     );
   };
 
@@ -79,13 +114,13 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
   const handleClearFilters = () => {
     setMinPrice(null);
     setMaxPrice(null);
-    setStatus("");
-    setType("LISTING");
+    setStatus("AVAILABLE");
+    setType("LISTINGS");
     onFilterChange({
       minPrice: null,
       maxPrice: null,
-      status: "",
-      searchType: "",
+      status: "AVAILABLE",
+      searchType: "LISTINGS",
       latitude: 48.463302,
       longitude: -123.3108,
     });
@@ -144,6 +179,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             value={minPrice !== null ? minPrice : ""}
             onChange={handleMinPriceChange}
             type="number"
+            error={!!priceError}
           />
         </FormControl>
         <FormControl fullWidth sx={{ m: 1 }}>
@@ -155,6 +191,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             value={maxPrice !== null ? maxPrice : ""}
             onChange={handleMaxPriceChange}
             type="number"
+            error={!!priceError}
           />
         </FormControl>
       </Box>
@@ -184,14 +221,9 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
         </FormControl>
         <FormControl fullWidth sx={{ m: 1 }}>
           <FormHelperText>Type</FormHelperText>
-          <Select
-            value={type}
-            onChange={handleTypeChange}
-            displayEmpty
-            id="type-select"
-          >
-            <MenuItem value={"LISTING"}>Listing</MenuItem>
-            <MenuItem value={"USER"}>User</MenuItem>
+          <Select value={type} onChange={handleTypeChange} id="type-select">
+            <MenuItem value={"LISTINGS"}>Listings</MenuItem>
+            <MenuItem value={"USERS"}>Users</MenuItem>
           </Select>
         </FormControl>
         <Button
@@ -243,6 +275,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
           Clear Filter
         </Button>
       </Box>
+      {priceError && <FormHelperText error>{priceError}</FormHelperText>}
     </Grid>
   );
 };

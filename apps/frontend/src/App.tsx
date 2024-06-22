@@ -10,10 +10,12 @@ import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
 import MyProfile from "./pages/MyProfile";
+import SearchBar from "./components/searchBar.tsx";
 
 function App() {
   return (
     <Router>
+      <SearchBar />
       <Routes>
         {/* If full URL is `/user/:id` then it would show another users profile,
         otherwise current users profile is shown. */}
