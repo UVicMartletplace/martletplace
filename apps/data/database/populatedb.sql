@@ -1,5 +1,5 @@
 INSERT INTO users (username, email, password, name, bio, profile_pic_url, verified) VALUES
-('user', 'user@uvic.ca', 'Testing1!', 'User', 'Hi! Im a verified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper', TRUE),
+('deleted_user', 'deleted@martletplace.com', 'iGKT2wOGvPkn5s6U', 'Deleted User', '', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper', TRUE),
 ('unverified', 'unverified@uvic.ca', 'Testing1!', 'Unverified User', 'Hi! Im an unverified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Kiki', FALSE),
 ('user3', 'user3@example.com', 'password3', 'User Three', 'Bio for user three', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Lucy', TRUE),
 ('user4', 'user4@example.com', 'password4', 'User Four', 'Bio for user four', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel', TRUE),
