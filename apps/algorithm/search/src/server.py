@@ -1,9 +1,10 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 import requests
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
+# from pydantic_partial import create_partial_model
 
 app = FastAPI()
 
@@ -55,6 +56,24 @@ class Listing(BaseModel):
     status: str = Field(..., example="AVAILABLE")
     dateCreated: str = Field(..., example="2024-05-22T10:30:00Z")
     imageUrl: str = Field(..., example="https://example.com/image1.jpg")
+
+
+class PartialListing(BaseModel):
+    listingId: Optional[str] = Field(..., example="abc123")
+    sellerId: Optional[str] = Field(..., example="seller456")
+    sellerName: Optional[str] = Field(..., example="billybobjoe")
+    title: Optional[str] = Field(..., example="High-Performance Laptop")
+    description: Optional[str] = Field(
+        ..., example="A powerful laptop suitable for gaming " "and professional use."
+    )
+    price: Optional[float] = Field(..., example=450.00)
+    location: Optional[dict] = Field(..., example={"latitude": 45.4215, "longitude": -75.6972})
+    status: Optional[str] = Field(..., example="AVAILABLE")
+    dateCreated: Optional[str] = Field(..., example="2024-05-22T10:30:00Z")
+    imageUrl: Optional[str] = Field(..., example="https://example.com/image1.jpg")
+
+
+# PartialListing = create_partial_model(Listing)
 
 
 @app.get("/api/search", response_model=List[ListingSummary])
@@ -125,11 +144,23 @@ async def put_listing(listing_id: str, listing: Listing):
 
 
 @app.patch("/api/listing/{listing_id}")
-async def patch_listing(listing_id: str, listing: Listing):
+async def patch_listing(listing_id: str, listing: PartialListing):
+    # print(f'*** PATCH /api/listing/{listing_id}')
+    # print('listing = ', jsonable_encoder(listing))
+
     # Modify a subset of fields in an existing document in the search engine.
+    requests.post(
+        f'https://elasticsearch:8311/listing/_update/{listing_id}',
+        # json=jsonable_encoder(listing),
+        json={
+            'doc': jsonable_encoder(listing),
+            'detect_noop': False
+        },
+        auth=elasticsearch_auth,
+        verify=False)
 
     # Nothing to return.
-    return {"message": "Updated the existing listing"}
+    return None
 
 
 @app.delete("/api/listing/{listing_id}")

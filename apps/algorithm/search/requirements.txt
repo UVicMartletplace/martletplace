@@ -1,5 +1,6 @@
 fastapi
 pydantic
+# pydantic-partial
 uvicorn[standard]
 requests
 
