@@ -1,5 +1,5 @@
 describe('Delete Listing Endpoint', () => {
-    const baseUrl = 'http://localhost/api/user';
+    const baseUrl = 'http://localhost:8211/api/user';
   
     it('should delete a listing successfully', () => {
       cy.request({

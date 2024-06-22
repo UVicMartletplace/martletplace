@@ -1,7 +1,6 @@
-// cypress/integration/user_creation_spec.js
-
-
 describe('User Creation', () => {
+    const baseUrl = 'http://localhost:8211/api/user';
+
     it('should create a new user', () => {
       // Define the new user data
       const newUser = {
@@ -16,7 +15,7 @@ describe('User Creation', () => {
       };
   
       // Send a POST request to create a new user
-      cy.request('POST', 'http://localhost/api/user', newUser)
+      cy.request('POST', baseUrl, newUser)
         .then((response) => {
           // Assert the response status
           expect(response.status).to.eq(201);
@@ -38,7 +37,7 @@ describe('User Creation', () => {
       // Send a POST request to create a new user
       cy.request({
         method: 'POST',
-        url: 'http://localhost/api/user',
+        url: `${baseUrl}`,
         body: {
           user: { ...invalidUser}
         },
