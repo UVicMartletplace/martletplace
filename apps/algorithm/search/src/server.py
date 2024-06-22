@@ -64,6 +64,18 @@ class ListingSummary(BaseModel):
         }
     )
 
+class Location(BaseModel):
+    lat: float = Field(..., description="Latitude of the location", ge=-90, le=90)
+    lon: float = Field(..., description="Longitude of the location", ge=-180, le=180)
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "lat": 45.4215,
+                "lon": -75.6972,
+            }
+        }
+    )
 
 class Listing(BaseModel):
     listingId: str = Field(...)
@@ -72,7 +84,7 @@ class Listing(BaseModel):
     title: str = Field(...)
     description: str = Field(...)
     price: float = Field(...)
-    location: dict = Field(...)
+    location: Location = Field(...)
     status: str = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
