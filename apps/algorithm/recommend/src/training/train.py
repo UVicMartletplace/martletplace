@@ -31,6 +31,8 @@ for i, seq in enumerate(sequences):
 tfidf_tensor = tf.convert_to_tensor(tfidf_matrix, dtype=tf.float32)
 
 normalized_vectors = tf.nn.l2_normalize(tfidf_tensor, axis=1)
+# save normalized vectors
+np.save("normalized_item_vectors.npy", normalized_vectors.numpy())
 
 cosine_similarity_matrix = tf.matmul(
     normalized_vectors, normalized_vectors, transpose_b=True
@@ -40,3 +42,4 @@ cosine_similarity_matrix = cosine_similarity_matrix.numpy()
 
 np.save("cosine_similarity_matrix.npy", cosine_similarity_matrix)
 data.to_csv("processed_data.csv", index=False)
+
