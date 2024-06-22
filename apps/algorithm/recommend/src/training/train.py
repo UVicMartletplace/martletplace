@@ -42,4 +42,3 @@ cosine_similarity_matrix = cosine_similarity_matrix.numpy()
 
 np.save("cosine_similarity_matrix.npy", cosine_similarity_matrix)
 data.to_csv("processed_data.csv", index=False)
-
