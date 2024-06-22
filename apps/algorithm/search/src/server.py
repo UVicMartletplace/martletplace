@@ -1,14 +1,11 @@
 import os
 from enum import Enum
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import ConfigDict, BaseModel, Field
-from fastapi.encoders import jsonable_encoder
-import requests
-# from pydantic_partial import create_partial_model
 
 DEFAULT_INDEX = "listings"
 DISTANCE_TO_SEARCH_WITHIN = "5km"
@@ -18,7 +15,17 @@ app = FastAPI()
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
 
-elasticsearch_auth = ('elastic', 'serxdfcghjfc')
+if not es.indices.exists(index=DEFAULT_INDEX):
+    es.indices.create(
+        index=DEFAULT_INDEX,
+        body={
+            "mappings": {
+                "properties": {
+                    "location": {"type": "geo_point"},
+                }
+            }
+        },
+    )
 
 class Status(str, Enum):
     AVAILABLE = "AVAILABLE"
