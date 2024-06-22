@@ -239,41 +239,28 @@ async def search(
 
 @app.post("/api/search/reindex/listing-created")
 async def post_listing(listing: Listing, authorization: str = Header(None)):
-    # Create a new document or replace an existing document in the search engine.
-    # requests.post(
-    #     f'https://elasticsearch:8311/listing/_doc/{listing_id}',
-    #     json=jsonable_encoder(listing),
-    #     auth=elasticsearch_auth,
-    #     verify=False)
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
     if (listing.price < 0):
         raise HTTPException(status_code=422, detail="price cannot be negative")
 
     es.index(index=INDEX, id=listing.listingId, body=listing.dict())
-    # Nothing to return.
+
     return {"message": "Listing added successfully."}
 
-@app.patch("/api/listing/{listing_id}")
+@app.patch("/api/search/reindex/listing-edited")
 async def patch_listing(listing: Listing, authorization: str = Header(None)):
-    # print(f'*** PATCH /api/listing/{listing_id}')
-    # print('listing = ', jsonable_encoder(listing))
-    # Modify a subset of fields in an existing document in the search engine.
-    requests.post(
-        f'https://elasticsearch:8311/listing/_update/{listing_id}',
-        # json=jsonable_encoder(listing),
-        json={
-            'doc': jsonable_encoder(listing),
-            'detect_noop': False
-        },
-        auth=elasticsearch_auth,
-        verify=False)
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    if (listing.price < 0):
+        raise HTTPException(status_code=422, detail="price cannot be negative")
 
-    # Nothing to return.
-    return None
+    es.index(index=INDEX, id=listing.listingId, body=listing.dict())
+
+    return {"message": "Listing edited successfully."}
 
 
-@app.delete("/api/listing/{listing_id}")
-async def delete_listing(listing_id: str, authorization: str = Header(None)):
-    # Delete the existing document from the search engine.
+@app.delete("/api/search/reindex/listing-deleted")
+async def delete_listing(listingId: str, authorization: str = Header(None)):
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    es.delete(index=INDEX, id=listingId)
 
-    return {"message": "Deleted the listing"}
+    return {"message": "Listing deleted successfully."}
