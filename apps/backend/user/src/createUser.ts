@@ -7,7 +7,8 @@ const createUser = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  const { username, password, email, name, bio, profile_pic_url } = req.body.user;
+  const { username, password, email, name, bio, profile_pic_url } =
+    req.body.user;
 
   if (!username || !password || !email) {
     return res
