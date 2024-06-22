@@ -1,6 +1,7 @@
 fastapi
 pydantic
 # pydantic-partial
+elasticsearch
 uvicorn[standard]
 requests
 
@@ -8,3 +9,4 @@ requests
 ruff
 pytest
 bandit
+httpx

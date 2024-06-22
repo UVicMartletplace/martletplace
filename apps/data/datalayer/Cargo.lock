@@ -142,7 +142,10 @@ name = "datalayer"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "mime",
  "rstest",
+ "serde",
+ "serde_json",
  "tokio",
  "tower",
 ]

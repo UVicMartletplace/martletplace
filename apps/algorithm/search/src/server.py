@@ -1,16 +1,25 @@
+import os
 from enum import Enum
-from typing import List, Optional
-import requests
-from fastapi import FastAPI
+from typing import Dict, Any, List, Optional
+
+from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError
+from fastapi import FastAPI, HTTPException, Header
+from pydantic import ConfigDict, BaseModel, Field
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel, Field
+import requests
 # from pydantic_partial import create_partial_model
+
+DEFAULT_INDEX = "listings"
+DISTANCE_TO_SEARCH_WITHIN = "5km"
 
 app = FastAPI()
 
+es_endpoint = os.getenv("ES_ENDPOINT")
+es = Elasticsearch([es_endpoint], verify_certs=False)
+
 elasticsearch_auth = ('elastic', 'serxdfcghjfc')
 
-# define enums
 class Status(str, Enum):
     AVAILABLE = "AVAILABLE"
     SOLD = "SOLD"
@@ -18,7 +27,7 @@ class Status(str, Enum):
 
 class SearchType(str, Enum):
     LISTINGS = "LISTINGS"
-    SELLERS = "SELLERS"
+    USERS = "USERS"
 
 
 class Sort(str, Enum):
@@ -31,54 +40,91 @@ class Sort(str, Enum):
     DISTANCE_DESC = "DISTANCE_DESC"
 
 
-# Define Pydantic models
 class ListingSummary(BaseModel):
-    listingID: str = Field(..., example="A23F29039B23")
-    sellerID: str = Field(..., example="A23F29039B23")
-    sellerName: str = Field(..., example="John Doe")
-    title: str = Field(..., example="Used Calculus Textbook")
-    description: str = Field(..., example="No wear and tear, drop-off available.")
-    price: float = Field(..., example=50)
-    dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
-    imageUrl: str = Field(..., example="image URL for first Image")
+    listingID: str = Field(...)
+    sellerID: str = Field(...)
+    sellerName: str = Field(...)
+    title: str = Field(...)
+    description: str = Field(...)
+    price: float = Field(...)
+    dateCreated: str = Field(...)
+    imageUrl: str = Field(...)
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "listingID": "A23F29039B23",
+                "sellerID": "A23F29039B23",
+                "sellerName": "John Doe",
+                "title": "Used Calculus Textbook",
+                "description": "No wear and tear, drop-off available.",
+                "price": 50,
+                "dateCreated": "2024-05-23T15:30:00Z",
+                "imageUrl": "image URL for first Image",
+            }
+        }
+    )
 
 
 class Listing(BaseModel):
-    listingId: str = Field(..., example="abc123")
-    sellerId: str = Field(..., example="seller456")
-    sellerName: str = Field(..., example="billybobjoe")
-    title: str = Field(..., example="High-Performance Laptop")
-    description: str = Field(
-        ..., example="A powerful laptop suitable for gaming " "and professional use."
+    listingId: str = Field(...)
+    sellerId: str = Field(...)
+    sellerName: str = Field(...)
+    title: str = Field(...)
+    description: str = Field(...)
+    price: float = Field(...)
+    location: dict = Field(...)
+    status: str = Field(...)
+    dateCreated: str = Field(...)
+    imageUrl: str = Field(...)
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "listingId": "abc123",
+                "sellerId": "seller456",
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450.00,
+                "location": {"lat": 45.4215, "lon": -75.6972},
+                "status": "AVAILABLE",
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        }
     )
-    price: float = Field(..., example=450.00)
-    location: dict = Field(..., example={"latitude": 45.4215, "longitude": -75.6972})
-    status: str = Field(..., example="AVAILABLE")
-    dateCreated: str = Field(..., example="2024-05-22T10:30:00Z")
-    imageUrl: str = Field(..., example="https://example.com/image1.jpg")
+
+def validate_search_params(
+    latitude: float,
+    longitude: float,
+    page: int,
+    limit: int,
+    minPrice: float,
+    maxPrice: float,
+):
+    if abs(latitude) > 90:
+        raise HTTPException(
+            status_code=422, detail="latitude must be between -90 and 90"
+        )
+    if abs(longitude) > 180:
+        raise HTTPException(
+            status_code=422, detail="longitude must be between -180 and 180"
+        )
+    if page <= 0:
+        raise HTTPException(status_code=422, detail="page cannot be zero or negative")
+    if limit <= 0:
+        raise HTTPException(status_code=422, detail="limit cannot be zero or negative")
+    if minPrice is not None and minPrice < 0:
+        raise HTTPException(status_code=422, detail="minPrice cannot be negative")
+    if maxPrice is not None and maxPrice < 0:
+        raise HTTPException(status_code=422, detail="maxPrice cannot be negative")
+    if minPrice is not None and maxPrice is not None and minPrice > maxPrice:
+        raise HTTPException(
+            status_code=422, detail="minPrice cannot be greater than maxPrice"
+        )
 
 
-class PartialListing(BaseModel):
-    listingId: Optional[str] = Field(..., example="abc123")
-    sellerId: Optional[str] = Field(..., example="seller456")
-    sellerName: Optional[str] = Field(..., example="billybobjoe")
-    title: Optional[str] = Field(..., example="High-Performance Laptop")
-    description: Optional[str] = Field(
-        ..., example="A powerful laptop suitable for gaming " "and professional use."
-    )
-    price: Optional[float] = Field(..., example=450.00)
-    location: Optional[dict] = Field(..., example={"latitude": 45.4215, "longitude": -75.6972})
-    status: Optional[str] = Field(..., example="AVAILABLE")
-    dateCreated: Optional[str] = Field(..., example="2024-05-22T10:30:00Z")
-    imageUrl: Optional[str] = Field(..., example="https://example.com/image1.jpg")
-
-
-# PartialListing = create_partial_model(Listing)
-
-
-@app.get("/api/search", response_model=List[ListingSummary])
+@app.get("/api/search")
 async def search(
-    authorization: str,
     query: str,
     latitude: float,
     longitude: float,
@@ -86,34 +132,94 @@ async def search(
     limit: int = 20,
     minPrice: float = None,
     maxPrice: float = None,
-    status: str = "AVAILABLE",
-    searchType: str = "LISTINGS",
-    sort: str = "RELEVANCE",
+    status: Status = "AVAILABLE",
+    searchType: SearchType = "LISTINGS",
+    sort: Sort = "RELEVANCE",
+    authorization: str = Header(None),
 ):
-    # actual logic will go here
+    validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
 
-    # This is a dummy response
-    return [
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+
+    if searchType == "LISTINGS":
+        must_conditions = [
+            {"multi_match": {"query": query, "fields": ["title", "description"]}},
+            {"match": {"status": status}},
+        ]
+    elif searchType == "USERS":
+        must_conditions = [
+            {"match": {"sellerName": query}},
+            {"match": {"status": status}},
+        ]
+    else:
+        raise HTTPException(status_code=422, detail="Invalid searchType")
+
+    search_body: Dict[str, Any] = {
+        "from": (page - 1) * limit,
+        "size": limit,
+        "query": {"bool": {"must": must_conditions, "filter": []}},
+        "sort": [],
+    }
+
+    if minPrice is not None or maxPrice is not None:
+        price_range = {}
+        if minPrice is not None:
+            price_range["gte"] = minPrice
+        if maxPrice is not None:
+            price_range["lte"] = maxPrice
+        search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
+
+    search_body["query"]["bool"]["filter"].append(
         {
-            "listingID": "A23F29039B23",
-            "sellerID": "A23F29039B23",
-            "sellerName": "John Doe",
-            "title": "Used Calculus Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 50,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
-        },
+            "geo_distance": {
+                "distance": DISTANCE_TO_SEARCH_WITHIN,
+                "location": {"lat": latitude, "lon": longitude},
+            }
+        }
+    )
+
+    if "DISTANCE" in sort:
+        search_body["sort"].append(
+            {
+                "_geo_distance": {
+                    "location": {"lat": latitude, "lon": longitude},
+                    "order": "asc" if sort == "DISTANCE_ASC" else "desc",
+                    "unit": "km",
+                }
+            }
+        )
+    else:
+        sort_options = {
+            "RELEVANCE": "_score",
+            "PRICE_ASC": "price",
+            "PRICE_DESC": "price",
+            "LISTED_TIME_ASC": "dateCreated",
+            "LISTED_TIME_DESC": "dateCreated",
+            "DISTANCE_ASC": "_geo_distance",
+            "DISTANCE_DESC": "_geo_distance",
+        }
+        search_body["sort"].append(
+            {sort_options[sort]: {"order": "asc" if "ASC" in sort else "desc"}}
+        )
+
+    try:
+        response = es.search(index=INDEX, body=search_body)
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="Index not found")
+
+    total_items = response["hits"]["total"]["value"]
+    results = [
         {
-            "listingID": "A23F29039B24",
-            "sellerID": "A23F29039B24",
-            "sellerName": "Jane Doe",
-            "title": "Used Physics Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 40,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
-        },
+            "listingID": hit["_source"]["listingId"],
+            "sellerID": hit["_source"]["sellerId"],
+            "sellerName": hit["_source"]["sellerName"],
+            "title": hit["_source"]["title"],
+            "description": hit["_source"]["description"],
+            "price": hit["_source"]["price"],
+            "dateCreated": hit["_source"]["dateCreated"],
+            "imageUrl": hit["_source"]["imageUrl"],
+        }
+        for hit in response["hits"]["hits"]
     ]
 
 @app.get("/api/listing/{listing_id}")
@@ -138,16 +244,13 @@ async def put_listing(listing_id: str, listing: Listing):
         json=jsonable_encoder(listing),
         auth=elasticsearch_auth,
         verify=False)
-
     # Nothing to return.
     return None
-
 
 @app.patch("/api/listing/{listing_id}")
 async def patch_listing(listing_id: str, listing: PartialListing):
     # print(f'*** PATCH /api/listing/{listing_id}')
     # print('listing = ', jsonable_encoder(listing))
-
     # Modify a subset of fields in an existing document in the search engine.
     requests.post(
         f'https://elasticsearch:8311/listing/_update/{listing_id}',

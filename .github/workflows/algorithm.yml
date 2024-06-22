@@ -58,8 +58,8 @@ jobs:
       - name: Test
         run: docker compose exec ${{ matrix.service }} pytest
 
-  security:
-    name: Security
+  sast:
+    name: Static Application Security Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -78,3 +78,17 @@ jobs:
 
       - name: Test
         run: bandit -c .bandit -ll -ii -n 3 -a file -r src/
+
+  supply:
+    name: Supply Chain Security
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          inputs: apps/algorithm/${{ matrix.service }}/requirements.txt
