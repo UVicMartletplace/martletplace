@@ -1,6 +1,9 @@
 fastapi
 pydantic
 uvicorn[standard]
+tensorflow
+pandas
+numpy
 
 ## Dev Dependencies
 ruff
