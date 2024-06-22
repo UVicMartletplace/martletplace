@@ -2,7 +2,6 @@ import os
 from enum import Enum
 from typing import Dict, Any
 
-import asyncpg
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
@@ -10,10 +9,6 @@ from pydantic import BaseModel, Field, ConfigDict
 
 DEFAULT_INDEX = "listings"
 DISTANCE_TO_SEARCH_WITHIN = "5km"
-
-user_id = 5
-
-db_endpoint = os.getenv("DB_ENDPOINT")
 
 app = FastAPI()
 
@@ -251,22 +246,8 @@ async def search(
         }
         for hit in response["hits"]["hits"]
     ]
-    await store_search_term(user_id, query)
 
     return {"items": results, "totalItems": total_items}
-
-
-async def store_search_term(user_id: int, search_term: str):
-    conn = await asyncpg.connect(db_endpoint)
-    await conn.execute(
-        """
-        INSERT INTO user_searches (user_id, search_term)
-        VALUES ($1, $2)
-        """,
-        user_id,
-        search_term,
-    )
-    await conn.close()
 
 
 @app.post("/api/search/reindex/listing-created")
