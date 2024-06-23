@@ -98,6 +98,7 @@ export const useStyles = () => ({
     width: "100vw",
     height: "30%",
   },
+
   // Account page styles
   drawer: {
     width: "350px",
@@ -123,5 +124,40 @@ export const useStyles = () => ({
     bgcolor: "background.default",
     p: 3,
     marginLeft: "350px",
+  },
+
+  // Profile page styles
+  uploadPfp: {
+    mt: 2,
+    backgroundColor: colors.martletplaceNavyBlue,
+    "&:hover": { backgroundColor: colors.martletplaceBlueHover },
+    textTransform: "none",
+    fontSize: "16px",
+    padding: "10px 0",
+    width: "200px",
+    height: "50px",
+    alignProperty: "center",
+  },
+
+  saveButton: {
+    mt: 2,
+    backgroundColor: colors.martletplaceNavyBlue,
+    "&:hover": { backgroundColor: colors.martletplaceBlueHover },
+    textTransform: "none",
+    fontSize: "16px",
+    padding: "10px 0",
+    width: "45%",
+    marginRight: "10px",
+    marginLeft: "15px",
+  },
+
+  cancelButton: {
+    mt: 2,
+    backgroundColor: colors.martletplaceRed,
+    "&:hover": { backgroundColor: colors.martletplaceRedClicked },
+    textTransform: "none",
+    fontSize: "16px",
+    padding: "10px 0",
+    width: "45%",
   },
 });
