@@ -1,16 +1,15 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
+from sqlalchemy import ARRAY, JSON, Column, String
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List
+
 
 class StatusType(str, Enum):
     available = "AVAILABLE"
     sold = "SOLD"
     removed = "REMOVED"
 
-class LocationType(SQLModel):
-    latitude: float
-    longitude: float
 
 class User(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, primary_key=True)
@@ -21,9 +20,12 @@ class User(SQLModel, table=True):
     bio: Optional[str] = None
     profile_pic_url: Optional[str] = None
     verified: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.now(datetime.UTC))
-    modified_at: datetime = Field(default_factory=datetime.now(datetime.UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     listings: List["Listing"] = Relationship(back_populates="seller")
+    searches: List["UserSearch"] = Relationship(back_populates="user")
+    clicks: List["UserClick"] = Relationship(back_populates="user")
+
 
 class Listing(SQLModel, table=True):
     listing_id: Optional[int] = Field(default=None, primary_key=True)
@@ -31,10 +33,28 @@ class Listing(SQLModel, table=True):
     buyer_id: Optional[int] = Field(default=None, foreign_key="user.user_id")
     title: str
     price: int
-    location: LocationType
+    location: dict = Field(sa_column=Column(JSON), default={})
     status: StatusType
     description: Optional[str] = None
-    image_urls: List[str] = []
-    created_at: datetime = Field(default_factory=datetime.now(datetime.UTC))
-    modified_at: datetime = Field(default_factory=datetime.now(datetime.UTC))
+    image_urls: List[str] = Field(sa_column=Column(ARRAY(String)), default=[])
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     seller: User = Relationship(back_populates="listings")
+
+
+class UserSearch(SQLModel, table=True):
+    search_id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.user_id")
+    search_term: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    user: User = Relationship(back_populates="searches")
+
+
+class UserClick(SQLModel, table=True):
+    click_id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.user_id")
+    listing_id: int = Field(foreign_key="listing.listing_id")
+    click_timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+    user: User = Relationship(back_populates="clicks")

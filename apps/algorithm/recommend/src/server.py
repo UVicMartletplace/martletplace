@@ -1,28 +1,58 @@
 from typing import List
-
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException, Depends
 from sqlmodel import select
-from api_models import ListingSummary, Review
-from sql_models import User
-from db import get_session, AsyncSession
-from fastapi import Depends
-from recommender import Recommender
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.sql_models import User, UserClick, UserSearch
+from src.api_models import ListingSummary, Review
+from src.db import get_session
+from src.recommender import Recommender
 
 app = FastAPI()
 recommender = Recommender()
 
+
 @app.get("/api/recommendations", response_model=List[ListingSummary])
-async def get_recommendations(authorization: str, page: int = 1, limit: int = 20, session: AsyncSession = Depends(get_session)):
-    user_id = int(authorization)
+async def get_recommendations(
+    authorization: str,
+    page: int = 1,
+    limit: int = 20,
+    session: AsyncSession = Depends(get_session),
+):
+    user_id = 5  # TODO need to do it based on auth
     users = await session.exec(select(User).where(User.id == user_id))
     if not users:
         return HTTPException(status_code=404, detail="User not found")
-    user = users.first()
-    recommendations = recommender.recommend(user.id)
-    # load recommendations into ListingSummary objects
-    
-    return []
+
+    items_clicked = await session.exec(
+        select(UserClick).where(UserClick.user_id == user_id)
+    )
+    items_clicked = [item.listing_id for item in items_clicked]
+
+    terms_searched = await session.exec(
+        select(UserSearch).where(UserSearch.user_id == user_id)
+    )
+    terms_searched = [term.search_term for term in terms_searched]
+
+    recommended_listings = recommender.recommend(
+        items_clicked, terms_searched, page, limit
+    )
+
+    listing_summaries = [
+        ListingSummary(
+            listingID=row["listingID"],
+            sellerID=row["sellerID"],
+            sellerName=row["sellerName"],
+            title=row["title"],
+            description=row["description"],
+            price=row["Price"],
+            dateCreated=row["dateCreated"],
+            imageUrl=row["imageUrl"],
+        )
+        for _, row in recommended_listings.iterrows()
+    ]
+
+    return listing_summaries
 
 
 @app.post("/api/user-preferences/stop-suggesting-item/{id}")

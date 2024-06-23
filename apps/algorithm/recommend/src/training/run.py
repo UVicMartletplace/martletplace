@@ -44,6 +44,8 @@ def get_recommendations_by_items_clicked(
     # Needs to happen before taking the top_n, otherwise we aren't guaranteed to get top_n recommendations
     recommendations = [i for i in recommendations if i not in indices]
     return data.iloc[recommendations[:top_n]]
+
+
 def get_recommendations_from_search_terms(search_terms, data, top_n=5):
     search_tfidf_tensor = generate_tfidf_vector(search_terms, len(data))
     normalized_search_vectors = tf.nn.l2_normalize(search_tfidf_tensor, axis=1)

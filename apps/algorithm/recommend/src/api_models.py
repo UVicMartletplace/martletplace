@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class ListingSummary(BaseModel):
     listingID: str = Field(..., example="A23F29039B23")
     sellerID: str = Field(..., example="A23F29039B23")
