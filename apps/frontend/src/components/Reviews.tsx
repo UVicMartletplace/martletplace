@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Container,
@@ -32,18 +32,15 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState<number | null>(null);
   const [reviewError, setReviewError] = useState("");
-
-  const handleReviewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setReviewText(event.target.value);
-  };
+  const starRatings = [1, 2, 3, 4, 5];
 
   const handleRatingChange = (newRating: number) => {
     setRating(newRating);
   };
 
   const handlePostReview = async () => {
-    if (!rating || !reviewText) {
-      setReviewError("Please provide a rating and review text");
+    if (!rating) {
+      setReviewError("Please provide a star rating");
       return;
     }
 
@@ -68,7 +65,7 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
     <Container>
       <Typography variant="h6">Reviews</Typography>
       <Grid item>
-        {[1, 2, 3, 4, 5].map((star) => (
+        {starRatings.map((star) => (
           <IconButton
             key={star}
             id="stars"
@@ -90,7 +87,7 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
         variant="outlined"
         fullWidth
         value={reviewText}
-        onChange={handleReviewChange}
+        onChange={(event) => setReviewText(event.target.value)}
         placeholder="Write your review here..."
         id="review_text"
         sx={{ marginBottom: 2 }}

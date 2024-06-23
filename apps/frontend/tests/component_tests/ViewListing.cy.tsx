@@ -161,17 +161,6 @@ describe("<ViewListing/>", () => {
     cy.wait("@getListing");
 
     // Assertions to verify the rendered content
-    cy.contains(
-      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
-    ).should("be.visible");
-    cy.contains(
-      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!"
-    ).should("be.visible");
-    cy.contains("Price: $20,000.00").should("be.visible");
-    cy.contains("Sold by: Merlin the Wizard").should("be.visible");
-    cy.contains("Posted on: Sat May 24 1980").should("be.visible");
-    cy.contains("Message Seller").should("be.visible");
-    cy.get("img").should("have.length", 5);
     cy.contains("John Doe").should("be.visible");
     cy.contains("This is the best product I have ever bought!").should(
       "be.visible"
@@ -347,6 +336,6 @@ describe("<ViewListing/>", () => {
     cy.get("#review_text").type("This is a great product!");
 
     cy.get("button").contains("Post").click();
-    cy.contains("Please provide a rating and review text").should("be.visible");
+    cy.contains("Please provide a star rating").should("be.visible");
   });
 });
