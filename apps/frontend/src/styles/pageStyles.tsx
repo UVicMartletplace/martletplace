@@ -105,6 +105,8 @@ export const useStyles = () => ({
     "& .MuiDrawer-paper": {
       width: "350px",
       boxSizing: "border-box",
+      marginTop: "90px",
+      zIndex: -1,
     },
   },
   listItemButton: {
