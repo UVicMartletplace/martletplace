@@ -4,7 +4,7 @@ import pytest
 from elasticsearch import Elasticsearch
 from fastapi.testclient import TestClient
 
-from server import app
+from .server import app
 
 TEST_INDEX = "test-index"
 
@@ -1172,11 +1172,11 @@ def test_search_with_invalid_sorting_criteria():
                 "type": "enum",
                 "loc": ["query", "sort"],
                 "msg": "Input should be 'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', "
-                "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
+                       "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
                 "input": "INVALID_SORT",
                 "ctx": {
                     "expected": "'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', 'LISTED_TIME_DESC', "
-                    "'DISTANCE_ASC' or 'DISTANCE_DESC'"
+                                "'DISTANCE_ASC' or 'DISTANCE_DESC'"
                 },
             }
         ]
