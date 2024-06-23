@@ -1,8 +1,15 @@
 import CreateListing from "../../src/pages/CreateListing.tsx";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 describe("<CreateListing />", () => {
   beforeEach(() => {
-    cy.mount(<CreateListing />);
+    cy.mount(
+      <MemoryRouter initialEntries={[`/listing/new`]}>
+        <Routes>
+          <Route path="/listing/new" element={<CreateListing />} />
+        </Routes>
+      </MemoryRouter>
+    );
     cy.viewport(400, 600);
   });
 
@@ -90,14 +97,14 @@ describe("<CreateListing />", () => {
       listing: {
         title: "Used Calculus Textbook",
         price: 50,
-        location: { latitude: 48.463302, longitude: -123.310800 },
+        location: { latitude: 48.463302, longitude: -123.3108 },
         description: "No wear and tear, drop-off available.",
         images: [
-          {url: "https://picsum.photos/200/300" },
-          {url: "https://picsum.photos/200/300" },
-          {url: "https://picsum.photos/200/300" }
-        ]
-      }
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+        ],
+      },
     };
 
     cy.intercept("POST", "/api/listing", {
@@ -110,8 +117,12 @@ describe("<CreateListing />", () => {
       body: { url: "https://picsum.photos/200/300" },
     }).as("uploadImages");
 
-    cy.get("#field-title").type("Used Calculus Textbook").should("have.value", "Used Calculus Textbook");
-    cy.get("#field-description").type("No wear and tear, drop-off available.").should("have.value", "No wear and tear, drop-off available.");
+    cy.get("#field-title")
+      .type("Used Calculus Textbook")
+      .should("have.value", "Used Calculus Textbook");
+    cy.get("#field-description")
+      .type("No wear and tear, drop-off available.")
+      .should("have.value", "No wear and tear, drop-off available.");
     cy.get("#field-price").type("50").should("have.value", "50");
 
     // Attach image files (if this is necessary for your test)
@@ -139,14 +150,14 @@ describe("<CreateListing />", () => {
       listing: {
         title: "Used Calculus Textbook",
         price: 50,
-        location: { latitude: 48.463302, longitude: -123.310800 },
+        location: { latitude: 48.463302, longitude: -123.3108 },
         description: "No wear and tear, drop-off available.",
         images: [
-          {url: "https://picsum.photos/200/300" },
-          {url: "https://picsum.photos/200/300" },
-          {url: "https://picsum.photos/200/300" }
-        ]
-      }
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+        ],
+      },
     };
 
     cy.intercept("POST", "/api/listing", {
@@ -159,17 +170,21 @@ describe("<CreateListing />", () => {
       body: { url: "https://picsum.photos/200/300" },
     }).as("uploadImages");
 
-    cy.get("#field-title").type("Used Calculus Textbook").should("have.value", "Used Calculus Textbook");
-    cy.get("#field-description").type("No wear and tear, drop-off available.").should("have.value", "No wear and tear, drop-off available.");
+    cy.get("#field-title")
+      .type("Used Calculus Textbook")
+      .should("have.value", "Used Calculus Textbook");
+    cy.get("#field-description")
+      .type("No wear and tear, drop-off available.")
+      .should("have.value", "No wear and tear, drop-off available.");
     cy.get("#field-price").type("-50").should("have.value", "-50");
-    cy.contains("This price is not valid, please make sure the value is positive and in the form xx.xx").should("be.visible");
+    cy.contains(
+      "This price is not valid, please make sure the value is positive and in the form xx.xx"
+    ).should("be.visible");
 
     cy.get("#submit-button").click();
 
-    cy.get('@createListing.all').should('have.length', 0);
+    cy.get("@createListing.all").should("have.length", 0);
 
-    cy.get('@uploadImages.all').should('have.length', 0);
-
+    cy.get("@uploadImages.all").should("have.length", 0);
   });
-
 });

@@ -11,13 +11,12 @@ describe("<ViewListing/>", () => {
           <Route path="/listing/view/:id" element={<ViewListing />} />
           <Route path="/messages" element={<Messages />} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     cy.viewport(1280, 720);
   });
 
   it("should render the listing details correctly", () => {
-
     const listingObject = {
       title: "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
       description:
@@ -42,20 +41,19 @@ describe("<ViewListing/>", () => {
 
     // Assertions to verify the rendered content
     cy.contains(
-      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
+      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
     ).should("be.visible");
     cy.contains(
-      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!",
+      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!"
     ).should("be.visible");
     cy.contains("Price: $20,000.00").should("be.visible");
     cy.contains("Sold by: Merlin the Wizard").should("be.visible");
     cy.contains("Posted on: Sat May 24 1980").should("be.visible");
     cy.contains("Message Seller").should("be.visible");
-    cy.get("img").should("have.length", 5);
+    cy.get("#carousel_img_box > img").should("have.length", 5);
   });
 
   it("should increment the image and change the visibility", () => {
-
     const listingObject = {
       title: "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
       description:
@@ -78,17 +76,16 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
-
-    cy.get("img").should("have.length", 5);
+    cy.get("#carousel_img_box > img").should("have.length", 5);
     for (let x = 1; x < 5; x++) {
       cy.get("#carousel_index").should("have.text", x.toString());
       cy.get("#carousel_right").click();
-      cy.get("img").eq(x).should("be.visible");
+      cy.get("#carousel_img_box > img").eq(x).should("be.visible");
     }
 
     for (let x = 5; x > 1; x--) {
       cy.get("#carousel_index").should("have.text", x.toString());
-      cy.get("img")
+      cy.get("#carousel_img_box > img")
         .eq(x - 1)
         .should("be.visible");
       cy.get("#carousel_left").click();
@@ -123,7 +120,6 @@ describe("<ViewListing/>", () => {
   });
 
   it("should fail gracefully if the listing cannot be retrieved", () => {
-    cy.contains("No Listing Received").should("be.visible")
-
+    cy.contains("No Listing Received").should("be.visible");
   });
 });
