@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from typing import Dict, Any
 
-import psycopg2
+import asyncpg
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
@@ -17,8 +17,25 @@ es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
 
 db_endpoint = os.getenv("DB_ENDPOINT")
-conn = psycopg2.connect(db_endpoint)
-cur = conn.cursor()
+
+
+async def get_db_connection():
+    return await asyncpg.connect(dsn=db_endpoint)
+
+
+async def insert_user_search(user_id: int, search_term: str):
+    conn = await get_db_connection()
+    try:
+        insert_query = """
+            INSERT INTO user_searches (user_id, search_term)
+            VALUES ($1, $2);
+        """
+        await conn.execute(insert_query, user_id, search_term)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 
 if not es.indices.exists(index=DEFAULT_INDEX):
     es.indices.create(
@@ -252,15 +269,9 @@ async def search(
         for hit in response["hits"]["hits"]
     ]
 
-    # Insert search term into user_searches table
     try:
         user_id = 1  # Placeholder user ID, replace with actual user ID if available
-        insert_query = """
-            INSERT INTO user_searches (user_id, search_term)
-            VALUES (%s, %s);
-        """
-        cur.execute(insert_query, (user_id, query))
-        conn.commit()
+        await insert_user_search(user_id, query)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
