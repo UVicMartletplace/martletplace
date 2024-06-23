@@ -229,9 +229,7 @@ describe("<ViewListing/>", () => {
 
     cy.wait("@getListing");
 
-    cy.get('textarea[placeholder="Write your review here..."]').type(
-      "This is a great product!"
-    );
+    cy.get("#review_text").type("This is a great product!");
     cy.get("#stars").click();
     cy.get("button").contains("Post").click();
 
@@ -297,9 +295,7 @@ describe("<ViewListing/>", () => {
 
     cy.wait("@getListing");
 
-    cy.get('textarea[placeholder="Write your review here..."]').type(
-      "This is a great product!"
-    );
+    cy.get("#review_text").type("This is a great product!");
     cy.get("#stars").click();
     cy.get("button").contains("Post").click();
 
@@ -348,9 +344,7 @@ describe("<ViewListing/>", () => {
 
     cy.wait("@getListing");
 
-    cy.get('textarea[placeholder="Write your review here..."]').type(
-      "This is a great product!"
-    );
+    cy.get("#review_text").type("This is a great product!");
 
     cy.get("button").contains("Post").click();
     cy.contains("Please provide a rating and review text").should("be.visible");
