@@ -1,13 +1,52 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 
-// POST /api/review - Create a new review
+// POST /api/reviews - Create a new review
 const createReview = async (
   req: Request,
   res: Response,
   db: IDatabase<object>,
 ) => {
-  return res.status(201).json({ message: "createReview" });
+  // TODO: AUTHENTICATION
+  const userID = 1; // placeholder for authenticated user ID
+  const { stars, comment, listingID } = req.body;
+
+  if (!stars || !comment || !listingID) {
+    console.log("missing parameter in request");
+    return res.status(400).json({ error: "missing parameter in request" });
+  }
+
+  try {
+    const createdReview = await db.one(
+      `INSERT INTO reviews (listing_id, user_id, review, rating_value, created_at, modified_at)
+       VALUES ($1, $2, $3, $4, NOW(), NOW())
+       RETURNING *`,
+      [listingID, userID, comment, stars],
+    );
+
+    const reviewerProfile = await db.one(
+      `SELECT user_id AS "userID", username, name
+       FROM users
+       WHERE user_id = $1`,
+      [userID],
+    );
+
+    const responseReview = {
+      review_id: createdReview.review_id,
+      reviewerName: reviewerProfile.name,
+      stars: createdReview.rating_value,
+      comment: createdReview.review,
+      userID: reviewerProfile.userID,
+      listingID: createdReview.listing_id,
+      dateCreated: createdReview.created_at,
+      dateModified: createdReview.modified_at,
+    };
+
+    return res.status(201).json(responseReview);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
 };
 
 export { createReview };
