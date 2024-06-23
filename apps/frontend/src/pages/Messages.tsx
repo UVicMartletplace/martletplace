@@ -1,4 +1,5 @@
 import SearchBar from "../components/searchBar";
+
 const Messages = () => {
   return (
     <>

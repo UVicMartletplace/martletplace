@@ -270,159 +270,162 @@ const EditListing = () => {
   );
 
   return (
-        <>
+    <>
       <SearchBar />
-    <Container>
-      {listingValid ? (
-        <Card>
-          <CardContent>
-            <Typography variant="h2">Edit Listing</Typography>
-            <Grid container spacing={1}>
-              <Grid item md={6} sm={12} xs={12}>
-                <Box>
-                  <form autoComplete="off" onSubmit={handleSubmit}>
-                    <FormControl sx={{ width: "100%", gap: "10px" }}>
-                      <TextField
-                        id="field-title"
-                        label="Title"
-                        sx={{ m: "10px" }}
-                        rows={1}
-                        onChange={updateListingTitle}
-                        required
-                        error={!!titleError}
-                        value={newListingObject.listing.title}
-                      />
-                      {titleError && (
-                        <FormHelperText error>{titleError}</FormHelperText>
-                      )}
-                      <TextField
-                        id="field-description"
-                        label="Description"
-                        type="text"
-                        sx={{ m: "10px", display: "flex" }}
-                        rows={10}
-                        multiline
-                        onChange={updateListingDescription}
-                        value={newListingObject.listing.description}
-                      />
-                      <TextField
-                        id="field-price"
-                        label="Price(CAD)"
-                        type="number"
-                        sx={{ m: "10px" }}
-                        rows={1}
-                        onChange={updateListingPrice}
-                        error={!!priceError}
-                        value={newListingObject.listing.price ?? ""}
-                      />
-                      {priceError && (
-                        <FormHelperText error>{priceError}</FormHelperText>
-                      )}
-                    </FormControl>
-                    <Box>
-                      <Box sx={{ display: "flex" }}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          sx={{
-                            display: "inline",
-                            mt: 2,
-                            backgroundColor: colors.martletplaceNavyBlue,
-                            "&:hover": {
-                              backgroundColor: colors.martletplaceBlueHover,
-                            },
-                            textTransform: "none",
-                            fontSize: "16px",
-                            padding: "10px 20px",
-                            margin: "10px",
-                          }}
-                          id="submit-button"
-                        >
-                          Update Listing
-                        </Button>
-                        <MultiFileUpload
-                          passedImages={listingImages}
-                          setPassedImages={setListingImages}
-                          multipleUpload={true}
-                          htmlForButton={buttonHTML}
-                          imageBinary={listingImageBinaries}
-                          setImageBinaries={setListingImageBinaries}
+      <Container>
+        {listingValid ? (
+          <Card>
+            <CardContent>
+              <Typography variant="h2">Edit Listing</Typography>
+              <Grid container spacing={1}>
+                <Grid item md={6} sm={12} xs={12}>
+                  <Box>
+                    <form autoComplete="off" onSubmit={handleSubmit}>
+                      <FormControl sx={{ width: "100%", gap: "10px" }}>
+                        <TextField
+                          id="field-title"
+                          label="Title"
+                          sx={{ m: "10px" }}
+                          rows={1}
+                          onChange={updateListingTitle}
+                          required
+                          error={!!titleError}
+                          value={newListingObject.listing.title}
                         />
-                      </Box>
+                        {titleError && (
+                          <FormHelperText error>{titleError}</FormHelperText>
+                        )}
+                        <TextField
+                          id="field-description"
+                          label="Description"
+                          type="text"
+                          sx={{ m: "10px", display: "flex" }}
+                          rows={10}
+                          multiline
+                          onChange={updateListingDescription}
+                          value={newListingObject.listing.description}
+                        />
+                        <TextField
+                          id="field-price"
+                          label="Price(CAD)"
+                          type="number"
+                          sx={{ m: "10px" }}
+                          rows={1}
+                          onChange={updateListingPrice}
+                          error={!!priceError}
+                          value={newListingObject.listing.price ?? ""}
+                        />
+                        {priceError && (
+                          <FormHelperText error>{priceError}</FormHelperText>
+                        )}
+                      </FormControl>
                       <Box>
-                        <Button
-                          sx={{
-                            display: "inline",
-                            mt: 2,
-                            backgroundColor: colors.martletplaceRed,
-                            "&:hover": {
-                              backgroundColor: colors.martletplaceRedHover,
-                            },
-                            textTransform: "none",
-                            fontSize: "16px",
-                            padding: "10px 20px",
-                            margin: "10px",
-                          }}
-                          variant="contained"
-                          id="delete-button"
-                          onClick={handleDelete}
-                        >
-                          Delete Posting
-                        </Button>
-                        <Button
-                          sx={{
-                            display: "inline",
-                            mt: 2,
-                            backgroundColor: colors.martletplaceYellow,
-                            "&:hover": {
-                              backgroundColor: colors.martletplaceYellowHover,
-                            },
-                            textTransform: "none",
-                            fontSize: "16px",
-                            padding: "10px 20px",
-                            margin: "10px",
-                          }}
-                          variant="contained"
-                          id="status-button"
-                          onClick={handleUpdateStatus}
-                        >
-                          {newListingObject.listing.status === "AVAILABLE"
-                            ? "Mark Purchased"
-                            : "Mark Not Purchased"}
-                        </Button>
+                        <Box sx={{ display: "flex" }}>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{
+                              display: "inline",
+                              mt: 2,
+                              backgroundColor: colors.martletplaceNavyBlue,
+                              "&:hover": {
+                                backgroundColor: colors.martletplaceBlueHover,
+                              },
+                              textTransform: "none",
+                              fontSize: "16px",
+                              padding: "10px 20px",
+                              margin: "10px",
+                            }}
+                            id="submit-button"
+                          >
+                            Update Listing
+                          </Button>
+                          <MultiFileUpload
+                            passedImages={listingImages}
+                            setPassedImages={setListingImages}
+                            multipleUpload={true}
+                            htmlForButton={buttonHTML}
+                            imageBinary={listingImageBinaries}
+                            setImageBinaries={setListingImageBinaries}
+                          />
+                        </Box>
+                        <Box>
+                          <Button
+                            sx={{
+                              display: "inline",
+                              mt: 2,
+                              backgroundColor: colors.martletplaceRed,
+                              "&:hover": {
+                                backgroundColor: colors.martletplaceRedHover,
+                              },
+                              textTransform: "none",
+                              fontSize: "16px",
+                              padding: "10px 20px",
+                              margin: "10px",
+                            }}
+                            variant="contained"
+                            id="delete-button"
+                            onClick={handleDelete}
+                          >
+                            Delete Posting
+                          </Button>
+                          <Button
+                            sx={{
+                              display: "inline",
+                              mt: 2,
+                              backgroundColor: colors.martletplaceYellow,
+                              "&:hover": {
+                                backgroundColor: colors.martletplaceYellowHover,
+                              },
+                              textTransform: "none",
+                              fontSize: "16px",
+                              padding: "10px 20px",
+                              margin: "10px",
+                            }}
+                            variant="contained"
+                            id="status-button"
+                            onClick={handleUpdateStatus}
+                          >
+                            {newListingObject.listing.status === "AVAILABLE"
+                              ? "Mark Purchased"
+                              : "Mark Not Purchased"}
+                          </Button>
+                        </Box>
                       </Box>
-                    </Box>
-                  </form>
-                </Box>
-              </Grid>
-              <Grid item lg={6} xs={12}>
-                <Box>
-                  <Typography variant="h5" sx={{ paddingLeft: "20px" }}>
-                    Image Preview
-                  </Typography>
-                  <Box sx={{ padding: "10px" }}>
-                    {!isImageValid(listingImages[0]) ? (
-                      <Typography sx={{ paddingLeft: "10px" }} variant="body2">
-                        No images uploaded yet, these images will overwrite the
-                        current ones.
-                      </Typography>
-                    ) : (
-                      <Carousel imageURLs={listingImages} />
-                    )}
+                    </form>
                   </Box>
-                </Box>
+                </Grid>
+                <Grid item lg={6} xs={12}>
+                  <Box>
+                    <Typography variant="h5" sx={{ paddingLeft: "20px" }}>
+                      Image Preview
+                    </Typography>
+                    <Box sx={{ padding: "10px" }}>
+                      {!isImageValid(listingImages[0]) ? (
+                        <Typography
+                          sx={{ paddingLeft: "10px" }}
+                          variant="body2"
+                        >
+                          No images uploaded yet, these images will overwrite
+                          the current ones.
+                        </Typography>
+                      ) : (
+                        <Carousel imageURLs={listingImages} />
+                      )}
+                    </Box>
+                  </Box>
+                </Grid>
               </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      ) : (
-        <Typography>
-          Sorry, we were unable to get this listing. Please try again or contact
-          for support.
-        </Typography>
-      )}
-    </Container>
-   </>
+            </CardContent>
+          </Card>
+        ) : (
+          <Typography>
+            Sorry, we were unable to get this listing. Please try again or
+            contact for support.
+          </Typography>
+        )}
+      </Container>
+    </>
   );
 };
 
