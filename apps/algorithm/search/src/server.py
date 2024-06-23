@@ -5,20 +5,21 @@ from typing import Dict, Any, AsyncGenerator
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
-from pydantic import BaseModel, Field, ConfigDict
-from sqlalchemy.ext.asyncio import AsyncEngine
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlmodel import create_engine, SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import SQLModel, Field
 
 DEFAULT_INDEX = "listings"
 DISTANCE_TO_SEARCH_WITHIN = "5km"
 
-user_id = 5
-
 app = FastAPI()
 
 db_endpoint = os.getenv('DB_ENDPOINT')
+
+# Ensure the db_endpoint uses the correct scheme
+if db_endpoint.startswith("postgres://"):
+    db_endpoint = db_endpoint.replace("postgres://", "postgresql+asyncpg://", 1)
 
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
@@ -37,17 +38,17 @@ if not es.indices.exists(index=DEFAULT_INDEX):
 
 
 class UserSearch(SQLModel, table=True):
+    search_id: int = Field(default=None, primary_key=True)
     user_id: int
     search_term: str
 
 
-engine = create_engine(db_endpoint, echo=True, future=True)
-async_engine = AsyncEngine(engine)
+engine = create_async_engine(db_endpoint, echo=True, future=True)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async_session = sessionmaker(
-        async_engine, class_=AsyncSession, expire_on_commit=False
+        engine, class_=AsyncSession, expire_on_commit=False
     )
     async with async_session() as session:
         yield session
@@ -165,9 +166,7 @@ def validate_search_params(
         raise HTTPException(status_code=422, detail="limit cannot be zero or negative")
     if minPrice is not None and minPrice < 0:
         raise HTTPException(status_code=422, detail="minPrice cannot be negative")
-    if maxPrice is not None and maxPrice < 0:
-        raise HTTPException(status_code=422, detail="maxPrice cannot be negative")
-    if minPrice is not None and maxPrice is not None and minPrice > maxPrice:
+    if maxPrice is not None and maxPrice is not None and minPrice > maxPrice:
         raise HTTPException(
             status_code=422, detail="minPrice cannot be greater than maxPrice"
         )
@@ -283,19 +282,16 @@ async def search(
 @app.post("/api/search/reindex/listing-created")
 async def reindex_listing_created(listingId: str, authorization: str = Header(None)):
     # actual logic will go here
-
     return {"message": "Listing added successfully."}
 
 
 @app.patch("/api/search/reindex/listing-edited")
 async def reindex_listing_edited(listingId: str, authorization: str = Header(None)):
     # actual logic will go here
-
     return {"message": "Listing edited successfully."}
 
 
 @app.delete("/api/search/reindex/listing-deleted")
 async def reindex_listing_deleted(listingId: str, authorization: str = Header(None)):
     # actual logic will go here
-
     return {"message": "Listing deleted successfully."}
