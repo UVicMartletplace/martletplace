@@ -1,16 +1,24 @@
 import os
 from enum import Enum
-from typing import Dict, Any
+from typing import Dict, Any, AsyncGenerator
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel, Field, ConfigDict
+from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import create_engine, SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 DEFAULT_INDEX = "listings"
 DISTANCE_TO_SEARCH_WITHIN = "5km"
 
+user_id = 5
+
 app = FastAPI()
+
+db_endpoint = os.getenv('DB_ENDPOINT')
 
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
@@ -26,6 +34,23 @@ if not es.indices.exists(index=DEFAULT_INDEX):
             }
         },
     )
+
+
+class UserSearch(SQLModel, table=True):
+    user_id: int
+    search_term: str
+
+
+engine = create_engine(db_endpoint, echo=True, future=True)
+async_engine = AsyncEngine(engine)
+
+
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    async_session = sessionmaker(
+        async_engine, class_=AsyncSession, expire_on_commit=False
+    )
+    async with async_session() as session:
+        yield session
 
 
 class Status(str, Enum):
@@ -246,6 +271,11 @@ async def search(
         }
         for hit in response["hits"]["hits"]
     ]
+
+    async with get_session() as session:
+        new_search = UserSearch(user_id=5, search_term=query)
+        session.add(new_search)
+        await session.commit()
 
     return {"items": results, "totalItems": total_items}
 

@@ -3,6 +3,8 @@ pydantic
 elasticsearch
 uvicorn[standard]
 asyncpg
+sqlmodel
+asyncpg
 
 ## Dev Dependencies
 ruff
