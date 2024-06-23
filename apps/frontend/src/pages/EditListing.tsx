@@ -413,7 +413,7 @@ const EditListing = () => {
           </CardContent>
         </Card>
       ) : (
-        <Typography>Listing Not Valid</Typography>
+        <Typography>Sorry, we were unable to get this listing. Please try again or contact for support.</Typography>
       )}
     </Container>
   );
