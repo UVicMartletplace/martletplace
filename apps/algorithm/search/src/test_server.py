@@ -1712,7 +1712,7 @@ def test_reindex_listing_created_with_invalid_longitude():
     }
 
 
-def test_reindex_listing_created_and_search():
+def test_reindex_listing_created_and_search(mock_insert_user_search):
     listing_data = {
         "listingId": "test123",
         "sellerId": "seller123",
