@@ -27,6 +27,7 @@ if not es.indices.exists(index=DEFAULT_INDEX):
         },
     )
 
+
 class Status(str, Enum):
     AVAILABLE = "AVAILABLE"
     SOLD = "SOLD"
@@ -71,6 +72,7 @@ class ListingSummary(BaseModel):
         }
     )
 
+
 class Location(BaseModel):
     lat: float = Field(..., description="Latitude of the location", ge=-90, le=90)
     lon: float = Field(..., description="Longitude of the location", ge=-180, le=180)
@@ -83,6 +85,7 @@ class Location(BaseModel):
             }
         }
     )
+
 
 class Listing(BaseModel):
     listingId: str = Field(...)
@@ -111,6 +114,7 @@ class Listing(BaseModel):
             }
         }
     )
+
 
 def validate_search_params(
     latitude: float,
@@ -247,17 +251,18 @@ async def search(
 @app.post("/api/search/reindex/listing-created")
 async def post_listing(listing: Listing, authorization: str = Header(None)):
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    if (listing.price < 0):
+    if listing.price < 0:
         raise HTTPException(status_code=422, detail="price cannot be negative")
 
     es.index(index=INDEX, id=listing.listingId, body=listing.dict())
 
     return {"message": "Listing added successfully."}
 
+
 @app.patch("/api/search/reindex/listing-edited")
 async def patch_listing(listing: Listing, authorization: str = Header(None)):
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    if (listing.price < 0):
+    if listing.price < 0:
         raise HTTPException(status_code=422, detail="price cannot be negative")
 
     es.index(index=INDEX, id=listing.listingId, body=listing.dict())
