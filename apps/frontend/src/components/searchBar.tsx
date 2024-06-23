@@ -81,7 +81,7 @@ const SearchBar = () => {
       ...filters,
       query: searchInput,
     };
-    //put search object in the URL
+    //Put search object in the URL
     navigate(
       `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
