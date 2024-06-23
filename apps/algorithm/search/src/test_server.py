@@ -1,4 +1,5 @@
 import os
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from elasticsearch import Elasticsearch
@@ -37,7 +38,13 @@ def setup_and_teardown_index(monkeypatch):
     es.options(ignore_status=[404]).indices.delete(index=TEST_INDEX)
 
 
-def test_search_no_listings():
+@pytest.fixture(autouse=True)
+def mock_insert_user_search():
+    with patch("src.routes.insert_user_search", new_callable=AsyncMock) as mock:
+        yield mock
+
+
+def test_search_no_listings(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -49,9 +56,10 @@ def test_search_no_listings():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "test")
 
 
-def test_search_for_existing_listing():
+def test_search_for_existing_listing(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -94,9 +102,10 @@ def test_search_for_existing_listing():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_for_multiple_listings():
+def test_search_for_multiple_listings(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -165,9 +174,10 @@ def test_search_for_multiple_listings():
         ],
         "totalItems": 2,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_empty_query():
+def test_search_empty_query(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -179,9 +189,10 @@ def test_search_empty_query():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "")
 
 
-def test_search_with_special_characters_in_query():
+def test_search_with_special_characters_in_query(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -193,9 +204,10 @@ def test_search_with_special_characters_in_query():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop!@#$%^&*()_+")
 
 
-def test_search_with_price_range():
+def test_search_with_price_range(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -240,9 +252,10 @@ def test_search_with_price_range():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_too_low_price_range_fail():
+def test_search_with_too_low_price_range_fail(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -273,9 +286,10 @@ def test_search_with_too_low_price_range_fail():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_too_high_price_range_fail():
+def test_search_with_too_high_price_range_fail(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -306,9 +320,10 @@ def test_search_with_too_high_price_range_fail():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_negative_min_price_fail():
+def test_search_with_negative_min_price_fail(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -321,9 +336,10 @@ def test_search_with_negative_min_price_fail():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "minPrice cannot be negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_negative_max_price_fail():
+def test_search_with_negative_max_price_fail(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -336,9 +352,10 @@ def test_search_with_negative_max_price_fail():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "maxPrice cannot be negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_min_price_higher_than_max_price_fail():
+def test_search_min_price_higher_than_max_price_fail(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -352,9 +369,10 @@ def test_search_min_price_higher_than_max_price_fail():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "minPrice cannot be greater than maxPrice"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_status():
+def test_search_with_status(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -414,9 +432,10 @@ def test_search_with_status():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_status_sold():
+def test_search_with_status_sold(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -476,9 +495,10 @@ def test_search_with_status_sold():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_status():
+def test_search_with_invalid_status(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -501,9 +521,10 @@ def test_search_with_invalid_status():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_user_search():
+def test_search_with_user_search(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -563,9 +584,10 @@ def test_search_with_user_search():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "billybobjoe")
 
 
-def test_search_with_user_search_negative():
+def test_search_with_user_search_negative(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -582,6 +604,22 @@ def test_search_with_user_search_negative():
             "imageUrl": "https://example.com/image1.jpg",
         },
     )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "SOLD",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
@@ -595,9 +633,10 @@ def test_search_with_user_search_negative():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_search_type():
+def test_search_with_invalid_search_type(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -620,9 +659,10 @@ def test_search_with_invalid_search_type():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_only_return_results_within_5km_of_location():
+def test_only_return_results_within_5km_of_location(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -681,9 +721,10 @@ def test_only_return_results_within_5km_of_location():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_missing_latitude():
+def test_search_with_missing_latitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -703,9 +744,10 @@ def test_search_with_missing_latitude():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_missing_longitude():
+def test_search_with_missing_longitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -725,9 +767,10 @@ def test_search_with_missing_longitude():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_out_of_bounds_latitude():
+def test_search_with_out_of_bounds_latitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -739,9 +782,10 @@ def test_search_with_out_of_bounds_latitude():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "latitude must be between -90 and 90"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_out_of_bounds_longitude():
+def test_search_with_out_of_bounds_longitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -753,9 +797,10 @@ def test_search_with_out_of_bounds_longitude():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "longitude must be between -180 and 180"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_sorting_by_relevance():
+def test_search_with_sorting_by_relevance(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -824,9 +869,10 @@ def test_search_with_sorting_by_relevance():
     assert results["items"][1]["listingID"] == "ghi789"
     assert results["items"][2]["listingID"] == "abc123"
     assert results["totalItems"] == 3
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_price_asc():
+def test_search_with_sorting_by_price_asc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -878,9 +924,10 @@ def test_search_with_sorting_by_price_asc():
     assert len(results["items"]) > 0
     assert results["items"][0]["price"] == 30.00
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "for")
 
 
-def test_search_with_sorting_by_price_desc():
+def test_search_with_sorting_by_price_desc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -932,9 +979,10 @@ def test_search_with_sorting_by_price_desc():
     assert len(results["items"]) > 0
     assert results["items"][0]["price"] == 450.00
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "for")
 
 
-def test_search_with_sorting_by_listed_time_asc():
+def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -987,9 +1035,10 @@ def test_search_with_sorting_by_listed_time_asc():
     assert results["items"][0]["listingID"] == "abc123"
     assert results["items"][1]["listingID"] == "def456"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_listed_time_desc():
+def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1042,9 +1091,10 @@ def test_search_with_sorting_by_listed_time_desc():
     assert results["items"][0]["listingID"] == "def456"
     assert results["items"][1]["listingID"] == "abc123"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_distance_asc():
+def test_search_with_sorting_by_distance_asc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1097,9 +1147,10 @@ def test_search_with_sorting_by_distance_asc():
     assert results["items"][0]["listingID"] == "abc123"
     assert results["items"][1]["listingID"] == "def456"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_distance_desc():
+def test_search_with_sorting_by_distance_desc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1152,9 +1203,10 @@ def test_search_with_sorting_by_distance_desc():
     assert results["items"][0]["listingID"] == "def456"
     assert results["items"][1]["listingID"] == "abc123"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_sorting_criteria():
+def test_search_with_invalid_sorting_criteria(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1172,18 +1224,19 @@ def test_search_with_invalid_sorting_criteria():
                 "type": "enum",
                 "loc": ["query", "sort"],
                 "msg": "Input should be 'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', "
-                "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
+                       "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
                 "input": "INVALID_SORT",
                 "ctx": {
                     "expected": "'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', 'LISTED_TIME_DESC', "
-                    "'DISTANCE_ASC' or 'DISTANCE_DESC'"
+                                "'DISTANCE_ASC' or 'DISTANCE_DESC'"
                 },
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_pagination():
+def test_search_with_pagination(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1270,8 +1323,12 @@ def test_search_with_pagination():
     assert results["items"][4]["listingID"] == "listing14"
     assert results["totalItems"] == 15
 
+    # Check that insert_user_search was awaited 3 times
+    assert mock_insert_user_search.await_count == 3
+    mock_insert_user_search.assert_any_await(5, "Item")
 
-def test_search_with_missing_pagination_parameters():
+
+def test_search_with_missing_pagination_parameters(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1311,9 +1368,10 @@ def test_search_with_missing_pagination_parameters():
     assert results["items"][0]["listingID"] == "listing0"
     assert results["items"][19]["listingID"] == "listing19"
     assert results["totalItems"] == 21
+    mock_insert_user_search.assert_awaited_once_with(5, "Item")
 
 
-def test_search_with_negative_page_number():
+def test_search_with_negative_page_number(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1327,9 +1385,10 @@ def test_search_with_negative_page_number():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "page cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_zero_page_number():
+def test_search_with_zero_page_number(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1343,9 +1402,10 @@ def test_search_with_zero_page_number():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "page cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_negative_limit():
+def test_search_with_negative_limit(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1359,9 +1419,10 @@ def test_search_with_negative_limit():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "limit cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_zero_limit():
+def test_search_with_zero_limit(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1375,9 +1436,10 @@ def test_search_with_zero_limit():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "limit cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_total_items_count_with_multiple_listings():
+def test_total_items_count_with_multiple_listings(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1417,9 +1479,10 @@ def test_total_items_count_with_multiple_listings():
     assert "totalItems" in results
     assert len(results["items"]) == 5
     assert results["totalItems"] == 10
+    mock_insert_user_search.assert_awaited_once_with(5, "Item")
 
 
-def test_total_items_count_with_filter():
+def test_total_items_count_with_filter(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1460,3 +1523,4 @@ def test_total_items_count_with_filter():
     assert "totalItems" in results
     assert len(results["items"]) == 5
     assert results["totalItems"] == 10
+    mock_insert_user_search.assert_awaited_once_with(5, "Item")
