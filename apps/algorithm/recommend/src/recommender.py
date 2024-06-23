@@ -28,25 +28,23 @@ class Recommender:
         search_recommendations = self.get_recommendations_from_search_terms(
             terms_searched
         )
-        combined_recommendations = np.concatenate(
-            [click_recommendations, search_recommendations]
-        )
-        unique_recommendations, counts = np.unique(
-            combined_recommendations, return_counts=True
-        )
-        top_indices = np.argsort(counts)[::-1]
 
-        start_index = (page - 1) * limit
-        if start_index >= len(unique_recommendations):
+        if click_recommendations.size == 0 and search_recommendations.size == 0:
             return np.array([])
-
-        end_index = start_index + limit
-        end_index = min(end_index, len(unique_recommendations))
-
-        paged_recommendations = unique_recommendations[top_indices][
-            start_index:end_index
-        ]
-        return self.data.iloc[paged_recommendations]
+        elif click_recommendations.size == 0:
+            return self.data.iloc[search_recommendations[:limit]]
+        elif search_recommendations.size == 0:
+            return self.data.iloc[click_recommendations[:limit]]
+        else:
+            combined_recommendations = pd.concat(
+                [
+                    self.data.iloc[click_recommendations[:limit]],
+                    self.data.iloc[search_recommendations[:limit]],
+                ]
+            )
+            # shuffle recommendations
+            combined_recommendations = combined_recommendations.sample(frac=1)
+            return combined_recommendations[:limit]
 
     @staticmethod
     def generate_tfidf_vector(texts, data):
@@ -80,13 +78,16 @@ class Recommender:
         the cosine similarity of each of the items clicked then returning the
         recommendations based on the highest similarities.
         """
+        if not items_clicked:
+            return np.array([])
         indices = self.data.index[self.data["listingID"].isin(items_clicked)].tolist()
         similarities = np.mean(self.cosine_similarity_matrix[indices], axis=0)
+        recommendations = np.argsort(similarities)[::-1]
         # Remove items that have already been clicked
         # Not sure if we want to do this or if we want to recommend stuff that has already been looked at?
         # Needs to happen before taking the top_n, otherwise we aren't guaranteed to get top_n recommendations
-        similarities = [i for i in similarities if i not in indices]
-        return similarities
+        recommendations = np.array([i for i in recommendations if i not in indices])
+        return recommendations
 
     def get_recommendations_from_search_terms(self, search_terms):
         """
@@ -94,6 +95,8 @@ class Recommender:
         the recommender works, by calculating the "similarity" of the search
         terms to the items in the data, and then returning the most similar items.
         """
+        if not search_terms:
+            return np.array([])
         search_tfidf_tensor = Recommender.generate_tfidf_vector(search_terms, self.data)
         normalized_search_vectors = tf.nn.l2_normalize(search_tfidf_tensor, axis=1)
         aggregated_search_vector = tf.reduce_mean(
@@ -106,4 +109,5 @@ class Recommender:
             .numpy()
             .flatten()
         )
-        return similarities
+        top_indices = np.argsort(similarities)[::-1]
+        return top_indices

@@ -31,7 +31,7 @@ class Users(SQLModel, table=True):
 class Listings(SQLModel, table=True):
     listing_id: Optional[int] = Field(default=None, primary_key=True)
     seller_id: int = Field(foreign_key="users.user_id")
-    buyer_id: Optional[int] = None#Field(default=None, foreign_key="user.user_id")
+    buyer_id: Optional[int] = None
     title: str
     price: int
     location: dict = Field(sa_column=Column(JSON), default={})

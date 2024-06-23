@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends
+import pandas as pd
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,7 +20,7 @@ async def get_recommendations(
     limit: int = 20,
     session: AsyncSession = Depends(get_session),
 ):
-    user_id = 5  # TODO need to do it based on auth
+    user_id = int(authorization)  # TODO need to do it based on auth
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     if not users:
         return HTTPException(status_code=404, detail="User not found")
@@ -37,6 +38,21 @@ async def get_recommendations(
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
     )
+    columns = [
+        "sellerID",
+        "dateCreated",
+        "Category",
+        "title",
+        "description",
+        "Price",
+        "listingID",
+        "imageUrl",
+        "price",
+        "sellerName",
+        "combined_features",
+    ]
+
+    recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
     listing_summaries = [
         ListingSummary(
@@ -51,7 +67,6 @@ async def get_recommendations(
         )
         for _, row in recommended_listings.iterrows()
     ]
-
     return listing_summaries
 
 
