@@ -78,8 +78,8 @@ jobs:
       - name: Test
         run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
 
-  security:
-    name: Security
+  sast:
+    name: Static Application Security Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -92,3 +92,22 @@ jobs:
         uses: ajinabraham/njsscan-action@master
         with:
           args: './apps/backend/${{ matrix.service }}'
+
+  supply:
+    name: Supply Chain Security
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+      fail-fast: false
+    defaults:
+      run:
+        working-directory: apps/backend/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - run: npm audit --audit-level high

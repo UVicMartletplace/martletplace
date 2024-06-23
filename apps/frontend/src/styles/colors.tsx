@@ -7,6 +7,7 @@ export const colors = {
   martletplaceYellowHover: "#e6a228",
   martletplaceWhite: "#ffffff",
   martletplaceGreyClicked: "#E8E8E8",
-  martletplaceRed: "#bd3225",
   martletplaceRedHover: "#a02b20",
+  martletplaceRed: "#c83424",
+  martletplaceRedClicked: "#dc847c",
 };

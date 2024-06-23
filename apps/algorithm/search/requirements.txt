@@ -1,8 +1,10 @@
 fastapi
 pydantic
+elasticsearch
 uvicorn[standard]
 
 ## Dev Dependencies
 ruff
 pytest
 bandit
+httpx
