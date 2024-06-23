@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.sql_models import User, UserClick, UserSearch
+from src.sql_models import Users, User_Clicks, User_Searches
 from src.api_models import ListingSummary, Review
 from src.db import get_session
 from src.recommender import Recommender
@@ -20,17 +20,17 @@ async def get_recommendations(
     session: AsyncSession = Depends(get_session),
 ):
     user_id = 5  # TODO need to do it based on auth
-    users = await session.exec(select(User).where(User.id == user_id))
+    users = await session.exec(select(Users).where(Users.user_id == user_id))
     if not users:
         return HTTPException(status_code=404, detail="User not found")
 
     items_clicked = await session.exec(
-        select(UserClick).where(UserClick.user_id == user_id)
+        select(User_Clicks).where(User_Clicks.user_id == user_id)
     )
     items_clicked = [item.listing_id for item in items_clicked]
 
     terms_searched = await session.exec(
-        select(UserSearch).where(UserSearch.user_id == user_id)
+        select(User_Searches).where(User_Searches.user_id == user_id)
     )
     terms_searched = [term.search_term for term in terms_searched]
 

@@ -11,7 +11,7 @@ class StatusType(str, Enum):
     removed = "REMOVED"
 
 
-class User(SQLModel, table=True):
+class Users(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(nullable=False, unique=True)
     email: str = Field(nullable=False, unique=True)
@@ -22,15 +22,16 @@ class User(SQLModel, table=True):
     verified: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     modified_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    listings: List["Listing"] = Relationship(back_populates="seller")
-    searches: List["UserSearch"] = Relationship(back_populates="user")
-    clicks: List["UserClick"] = Relationship(back_populates="user")
+
+    listings: List["Listings"] = Relationship(back_populates="seller")
+    searches: List["User_Searches"] = Relationship(back_populates="user")
+    clicks: List["User_Clicks"] = Relationship(back_populates="user")
 
 
-class Listing(SQLModel, table=True):
+class Listings(SQLModel, table=True):
     listing_id: Optional[int] = Field(default=None, primary_key=True)
-    seller_id: int = Field(foreign_key="user.user_id")
-    buyer_id: Optional[int] = Field(default=None, foreign_key="user.user_id")
+    seller_id: int = Field(foreign_key="users.user_id")
+    buyer_id: Optional[int] = None#Field(default=None, foreign_key="user.user_id")
     title: str
     price: int
     location: dict = Field(sa_column=Column(JSON), default={})
@@ -39,22 +40,24 @@ class Listing(SQLModel, table=True):
     image_urls: List[str] = Field(sa_column=Column(ARRAY(String)), default=[])
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     modified_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    seller: User = Relationship(back_populates="listings")
+
+    seller: Users = Relationship(back_populates="listings")
 
 
-class UserSearch(SQLModel, table=True):
+class User_Searches(SQLModel, table=True):
     search_id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.user_id")
+    user_id: int = Field(foreign_key="users.user_id")
     search_term: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    user: User = Relationship(back_populates="searches")
+
+    user: Users = Relationship(back_populates="searches")
 
 
-class UserClick(SQLModel, table=True):
+class User_Clicks(SQLModel, table=True):
     click_id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="user.user_id")
-    listing_id: int = Field(foreign_key="listing.listing_id")
+    user_id: int = Field(foreign_key="users.user_id")
+    listing_id: int = Field(foreign_key="listings.listing_id")
     click_timestamp: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
-    user: User = Relationship(back_populates="clicks")
+    user: Users = Relationship(back_populates="clicks")
