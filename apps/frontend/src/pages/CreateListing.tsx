@@ -42,6 +42,7 @@ const CreateListing = () => {
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
     []
   );
+
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
     "This field is required"
