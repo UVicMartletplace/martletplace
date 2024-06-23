@@ -9,7 +9,7 @@ import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
-import MyProfile from "./pages/MyProfile";
+import Profile from "./pages/Profile";
 import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AuthRoute from "./components/Auth/AuthRoute";
@@ -59,7 +59,7 @@ function App() {
             path="/user"
             element={
               <PrivateRoute>
-                <MyProfile />
+                <Profile />
               </PrivateRoute>
             }
           />
@@ -67,7 +67,7 @@ function App() {
             path="/user/profile"
             element={
               <PrivateRoute>
-                <MyProfile />
+                <Profile />
               </PrivateRoute>
             }
           />

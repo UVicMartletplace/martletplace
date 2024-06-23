@@ -6,7 +6,7 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
 import AccountSidebarItem from "./AccountSidebarItem";
 import useUser from "../hooks/useUser";
@@ -20,20 +20,21 @@ const AccountSidebar = ({ selectedItem }: { selectedItem: string }) => {
     logout();
     navigate("/user/login");
   };
+  const { id } = useParams();
 
   return (
     <Box sx={{ display: "flex" }}>
       <Drawer variant="permanent" sx={styles.drawer}>
         <Divider />
         <List>
-          <ListItem onClick={() => navigate("/user")}>
+          <ListItem onClick={() => navigate(`/user/${id}`)}>
             <Typography variant="h4" sx={{ fontWeight: "bold" }}>
               {user ? user.name : "Account"}
             </Typography>
           </ListItem>
           <Divider />
           <AccountSidebarItem
-            path="/user"
+            path={`/user/${id}`}
             itemName="My Profile"
             selected={selectedItem === "My Profile"}
           />

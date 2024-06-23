@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import MyProfile from "../../src/pages/MyProfile";
+import Profile from "../../src/pages/Profile";
 import TestProviders from "../utils/TestProviders";
 
 describe("Account Page", () => {
@@ -7,7 +7,7 @@ describe("Account Page", () => {
     cy.mount(
       <TestProviders>
         <BrowserRouter>
-          <MyProfile />
+          <Profile />
         </BrowserRouter>
       </TestProviders>
     );
