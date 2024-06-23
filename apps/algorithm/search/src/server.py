@@ -2,6 +2,7 @@ import os
 from enum import Enum
 from typing import Dict, Any
 
+import psycopg2
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 from fastapi import FastAPI, HTTPException, Header
@@ -14,6 +15,10 @@ app = FastAPI()
 
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
+
+db_endpoint = os.getenv("DB_ENDPOINT")
+conn = psycopg2.connect(db_endpoint)
+cur = conn.cursor()
 
 if not es.indices.exists(index=DEFAULT_INDEX):
     es.indices.create(
@@ -246,6 +251,18 @@ async def search(
         }
         for hit in response["hits"]["hits"]
     ]
+
+    # Insert search term into user_searches table
+    try:
+        user_id = 1  # Placeholder user ID, replace with actual user ID if available
+        insert_query = """
+            INSERT INTO user_searches (user_id, search_term)
+            VALUES (%s, %s);
+        """
+        cur.execute(insert_query, (user_id, query))
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     return {"items": results, "totalItems": total_items}
 

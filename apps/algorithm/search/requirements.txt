@@ -2,9 +2,7 @@ fastapi
 pydantic
 elasticsearch
 uvicorn[standard]
-asyncpg
-sqlmodel
-asyncpg
+psycopg2-binary
 
 ## Dev Dependencies
 ruff
