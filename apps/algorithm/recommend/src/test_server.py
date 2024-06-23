@@ -4,6 +4,7 @@ from server import app
 
 client = TestClient(app)
 
+
 def test_get_recommendations():
     response = client.get(
         "/api/recommendations",
@@ -13,6 +14,7 @@ def test_get_recommendations():
     assert response.status_code == 200
     assert len(response.json()) == 10
 
+
 def test_get_recommendations_invalid_user():
     response = client.get(
         "/api/recommendations",
@@ -21,6 +23,7 @@ def test_get_recommendations_invalid_user():
     )
     assert response.status_code == 404
     assert response.json() == {"detail": "User not found: abc"}
+
 
 def test_get_recommendations_no_recommendations():
     response = client.get(

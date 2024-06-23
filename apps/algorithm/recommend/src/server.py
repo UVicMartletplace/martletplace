@@ -24,7 +24,9 @@ async def get_recommendations(
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     user = users.first()
     if user is None:
-        raise HTTPException(status_code=404, detail="User not found: " + str(authorization))
+        raise HTTPException(
+            status_code=404, detail="User not found: " + str(authorization)
+        )
 
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
