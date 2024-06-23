@@ -139,7 +139,7 @@ async def search(
 @search_router.post("/api/search/reindex/listing-created")
 async def post_listing(listing: Listing, authorization: str = Header(None)):
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    if (listing.price < 0):
+    if listing.price < 0:
         raise HTTPException(status_code=422, detail="price cannot be negative")
 
     es.index(index=INDEX, id=listing.listingId, body=listing.dict())
@@ -150,7 +150,7 @@ async def post_listing(listing: Listing, authorization: str = Header(None)):
 @search_router.patch("/api/search/reindex/listing-edited")
 async def patch_listing(listing: Listing, authorization: str = Header(None)):
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    if (listing.price < 0):
+    if listing.price < 0:
         raise HTTPException(status_code=422, detail="price cannot be negative")
 
     es.index(index=INDEX, id=listing.listingId, body=listing.dict())
