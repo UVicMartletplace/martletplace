@@ -1224,11 +1224,11 @@ def test_search_with_invalid_sorting_criteria(mock_insert_user_search):
                 "type": "enum",
                 "loc": ["query", "sort"],
                 "msg": "Input should be 'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', "
-                "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
+                       "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
                 "input": "INVALID_SORT",
                 "ctx": {
                     "expected": "'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', 'LISTED_TIME_DESC', "
-                    "'DISTANCE_ASC' or 'DISTANCE_DESC'"
+                                "'DISTANCE_ASC' or 'DISTANCE_DESC'"
                 },
             }
         ]
@@ -1748,6 +1748,7 @@ def test_reindex_listing_created_and_search():
     )
 
     assert response.status_code == 200
+    mock_insert_user_search.assert_awaited_once_with(5, "Test Product")
     results = response.json()
     assert results["totalItems"] == 1
     assert results["items"][0]["listingID"] == "test123"
