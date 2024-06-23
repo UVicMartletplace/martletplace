@@ -1552,7 +1552,7 @@ def test_reindex_listing_created():
     es.indices.refresh(index=TEST_INDEX)
     es_response = es.get(index=TEST_INDEX, id="test123")
 
-    assert es_response["found"] == True
+    assert es_response["found"]
     assert es_response["_source"]["listingId"] == "test123"
     assert es_response["_source"]["sellerId"] == "seller123"
     assert es_response["_source"]["sellerName"] == "test_seller"
@@ -1799,7 +1799,7 @@ def test_reindex_listing_edited():
     es.indices.refresh(index=TEST_INDEX)
     es_response = es.get(index=TEST_INDEX, id="test123")
 
-    assert es_response["found"] == True
+    assert es_response["found"]
     assert es_response["_source"]["title"] == "Updated Test Product"
     assert es_response["_source"]["price"] == 150.0
 
