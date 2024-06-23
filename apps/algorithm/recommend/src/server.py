@@ -38,6 +38,8 @@ async def get_recommendations(
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
     )
+    # remove rows with NaN values
+    recommended_listings.dropna(inplace=True)
     columns = [
         "sellerID",
         "dateCreated",
