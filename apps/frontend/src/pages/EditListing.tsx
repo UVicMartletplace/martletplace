@@ -65,25 +65,28 @@ const EditListing = () => {
   });
 
   useEffect(() => {
-    _axios_instance
-      .get("/listing/" + id)
-      .then((response) => {
+    const fetchListing = async () => {
+      try {
+        const response = await _axios_instance.get(`/listing/${id}`);
+        const { title, description, price, status, images } = response.data;
         setNewListingObject((prevState) => ({
           ...prevState,
           listing: {
             ...prevState.listing,
-            title: response.data.title || "",
-            description: response.data.description || "",
-            price: +response.data.price || 0,
-            status: response.data.status || "AVAILABLE",
-            images: response.data.images || [],
+            title: title || "",
+            description: description || "",
+            price: +price || 0,
+            status: status || "AVAILABLE",
+            images: images || [],
           },
         }));
         setListingValid(true);
-      })
-      .catch(() => {
+      } catch (error) {
         alert("Listing not updated successfully");
-      });
+      }
+    };
+
+    fetchListing();
   }, [id]);
 
   const updateNewListingPayload = (
@@ -118,27 +121,25 @@ const EditListing = () => {
     }
   };
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (
-    submissionEvent,
-  ) => {
+const handleSubmit: FormEventHandler<HTMLFormElement> = async (submissionEvent) => {
     submissionEvent.preventDefault();
 
     if (!priceError && !titleError) {
-      const successImages: boolean = await asyncListingImageWrapper();
+      try {
+        const successImages: boolean = await asyncListingImageWrapper();
 
-      if (successImages) {
-        _axios_instance
-          .patch("/listing/" + id, newListingObject)
-          .then(() => {
+        if (successImages) {
+          try {
+            await _axios_instance.patch(`/listing/${id}`, newListingObject);
             alert("Listing Updated!");
             navigate("/");
-          })
-          .catch(() => {
+          } catch (error) {
             alert("Listing Update Failed");
-          });
-      } else if (!successImages) {
-        alert("Images failed to upload, please try again later");
-      } else {
+          }
+        } else {
+          alert("Images failed to upload, please try again later");
+        }
+      } catch (error) {
         alert(
           "Error occurred when updating the listing, you may need to enable location permissions for this site",
         );
