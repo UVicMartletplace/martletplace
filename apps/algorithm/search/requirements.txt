@@ -1,9 +1,7 @@
 fastapi
 pydantic
-# pydantic-partial
 elasticsearch
 uvicorn[standard]
-requests
 
 ## Dev Dependencies
 ruff
