@@ -20,10 +20,11 @@ async def get_recommendations(
     limit: int = 20,
     session: AsyncSession = Depends(get_session),
 ):
-    user_id = int(authorization)  # TODO need to do it based on auth
+    user_id = int(authorization) if authorization.isdigit() else None
     users = await session.exec(select(Users).where(Users.user_id == user_id))
-    if not users:
-        return HTTPException(status_code=404, detail="User not found")
+    user = users.first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found: " + str(authorization))
 
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
@@ -38,6 +39,8 @@ async def get_recommendations(
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
     )
+    if recommended_listings.size == 0:
+        return []
     # remove rows with NaN values
     recommended_listings.dropna(inplace=True)
     columns = [
