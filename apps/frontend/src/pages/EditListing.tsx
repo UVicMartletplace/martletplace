@@ -121,7 +121,9 @@ const EditListing = () => {
     }
   };
 
-const handleSubmit: FormEventHandler<HTMLFormElement> = async (submissionEvent) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (
+    submissionEvent,
+  ) => {
     submissionEvent.preventDefault();
 
     if (!priceError && !titleError) {
