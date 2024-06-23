@@ -63,7 +63,9 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
 
   return (
     <Container>
-      <Typography variant="h6">Reviews</Typography>
+      <Typography variant="h6" sx={{ paddingTop: "10px" }}>
+        Reviews
+      </Typography>
       <Grid item>
         {starRatings.map((star) => (
           <IconButton
