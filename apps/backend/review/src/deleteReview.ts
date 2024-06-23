@@ -11,7 +11,7 @@ const deleteReview = async (
   const { id } = req.params;
 
   if (!id) {
-    console.log("no review_id in request");
+    console.error("no review_id in request");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -23,13 +23,13 @@ const deleteReview = async (
     );
 
     if (result.rowCount === 0) {
-      console.log("review not found");
+      console.error("review not found");
       return res.status(404).json({ error: "Review not found" });
     }
 
     return res.status(200).json({ message: "Review deleted successfully" });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };

@@ -12,7 +12,7 @@ const updateReview = async (
   const { stars, comment, listingID } = req.body;
 
   if (!stars || !comment || !listingID) {
-    console.log("missing parameter in request");
+    console.error("missing parameter in request");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -29,7 +29,7 @@ const updateReview = async (
     );
 
     if (!updatedReview) {
-      console.log("review not found");
+      console.error("review not found");
       return res.status(404).json({ error: "Review not found" });
     }
 
@@ -43,7 +43,7 @@ const updateReview = async (
 
     return res.status(200).json(responseReview);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };

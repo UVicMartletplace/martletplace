@@ -11,7 +11,7 @@ const getReview = async (
   const { id } = req.params;
 
   if (!id) {
-    console.log("missing review id parameter in request");
+    console.error("missing review id parameter in request");
     return res.status(400).json({ error: "Review ID is required" });
   }
 
@@ -42,7 +42,7 @@ const getReview = async (
 
     return res.status(200).json(review);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
