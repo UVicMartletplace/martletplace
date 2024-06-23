@@ -1,6 +1,7 @@
 import os
 from enum import Enum
 from typing import Dict, Any, AsyncGenerator
+from contextlib import asynccontextmanager
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
@@ -45,7 +46,7 @@ class UserSearch(SQLModel, table=True):
 
 engine = create_async_engine(db_endpoint, echo=True, future=True)
 
-
+@asynccontextmanager
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async_session = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
