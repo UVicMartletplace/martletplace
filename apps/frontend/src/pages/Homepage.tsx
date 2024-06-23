@@ -15,6 +15,7 @@ import { useState, useEffect, useRef } from "react";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
+import SearchBar from "../components/searchBar.tsx";
 
 interface ListingObject {
   listingID: string;
@@ -167,84 +168,87 @@ const Homepage = () => {
   }, [location.pathname, searchObject]);
 
   return (
-    <Box sx={classes.HomePageBox}>
-      {searchPerformed ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            paddingTop: "10px",
-            paddingBottom: "10px",
-          }}
-        >
-          <Typography
-            variant="h5"
-            component="h3"
-            gutterBottom
-            sx={{ margin: "10px" }}
-          >
-            Results ({totalItems})
-          </Typography>
-          <FormControl sx={{ minWidth: "25%" }}>
-            <InputLabel sx={{ background: "white" }}>Sort By</InputLabel>
-            <Select value={sortBy} onChange={handleSortBy}>
-              <MenuItem value={"RELEVANCE"}>Relevance</MenuItem>
-              <MenuItem value={"PRICE_ASC"}>Price Ascending</MenuItem>
-              <MenuItem value={"PRICE_DESC"}>Price Descending</MenuItem>
-              <MenuItem value={"LISTED_TIME_ASC"}>
-                Listed Time Ascending
-              </MenuItem>
-              <MenuItem value={"LISTED_TIME_DESC"}>
-                Listed Time Descending
-              </MenuItem>
-              <MenuItem value={"DISTANCE_ASC"}>Distance Ascending</MenuItem>
-              <MenuItem value={"DISTANCE_DESC"}>Distance Descending</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-      ) : (
-        <>
+    <>
+      <SearchBar />
+      <Box sx={classes.HomePageBox}>
+        {searchPerformed ? (
           <Box
             sx={{
-              borderBottom: "1px solid #808080",
+              display: "flex",
+              flexDirection: "row",
+              paddingTop: "10px",
+              paddingBottom: "10px",
             }}
           >
-            <Typography variant="h6" component="h3" gutterBottom>
-              Welcome!
+            <Typography
+              variant="h5"
+              component="h3"
+              gutterBottom
+              sx={{ margin: "10px" }}
+            >
+              Results ({totalItems})
             </Typography>
+            <FormControl sx={{ minWidth: "25%" }}>
+              <InputLabel sx={{ background: "white" }}>Sort By</InputLabel>
+              <Select value={sortBy} onChange={handleSortBy}>
+                <MenuItem value={"RELEVANCE"}>Relevance</MenuItem>
+                <MenuItem value={"PRICE_ASC"}>Price Ascending</MenuItem>
+                <MenuItem value={"PRICE_DESC"}>Price Descending</MenuItem>
+                <MenuItem value={"LISTED_TIME_ASC"}>
+                  Listed Time Ascending
+                </MenuItem>
+                <MenuItem value={"LISTED_TIME_DESC"}>
+                  Listed Time Descending
+                </MenuItem>
+                <MenuItem value={"DISTANCE_ASC"}>Distance Ascending</MenuItem>
+                <MenuItem value={"DISTANCE_DESC"}>Distance Descending</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
-          <Typography variant="h5" component="h3" gutterBottom>
-            Recommended for you
-          </Typography>
-        </>
-      )}
-      <Grid
-        container
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        spacing={0}
-        key="grid-listings"
-      >
-        {listingObjects.map((listing) => (
-          <ListingCard
-            key={listing.listingID}
-            searchPerformed={searchPerformed}
-            listing={listing}
+        ) : (
+          <>
+            <Box
+              sx={{
+                borderBottom: "1px solid #808080",
+              }}
+            >
+              <Typography variant="h6" component="h3" gutterBottom>
+                Welcome!
+              </Typography>
+            </Box>
+            <Typography variant="h5" component="h3" gutterBottom>
+              Recommended for you
+            </Typography>
+          </>
+        )}
+        <Grid
+          container
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          spacing={0}
+          key="grid-listings"
+        >
+          {listingObjects.map((listing) => (
+            <ListingCard
+              key={listing.listingID}
+              searchPerformed={searchPerformed}
+              listing={listing}
+            />
+          ))}
+        </Grid>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+        >
+          <Pagination
+            count={totalPages}
+            shape="rounded"
+            page={currentPage}
+            onChange={handlePageChange}
           />
-        ))}
-      </Grid>
-      <Box
-        sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-      >
-        <Pagination
-          count={totalPages}
-          shape="rounded"
-          page={currentPage}
-          onChange={handlePageChange}
-        />
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

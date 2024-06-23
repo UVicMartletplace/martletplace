@@ -13,6 +13,7 @@ import _axios_instance from "../_axios_instance.tsx";
 import Carousel from "../components/Carousel.tsx";
 import { useStyles } from "../styles/pageStyles.tsx";
 import { colors } from "../styles/colors.tsx";
+import SearchBar from "../components/searchBar.tsx";
 
 const ViewListing = () => {
   const classes = useStyles();
@@ -60,69 +61,72 @@ const ViewListing = () => {
   };
 
   return (
-    <Container>
-      {!listingReceived ? <Typography>No Listing Received</Typography> : null}
-      <Card
-        sx={{
-          height: "100%",
-          width: "100%",
-          display: listingReceived ? "block" : "none",
-        }}
-      >
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid item sm={12} md={12} lg={6}>
-              <Typography variant={"h2"}>
-                {listingObject?.title ?? "Title not received"}
-              </Typography>
-              <Typography variant={"body1"}>
-                {listingObject.description}
-              </Typography>
-              <hr
-                style={{
-                  border: "none",
-                  height: "1px",
-                  backgroundColor: colors.martletplaceGrey,
-                }}
-              />
-              <Typography variant={"body1"}>
-                Price:{" "}
-                {listingObject.price !== 0
-                  ? priceFormatter.format(listingObject.price)
-                  : "Free"}
-              </Typography>
-              <Typography variant={"body1"}>
-                Sold by: <Link>{listingObject.seller_profile.name}</Link>
-              </Typography>
-              <Typography variant={"body1"}>
-                Distance:{" "}
-                {listingObject.distance !== 0
-                  ? listingObject.distance + "km"
-                  : "Unknown"}
-              </Typography>
-              <Typography variant={"body1"}>
-                Posted on: {convertDate(listingObject.dateCreated)}
-              </Typography>
-              <Button
-                type="button"
-                variant="contained"
-                fullWidth
-                sx={classes.button}
-                onClick={handleNavToMessages}
-                id={"message_button"}
-              >
-                Message Seller
-              </Button>
+    <>
+      <SearchBar />
+      <Container>
+        {!listingReceived ? <Typography>No Listing Received</Typography> : null}
+        <Card
+          sx={{
+            height: "100%",
+            width: "100%",
+            display: listingReceived ? "block" : "none",
+          }}
+        >
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item sm={12} md={12} lg={6}>
+                <Typography variant={"h2"}>
+                  {listingObject?.title ?? "Title not received"}
+                </Typography>
+                <Typography variant={"body1"}>
+                  {listingObject.description}
+                </Typography>
+                <hr
+                  style={{
+                    border: "none",
+                    height: "1px",
+                    backgroundColor: colors.martletplaceGrey,
+                  }}
+                />
+                <Typography variant={"body1"}>
+                  Price:{" "}
+                  {listingObject.price !== 0
+                    ? priceFormatter.format(listingObject.price)
+                    : "Free"}
+                </Typography>
+                <Typography variant={"body1"}>
+                  Sold by: <Link>{listingObject.seller_profile.name}</Link>
+                </Typography>
+                <Typography variant={"body1"}>
+                  Distance:{" "}
+                  {listingObject.distance !== 0
+                    ? listingObject.distance + "km"
+                    : "Unknown"}
+                </Typography>
+                <Typography variant={"body1"}>
+                  Posted on: {convertDate(listingObject.dateCreated)}
+                </Typography>
+                <Button
+                  type="button"
+                  variant="contained"
+                  fullWidth
+                  sx={classes.button}
+                  onClick={handleNavToMessages}
+                  id={"message_button"}
+                >
+                  Message Seller
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={6}>
+                <Carousel
+                  imageURLs={listingObject.images.map((image) => image.url)}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <Carousel
-                imageURLs={listingObject.images.map((image) => image.url)}
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-    </Container>
+          </CardContent>
+        </Card>
+      </Container>
+    </>
   );
 };
 

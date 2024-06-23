@@ -15,6 +15,7 @@ import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
+import SearchBar from "../components/searchBar.tsx";
 
 interface ImageURLObject {
   url: string;
@@ -39,11 +40,11 @@ interface NewListingObject {
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
-    [],
+    []
   );
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
-    "This field is required",
+    "This field is required"
   );
   const [sent, setSent] = useState(false);
 
@@ -63,7 +64,7 @@ const CreateListing = () => {
 
   // Updates and sends the newListingObject, to the server via post under /api/listing
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (
-    submissionEvent,
+    submissionEvent
   ) => {
     submissionEvent.preventDefault();
     console.log("Listing Image Binaries", listingImageBinaries);
@@ -89,7 +90,7 @@ const CreateListing = () => {
       } else {
         // Currently this is added to catch if the location is not set, we could default this to the location of the university instead
         alert(
-          "Error occurred when creating a listing, you may need to enable location permissions for this site",
+          "Error occurred when creating a listing, you may need to enable location permissions for this site"
         );
         setSent(false);
       }
@@ -98,7 +99,7 @@ const CreateListing = () => {
 
   const updateNewListingPayload = (
     key: keyof ListingObject,
-    value: string | number | LocationObject,
+    value: string | number | LocationObject
   ) => {
     if (["title", "description", "price", "location", "images"].includes(key)) {
       setNewListingObject((prevState) => ({
@@ -143,7 +144,7 @@ const CreateListing = () => {
   };
 
   const updateListingDescription = (
-    event: ChangeEvent<HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLTextAreaElement>
   ) => {
     // Handle
     updateNewListingPayload("description", event.target.value);
@@ -154,14 +155,14 @@ const CreateListing = () => {
     const regex = /^\d+(.\d{1,2})?$/;
     if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       updateNewListingPayload(
         "price",
-        priceValue >= 0 ? priceValue : priceValue * -1,
+        priceValue >= 0 ? priceValue : priceValue * -1
       );
     }
   };
@@ -264,102 +265,108 @@ const CreateListing = () => {
   );
 
   return (
-    <Container>
-      <Card>
-        <CardContent>
-          <Typography variant={"h2"}>Create Listing</Typography>
-          <Grid container spacing={1}>
-            <Grid item md={6} sm={12} xs={12}>
-              <Box>
-                <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-                  <FormControl sx={{ width: "100%", padding: "10px" }}>
-                    <TextField
-                      id="field-title"
-                      label="Title"
-                      sx={{ m: "10px" }}
-                      rows={1}
-                      onChange={updateListingTitle}
-                      required
-                      error={!!titleError}
-                    />
-                    {titleError && (
-                      <FormHelperText error>{titleError}</FormHelperText>
-                    )}
-                    <TextField
-                      id="field-description"
-                      label="Description"
-                      type="text"
-                      sx={{ m: "10px", display: "flex" }}
-                      rows={10}
-                      multiline
-                      onChange={updateListingDescription}
-                    />
-                    <TextField
-                      id="field-price"
-                      label="Price(CAD)"
-                      type="number"
-                      sx={{ m: "10px" }}
-                      rows={1}
-                      InputProps={{ inputProps: { min: 0 } }}
-                      onChange={updateListingPrice}
-                      error={!!priceError}
-                    />
-                    {priceError && (
-                      <FormHelperText error>{priceError}</FormHelperText>
-                    )}
-                  </FormControl>
-                  <Box sx={{ display: "flex" }}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      sx={{
-                        display: "inline",
-                        mt: 2,
-                        backgroundColor: colors.martletplaceNavyBlue,
-                        "&:hover": {
-                          backgroundColor: colors.martletplaceBlueHover,
-                        },
-                        textTransform: "none",
-                        fontSize: "16px",
-                        padding: "10px 20px",
-                        margin: "10px",
-                      }}
-                      id={"submit-button"}
-                    >
-                      Create Listing
-                    </Button>
-                    <MultiFileUpload
-                      passedImages={listingImages}
-                      setPassedImages={setListingImages}
-                      multipleUpload={true}
-                      htmlForButton={buttonHTML}
-                      imageBinary={listingImageBinaries}
-                      setImageBinaries={setListingImageBinaries}
-                    />
-                  </Box>
-                </form>
-              </Box>
-            </Grid>
-            <Grid item lg={6} xs={12}>
-              <Box>
-                <Typography variant={"h5"} sx={{ paddingLeft: "20px" }}>
-                  Image Preview
-                </Typography>
-                <Box sx={{ padding: "10px" }}>
-                  {!isImageValid(listingImages[0]) ? (
-                    <Typography sx={{ paddingLeft: "10px" }} variant={"body2"}>
-                      No images uploaded yet
-                    </Typography>
-                  ) : (
-                    <Carousel imageURLs={listingImages} />
-                  )}
+    <>
+      <SearchBar />
+      <Container>
+        <Card>
+          <CardContent>
+            <Typography variant={"h2"}>Create Listing</Typography>
+            <Grid container spacing={1}>
+              <Grid item md={6} sm={12} xs={12}>
+                <Box>
+                  <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+                    <FormControl sx={{ width: "100%", padding: "10px" }}>
+                      <TextField
+                        id="field-title"
+                        label="Title"
+                        sx={{ m: "10px" }}
+                        rows={1}
+                        onChange={updateListingTitle}
+                        required
+                        error={!!titleError}
+                      />
+                      {titleError && (
+                        <FormHelperText error>{titleError}</FormHelperText>
+                      )}
+                      <TextField
+                        id="field-description"
+                        label="Description"
+                        type="text"
+                        sx={{ m: "10px", display: "flex" }}
+                        rows={10}
+                        multiline
+                        onChange={updateListingDescription}
+                      />
+                      <TextField
+                        id="field-price"
+                        label="Price(CAD)"
+                        type="number"
+                        sx={{ m: "10px" }}
+                        rows={1}
+                        InputProps={{ inputProps: { min: 0 } }}
+                        onChange={updateListingPrice}
+                        error={!!priceError}
+                      />
+                      {priceError && (
+                        <FormHelperText error>{priceError}</FormHelperText>
+                      )}
+                    </FormControl>
+                    <Box sx={{ display: "flex" }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceNavyBlue,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceBlueHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        id={"submit-button"}
+                      >
+                        Create Listing
+                      </Button>
+                      <MultiFileUpload
+                        passedImages={listingImages}
+                        setPassedImages={setListingImages}
+                        multipleUpload={true}
+                        htmlForButton={buttonHTML}
+                        imageBinary={listingImageBinaries}
+                        setImageBinaries={setListingImageBinaries}
+                      />
+                    </Box>
+                  </form>
                 </Box>
-              </Box>
+              </Grid>
+              <Grid item lg={6} xs={12}>
+                <Box>
+                  <Typography variant={"h5"} sx={{ paddingLeft: "20px" }}>
+                    Image Preview
+                  </Typography>
+                  <Box sx={{ padding: "10px" }}>
+                    {!isImageValid(listingImages[0]) ? (
+                      <Typography
+                        sx={{ paddingLeft: "10px" }}
+                        variant={"body2"}
+                      >
+                        No images uploaded yet
+                      </Typography>
+                    ) : (
+                      <Carousel imageURLs={listingImages} />
+                    )}
+                  </Box>
+                </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-    </Container>
+          </CardContent>
+        </Card>
+      </Container>
+    </>
   );
 };
 
