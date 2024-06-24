@@ -68,7 +68,7 @@ describe("<CreateAccount />", () => {
       .should("eq", 201);
 
     // Check if navigation occurred as expected
-    cy.location("pathname").should("eq", "/");
+    cy.location("pathname").should("eq", "/login");
   });
 
   it("does not navigate on unsuccessful account creation", () => {
