@@ -19,7 +19,7 @@ const patchUser = async (
     return res.status(400).json({ error: "User ID is required" });
   }
 
-  if (id == 1) {
+  if (id === 1) {
     return res.status(401).json({ error: "Cannot update the base user" });
   }
 
