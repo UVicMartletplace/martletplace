@@ -68,7 +68,7 @@ const Profile = () => {
 
   // Uploads a single image to the S3 server
   const asyncUploadSingleImage = async (
-    imageBinary: string
+    imageBinary: string,
   ): Promise<ImageURLObject | null> => {
     try {
       const response = await _axios_instance.post("/images", imageBinary, {
@@ -114,7 +114,7 @@ const Profile = () => {
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string
+    field: string,
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
     setEditMode(true);
@@ -124,7 +124,7 @@ const Profile = () => {
     if (!usernameFormat.test(profile.username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters or numbers."
+        "Username must be between 1 and 20 characters and only contain letters or numbers.",
       );
       return;
     } else {

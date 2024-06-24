@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import { User } from "./models/user";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
 // createUser route
 const createUser = async (
@@ -9,8 +9,7 @@ const createUser = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  const { username, password, email, name, bio, profile_pic_url } =
-    req.body;
+  const { username, password, email, name, bio, profile_pic_url } = req.body;
 
   if (!username || !password || !email) {
     return res
@@ -24,7 +23,13 @@ const createUser = async (
   const hasSpecialChar = /(?=.*\W)/.test(password);
   const hasMinLength = password.length >= 8;
 
-  if (!hasDigit || !hasLowercase || !hasUppercase || !hasSpecialChar || !hasMinLength) {
+  if (
+    !hasDigit ||
+    !hasLowercase ||
+    !hasUppercase ||
+    !hasSpecialChar ||
+    !hasMinLength
+  ) {
     return res
       .status(400)
       .json({ error: "Password does not meet constraints" });
@@ -39,7 +44,15 @@ const createUser = async (
     RETURNING user_id, username, email, name, bio, profile_pic_url, verified, created_at, modified_at;
   `;
 
-  const values = [username, email, hashedPassword, name, bio, profile_pic_url, false];
+  const values = [
+    username,
+    email,
+    hashedPassword,
+    name,
+    bio,
+    profile_pic_url,
+    false,
+  ];
 
   try {
     await db.oneOrNone(query, values).then((data: User) => {

@@ -12,7 +12,8 @@ const patchUser = async (
   // This is like this so resops can replace the userid but the guard on id === 1 doesn't show an error, I'm not crazy
   const id = 1 === 1 ? 3 : 1;
 
-  const { username, password, name, bio, profilePictureUrl, verified } = req.body;
+  const { username, password, name, bio, profilePictureUrl, verified } =
+    req.body;
 
   if (!id) {
     return res.status(400).json({ error: "User ID is required" });
@@ -22,7 +23,16 @@ const patchUser = async (
     return res.status(401).json({ error: "Cannot update the base user" });
   }
 
-  if (!(username || password || name || bio || profilePictureUrl || verified !== undefined)) {
+  if (
+    !(
+      username ||
+      password ||
+      name ||
+      bio ||
+      profilePictureUrl ||
+      verified !== undefined
+    )
+  ) {
     return res
       .status(400)
       .json({ error: "At least one field is required to update" });
@@ -39,7 +49,7 @@ const patchUser = async (
       return res.status(400).json({ error: "Existing user not found" });
     }
 
-    const hashedPassword = password ? await bcrypt.hash(password, 10): null;
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
     // Construct patched user!
     const patchedUser = {
@@ -78,13 +88,15 @@ const patchUser = async (
       bio: updated_user.bio,
       profileUrl: updated_user.profile_pic_url,
       id: updated_user.user_id,
-    }
+    };
 
     return res
       .status(200)
       .json({ message: "User updated successfully", user: returnObject });
   } catch (err: any) {
-    if (err?.message.includes("duplicate key value violates unique constraint")) {
+    if (
+      err?.message.includes("duplicate key value violates unique constraint")
+    ) {
       return res.status(400).json({ error: "Username already exists" });
     }
     return res.status(500).json({ error: (err as Error).message });
