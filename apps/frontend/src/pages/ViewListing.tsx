@@ -141,12 +141,10 @@ const ViewListing = () => {
               />
             </Grid>
             <Reviews reviews={listingObject.reviews ?? []} />
-          </Grid>
-        </CardContent>
-      </Card>
-    </Container>
-        </>
-
+          </CardContent>
+        </Card>
+      </Container>
+    </>
   );
 };
 
