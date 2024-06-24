@@ -12,7 +12,7 @@ const patchUser = async (
   // This is like this so resops can replace the userid but the guard on id === 1 doesn't show an error, I'm not crazy
   const id = 1 === 1 ? 3 : 1;
 
-  const { username, password, name, bio, profilePictureUrl, verified } =
+  const { username, password, name, bio, profilePictureUrl } =
     req.body;
 
   if (!id) {
@@ -29,8 +29,7 @@ const patchUser = async (
       password ||
       name ||
       bio ||
-      profilePictureUrl ||
-      verified !== undefined
+      profilePictureUrl
     )
   ) {
     return res
@@ -38,8 +37,25 @@ const patchUser = async (
       .json({ error: "At least one field is required to update" });
   }
 
+  const hasDigit = /(?=.*\d)/.test(password);
+  const hasLowercase = /(?=.*[a-z])/.test(password);
+  const hasUppercase = /(?=.*[A-Z])/.test(password);
+  const hasSpecialChar = /(?=.*\W)/.test(password);
+  const hasMinLength = password.length >= 8;
+
+  if (
+    !hasDigit ||
+    !hasLowercase ||
+    !hasUppercase ||
+    !hasSpecialChar ||
+    !hasMinLength
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Password does not meet constraints" });
+  }
+
   try {
-    // Get current user data
     const getUserQuery = `
         SELECT * FROM users WHERE user_id = $1
       `;
@@ -51,21 +67,19 @@ const patchUser = async (
 
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
-    // Construct patched user!
     const patchedUser = {
       username: username || originalUser.username,
       name: name || originalUser.name,
       bio: bio || originalUser.bio,
       profile_pic_url: profilePictureUrl || originalUser.profile_pic_url,
-      verified: verified || originalUser.verified,
       password: hashedPassword || originalUser.password,
     };
 
     const patchUserQuery = `
         UPDATE users
-        SET username = $1, name = $2, bio = $3, profile_pic_url = $4, verified = $5, password = $6
-        WHERE user_id = $7
-        RETURNING user_id, username, email, name, bio, profile_pic_url, verified, created_at, modified_at;
+        SET username = $1, name = $2, bio = $3, profile_pic_url = $4, password = $5
+        WHERE user_id = $6
+        RETURNING user_id, username, email, name, bio, profile_pic_url;
       `;
 
     const updated_user = await db.oneOrNone(patchUserQuery, [
@@ -73,7 +87,6 @@ const patchUser = async (
       patchedUser.name,
       patchedUser.bio,
       patchedUser.profile_pic_url,
-      patchedUser.verified,
       hashedPassword,
       id,
     ]);

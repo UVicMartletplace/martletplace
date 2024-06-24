@@ -9,7 +9,7 @@ const createUser = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  const { username, password, email, name, bio, profile_pic_url } = req.body;
+  const { username, password, email, name  } = req.body;
 
   if (!username || !password || !email) {
     return res
@@ -39,9 +39,9 @@ const createUser = async (
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const query = `
-    INSERT INTO users (username, email, password, name, bio, profile_pic_url, verified)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING user_id, username, email, name, bio, profile_pic_url, verified, created_at, modified_at;
+    INSERT INTO users (username, email, password, name, verified)
+    VALUES ($1, $2, $3, $4, $5, )
+    RETURNING user_id, username, email, name, bio, profile_pic_url;
   `;
 
   const values = [
@@ -49,8 +49,6 @@ const createUser = async (
     email,
     hashedPassword,
     name,
-    bio,
-    profile_pic_url,
     false,
   ];
 

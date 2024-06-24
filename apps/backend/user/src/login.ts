@@ -12,33 +12,25 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
 
   try {
     const user = await db.oneOrNone<User>(
-      "SELECT * FROM users WHERE email = $1",
+      "SELECT user_id, username, email, password, name, bio, profile_pic_url, verified FROM users WHERE email = $1",
       [email],
     );
-
-    if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
 
     let isPasswordValid = false;
 
     if (process.env.NODE_ENV === "test") {
       isPasswordValid = true;
     } else {
-      isPasswordValid = await bcrypt.compare(password, user.password);
+      isPasswordValid = user?.password ? await bcrypt.compare(password, user.password) : false;
     }
 
-    if (!isPasswordValid) {
+    if (!isPasswordValid || !user) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const token = "ResopsPleaseReplaceThisWithARealToken";
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000, // 1 hour
-    });
+    if (!user.verified) {
+      return res.status(401).json({ error: "User is not verified" });
+    }
 
     return res.status(200).json({
       userID: user.user_id,
