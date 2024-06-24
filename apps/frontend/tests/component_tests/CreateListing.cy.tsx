@@ -138,7 +138,19 @@ describe("<CreateListing />", () => {
       const requestBody = interception.request.body;
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
-      expect(requestBody).to.deep.equal(listingObject);
+      expect(requestBody).to.equal({
+        listing: {
+          title: "Used Calculus Textbook",
+          description: "No wear and tear, drop-off available.",
+          price: 50,
+          location: { latitude: 48.463302, longitude: -123.3108 },
+          images: [
+            { url: "https://picsum.photos/200/300" },
+            { url: "https://picsum.photos/200/300" },
+            { url: "https://picsum.photos/200/300" },
+          ],
+        },
+      });
     });
   });
 
