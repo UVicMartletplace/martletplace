@@ -28,7 +28,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     try {
       await axios.post("/api/user/logout");
     } catch (error) {
-      // If this fails, it should still act as though the user logged out since the cookie and user were cleared
+      // If this fails, it should still act as though the user logged out since the user was cleared
       console.error("Logout request was unsuccessful");
     }
   };
