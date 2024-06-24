@@ -139,7 +139,7 @@ describe("<CreateListing />", () => {
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
       expect(requestBody).to.deep.equal({
-        ...listingObject.listing,
+        listing: listingObject.listing,
         images: listingObject.listing.images,
       });
     });
