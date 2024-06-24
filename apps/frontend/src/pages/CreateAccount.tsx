@@ -11,13 +11,7 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import useUser from "../hooks/useUser";
 import axios from "axios";
-// --- Uncomment these imports and delete getDefaultUser when backend auth is implemented ---
-// import Cookies from "js-cookie";
-// import { jwtDecode } from "jwt-decode";
-import { getDefaultUser } from "../MockUserUtils";
 
 const CreateAccount = () => {
   const classes = useStyles();
@@ -33,7 +27,6 @@ const CreateAccount = () => {
   const isFormIncomplete = !email || !name || !username || !password;
 
   const navigate = useNavigate();
-  const { setUser } = useUser();
 
   const handleCreateAccount = async (e: FormEvent) => {
     e.preventDefault();
@@ -51,7 +44,7 @@ const CreateAccount = () => {
 
     if (!usernameFormat.test(username)) {
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters or numbers.",
+        "Username must be between 1 and 20 characters and only contain letters or numbers."
       );
       return;
     } else {
@@ -72,34 +65,14 @@ const CreateAccount = () => {
     }
 
     try {
-      // --- Delete this when backend auth is implemented ---
-      const mockUser = getDefaultUser();
-      setUser(mockUser);
-
-      const mockToken = btoa(JSON.stringify(mockUser));
-      const mockJwtToken = `mockHeader.${mockToken}.mockSignature`;
-      Cookies.set("token", mockJwtToken, { expires: 1, sameSite: "strict" });
-
-      // right now this is here only to keep the test functionality
       await axios.post("/api/user", {
         name,
         username,
         email,
         password,
       });
-      // --- Uncomment everything below when backend auth is implemented ---
-      // const response = await axios.post("/api/user", {
-      //  name,
-      //   username,
-      //   email,
-      //   password,
-      // });
-      // const token = response.data.token;
-      // Cookies.set("token", token, { sameSite: "strict", expires: 1 });
-      // const decoded: User = jwtDecode(token);
-      // setUser(decoded);
 
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       alert("Failed to create account. Please try again.");
     }

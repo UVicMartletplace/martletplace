@@ -3,18 +3,9 @@ import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
-import Cookies from "js-cookie";
 import useUser from "../hooks/useUser";
 import axios from "axios";
-// --- Uncomment this import and remove getDefaultUser when backend auth is implemented ---
-// import { jwtDecode } from "jwt-decode";
-import { getDefaultUser } from "../MockUserUtils";
-
-// interface User {
-//   id: string;
-//   username: string;
-//   name: string;
-// }
+import { User } from "../types";
 
 const Login = () => {
   const classes = useStyles();
@@ -29,33 +20,15 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // --- Delete this when backend auth is implemented ---
-      const mockUser = getDefaultUser();
-      setUser(mockUser);
-
-      const mockToken = btoa(JSON.stringify(mockUser));
-      const mockJwtToken = `mockHeader.${mockToken}.mockSignature`;
-      Cookies.set("token", mockJwtToken, { expires: 1, sameSite: "strict" });
-
-      // right now this is here just for the cypress tests
-      await axios.post("/api/login", {
+      const response = await axios.post("/api/user/login", {
         email,
         password,
       });
-      // --- Uncomment everything below when backend auth is implemented ---
-      // // TODO: Email and password format validation (for front end)
-      // const response = await axios.post("/api/login", {
-      //   email,
-      //   password
-      // });
-      // const token = response.data.token;
-      // Cookies.set("token", token, { sameSite: "strict", expires: 1 });
-      // const decoded: User = jwtDecode<User>(token);
-      // setUser(decoded);
+
+      setUser(response.data as User);
 
       navigate("/");
     } catch (error) {
-      // TODO: handle 401 error vs other errors differently
       setError("Login unsuccessful. Invalid username and password combination");
     }
   };

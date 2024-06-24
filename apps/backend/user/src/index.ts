@@ -3,8 +3,10 @@ import morgan from "morgan";
 import pgPromise from "pg-promise";
 import { createUser } from "./createUser";
 import { getUser } from "./getUser";
-import { patchUser } from "./updateUser";
+import { patchUser } from "./patchUser";
 import { deleteUser } from "./deleteUser";
+import { login } from "./login";
+import { logout } from "./logout";
 
 const PORT = 8211;
 
@@ -30,6 +32,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Define endpoints
 
+// Login
+app.post("/api/user/login", (req, res) => login(req, res, db));
+
+// Logout
+app.post("/api/user/logout", (req, res) => logout(req, res, db));
+
 // Create user
 app.post("/api/user", (req, res) => createUser(req, res, db));
 
@@ -37,10 +45,10 @@ app.post("/api/user", (req, res) => createUser(req, res, db));
 app.get("/api/user/:id", (req, res) => getUser(req, res, db));
 
 // Patch user
-app.patch("/api/user/:id", (req, res) => patchUser(req, res, db));
+app.patch("/api/user", (req, res) => patchUser(req, res, db));
 
 // Delete user
-app.delete("/api/user/:id", (req, res) => deleteUser(req, res, db));
+app.delete("/api/user", (req, res) => deleteUser(req, res, db));
 
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);

@@ -17,7 +17,15 @@ const getUser = async (req: Request, res: Response, db: IDatabase<object>) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      return res.status(200).send(data);
+      const returnObject = {
+        name: data.name,
+        username: data.username,
+        email: data.email,
+        bio: data.bio,
+        profileUrl: data.profile_pic_url,
+      };
+
+      return res.status(200).send(returnObject);
     });
   } catch (err) {
     console.log(err);

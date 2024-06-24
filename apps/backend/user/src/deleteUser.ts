@@ -6,14 +6,12 @@ const deleteUser = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  // Change to use auth/JWT
-  // if (!authorization) {
-  //   return res.status(401).send("Unauthorized");
-  // }
-  const { id } = req.params;
 
-  if (id == "1") {
-    return res.status(401).json({ error: "Cannot delete the default user" });
+  // This is like this so resops can replace the userid but the guard on id === 1 doesn't show an error, I'm not crazy
+  const id =  1 === 1 ? 2 : 1;
+
+  if (id === 1) {
+    return res.status(401).json({ error: "Cannot delete the base user" });
   }
 
   const query = `
