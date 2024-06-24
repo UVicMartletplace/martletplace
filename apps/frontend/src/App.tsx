@@ -10,28 +10,118 @@ import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
 import Profile from "./pages/Profile";
+import UserProvider from "./contexts/UserProvider";
+import PrivateRoute from "./components/Auth/PrivateRoute";
+import AuthRoute from "./components/Auth/AuthRoute";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/user/:id" element={<Profile />} />
-        <Route path="/user/reviews" element={<MyReviews />} />
-        <Route path="/user/listings" element={<MyListings />} />
+    <UserProvider>
+      <Router>
+        <Routes>
+          {/* Auth Routes */}
+          <Route
+            path="/user/login"
+            element={
+              <AuthRoute>
+                <Login />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/user/resetpassword"
+            element={
+              <AuthRoute>
+                <ForgotPassword />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/user/signup"
+            element={
+              <AuthRoute>
+                <CreateAccount />
+              </AuthRoute>
+            }
+          />
 
-        <Route path="/user/login" element={<Login />} />
-        <Route path="/user/resetpassword" element={<ForgotPassword />} />
-        <Route path="/user/signup" element={<CreateAccount />} />
+          {/* Private Routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Homepage />
+              </PrivateRoute>
+            }
+          />
 
-        <Route path="/listing/new" element={<CreateListing />} />
-        <Route path="/listing/edit/:id" element={<EditListing />} />
-        <Route path="/listing/view/:id" element={<ViewListing />} />
-        {/* TODO: Give path a listing ID?*/}
-        <Route path="/messages" element={<Messages />} />
-        {/* If not logged in redirect to login page */}
-        <Route path="/" element={<Homepage />} />
-      </Routes>
-    </Router>
+          <Route
+            path="/user"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/reviews"
+            element={
+              <PrivateRoute>
+                <MyReviews />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/listings"
+            element={
+              <PrivateRoute>
+                <MyListings />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/listing/new"
+            element={
+              <PrivateRoute>
+                <CreateListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/listing/edit/:id"
+            element={
+              <PrivateRoute>
+                <EditListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/listing/view/:id"
+            element={
+              <PrivateRoute>
+                <ViewListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <PrivateRoute>
+                <Messages />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </UserProvider>
   );
 }
 

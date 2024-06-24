@@ -23,6 +23,8 @@
     "@mui/material": "^5.15.19",
     "@types/axios": "^0.14.0",
     "axios": "^1.7.2",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "dotenv": "^16.4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -30,6 +32,8 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",
+    "@types/js-cookie": "^3.0.6",
+    "@types/jwt-decode": "^3.1.0",
     "@types/node": "^20.14.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

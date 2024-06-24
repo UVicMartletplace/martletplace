@@ -1,12 +1,15 @@
 import { BrowserRouter } from "react-router-dom";
 import Login from "../../src/pages/Login";
+import TestProviders from "../utils/TestProviders";
 
 describe("<Login />", () => {
   beforeEach(() => {
     cy.mount(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>
+      <TestProviders>
+        <BrowserRouter>
+          <Login />
+        </BrowserRouter>
+      </TestProviders>
     );
   });
 

@@ -1,12 +1,15 @@
 import { BrowserRouter } from "react-router-dom";
 import Profile from "../../src/pages/Profile";
+import TestProviders from "../utils/TestProviders";
 
 describe("Account Page", () => {
   beforeEach(() => {
     cy.mount(
-      <BrowserRouter>
-        <Profile />
-      </BrowserRouter>
+      <TestProviders>
+        <BrowserRouter>
+          <Profile />
+        </BrowserRouter>
+      </TestProviders>
     );
     cy.viewport(1280, 720);
   });
@@ -30,5 +33,12 @@ describe("Account Page", () => {
 
     // Check if the url contains the correct path
     cy.url().should("include", "/user/reviews");
+  });
+
+  it("logs out the user", () => {
+    cy.get("h5").contains("Logout").click();
+
+    // Check if the url contains the correct path
+    cy.url().should("include", "/user/login");
   });
 });
