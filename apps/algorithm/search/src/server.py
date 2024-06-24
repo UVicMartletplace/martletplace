@@ -15,6 +15,18 @@ app = FastAPI()
 es_endpoint = os.getenv("ES_ENDPOINT")
 es = Elasticsearch([es_endpoint], verify_certs=False)
 
+if not es.indices.exists(index=DEFAULT_INDEX):
+    es.indices.create(
+        index=DEFAULT_INDEX,
+        body={
+            "mappings": {
+                "properties": {
+                    "location": {"type": "geo_point"},
+                }
+            }
+        },
+    )
+
 
 class Status(str, Enum):
     AVAILABLE = "AVAILABLE"
@@ -61,6 +73,20 @@ class ListingSummary(BaseModel):
     )
 
 
+class Location(BaseModel):
+    lat: float = Field(..., description="Latitude of the location", ge=-90, le=90)
+    lon: float = Field(..., description="Longitude of the location", ge=-180, le=180)
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "lat": 45.4215,
+                "lon": -75.6972,
+            }
+        }
+    )
+
+
 class Listing(BaseModel):
     listingId: str = Field(...)
     sellerId: str = Field(...)
@@ -68,8 +94,8 @@ class Listing(BaseModel):
     title: str = Field(...)
     description: str = Field(...)
     price: float = Field(...)
-    location: dict = Field(...)
-    status: str = Field(...)
+    location: Location = Field(...)
+    status: Status = Field(...)
     dateCreated: str = Field(...)
     imageUrl: str = Field(...)
     model_config = ConfigDict(
@@ -223,21 +249,30 @@ async def search(
 
 
 @app.post("/api/search/reindex/listing-created")
-async def reindex_listing_created(listingId: str, authorization: str = Header(None)):
-    # actual logic will go here
+async def post_listing(listing: Listing, authorization: str = Header(None)):
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    if listing.price < 0:
+        raise HTTPException(status_code=422, detail="price cannot be negative")
+
+    es.index(index=INDEX, id=listing.listingId, body=listing.dict())
 
     return {"message": "Listing added successfully."}
 
 
 @app.patch("/api/search/reindex/listing-edited")
-async def reindex_listing_edited(listingId: str, authorization: str = Header(None)):
-    # actual logic will go here
+async def patch_listing(listing: Listing, authorization: str = Header(None)):
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    if listing.price < 0:
+        raise HTTPException(status_code=422, detail="price cannot be negative")
+
+    es.index(index=INDEX, id=listing.listingId, body=listing.dict())
 
     return {"message": "Listing edited successfully."}
 
 
 @app.delete("/api/search/reindex/listing-deleted")
-async def reindex_listing_deleted(listingId: str, authorization: str = Header(None)):
-    # actual logic will go here
+async def delete_listing(listingId: str, authorization: str = Header(None)):
+    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+    es.delete(index=INDEX, id=listingId)
 
     return {"message": "Listing deleted successfully."}
