@@ -92,12 +92,12 @@ describe("<CreateListing />", () => {
         price: 50,
         location: { latitude: 48.463302, longitude: -123.3108 },
         description: "No wear and tear, drop-off available.",
-        images: [
-          { url: "https://picsum.photos/200/300" },
-          { url: "https://picsum.photos/200/300" },
-          { url: "https://picsum.photos/200/300" },
-        ],
       },
+      images: [
+        { url: "https://picsum.photos/200/300" },
+        { url: "https://picsum.photos/200/300" },
+        { url: "https://picsum.photos/200/300" },
+      ],
     };
 
     cy.intercept("POST", "/api/listing", (req) => {
@@ -140,7 +140,7 @@ describe("<CreateListing />", () => {
       cy.log("Expected Body", listingObject);
       expect(requestBody).to.deep.equal({
         listing: listingObject.listing,
-        images: listingObject.listing.images,
+        images: listingObject.images,
       });
     });
   });
