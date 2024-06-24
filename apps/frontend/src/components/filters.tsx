@@ -10,7 +10,6 @@ import {
   Select,
   Typography,
   FormHelperText,
-  useMediaQuery,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
 import { useState, ChangeEvent, useEffect } from "react";

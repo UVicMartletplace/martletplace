@@ -92,7 +92,7 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
           }}
         />
       </Grid>
-      {searchPerformed && (
+      {!searchPerformed && (
         <Grid item xs={12} sx={{ width: "100%" }}>
           <Button
             variant="contained"

@@ -135,11 +135,6 @@ const ViewListing = () => {
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={6}>
-              <Carousel
-                imageURLs={listingObject.images.map((image) => image.url)}
-              />
-            </Grid>
             <Reviews reviews={listingObject.reviews ?? []} />
           </CardContent>
         </Card>
