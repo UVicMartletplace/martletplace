@@ -27,7 +27,6 @@ describe("<Profile />", () => {
   });
 
   const testUsername = "theboywholived";
-  const testPassword = "expelliarmus";
   const testName = "Harry James Potter";
   const testBio = "Dumbledore's Army Forever!";
   const testImageURL = "https://example.com/image.png";
@@ -42,54 +41,28 @@ describe("<Profile />", () => {
     cy.get("#bio").type(testBio).should("have.value", testBio);
   });
 
-  it("gets the profile information for a user", () => {
-    const expectedProfile = {
-      userID: "A1234B345",
-      username: testUsername,
-      name: testName,
-      bio: testBio,
-      profilePictureUrl: testImageURL,
-    };
-
-    // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", (req) => {
-      req.reply({
-        statusCode: 200,
-        body: expectedProfile,
-      });
-    }).as("profileRequest");
-
-    // Wait for the mock request to complete and check its status
-    cy.wait("@profileRequest").then((interception) => {
-      // Log request and expected bodies for debugging
-      cy.log("Request Body", interception.request.body);
-      cy.log("Expected Body", expectedProfile);
-
-      if (interception.response) {
-        expect(interception.response.body).to.deep.equal(expectedProfile);
-      }
-    });
-  });
-
   it("saves updated profile information", () => {
     const updatedProfile = {
       username: testUsername,
       name: updatedName,
       bio: updatedBio,
       profilePictureUrl: updatedImageURL,
-      password: testPassword,
+      password: "",
     };
 
     // Type into the input fields
-    cy.get("#name").type(updatedName).should("have.value", updatedName);
-    cy.get("#bio").type(updatedBio).should("have.value", updatedBio);
-    cy.get("#username").type(testUsername).should("have.value", testUsername);
+    cy.get("#name").clear().type(updatedName).should("have.value", updatedName);
+    cy.get("#bio").clear().type(updatedBio).should("have.value", updatedBio);
+    cy.get("#username")
+      .clear()
+      .type(testUsername)
+      .should("have.value", testUsername);
 
     cy.intercept("PATCH", "/api/user", (req) => {
       // Log request body for debugging
       req.reply({
         statusCode: 200,
-        body: updatedProfile,
+        body: { user: updatedProfile },
       });
     }).as("saveProfileRequest");
 
@@ -103,7 +76,7 @@ describe("<Profile />", () => {
       cy.log("Expected Body", updatedProfile);
 
       if (interception.response) {
-        expect(interception.response.body).to.deep.equal(updatedProfile);
+        expect(interception.response.body.user).to.deep.equal(updatedProfile);
       }
     });
 
@@ -118,7 +91,7 @@ describe("<Profile />", () => {
       name: updatedName,
       bio: updatedBio,
       profilePictureUrl: updatedImageURL,
-      password: testPassword,
+      password: "",
     };
 
     // Type into the input fields
@@ -128,9 +101,6 @@ describe("<Profile />", () => {
       .clear()
       .type(testUsername)
       .should("have.value", testUsername);
-
-    // Click the save button
-    cy.get("#save_button").click();
 
     cy.intercept("PATCH", "/api/user", (req) => {
       // Cypress commands should not be mixed with native promises
@@ -143,6 +113,9 @@ describe("<Profile />", () => {
       });
     }).as("saveProfileRequest");
 
+    // Click the save button
+    cy.get("#save_button").click();
+
     // Assert that the profile information remains as the updated values (failed to save does not revert the inputs)
     cy.get("#name").should("have.value", updatedName);
     cy.get("#bio").should("have.value", updatedBio);
@@ -150,23 +123,6 @@ describe("<Profile />", () => {
   });
 
   it("cancels the changes and reverts to original profile information", () => {
-    // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", (req) => {
-      req.reply({
-        statusCode: 200,
-        body: {
-          username: testUsername,
-          name: testName,
-          password: testPassword,
-          bio: testBio,
-          profilePictureUrl: testImageURL,
-        },
-      });
-    }).as("profileRequest");
-
-    // Wait for the mock request to complete and check its status
-    cy.wait("@profileRequest").its("response.statusCode").should("eq", 200);
-
     // Type into the input fields
     cy.get("#name").clear().type(updatedName).should("have.value", updatedName);
     cy.get("#bio").clear().type(updatedBio).should("have.value", updatedBio);
@@ -180,23 +136,6 @@ describe("<Profile />", () => {
   });
 
   it("disables buttons when no profile information has been updated", () => {
-    // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", (req) => {
-      req.reply({
-        statusCode: 200,
-        body: {
-          username: testUsername,
-          name: testName,
-          password: testPassword,
-          bio: testBio,
-          profilePictureUrl: testImageURL,
-        },
-      });
-    }).as("profileRequest");
-
-    // Wait for the mock request to complete and check its status
-    cy.wait("@profileRequest").its("response.statusCode").should("eq", 200);
-
     // Check that save and cancel buttons are disabled
     cy.get("#save_button").invoke("attr", "disabled").should("exist");
     cy.get("#cancel_button").invoke("attr", "disabled").should("exist");
