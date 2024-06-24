@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import pgPromise from "pg-promise";
 import { getListingById } from "./getListingById";
+import { getListingsByUser } from "./getListingsByUser";
 import { createListing } from "./createListing";
 import { updateListing } from "./updateListing";
 import { deleteListing } from "./deleteListing";
@@ -25,6 +26,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get("/api/listing/:id", (req, res) => getListingById(req, res, db));
+app.get("/api/listings", (req, res) => getListingsByUser(req, res, db));
 app.post("/api/listing", (req, res) => createListing(req, res, db));
 app.patch("/api/listing/:id", (req, res) => updateListing(req, res, db));
 app.delete("/api/listing/:id", (req, res) => deleteListing(req, res, db));
