@@ -63,8 +63,8 @@ const patchUser = async (
 
     const patchUserQuery = `
         UPDATE users
-        SET username = $1, name = $2, bio = $3, profile_pic_url = $4, verified = $5
-        WHERE user_id = $6
+        SET username = $1, name = $2, bio = $3, profile_pic_url = $4, verified = $5, password = $6
+        WHERE user_id = $7
         RETURNING user_id, username, email, name, bio, profile_pic_url, verified, created_at, modified_at;
       `;
 
@@ -74,6 +74,7 @@ const patchUser = async (
       patchedUser.bio,
       patchedUser.profile_pic_url,
       patchedUser.verified,
+      hashedPassword,
       id,
     ]);
 
@@ -99,7 +100,7 @@ const patchUser = async (
     ) {
       return res.status(400).json({ error: "Username already exists" });
     }
-    return res.status(500).json({ error: (err as Error).message });
+    return res.status(500).json({ error: "Something went wrong" });
   }
 };
 

@@ -17,7 +17,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     );
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid email" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
     let isPasswordValid = false;
@@ -29,7 +29,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     }
 
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid password" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
     const token = "ResopsPleaseReplaceThisWithARealToken";
@@ -50,7 +50,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: (err as Error).message });
+    return res.status(500).json({ error: "Something went wrong" });
   }
 };
 

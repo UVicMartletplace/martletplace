@@ -8,11 +8,11 @@ const getUser = async (req: Request, res: Response, db: IDatabase<object>) => {
   const { id } = req.params;
 
   const query = `
-        SELECT * from users where user_id = ${id}
+        SELECT * FROM users WHERE user_id = $1
       `;
 
   try {
-    await db.oneOrNone(query).then((data: User) => {
+    await db.oneOrNone(query, [id]).then((data: User) => {
       if (!data) {
         return res.status(404).json({ error: "User not found" });
       }
@@ -29,7 +29,7 @@ const getUser = async (req: Request, res: Response, db: IDatabase<object>) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: (err as Error).message });
+    return res.status(500).json({ error: "Something went wrong" });
   }
 };
 
