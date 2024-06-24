@@ -2,7 +2,6 @@ import { useState, useEffect, ReactNode } from "react";
 import UserContext from "./userContext";
 import { User } from "../types";
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -25,7 +24,6 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     setUser(null);
     localStorage.removeItem("user");
-    Cookies.remove("token");
 
     try {
       await axios.post("/api/user/logout");
