@@ -123,6 +123,17 @@ describe("<Profile />", () => {
   });
 
   it("cancels the changes and reverts to original profile information", () => {
+    const originalProfile = {
+      username: testUsername,
+      name: testName,
+      bio: testBio,
+      profilePictureUrl: testImageURL,
+      password: "",
+    };
+
+    // Set the initial state
+    cy.window().its("store").invoke("setState", { user: originalProfile });
+
     // Type into the input fields
     cy.get("#name").clear().type(updatedName).should("have.value", updatedName);
     cy.get("#bio").clear().type(updatedBio).should("have.value", updatedBio);

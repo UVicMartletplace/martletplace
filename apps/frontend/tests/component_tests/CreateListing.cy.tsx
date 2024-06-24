@@ -138,7 +138,7 @@ describe("<CreateListing />", () => {
       const requestBody = interception.request.body;
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
-      expect(requestBody).to.equal({
+      expect(requestBody).to.deep.equal({
         listing: {
           title: "Used Calculus Textbook",
           description: "No wear and tear, drop-off available.",
