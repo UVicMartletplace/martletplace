@@ -3,7 +3,7 @@ INSERT INTO users (username, email, password, name, bio, profile_pic_url, verifi
 ('unverified', 'unverified@uvic.ca', 'Testing1!', 'Unverified User', 'Hi! Im an unverified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Kiki', FALSE),
 ('user3', 'user3@example.com', 'password3', 'User Three', 'Bio for user three', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Lucy', TRUE),
 ('user4', 'user4@example.com', 'password4', 'User Four', 'Bio for user four', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel', TRUE),
-('user5', 'user5@example.com', 'password5', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE);
+('user5', 'user5@example.com', 'Password5!', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE);
 
 INSERT INTO listings (seller_id, buyer_id, title, description, price, location, status, image_urls) VALUES
 (1, NULL, 'Listing One', 'Description for listing one', 100, ROW(40.7128, -74.0060), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Jasper', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella']),
