@@ -14,6 +14,7 @@ USER root
 
 ENV PGBOUNCER_PORT=8300
 ENV PGBOUNCER_DATABASE=martletplace
+ENV PGBOUNCER_LOG_STATS=0
 
 RUN apt update && apt install -y supervisor
 
