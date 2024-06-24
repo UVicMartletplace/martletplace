@@ -1,14 +1,17 @@
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Profile from "../../src/pages/Profile";
+import TestProviders from "../utils/TestProviders";
 
 describe("<Profile />", () => {
   beforeEach(() => {
     cy.mount(
-      <MemoryRouter initialEntries={[`/user/1`]}>
-        <Routes>
-          <Route path="/user/:id" element={<Profile />} />
-        </Routes>
-      </MemoryRouter>
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/user/1`]}>
+          <Routes>
+            <Route path="/user/:id" element={<Profile />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
     );
 
     cy.viewport(1280, 720);

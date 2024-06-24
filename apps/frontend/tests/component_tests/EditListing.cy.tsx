@@ -1,5 +1,6 @@
 import EditListing from "../../src/pages/EditListing";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import TestProviders from "../utils/TestProviders";
 
 const listingObject = {
   listingID: "A23F29039B23",
@@ -44,11 +45,13 @@ const listingObject = {
 describe("<EditListing />", () => {
   beforeEach(() => {
     cy.mount(
-      <MemoryRouter initialEntries={[`/listing/edit/1`]}>
-        <Routes>
-          <Route path="/listing/edit/:id" element={<EditListing />} />
-        </Routes>
-      </MemoryRouter>,
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
+          <Routes>
+            <Route path="/listing/edit/:id" element={<EditListing />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
     );
     cy.viewport(1280, 720);
     cy.intercept("GET", "/api/listing/1", {
@@ -91,7 +94,7 @@ describe("<EditListing />", () => {
 
     cy.get("#field-description").should(
       "have.value",
-      listingObject.description,
+      listingObject.description
     );
 
     cy.get("#field-description").type("HELLO");
@@ -109,7 +112,7 @@ describe("<EditListing />", () => {
       .type("This is a bad textbook like the one used with SENG 474")
       .should(
         "have.value",
-        "This is a bad textbook like the one used with SENG 474",
+        "This is a bad textbook like the one used with SENG 474"
       );
 
     cy.get("#field-price")
