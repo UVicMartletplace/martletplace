@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
+import { colors } from "../styles/colors.tsx";
 
 interface ListingObject {
   listingID: string;
@@ -22,7 +23,7 @@ interface ListingCardProps {
 
 const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
   const navigate = useNavigate();
-  const [isGreyedOut, setIsGreyedOut] = useState(false);
+  const [notInterested, setNotInterested] = useState(false);
 
   const handleListingClick = () => {
     navigate(`/listing/${listing.listingID}`);
@@ -39,12 +40,9 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
   };
 
   const handleNotInterested = () => {
-    setIsGreyedOut(true);
+    setNotInterested(true);
     _axios_instance
       .post("/recommendations/stop", { id: listing.listingID })
-      .then((response) => {
-        console.log("Successfully stopped recommendations:", response.data);
-      })
       .catch((error) => {
         console.error("Error stopping recommendations:", error);
       });
@@ -57,12 +55,12 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
       alignItems="flex-start"
       justifyContent="flex-start"
       spacing={3}
-      maxWidth={"29vw"}
+      maxWidth="29vw"
       sx={{
         margin: "1.5%",
         cursor: "pointer",
-        background: isGreyedOut ? "#b5b5b5" : "none",
-        pointerEvents: isGreyedOut ? "none" : "auto",
+        background: notInterested ? colors.martletplaceNotInterested : "none",
+        pointerEvents: notInterested ? "none" : "auto",
         borderRadius: "8px",
         paddingBottom: "8px",
       }}
@@ -94,15 +92,17 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
           }}
         />
       </Grid>
-      {searchPerformed ? null : (
+      {searchPerformed && (
         <Grid item xs={12} sx={{ width: "100%" }}>
           <Button
             variant="contained"
             sx={{
-              backgroundColor: isGreyedOut ? "#808080" : "white",
+              backgroundColor: notInterested
+                ? colors.martletplaceGrey
+                : "white",
               color: "black",
               outline: "1px solid #808080",
-              "&:hover": { backgroundColor: "#808080" },
+              "&:hover": { backgroundColor: colors.martletplaceGrey },
               textTransform: "none",
               width: "calc(100% - 20px)",
             }}

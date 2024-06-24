@@ -13,7 +13,7 @@ import { useStyles } from "../styles/pageStyles";
 import { useState, ChangeEvent, useEffect } from "react";
 import Filters from "./filters";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import * as React from "react";
+import React from "react";
 
 interface SearchObject {
   query: string;
@@ -82,9 +82,20 @@ const SearchBar = () => {
       query: searchInput,
     };
     //Put search object in the URL
-    navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${searchObject.page}&limit=${searchObject.limit}`,
-    );
+    const params = new URLSearchParams({
+      query: searchObject.query,
+      minPrice: searchObject.minPrice?.toString() ?? "",
+      maxPrice: searchObject.maxPrice?.toString() ?? "",
+      status: searchObject.status,
+      searchType: searchObject.searchType,
+      latitude: searchObject.latitude.toString(),
+      longitude: searchObject.longitude.toString(),
+      sort: searchObject.sort,
+      page: searchObject.page.toString(),
+      limit: searchObject.limit.toString(),
+    });
+
+    navigate(`/query?${params.toString()}`);
   };
 
   const { query } = useParams();
@@ -103,7 +114,7 @@ const SearchBar = () => {
       page: 1,
       limit: 6,
     };
-    if (!(query === undefined)) {
+    if (query !== undefined) {
       //Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
       let match;

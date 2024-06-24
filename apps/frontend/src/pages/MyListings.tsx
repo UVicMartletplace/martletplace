@@ -1,6 +1,5 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import AccountSidebar from "../components/AccountSidebar";
-import SearchBar from "../components/searchBar";
 
 const MyListings = () => {
   const theme = useTheme();
@@ -8,7 +7,6 @@ const MyListings = () => {
 
   return (
     <>
-      <SearchBar />
       {isDesktop && <AccountSidebar selectedItem="My Listings" />}
       <Box
         sx={{

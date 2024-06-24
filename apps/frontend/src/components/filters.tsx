@@ -52,20 +52,18 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setPriceError("");
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
     } else if (maxPrice !== null && newMinPrice > maxPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price",
+        "This price is not valid, please make sure the min price is less than the max price"
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       setMinPrice(priceValue >= 0 ? priceValue : priceValue * -1);
     }
-    setMinPrice(
-      event.target.value === "" ? null : parseFloat(event.target.value),
-    );
+    setMinPrice(event.target.value ? Number(event.target.value) : null);
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,20 +73,18 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setPriceError("");
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
     } else if (minPrice !== null && newMaxPrice < minPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price",
+        "This price is not valid, please make sure the min price is less than the max price"
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       setMaxPrice(priceValue >= 0 ? priceValue : priceValue * -1);
     }
-    setMaxPrice(
-      event.target.value === "" ? null : parseFloat(event.target.value),
-    );
+    setMaxPrice(event.target.value ? Number(event.target.value) : null);
   };
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
@@ -154,10 +150,8 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     setLongitude(filters.longitude);
   }, [filters]);
 
-  const isDesktop = useMediaQuery("(min-width:850px)");
-
   return (
-    <Grid item container xs={isDesktop ? 5 : 10}>
+    <Grid item container lg={6} xs={9}>
       <Typography variant="h6" component="h3" m={1}>
         Filters
       </Typography>
@@ -176,7 +170,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Min"
-            value={minPrice !== null ? minPrice : ""}
+            value={minPrice ?? ""}
             onChange={handleMinPriceChange}
             type="number"
             error={!!priceError}
@@ -188,7 +182,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Max"
-            value={maxPrice !== null ? maxPrice : ""}
+            value={maxPrice ?? ""}
             onChange={handleMaxPriceChange}
             type="number"
             error={!!priceError}
@@ -215,15 +209,15 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             <MenuItem disabled value="">
               <em>Status</em>
             </MenuItem>
-            <MenuItem value={"AVAILABLE"}>Available</MenuItem>
-            <MenuItem value={"SOLD"}>Not Available</MenuItem>
+            <MenuItem value="AVAILABLE">Available</MenuItem>
+            <MenuItem value="SOLD">Not Available</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth sx={{ m: 1 }}>
           <FormHelperText>Type</FormHelperText>
           <Select value={type} onChange={handleTypeChange} id="type-select">
-            <MenuItem value={"LISTINGS"}>Listings</MenuItem>
-            <MenuItem value={"USERS"}>Users</MenuItem>
+            <MenuItem value="LISTINGS">Listings</MenuItem>
+            <MenuItem value="USERS">Users</MenuItem>
           </Select>
         </FormControl>
         <Button
@@ -251,7 +245,6 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
         sx={{
           width: "60%",
           display: "flex",
-          flexDirection: "row",
           gap: "10px",
           marginBottom: "15px",
           alignItems: "center",
