@@ -14,13 +14,25 @@ import Carousel from "../components/Carousel.tsx";
 import { useStyles } from "../styles/pageStyles.tsx";
 import { colors } from "../styles/colors.tsx";
 import SearchBar from "../components/searchBar.tsx";
+import Reviews, { Review } from "../components/Reviews.tsx";
+
+interface ListingObject {
+  title: string;
+  description: string;
+  price: number;
+  seller_profile: { name: string };
+  dateCreated: string;
+  distance: number;
+  images: { url: string }[];
+  reviews?: Review[];
+}
 
 const ViewListing = () => {
   const classes = useStyles();
   const [listingReceived, setListingReceived] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id } = useParams();
-  const [listingObject, setListingObject] = useState({
+  const [listingObject, setListingObject] = useState<ListingObject>({
     title: "Sorry This Listing Cannot Be Loaded",
     description: "Please Try again Later",
     price: 0,
@@ -123,10 +135,18 @@ const ViewListing = () => {
                 />
               </Grid>
             </Grid>
-          </CardContent>
-        </Card>
-      </Container>
-    </>
+            <Grid item xs={12} sm={12} md={12} lg={6}>
+              <Carousel
+                imageURLs={listingObject.images.map((image) => image.url)}
+              />
+            </Grid>
+            <Reviews reviews={listingObject.reviews ?? []} />
+          </Grid>
+        </CardContent>
+      </Card>
+    </Container>
+        </>
+
   );
 };
 

@@ -11,4 +11,5 @@ export const colors = {
   martletplaceRed: "#c83424",
   martletplaceRedClicked: "#dc847c",
   martletplaceNotInterested: "#b5b5b5",
+  martletplaceStarYellow: "#FFD700",
 };
