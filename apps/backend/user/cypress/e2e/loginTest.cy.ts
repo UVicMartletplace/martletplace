@@ -15,7 +15,7 @@ describe('Login Endpoint', () => {
       failOnStatusCode: false
     }).then((response) => {
       expect(response.status).to.eq(401);
-      expect(response.body).to.have.property('error', 'Invalid email');
+      expect(response.body).to.have.property('error', 'Invalid email or password');
     });
   });
 
@@ -32,7 +32,7 @@ describe('Login Endpoint', () => {
       failOnStatusCode: false
     }).then((response) => {
       expect(response.status).to.eq(401);
-      expect(response.body).to.have.property('error', 'Invalid password');
+      expect(response.body).to.have.property('error', 'Invalid email or password');
     });
   });
 });
