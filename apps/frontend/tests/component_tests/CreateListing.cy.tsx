@@ -92,22 +92,26 @@ describe("<CreateListing />", () => {
         price: 50,
         location: { latitude: 48.463302, longitude: -123.3108 },
         description: "No wear and tear, drop-off available.",
+        images: [
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+          { url: "https://picsum.photos/200/300" },
+        ],
       },
-      images: [
-        { url: "https://picsum.photos/200/300" },
-        { url: "https://picsum.photos/200/300" },
-        { url: "https://picsum.photos/200/300" },
-      ],
     };
 
-    cy.intercept("POST", "/api/listing", {
-      statusCode: 201,
-      body: listingObject,
+    cy.intercept("POST", "/api/listing", (req) => {
+      req.reply({
+        statusCode: 201,
+        body: listingObject,
+      });
     }).as("createListing");
 
-    cy.intercept("POST", "/api/images", {
-      statusCode: 201,
-      body: { url: "https://picsum.photos/200/300" },
+    cy.intercept("POST", "/api/images", (req) => {
+      req.reply({
+        statusCode: 201,
+        body: { url: "https://picsum.photos/200/300" },
+      });
     }).as("uploadImages");
 
     cy.get("#field-title")
@@ -134,7 +138,10 @@ describe("<CreateListing />", () => {
       const requestBody = interception.request.body;
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
-      expect(requestBody).to.deep.equal(listingObject);
+      expect(requestBody).to.deep.equal({
+        ...listingObject.listing,
+        images: listingObject.listing.images,
+      });
     });
   });
 
