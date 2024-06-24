@@ -92,12 +92,12 @@ describe("<CreateListing />", () => {
         price: 50,
         location: { latitude: 48.463302, longitude: -123.3108 },
         description: "No wear and tear, drop-off available.",
-        images: [
-          { url: "https://picsum.photos/200/300" },
-          { url: "https://picsum.photos/200/300" },
-          { url: "https://picsum.photos/200/300" },
-        ],
       },
+      images: [
+        { url: "https://picsum.photos/200/300" },
+        { url: "https://picsum.photos/200/300" },
+        { url: "https://picsum.photos/200/300" },
+      ],
     };
 
     cy.intercept("POST", "/api/listing", {
@@ -134,17 +134,7 @@ describe("<CreateListing />", () => {
       const requestBody = interception.request.body;
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", listingObject);
-      expect(requestBody).to.deep.equal({
-        title: "Used Calculus Textbook",
-        description: "No wear and tear, drop-off available.",
-        price: 50,
-        location: { latitude: 48.463302, longitude: -123.3108 },
-        images: [
-          { url: "https://picsum.photos/200/300" },
-          { url: "https://picsum.photos/200/300" },
-          { url: "https://picsum.photos/200/300" },
-        ],
-      });
+      expect(requestBody).to.deep.equal(listingObject);
     });
   });
 

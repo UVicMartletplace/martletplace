@@ -52,9 +52,11 @@ describe("<Profile />", () => {
     };
 
     // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", {
-      statusCode: 200,
-      body: expectedProfile,
+    cy.intercept("GET", "/api/user/1", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: expectedProfile,
+      });
     }).as("profileRequest");
 
     // Wait for the mock request to complete and check its status
@@ -149,15 +151,17 @@ describe("<Profile />", () => {
 
   it("cancels the changes and reverts to original profile information", () => {
     // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", {
-      statusCode: 200,
-      body: {
-        username: testUsername,
-        name: testName,
-        password: testPassword,
-        bio: testBio,
-        profilePictureUrl: testImageURL,
-      },
+    cy.intercept("GET", "/api/user/1", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: {
+          username: testUsername,
+          name: testName,
+          password: testPassword,
+          bio: testBio,
+          profilePictureUrl: testImageURL,
+        },
+      });
     }).as("profileRequest");
 
     // Wait for the mock request to complete and check its status
@@ -177,15 +181,17 @@ describe("<Profile />", () => {
 
   it("disables buttons when no profile information has been updated", () => {
     // Stubbing network request for getting profile information
-    cy.intercept("GET", "/api/user/1", {
-      statusCode: 200,
-      body: {
-        username: testUsername,
-        name: testName,
-        password: testPassword,
-        bio: testBio,
-        profilePictureUrl: testImageURL,
-      },
+    cy.intercept("GET", "/api/user/1", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: {
+          username: testUsername,
+          name: testName,
+          password: testPassword,
+          bio: testBio,
+          profilePictureUrl: testImageURL,
+        },
+      });
     }).as("profileRequest");
 
     // Wait for the mock request to complete and check its status
