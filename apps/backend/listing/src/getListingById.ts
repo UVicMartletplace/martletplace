@@ -17,10 +17,6 @@ const getListingById = async (
     return res.status(400).json({ error: "Listing ID is required" });
   }
 
-  if (!user_location || !user_location.latitude || !user_location.longitude) {
-    console.log("request body empty");
-    return res.status(400).json({ error: "User location is required" });
-  }
 
   try {
     const listingQuery = `
@@ -65,18 +61,6 @@ const getListingById = async (
       longitude: parseFloat(longitudeStr),
     };
 
-    const distance =
-      getDistance(
-        {
-          latitude: user_location.latitude,
-          longitude: user_location.longitude,
-        },
-        {
-          latitude: listingLocation.latitude,
-          longitude: listingLocation.longitude,
-        },
-      ) / 1000;
-
     const reviewsQuery = `
       SELECT 
         r.review_id AS "listing_review_id",
@@ -99,7 +83,7 @@ const getListingById = async (
 
     listing.reviews = reviews;
     listing.images = listing.image_urls.map((url: string) => ({ url }));
-    listing.distance = distance;
+    listing.distance = 0;
 
     delete listing.image_urls;
 
