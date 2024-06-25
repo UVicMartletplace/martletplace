@@ -1,10 +1,9 @@
 describe('Get Review by ID Endpoint', () => {
-    const baseUrl = 'http://localhost:8213/api/review';
       
     it('should retrieve a review successfully', () => {
       cy.request({
         method: 'GET',
-        url: `${baseUrl}/1`, // assuming review with ID 1 exists
+        url: '/api/review/1', // assuming review with ID 1 exists
       }).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('review_id', 1);
@@ -21,7 +20,7 @@ describe('Get Review by ID Endpoint', () => {
     it('should fail to retrieve a non-existent review', () => {
       cy.request({
         method: 'GET',
-        url: `${baseUrl}/9999`, // assuming review with ID 9999 does not exist
+        url: '/api/review/9999', // assuming review with ID 9999 does not exist
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(404);

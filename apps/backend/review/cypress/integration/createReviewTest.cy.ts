@@ -1,10 +1,9 @@
 describe('Create Reviews Endpoint', () => {
-  const baseUrl = 'http://localhost:8213/api/review';
 
   it('should create a new review successfully', () => {
     cy.request({
       method: 'POST',
-      url: baseUrl,
+      url: '/api/review',
       body: {
         listing_rating_id: '1',
         stars: 5,
@@ -26,7 +25,7 @@ describe('Create Reviews Endpoint', () => {
   it('should fail to create a new review with missing parameters', () => {
     cy.request({
       method: 'POST',
-      url: baseUrl,
+      url: '/api/review',
       body: {
         stars: 5,
         comment: 'Great seller, the item was exactly as described and in perfect condition.'

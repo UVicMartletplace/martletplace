@@ -1,10 +1,9 @@
 describe('Update Review Endpoint', () => {
-    const baseUrl = 'http://localhost:8213/api/review';
       
     it('should update a review successfully', () => {
       cy.request({
         method: 'PATCH',
-        url: `${baseUrl}/1`, // assuming review with ID 1 exists
+        url: '/api/review/1', // assuming review with ID 1 exists
         body: {
           stars: 4,
           comment: 'Updated comment: Great seller, but the item had a minor issue.',
@@ -23,7 +22,7 @@ describe('Update Review Endpoint', () => {
     it('should fail to update a non-existent review', () => {
       cy.request({
         method: 'PATCH',
-        url: `${baseUrl}/9999`, // assuming review with ID 9999 does not exist
+        url: '/api/review/9999', // assuming review with ID 9999 does not exist
         body: {
           listing_rating_id: '9999',
           stars: 4,
@@ -40,7 +39,7 @@ describe('Update Review Endpoint', () => {
     it('should fail to update a review with missing parameters', () => {
       cy.request({
         method: 'PATCH',
-        url: `${baseUrl}/1`, // assuming review with ID 1 exists
+        url: '/api/review/1', // assuming review with ID 1 exists
         body: {
           stars: 4,
           comment: 'Updated comment: Missing listingID parameter.',

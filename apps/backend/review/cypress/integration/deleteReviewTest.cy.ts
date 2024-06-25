@@ -1,10 +1,9 @@
 describe('Delete Review Endpoint', () => {
-    const baseUrl = 'http://localhost:8213/api/review';
       
     it('should delete a review successfully', () => {
       cy.request({
         method: 'DELETE',
-        url: `${baseUrl}/5`, // assuming review with ID 5 exists
+        url: '/api/review/5', // assuming review with ID 5 exists
       }).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('message', 'Review deleted successfully');
@@ -14,7 +13,7 @@ describe('Delete Review Endpoint', () => {
     it('should fail to delete a non-existent review', () => {
       cy.request({
         method: 'DELETE',
-        url: `${baseUrl}/9999`, // assuming review with ID 9999 does not exist
+        url: `${'/api/review'}/9999`, // assuming review with ID 9999 does not exist
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(404);
