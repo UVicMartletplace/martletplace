@@ -16,7 +16,7 @@ COPY ./src ./src
 ARG RECOMMENDER_VERSION=v1.0.0
 ENV COSINE_SIMILARITY_URL=https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/cosine_similarity_matrix.npy
 ENV NORMALIZED_ITEM_VECTORS_URL=https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/normalized_item_vectors.npy
-ENV PROCESSED_DATA_URL=https://https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/processed_data.csv
+ENV PROCESSED_DATA_URL=https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/processed_data.csv
 
 # Download the models if they don't already exist, which they will in development
 # assuming we're testing new versions of the models in dev
