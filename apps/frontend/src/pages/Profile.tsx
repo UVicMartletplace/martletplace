@@ -176,94 +176,95 @@ const Profile = () => {
   // }
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {isDesktop ? (
-        <AccountSidebar selectedItem="My Listings" />
-      ) : (
-        <SearchBar />
-      )}
-      <Typography variant={"h4"}>My Profile</Typography>
-      <Avatar
-        src={imageURL}
-        alt="Profile Picture"
-        sx={{ width: 150, height: 150, mt: 2, mb: 2 }}
-        id="profile_picture"
-      />
-      <Button
-        variant="contained"
-        component="label"
-        sx={classes.uploadPfp}
-        id="upload_button"
-      >
-        Upload Picture
-        <input type="file" hidden onChange={handleImageUpload} />
-      </Button>
+    <>
+      {isDesktop ? <AccountSidebar selectedItem="My Profile" /> : <SearchBar />}
       <Box
-        component="form"
-        sx={{ mt: 2, width: "80%", maxWidth: "400px", height: "50px" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingLeft: isDesktop ? "250px" : "0",
+        }}
       >
-        <TextField
-          label="Username"
-          variant="outlined"
-          sx={{ width: "100%" }}
-          margin="normal"
-          value={profile.username}
-          error={!!usernameError}
-          onChange={(e) => handleInputChange(e, "username")}
-          id="username"
-        />
-        {usernameError && (
-          <FormHelperText error>{usernameError}</FormHelperText>
-        )}
-        <TextField
-          label="Name"
-          variant="outlined"
-          sx={{ width: "100%" }}
-          margin="normal"
-          value={profile.name}
-          onChange={(e) => handleInputChange(e, "name")}
-          id="name"
-        />
-        <TextField
-          label="Bio"
-          variant="outlined"
-          sx={{ width: "100%" }}
-          margin="normal"
-          multiline
-          rows={4}
-          value={profile.bio}
-          onChange={(e) => handleInputChange(e, "bio")}
-          id="bio"
+        <Typography variant="h4" sx={{ marginTop: 2 }}>
+          My Profile
+        </Typography>
+        <Avatar
+          src={imageURL}
+          alt="Profile Picture"
+          sx={{ width: 150, height: 150, mt: 2, mb: 2 }}
+          id="profile_picture"
         />
         <Button
-          type="button"
           variant="contained"
-          sx={classes.saveButton}
-          onClick={handleSaveChanges}
-          id="save_button"
-          disabled={!editMode}
+          component="label"
+          sx={classes.uploadPfp}
+          id="upload_button"
         >
-          Save
+          Upload Picture
+          <input type="file" hidden onChange={handleImageUpload} />
         </Button>
-        <Button
-          type="button"
-          variant="contained"
-          sx={classes.cancelButton}
-          onClick={handleCancelChanges}
-          id="cancel_button"
-          disabled={!editMode}
+        <Box
+          component="form"
+          sx={{ mt: 2, width: "80%", maxWidth: "400px", height: "50px" }}
         >
-          Cancel
-        </Button>
+          <TextField
+            label="Username"
+            variant="outlined"
+            sx={{ width: "100%" }}
+            margin="normal"
+            value={profile.username}
+            error={!!usernameError}
+            onChange={(e) => handleInputChange(e, "username")}
+            id="username"
+          />
+          {usernameError && (
+            <FormHelperText error>{usernameError}</FormHelperText>
+          )}
+          <TextField
+            label="Name"
+            variant="outlined"
+            sx={{ width: "100%" }}
+            margin="normal"
+            value={profile.name}
+            onChange={(e) => handleInputChange(e, "name")}
+            id="name"
+          />
+          <TextField
+            label="Bio"
+            variant="outlined"
+            sx={{ width: "100%" }}
+            margin="normal"
+            multiline
+            rows={4}
+            value={profile.bio}
+            onChange={(e) => handleInputChange(e, "bio")}
+            id="bio"
+          />
+          <Button
+            type="button"
+            variant="contained"
+            sx={classes.saveButton}
+            onClick={handleSaveChanges}
+            id="save_button"
+            disabled={!editMode}
+          >
+            Save
+          </Button>
+          <Button
+            type="button"
+            variant="contained"
+            sx={classes.cancelButton}
+            onClick={handleCancelChanges}
+            id="cancel_button"
+            disabled={!editMode}
+          >
+            Cancel
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

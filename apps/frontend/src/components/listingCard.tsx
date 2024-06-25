@@ -62,8 +62,8 @@ const ListingCard = ({
     <Grid
       container
       direction="column"
-      alignItems="flex-start"
-      justifyContent="flex-start"
+      alignItems="stretch"
+      justifyContent="space-between"
       spacing={1}
       sx={{
         margin: "1.5%",
@@ -74,6 +74,7 @@ const ListingCard = ({
         paddingBottom: "8px",
         width: "100%",
         maxWidth: "300px",
+        height: "100%", // Added to ensure all cards have the same height
         "@media (max-width: 600px)": {
           maxWidth: "none",
           width: "calc(100% - 20px)",
@@ -99,64 +100,74 @@ const ListingCard = ({
           style={{
             width: "100%",
             height: "auto",
-            maxHeight: "300px",
+            maxHeight: "200px",
             objectFit: "cover",
             borderRadius: "8px",
           }}
         />
       </Grid>
-      {!searchPerformed && (
-        <Grid item sx={{ width: "100%" }}>
-          {canEdit ? (
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: colors.martletplaceNavyBlue,
-                color: colors.martletplaceWhite,
-                outline: "1px solid #808080",
-                "&:hover": { backgroundColor: colors.martletplaceBlueHover },
-                textTransform: "none",
-                width: "100%",
-                margin: "5px 0",
-              }}
-              onClick={handleCanEdit}
-            >
-              Edit
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: colors.martletplaceWhite,
-                color: "black",
-                outline: "1px solid #808080",
-                "&:hover": { backgroundColor: colors.martletplaceGrey },
-                textTransform: "none",
-                width: "100%",
-                margin: "5px 0",
-              }}
-              onClick={handleNotInterested}
-            >
-              Not interested
-            </Button>
-          )}
-        </Grid>
-      )}
-      <Grid item sx={{ width: "100%" }}>
-        <Typography variant="body1" gutterBottom>
-          {listing.title}
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          {listing.price !== 0 ? priceFormatter.format(listing.price) : "Free"}
-        </Typography>
-        {!canEdit && (
-          <Typography variant="body2" gutterBottom>
-            For Sale By: {listing.sellerName}
+      <Grid
+        item
+        container
+        direction="column"
+        justifyContent="space-between"
+        flexGrow={1}
+      >
+        <Grid item>
+          <Typography variant="body1" gutterBottom>
+            {listing.title}
           </Typography>
+          <Typography variant="body2" gutterBottom>
+            {listing.price !== 0
+              ? priceFormatter.format(listing.price)
+              : "Free"}
+          </Typography>
+          {!canEdit && (
+            <Typography variant="body2" gutterBottom>
+              For Sale By: {listing.sellerName}
+            </Typography>
+          )}
+          <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
+            Posted: {convertDate(listing.dateCreated)}
+          </Typography>
+        </Grid>
+        {!searchPerformed && (
+          <Grid item sx={{ width: "100%", marginTop: "auto" }}>
+            {canEdit ? (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: colors.martletplaceNavyBlue,
+                  color: colors.martletplaceWhite,
+                  outline: "1px solid #808080",
+                  "&:hover": { backgroundColor: colors.martletplaceBlueHover },
+                  textTransform: "none",
+                  width: "100%",
+                  margin: "5px 0",
+                }}
+                onClick={handleCanEdit}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: colors.martletplaceWhite,
+                  color: "black",
+                  outline: "1px solid #808080",
+                  "&:hover": { backgroundColor: colors.martletplaceGrey },
+                  textTransform: "none",
+                  width: "100%",
+                  margin: "5px 0",
+                }}
+                onClick={handleNotInterested}
+              >
+                Not interested
+              </Button>
+            )}
+          </Grid>
         )}
-        <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
-          Posted: {convertDate(listing.dateCreated)}
-        </Typography>
       </Grid>
     </Grid>
   );

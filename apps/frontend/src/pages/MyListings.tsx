@@ -52,6 +52,7 @@ const MyListings = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        textAlign: "center",
       }}
     >
       {isDesktop ? (
@@ -59,25 +60,29 @@ const MyListings = () => {
       ) : (
         <SearchBar />
       )}
-      <Typography variant="h4">My Listings</Typography>
-      <Grid
-        container
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        spacing={2}
-        key="grid-listings"
-        paddingLeft={isDesktop ? "250px" : undefined}
-      >
-        {listingObjects.map((listing) => (
-          <ListingCard
-            key={listing.listingID}
-            searchPerformed={false}
-            listing={listing}
-            canEdit={true}
-          />
-        ))}
-      </Grid>
+      <Box sx={{ paddingLeft: isDesktop ? "250px" : "0" }}>
+        <Typography variant="h4" sx={{ marginTop: 2 }}>
+          My Listings
+        </Typography>
+        <Grid
+          container
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          spacing={2}
+          sx={{ width: "100%", maxWidth: "1000px" }}
+        >
+          {listingObjects.map((listing) => (
+            <Grid item xs={12} sm={6} md={4} key={listing.listingID}>
+              <ListingCard
+                searchPerformed={false}
+                listing={listing}
+                canEdit={true}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
     </Box>
   );
 };
