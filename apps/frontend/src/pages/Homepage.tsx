@@ -78,6 +78,35 @@ const Homepage = () => {
   };
 
   const handleSearch = (searchObject: SearchObject) => {
+    const {
+      query,
+      minPrice,
+      maxPrice,
+      status,
+      searchType,
+      latitude,
+      longitude,
+      sort,
+      page,
+      limit,
+    } = searchObject;
+    const fullUrl = _axios_instance.getUri({
+      url: "/search",
+      params: {
+        query,
+        minPrice,
+        maxPrice,
+        status,
+        searchType,
+        latitude,
+        longitude,
+        sort,
+        page,
+        limit,
+      },
+    });
+
+    console.log("Full Request URL:", fullUrl);
     setSearchObject(searchObject);
     _axios_instance
       .get("/search", { params: { searchObject } })
@@ -218,13 +247,14 @@ const Homepage = () => {
           spacing={0}
           key="grid-listings"
         >
-          {listingObjects.map((listing) => (
-            <ListingCard
-              key={listing.listingID}
-              searchPerformed={searchPerformed}
-              listing={listing}
-            />
-          ))}
+          {Array.isArray(listingObjects) &&
+            listingObjects.map((listing: ListingObject) => (
+              <ListingCard
+                key={listing.listingID}
+                searchPerformed={searchPerformed}
+                listing={listing}
+              />
+            ))}
         </Grid>
         <Box
           sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
