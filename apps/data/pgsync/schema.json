@@ -1,0 +1,33 @@
+[
+    {
+        "database": "martletplace",
+        "nodes": {
+            "table": "listings",
+            "columns": [
+                "listing_id",
+                "seller_id",
+                "buyer_id",
+                "title",
+                "price",
+                "location",
+                "status",
+                "description",
+                "image_urls",
+                "created_at",
+                "modified_at"
+            ],
+            "children": [
+                {
+                    "table": "users",
+                    "columns": [
+                        "user_id"
+                    ],
+                    "relationship": {
+                        "variant": "object",
+                        "type": "one_to_one"
+                    }
+                }
+            ]
+        }
+    }
+]

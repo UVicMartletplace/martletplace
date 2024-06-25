@@ -1,14 +1,16 @@
 FROM python:3.12-slim
 
+# No way to disable status logs
+ENV LOG_INTERVAL=999999
+
 WORKDIR /app
 
-COPY ./requirements.txt ./
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pgsync
 
 # Ensure the directory exists
 RUN mkdir -p /app/config
 
 # Copy the configuration file into the container
-COPY pgsync.yml /app/config/pgsync.yml
+COPY schema.json /app/config/schema.json
 
-CMD ["pgsync", "--config", "/app/config/pgsync.yml"]
+CMD bash -c 'bootstrap --config /app/config/schema.json && pgsync --config /app/config/schema.json --daemon'
