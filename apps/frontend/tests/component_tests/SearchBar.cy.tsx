@@ -2,17 +2,20 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 import Homepage from "../../src/pages/Homepage";
 import Messages from "../../src/pages/Messages";
 import Profile from "../../src/pages/Profile";
+import TestProviders from "../utils/TestProviders";
 
 describe("<SearchBar />", () => {
   beforeEach(() => {
     cy.mount(
-      <MemoryRouter>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/messages" element={<Messages />} />\
-          <Route path="/user" element={<Profile />} />
-        </Routes>
-      </MemoryRouter>
+      <TestProviders>
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/messages" element={<Messages />} />\
+            <Route path="/user" element={<Profile />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
     );
     cy.viewport(1280, 720);
   });
