@@ -12,6 +12,11 @@ INSERT INTO listings (seller_id, buyer_id, title, description, price, location, 
 (4, NULL, 'Listing Four', 'Description for listing four', 400, ROW(29.7604, -95.3698), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Casper']),
 (5, NULL, 'Listing Five', 'Description for listing five', 500, ROW(51.5074, -0.1278), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Kiki']);
 
+COPY listings(seller_id, buyer_id, title, description, price, location, status, image_urls)
+FROM '/docker-entrypoint-initdb.d/recommender/trainingData.csv'
+DELIMITER ','
+CSV HEADER;
+
 INSERT INTO messages (sender_id, receiver_id, listing_id, message_body) VALUES
 (2, 1, 1, 'You still offering this???'),
 (1, 2, 1, 'Yep'),
