@@ -11,10 +11,10 @@ const createUser = async (
 ) => {
   const { username, password, email, name } = req.body;
 
-  if (!username || !password || !email) {
+  if (!username || !password || !email || !name) {
     return res
       .status(400)
-      .json({ error: "Username, password, and email are required" });
+      .json({ error: "Username, password, name and email are required" });
   }
 
   const hasDigit = /(?=.*\d)/.test(password);
@@ -40,20 +40,19 @@ const createUser = async (
 
   const query = `
     INSERT INTO users (username, email, password, name, verified)
-    VALUES ($1, $2, $3, $4, $5, )
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING user_id, username, email, name, bio, profile_pic_url;
   `;
 
   const values = [username, email, hashedPassword, name, false];
 
   try {
-    await db.oneOrNone(query, values).then((data: User) => {
+    const data = await db.oneOrNone(query, values)
       if (!data) {
         return res.status(500).json({ error: "User not created" });
       }
 
       return res.status(201).send(data);
-    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong" });
