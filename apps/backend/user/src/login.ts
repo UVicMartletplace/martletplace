@@ -46,7 +46,6 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     }
 
     return res.status(200).json({
-      user: user.totp_secret,
       userID: user.user_id,
       username: user.username,
       name: user.name,
