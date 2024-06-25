@@ -146,8 +146,6 @@ const Homepage = () => {
           .catch((error) => {
             console.error("Error fetching listings:", error);
           });
-        setListingObjects([]);
-        console.log(listingObjects);
         setSearchPerformed(false);
       }
     } else {
