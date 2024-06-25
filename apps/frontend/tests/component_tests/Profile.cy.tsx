@@ -101,7 +101,7 @@ describe("<Profile />", () => {
       .type(testUsername)
       .should("have.value", testUsername);
 
-    cy.intercept("PATCH", "/api/user", (req) => {
+    cy.intercept("PATCH", "/user", (req) => {
       req.reply((res) => {
         // Log request body for debugging
         cy.log("Request Body", req.body);
