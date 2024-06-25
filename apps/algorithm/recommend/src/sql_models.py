@@ -43,6 +43,7 @@ class Listings(SQLModel, table=True):
 
     seller: Users = Relationship(back_populates="listings")
 
+
 class User_Preferences(SQLModel, table=True):
     user_pref_id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.user_id")
@@ -50,6 +51,7 @@ class User_Preferences(SQLModel, table=True):
     weight: float
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     modified_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 
 class User_Searches(SQLModel, table=True):
     search_id: Optional[int] = Field(default=None, primary_key=True)

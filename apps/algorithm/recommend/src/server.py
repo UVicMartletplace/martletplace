@@ -2,11 +2,11 @@ from typing import List
 from fastapi import FastAPI, HTTPException, Depends
 import pandas as pd
 from sqlalchemy import insert
-from sqlmodel import select, delete
+from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches
-from src.api_models import ListingSummary, Review
+from src.api_models import ListingSummary
 from src.db import get_session
 from src.recommender import Recommender
 
@@ -79,7 +79,9 @@ async def get_recommendations(
 
 
 @app.post("/api/recommendations/stop/{id}")
-async def stop_suggesting_item(authorization: str, id: str, session: AsyncSession = Depends(get_session)):
+async def stop_suggesting_item(
+    authorization: str, id: str, session: AsyncSession = Depends(get_session)
+):
     user_id = int(authorization) if authorization.isdigit() else None
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     user = users.first()
@@ -87,8 +89,13 @@ async def stop_suggesting_item(authorization: str, id: str, session: AsyncSessio
         raise HTTPException(
             status_code=404, detail="User not found: " + str(authorization)
         )
-    
-    await session.exec(insert(User_Preferences, values={"user_id": user_id, "listing_id": id, "weight": 1.0}))
+
+    await session.exec(
+        insert(
+            User_Preferences,
+            values={"user_id": user_id, "listing_id": id, "weight": 1.0},
+        )
+    )
 
     return {"message": "Preference updated successfully."}
 
