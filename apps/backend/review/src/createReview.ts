@@ -16,6 +16,11 @@ const createReview = async (
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
+  if (stars < 1 || stars > 5 ){
+    console.error("invalid rating value");
+    return res.status(400).json({ error: "invalid rating value" });
+  }
+
   try {
     const createdReview = await db.one(
       `INSERT INTO reviews (listing_id, user_id, review, rating_value)
