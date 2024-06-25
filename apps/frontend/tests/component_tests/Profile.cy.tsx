@@ -59,7 +59,6 @@ describe("<Profile />", () => {
       .should("have.value", testUsername);
 
     cy.intercept("PATCH", "/api/user", (req) => {
-      // Log request body for debugging
       req.reply({
         statusCode: 200,
         body: { user: updatedProfile },
@@ -103,7 +102,6 @@ describe("<Profile />", () => {
       .should("have.value", testUsername);
 
     cy.intercept("PATCH", "/api/user", (req) => {
-      // Cypress commands should not be mixed with native promises
       req.reply((res) => {
         // Log request body for debugging
         cy.log("Request Body", req.body);
@@ -123,16 +121,16 @@ describe("<Profile />", () => {
   });
 
   it("cancels the changes and reverts to original profile information", () => {
-    const originalProfile = {
-      username: testUsername,
-      name: testName,
-      bio: testBio,
-      profilePictureUrl: testImageURL,
-      password: "",
-    };
-
-    // Set the initial state
-    cy.window().its("store").invoke("setState", { user: originalProfile });
+    // Initialize the profile with test data
+    cy.window().then((win) => {
+      const user = {
+        name: testName,
+        username: testUsername,
+        bio: testBio,
+        profileUrl: testImageURL,
+      };
+      win.dispatchEvent(new CustomEvent("setUser", { detail: user }));
+    });
 
     // Type into the input fields
     cy.get("#name").clear().type(updatedName).should("have.value", updatedName);
