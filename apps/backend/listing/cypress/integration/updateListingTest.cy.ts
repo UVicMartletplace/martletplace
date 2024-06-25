@@ -3,7 +3,7 @@ describe('Update Listing Endpoint', () => {
   it('should update a listing successfully', () => {
     cy.request({
       method: 'PATCH',
-      url: '/api/listing/', // assuming listing with ID 1 exists
+      url: '/api/listing/1', // assuming listing with ID 1 exists
       body: {
         listing: {
           title: 'Updated Listing One',

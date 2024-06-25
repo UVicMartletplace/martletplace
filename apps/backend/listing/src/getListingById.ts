@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
-import { getDistance } from "geolib";
 
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (
@@ -10,12 +9,11 @@ const getListingById = async (
   db: IDatabase<object>,
 ) => {
   const { id } = req.params;
-  
+
   if (!id) {
     console.log("missing listing id parameter in request");
     return res.status(400).json({ error: "Listing ID is required" });
   }
-
 
   try {
     const listingQuery = `
@@ -49,16 +47,6 @@ const getListingById = async (
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
-
-    const listingLocationStr = listing.location;
-
-    const [latitudeStr, longitudeStr] = listingLocationStr
-      .slice(1, -1)
-      .split(",");
-    const listingLocation = {
-      latitude: parseFloat(latitudeStr),
-      longitude: parseFloat(longitudeStr),
-    };
 
     const reviewsQuery = `
       SELECT 
