@@ -64,8 +64,7 @@ const ListingCard = ({
       direction="column"
       alignItems="flex-start"
       justifyContent="flex-start"
-      spacing={3}
-      maxWidth="29vw"
+      spacing={1}
       sx={{
         margin: "1.5%",
         cursor: "pointer",
@@ -73,19 +72,23 @@ const ListingCard = ({
         pointerEvents: notInterested ? "none" : "auto",
         borderRadius: "8px",
         paddingBottom: "8px",
+        width: "100%",
+        maxWidth: "300px",
+        "@media (max-width: 600px)": {
+          maxWidth: "none",
+          width: "calc(100% - 20px)",
+        },
       }}
       className="listing-card"
       onClick={handleListingClick}
     >
       <Grid
         item
-        xs={12}
         sx={{
-          width: "90%",
+          width: "100%",
           maxHeight: "40vh",
           display: "flex",
           justifyContent: "center",
-          alignSelf: "left",
           overflow: "hidden",
           borderRadius: "8px",
         }}
@@ -95,15 +98,15 @@ const ListingCard = ({
           alt={listing.title}
           style={{
             width: "100%",
-            height: "300px",
+            height: "auto",
+            maxHeight: "300px",
             objectFit: "cover",
             borderRadius: "8px",
-            margin: "0px",
           }}
         />
       </Grid>
       {!searchPerformed && (
-        <Grid item xs={12} sx={{ width: "100%" }}>
+        <Grid item sx={{ width: "100%" }}>
           {canEdit ? (
             <Button
               variant="contained"
@@ -113,7 +116,8 @@ const ListingCard = ({
                 outline: "1px solid #808080",
                 "&:hover": { backgroundColor: colors.martletplaceBlueHover },
                 textTransform: "none",
-                width: "calc(100% - 20px)",
+                width: "100%",
+                margin: "5px 0",
               }}
               onClick={handleCanEdit}
             >
@@ -128,7 +132,8 @@ const ListingCard = ({
                 outline: "1px solid #808080",
                 "&:hover": { backgroundColor: colors.martletplaceGrey },
                 textTransform: "none",
-                width: "calc(100% - 20px)",
+                width: "100%",
+                margin: "5px 0",
               }}
               onClick={handleNotInterested}
             >
@@ -137,7 +142,7 @@ const ListingCard = ({
           )}
         </Grid>
       )}
-      <Grid item xs={12} sx={{ width: "100%" }}>
+      <Grid item sx={{ width: "100%" }}>
         <Typography variant="body1" gutterBottom>
           {listing.title}
         </Typography>
