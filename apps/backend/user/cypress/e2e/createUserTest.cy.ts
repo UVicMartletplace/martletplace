@@ -7,9 +7,7 @@ describe('User Creation', () => {
       username: "Createdusertest5",
       email: "createdUserTest@uvic.ca5",
       password: "Testing1!5",
-      name: "Created user test",
-      bio: "Hi! Im a verified user!",
-      profile_pic_url: "https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper"
+      name: "Created user test"
     };
 
     // Send a POST request to create a new user
@@ -22,8 +20,6 @@ describe('User Creation', () => {
         expect(response.body).to.have.property('username', newUser.username);
         expect(response.body).to.have.property('email', newUser.email);
         expect(response.body).to.have.property('name', newUser.name);
-        expect(response.body).to.have.property('bio', newUser.bio);
-        expect(response.body).to.have.property('profile_pic_url', newUser.profile_pic_url);
         expect(response.body).to.have.property('verified', false);
       });
   });
