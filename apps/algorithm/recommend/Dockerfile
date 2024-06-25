@@ -13,6 +13,8 @@ COPY ./requirements.txt ./
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY ./src ./src
+RUN mkdir -p ./src/training
+
 ARG RECOMMENDER_VERSION=v1.0.0
 ENV COSINE_SIMILARITY_URL=https://github.com/UVicMartletplace/martletplace/releases/download/recommender-$RECOMMENDER_VERSION/cosine_similarity_matrix.npy
 ENV NORMALIZED_ITEM_VECTORS_URL=https://github.com/UVicMartletplace/martletplace/releases/download/recommender-$RECOMMENDER_VERSION/normalized_item_vectors.npy
@@ -29,5 +31,7 @@ RUN [ ! -f ./src/training/normalized_item_vectors.npy ] \
 RUN [ ! -f ./src/training/processed_data.csv ] \
     && curl -L -o ./src/training/processed_data.csv $PROCESSED_DATA_URL \
     || echo "File processed_data.csv already exists"
+
+RUN ls -la /app/src/training/
 
 CMD uvicorn src.server:app --host 0.0.0.0 --port 8222 --reload
