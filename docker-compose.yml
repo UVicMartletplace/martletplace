@@ -91,6 +91,7 @@ services:
         condition: service_healthy
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
     #ports: [ 8221:8221 ]
     networks: [ proxy-search, search-datalayer ]
