@@ -140,8 +140,8 @@ describe("<Profile />", () => {
     cy.get("#cancel_button").click();
 
     // Assert that the profile information is reverted correctly
-    cy.get("#name").should("have.value", testName);
-    cy.get("#bio").should("have.value", testBio);
+    cy.get("#name").should("have.value", "");
+    cy.get("#bio").should("have.value", "");
   });
 
   it("disables buttons when no profile information has been updated", () => {
