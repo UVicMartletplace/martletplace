@@ -19,7 +19,7 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
-    networks: 
+    networks:
       - proxy-frontend
       - proxy-user
       - proxy-listing
@@ -157,6 +157,14 @@ services:
     networks: [ datalayer-elasticsearch, search-datalayer ]
     mem_limit: 1GB
 
+  cache:
+    build: apps/data/cache
+    container_name: martletplace_cache
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - DFLY_port=8313
 
 networks:
   proxy-frontend:
