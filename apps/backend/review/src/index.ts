@@ -14,7 +14,12 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 const pgp = pgPromise();
-const DB_ENDPOINT = process.env.DB_ENDPOINT || "";
+const DB_ENDPOINT = process.env.DB_ENDPOINT;
+
+if (!DB_ENDPOINT) {
+  console.error("DB_ENDPOINT environment variable is not set");
+  process.exit(1);
+}
 
 const db = pgp(DB_ENDPOINT);
 
