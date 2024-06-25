@@ -3,9 +3,13 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { authenticate_request } from "../../lib/src/auth";
 import pgPromise from "pg-promise";
-import { getMessageThreads } from "./getMessageThreads";
-import { getMessages } from "./getMessages";
+import {
+  getMessageThreads,
+  useValidateGetMessageThreads,
+} from "./getMessageThreads";
+import { getMessages, useValidateGetMessages } from "./getMessages";
 import { createMessage, useValidateCreateMessage } from "./createMessage";
+import { useAuth } from "./lib/auth";
 
 const PORT = 8214;
 
@@ -29,15 +33,23 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.get("/api/messages/overview", getMessageThreads);
-app.get("/api/messages/thread/:listing_id/:receiver_id", getMessages);
-app.post(
+app.post("/api/messages", useAuth, useValidateCreateMessage, (req, res) =>
+  createMessage(req, res, db),
+);
+app.get(
   "/api/messages/thread/:listing_id/:receiver_id",
-  useValidateCreateMessage,
-  createMessage
+  useAuth,
+  useValidateGetMessages,
+  (req, res) => getMessages(req, res, db),
+);
+app.get(
+  "/api/messages/overview",
+  useAuth,
+  useValidateGetMessageThreads,
+  (req, res) => getMessageThreads(req, res, db),
 );
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
 
