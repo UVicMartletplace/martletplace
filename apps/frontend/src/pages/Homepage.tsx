@@ -10,23 +10,12 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
-import ListingCard from "../components/listingCard.tsx";
+import ListingCard, { ListingObject } from "../components/listingCard.tsx";
 import { useState, useEffect, useRef } from "react";
 import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import SearchBar from "../components/searchBar.tsx";
-
-interface ListingObject {
-  listingID: string;
-  sellerID: string;
-  sellerName: string;
-  title: string;
-  description: string;
-  price: number;
-  dateCreated: string;
-  imageUrl: string;
-}
 
 interface SearchObject {
   query: string;
