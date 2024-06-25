@@ -37,7 +37,7 @@ describe("<Login />", () => {
 
   it("submits the form and navigates on successful login", () => {
     // Stubbing network request for login as successful
-    cy.intercept("POST", "/api/login", (req) => {
+    cy.intercept("POST", "/api/user/login", (req) => {
       req.reply({
         statusCode: 200,
         body: { success: true },
@@ -60,7 +60,7 @@ describe("<Login />", () => {
 
   it("does not navigate on unsuccessful login", () => {
     // Stubbing network request for login as unsuccessful
-    cy.intercept("POST", "/api/login", (req) => {
+    cy.intercept("POST", "/api/user/login", (req) => {
       req.reply({
         statusCode: 401, // Use an appropriate status code for failed login
         body: { success: false, message: "Invalid credentials" },
