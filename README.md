@@ -13,6 +13,11 @@ git clone https://github.com/UVicMartletplace/martletplace && cd martletplace
 docker compose up --build
 ```
 
+### Testing
+
+Testing will run on each commit as part of each service's workflow.
+To manually test, run the test.sh file in the root of the project. This will run all tests for all services sequentially.
+
 The development environment is now running and accesible at [http://local.martletplace.ca/](http://local.martletplace.ca/)
 
 ## System Architecture
