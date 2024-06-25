@@ -32,6 +32,8 @@ RUN [ ! -f ./src/training/processed_data.csv ] \
     && curl -L -o ./src/training/processed_data.csv $PROCESSED_DATA_URL \
     || echo "File processed_data.csv already exists"
 
+RUN chmod -R a+r /app/src/training/
 RUN ls -la /app/src/training/
+
 
 CMD uvicorn src.server:app --host 0.0.0.0 --port 8222 --reload
