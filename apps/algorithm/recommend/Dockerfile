@@ -16,6 +16,7 @@ COPY ./src ./src
 ARG RECOMMENDER_VERSION=v1.0.0
 ENV COSINE_SIMILARITY_URL=https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/cosine_similarity_matrix.npy
 ENV NORMALIZED_ITEM_VECTORS_URL=https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/normalized_item_vectors.npy
+ENV PROCESSED_DATA_URL=https://https://github.com/UVicMartletplace/martletplace/releases/download/$RECOMMENDER_VERSION/processed_data.csv
 
 # Download the models if they don't already exist, which they will in development
 # assuming we're testing new versions of the models in dev
@@ -25,5 +26,8 @@ RUN [ ! -f ./src/training/cosine_similarity_matrix.npy ] \
 RUN [ ! -f ./src/training/normalized_item_vectors.npy ] \
     && curl -L -o ./src/training/normalized_item_vectors.npy $NORMALIZED_ITEM_VECTORS_URL \
     || echo "File normalized_item_vectors.npy already exists"
+RUN [ ! -f ./src/training/processed_data.csv ] \
+    && curl -L -o ./src/training/processed_data.csv $PROCESSED_DATA_URL \
+    || echo "File processed_data.csv already exists"
 
 CMD uvicorn src.server:app --host 0.0.0.0 --port 8222 --reload
