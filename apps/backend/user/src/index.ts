@@ -7,8 +7,6 @@ import { patchUser } from "./patchUser";
 import { deleteUser } from "./deleteUser";
 import { login } from "./login";
 import { logout } from "./logout";
-import { enableMFA } from "./enableMFA";
-import { verifyMFA } from "./verifyMFA";
 
 const PORT = 8211;
 
@@ -33,10 +31,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Define endpoints
-
-// MFA
-app.post("/api/user/enable-mfa", (req, res) => enableMFA(req, res, db));
-app.post("/api/user/verify-mfa", (req, res) => verifyMFA(req, res, db));
 
 // Login
 app.post("/api/user/login", (req, res) => login(req, res, db));
