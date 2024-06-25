@@ -19,7 +19,7 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
-    networks: 
+    networks:
       - proxy-frontend
       - proxy-user
       - proxy-listing
@@ -91,6 +91,7 @@ services:
         condition: service_healthy
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
     #ports: [ 8221:8221 ]
     networks: [ proxy-search, search-datalayer ]
@@ -138,7 +139,7 @@ services:
     container_name: martletplace_database
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/data/database/populatedb.sql:/docker-entrypoint-initdb.d/populatedb.sql ]
+    volumes: [ ./apps/data/database/populatedb.sql:/docker-entrypoint-initdb.d/populatedb.sql, ./apps/data/database/recommender/trainingData.csv:/docker-entrypoint-initdb.d/recommender/trainingData.csv ]
     environment:
       - POSTGRES_USER=martletplace
       - POSTGRES_PASSWORD=johuigytfrdcv
@@ -158,6 +159,14 @@ services:
     networks: [ datalayer-elasticsearch, search-datalayer ]
     mem_limit: 1GB
 
+  cache:
+    build: apps/data/cache
+    container_name: martletplace_cache
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment:
+      - DFLY_port=8313
 
 networks:
   proxy-frontend:

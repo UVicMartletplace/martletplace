@@ -29,7 +29,7 @@ FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE listings (
     listing_id SERIAL PRIMARY KEY,
-    seller_id INTEGER NOT NULL REFERENCES users(user_id),
+    seller_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     buyer_id INTEGER REFERENCES users(user_id),
     title VARCHAR NOT NULL,
     price INTEGER NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE messages (
 CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
     listing_id INTEGER NOT NULL REFERENCES listings(listing_id) ON DELETE CASCADE,
-    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(user_id),
     review TEXT,
     rating_value INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
