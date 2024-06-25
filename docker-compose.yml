@@ -137,7 +137,7 @@ services:
     container_name: martletplace_database
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/data/database/populatedb.sql:/docker-entrypoint-initdb.d/populatedb.sql ]
+    volumes: [ ./apps/data/database/populatedb.sql:/docker-entrypoint-initdb.d/populatedb.sql, ./apps/data/database/recommender/trainingData.csv:/docker-entrypoint-initdb.d/recommender/trainingData.csv ]
     environment:
       - POSTGRES_USER=martletplace
       - POSTGRES_PASSWORD=johuigytfrdcv
