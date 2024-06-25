@@ -95,7 +95,7 @@ const ListingCard = ({
           alt={listing.title}
           style={{
             width: "100%",
-            height: "auto",
+            height: "300px",
             objectFit: "cover",
             borderRadius: "8px",
             margin: "0px",
