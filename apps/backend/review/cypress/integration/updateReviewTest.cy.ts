@@ -11,11 +11,6 @@ describe('Update Review Endpoint', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200);
-        expect(response.body).to.have.property('review_id', 1);
-        expect(response.body).to.have.property('stars', 4);
-        expect(response.body).to.have.property('comment', 'Updated comment: Great seller, but the item had a minor issue.');
-        expect(response.body).to.have.property('listingID', 1);
-        expect(response.body).to.have.property('dateModified');
       });
     });
   

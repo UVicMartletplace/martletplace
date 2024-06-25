@@ -32,15 +32,7 @@ const updateReview = async (
       return res.status(404).json({ error: "Review not found" });
     }
 
-    const responseReview = {
-      review_id: updatedReview.review_id,
-      stars: updatedReview.rating_value,
-      comment: updatedReview.review,
-      listingID: updatedReview.listing_id,
-      dateModified: updatedReview.modified_at,
-    };
-
-    return res.status(200).json(responseReview);
+    return res.status(200).json({message: "Review edited successfully"});
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
