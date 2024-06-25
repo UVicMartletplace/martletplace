@@ -11,6 +11,6 @@ docker compose exec lib npm run test:ci
 docker compose exec search pytest
 docker compose exec recommend pytest
 npm ci
-npm run testa
+npm run test
 
 docker compose down
