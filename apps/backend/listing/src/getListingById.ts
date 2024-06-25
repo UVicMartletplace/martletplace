@@ -11,7 +11,7 @@ const getListingById = async (
   const { id } = req.params;
 
   if (!id) {
-    console.log("missing listing id parameter in request");
+    console.error("missing listing id parameter in request");
     return res.status(400).json({ error: "Listing ID is required" });
   }
 
@@ -76,7 +76,7 @@ const getListingById = async (
 
     return res.status(200).json(listing);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
