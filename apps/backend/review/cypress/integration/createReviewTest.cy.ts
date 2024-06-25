@@ -12,7 +12,7 @@ describe('Create Reviews Endpoint', () => {
       }
     }).then((response) => {
       expect(response.status).to.eq(201);
-      expect(response.body).to.have.property('reviewerName', 'User');
+      expect(response.body).to.have.property('reviewerName', 'Deleted User');
       expect(response.body).to.have.property('stars', 5);
       expect(response.body).to.have.property('comment', 'Great seller, the item was exactly as described and in perfect condition.');
       expect(response.body).to.have.property('userID', 1);

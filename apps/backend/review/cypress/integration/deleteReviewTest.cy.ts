@@ -13,7 +13,7 @@ describe('Delete Review Endpoint', () => {
     it('should fail to delete a non-existent review', () => {
       cy.request({
         method: 'DELETE',
-        url: `${'/api/review'}/9999`, // assuming review with ID 9999 does not exist
+        url: '/api/review/9999', // assuming review with ID 9999 does not exist
         failOnStatusCode: false
       }).then((response) => {
         expect(response.status).to.eq(404);
