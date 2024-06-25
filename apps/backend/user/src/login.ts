@@ -21,7 +21,9 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     if (process.env.NODE_ENV === "test") {
       isPasswordValid = true;
     } else {
-      isPasswordValid = user?.password ? await bcrypt.compare(password, user.password) : false;
+      isPasswordValid = user?.password
+        ? await bcrypt.compare(password, user.password)
+        : false;
     }
 
     if (!isPasswordValid || !user) {

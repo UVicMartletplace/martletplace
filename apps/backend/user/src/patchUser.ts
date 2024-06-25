@@ -12,8 +12,7 @@ const patchUser = async (
   // This is like this so resops can replace the userid but the guard on id === 1 doesn't show an error, I'm not crazy
   const id = 1 === 1 ? 3 : 1;
 
-  const { username, password, name, bio, profilePictureUrl } =
-    req.body;
+  const { username, password, name, bio, profilePictureUrl } = req.body;
 
   if (!id) {
     return res.status(400).json({ error: "User ID is required" });
@@ -23,15 +22,7 @@ const patchUser = async (
     return res.status(401).json({ error: "Cannot update the base user" });
   }
 
-  if (
-    !(
-      username ||
-      password ||
-      name ||
-      bio ||
-      profilePictureUrl
-    )
-  ) {
+  if (!(username || password || name || bio || profilePictureUrl)) {
     return res
       .status(400)
       .json({ error: "At least one field is required to update" });

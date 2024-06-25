@@ -9,7 +9,7 @@ const createUser = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  const { username, password, email, name  } = req.body;
+  const { username, password, email, name } = req.body;
 
   if (!username || !password || !email) {
     return res
@@ -44,13 +44,7 @@ const createUser = async (
     RETURNING user_id, username, email, name, bio, profile_pic_url;
   `;
 
-  const values = [
-    username,
-    email,
-    hashedPassword,
-    name,
-    false,
-  ];
+  const values = [username, email, hashedPassword, name, false];
 
   try {
     await db.oneOrNone(query, values).then((data: User) => {
