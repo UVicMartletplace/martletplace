@@ -1,13 +1,16 @@
 import { BrowserRouter } from "react-router-dom";
 import MyListings from "../../src/pages/MyListings";
+import TestProviders from "../utils/TestProviders";
 
 describe("<MyListings />", () => {
   beforeEach(() => {
     cy.viewport(1280, 720);
     cy.mount(
-      <BrowserRouter>
-        <MyListings />
-      </BrowserRouter>
+      <TestProviders>
+        <BrowserRouter>
+          <MyListings />
+        </BrowserRouter>
+      </TestProviders>
     );
   });
 
