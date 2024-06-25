@@ -99,7 +99,6 @@ services:
     environment:
       # needs to be postgresql+asyncpg for sqlalchemy to be happy
       - DB_ENDPOINT=postgresql+asyncpg://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    #ports: [ 8222:8222 ]
     networks: [ proxy-recommend, recommend-datalayer ]
 
   datalayer:
