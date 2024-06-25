@@ -6,9 +6,9 @@ describe('Get Listing by ID Endpoint', () => {
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('listingID', 1);
-      expect(response.body).to.have.property('title', 'Updated Listing One');
-      expect(response.body).to.have.property('description', 'Updated description for listing one');
-      expect(response.body).to.have.property('price', 150);
+      expect(response.body).to.have.property('title', 'Listing One');
+      expect(response.body).to.have.property('description', 'Description for listing one');
+      expect(response.body).to.have.property('price', 100);
       expect(response.body).to.have.property('status', 'AVAILABLE');
       expect(response.body).to.have.property('dateCreated');
       expect(response.body).to.have.property('dateModified');
