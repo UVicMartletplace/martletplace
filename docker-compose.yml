@@ -164,7 +164,7 @@ services:
       - database
       - elasticsearch
     volumes:
-      - ./apps/data/pgsync/config:/app/config
+      - ./apps/data/pgsync/config/pgsync.yml:/app/config/pgsync.yml
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
