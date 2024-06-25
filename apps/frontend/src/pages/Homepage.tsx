@@ -69,7 +69,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -79,16 +79,45 @@ const Homepage = () => {
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    currentPage: number,
+    currentPage: number
   ) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
 
   const handleSearch = (searchObject: SearchObject) => {
+    const {
+      query,
+      minPrice,
+      maxPrice,
+      status,
+      searchType,
+      latitude,
+      longitude,
+      sort,
+      page,
+      limit,
+    } = searchObject;
+    const fullUrl = _axios_instance.getUri({
+      url: "/search",
+      params: {
+        query,
+        minPrice,
+        maxPrice,
+        status,
+        searchType,
+        latitude,
+        longitude,
+        sort,
+        page,
+        limit,
+      },
+    });
+
+    console.log("Full Request URL:", fullUrl);
     setSearchObject(searchObject);
     _axios_instance
       .get("/search", { params: { searchObject } })
@@ -117,6 +146,8 @@ const Homepage = () => {
           .catch((error) => {
             console.error("Error fetching listings:", error);
           });
+        setListingObjects([]);
+        console.log(listingObjects);
         setSearchPerformed(false);
       }
     } else {
@@ -229,13 +260,14 @@ const Homepage = () => {
           spacing={0}
           key="grid-listings"
         >
-          {listingObjects.map((listing) => (
-            <ListingCard
-              key={listing.listingID}
-              searchPerformed={searchPerformed}
-              listing={listing}
-            />
-          ))}
+          {Array.isArray(listingObjects) &&
+            listingObjects.map((listing: ListingObject) => (
+              <ListingCard
+                key={listing.listingID}
+                searchPerformed={searchPerformed}
+                listing={listing}
+              />
+            ))}
         </Grid>
         <Box
           sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
