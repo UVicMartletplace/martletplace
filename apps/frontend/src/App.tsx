@@ -47,7 +47,7 @@ function App() {
 
           {/* Private Routes */}
           <Route
-            path="/"
+            path="/:query?"
             element={
               <PrivateRoute>
                 <Homepage />

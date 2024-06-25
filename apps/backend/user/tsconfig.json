@@ -5,7 +5,8 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "cypress", "express"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

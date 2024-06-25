@@ -1,8 +1,15 @@
 import CreateListing from "../../src/pages/CreateListing.tsx";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 describe("<CreateListing />", () => {
   beforeEach(() => {
-    cy.mount(<CreateListing />);
+    cy.mount(
+      <MemoryRouter initialEntries={[`/listing/new`]}>
+        <Routes>
+          <Route path="/listing/new" element={<CreateListing />} />
+        </Routes>
+      </MemoryRouter>
+    );
     cy.viewport(400, 600);
   });
 

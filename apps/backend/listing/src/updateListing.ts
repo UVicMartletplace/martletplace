@@ -11,7 +11,7 @@ const updateListing = async (
   const { listing, status } = req.body;
 
   if (!listing) {
-    console.log("request body empty");
+    console.error("request body empty");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -26,7 +26,7 @@ const updateListing = async (
     !location.latitude ||
     !location.longitude
   ) {
-    console.log("missing parameter in request");
+    console.error("missing parameter in request");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -55,7 +55,7 @@ const updateListing = async (
     );
 
     if (!updatedListing) {
-      console.log("listing not found");
+      console.error("listing not found");
       return res.status(404).json({ error: "Listing not found" });
     }
 
@@ -76,7 +76,7 @@ const updateListing = async (
 
     return res.status(200).json(responseListing);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
