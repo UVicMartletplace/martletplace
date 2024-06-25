@@ -32,12 +32,12 @@ async def get_recommendations(
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
     )
-    items_clicked = [] #["B07WJK2116", "B07JPKH58Y"]# [item.listing_id for item in items_clicked]
+    items_clicked = [item.listing_id for item in items_clicked]
 
     terms_searched = await session.exec(
         select(User_Searches).where(User_Searches.user_id == user_id)
     )
-    terms_searched = ["chocolate", "moisturizer"]#[term.search_term for term in terms_searched]
+    terms_searched = [term.search_term for term in terms_searched]
 
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
