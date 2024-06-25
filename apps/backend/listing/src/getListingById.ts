@@ -10,8 +10,7 @@ const getListingById = async (
   db: IDatabase<object>,
 ) => {
   const { id } = req.params;
-  const { user_location } = req.body;
-
+  
   if (!id) {
     console.log("missing listing id parameter in request");
     return res.status(400).json({ error: "Listing ID is required" });

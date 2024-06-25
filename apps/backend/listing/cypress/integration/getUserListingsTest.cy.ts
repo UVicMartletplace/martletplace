@@ -1,10 +1,8 @@
-describe('Get Listings by User Endpoint', () => {
-    const baseUrl = 'http://localhost:8212/api/listings';
-  
+describe('Get Listings by User Endpoint', () => {  
     it('should retrieve all listings for the authenticated user successfully', () => {
       cy.request({
         method: 'GET',
-        url: baseUrl // as auth not functioning, assumes id of 1.
+        url: '/api/listings' // as auth not functioning, assumes id of 1.
       }).then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.be.an('array').with.length.greaterThan(0);

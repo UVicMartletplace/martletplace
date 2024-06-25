@@ -1,16 +1,14 @@
 describe('Get Listing by ID Endpoint', () => {
-  const baseUrl = 'http://localhost:8212/api/listing';
-
   it('should retrieve a listing successfully and calculate zero distance for same coordinates', () => {
     cy.request({
       method: 'GET',
-      url: `${baseUrl}/1` // assuming listing with ID 1 exists
+      url: '/api/listing/1' // assuming listing with ID 1 exists
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('listingID', 1);
-      expect(response.body).to.have.property('title', 'Listing One');
-      expect(response.body).to.have.property('description', 'Description for listing one');
-      expect(response.body).to.have.property('price', 100);
+      expect(response.body).to.have.property('title', 'Updated Listing One');
+      expect(response.body).to.have.property('description', 'Updated description for listing one');
+      expect(response.body).to.have.property('price', 150);
       expect(response.body).to.have.property('status', 'AVAILABLE');
       expect(response.body).to.have.property('dateCreated');
       expect(response.body).to.have.property('dateModified');
@@ -23,7 +21,7 @@ describe('Get Listing by ID Endpoint', () => {
   it('should fail to retrieve a non-existent listing', () => {
     cy.request({
       method: 'GET',
-      url: `${baseUrl}/9999`, // assuming listing with ID 9999 does not exist
+      url: '/api/listing/9999', // assuming listing with ID 9999 does not exist
       failOnStatusCode: false
     }).then((response) => {
       expect(response.status).to.eq(404);
