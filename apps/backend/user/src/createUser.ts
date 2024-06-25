@@ -47,12 +47,12 @@ const createUser = async (
   const values = [username, email, hashedPassword, name, false];
 
   try {
-    const data = await db.oneOrNone(query, values)
-      if (!data) {
-        return res.status(500).json({ error: "User not created" });
-      }
+    const data = await db.oneOrNone(query, values);
+    if (!data) {
+      return res.status(500).json({ error: "User not created" });
+    }
 
-      return res.status(201).send(data);
+    return res.status(201).send(data);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong" });

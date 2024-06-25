@@ -22,7 +22,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       isPasswordValid = true;
     } else {
       const maybePassword = user?.password || "bananas";
-      isPasswordValid = await bcrypt.compare(password, maybePassword)
+      isPasswordValid = await bcrypt.compare(password, maybePassword);
     }
 
     if (!isPasswordValid || !user) {
