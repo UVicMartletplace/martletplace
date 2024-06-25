@@ -19,7 +19,7 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
-    networks: 
+    networks:
       - proxy-frontend
       - proxy-user
       - proxy-listing
@@ -157,6 +157,21 @@ services:
     networks: [ datalayer-elasticsearch, search-datalayer ]
     mem_limit: 1GB
 
+  pgsync:
+    build: apps/data/pgsync
+    container_name: martletplace_pgsync
+    depends_on:
+      - database
+      - elasticsearch
+    volumes:
+      - ./apps/data/pgsync/config:/pgsync/config
+    environment:
+      - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
+      - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
+    networks:
+      - datalayer-database
+      - datalayer-elasticsearch
+
 
 networks:
   proxy-frontend:
@@ -176,3 +191,5 @@ networks:
   datalayer-elasticsearch:
   datalayer-cache:
   datalayer-blob:
+  pgsync-database:
+  pgsync-elasticsearch:
