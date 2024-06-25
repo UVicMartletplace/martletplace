@@ -1,10 +1,11 @@
 import os
+from unittest.mock import AsyncMock, patch
 
 import pytest
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, NotFoundError
 from fastapi.testclient import TestClient
 
-from server import app
+from .server import app
 
 TEST_INDEX = "test-index"
 
@@ -37,7 +38,13 @@ def setup_and_teardown_index(monkeypatch):
     es.options(ignore_status=[404]).indices.delete(index=TEST_INDEX)
 
 
-def test_search_no_listings():
+@pytest.fixture(autouse=True)
+def mock_insert_user_search():
+    with patch("src.routes.insert_user_search", new_callable=AsyncMock) as mock:
+        yield mock
+
+
+def test_search_no_listings(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -49,9 +56,10 @@ def test_search_no_listings():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "test")
 
 
-def test_search_for_existing_listing():
+def test_search_for_existing_listing(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -94,9 +102,10 @@ def test_search_for_existing_listing():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_for_multiple_listings():
+def test_search_for_multiple_listings(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -165,9 +174,10 @@ def test_search_for_multiple_listings():
         ],
         "totalItems": 2,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_empty_query():
+def test_search_empty_query(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -179,9 +189,10 @@ def test_search_empty_query():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "")
 
 
-def test_search_with_special_characters_in_query():
+def test_search_with_special_characters_in_query(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -193,9 +204,10 @@ def test_search_with_special_characters_in_query():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop!@#$%^&*()_+")
 
 
-def test_search_with_price_range():
+def test_search_with_price_range(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -240,9 +252,10 @@ def test_search_with_price_range():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_too_low_price_range_fail():
+def test_search_with_too_low_price_range_fail(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -273,9 +286,10 @@ def test_search_with_too_low_price_range_fail():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_too_high_price_range_fail():
+def test_search_with_too_high_price_range_fail(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -306,9 +320,10 @@ def test_search_with_too_high_price_range_fail():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_negative_min_price_fail():
+def test_search_with_negative_min_price_fail(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -321,9 +336,10 @@ def test_search_with_negative_min_price_fail():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "minPrice cannot be negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_negative_max_price_fail():
+def test_search_with_negative_max_price_fail(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -336,9 +352,10 @@ def test_search_with_negative_max_price_fail():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "maxPrice cannot be negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_min_price_higher_than_max_price_fail():
+def test_search_min_price_higher_than_max_price_fail(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -352,9 +369,10 @@ def test_search_min_price_higher_than_max_price_fail():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "minPrice cannot be greater than maxPrice"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_status():
+def test_search_with_status(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -414,9 +432,10 @@ def test_search_with_status():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_status_sold():
+def test_search_with_status_sold(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -476,9 +495,10 @@ def test_search_with_status_sold():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_status():
+def test_search_with_invalid_status(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -501,9 +521,10 @@ def test_search_with_invalid_status():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_user_search():
+def test_search_with_user_search(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -563,9 +584,10 @@ def test_search_with_user_search():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "billybobjoe")
 
 
-def test_search_with_user_search_negative():
+def test_search_with_user_search_negative(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -582,6 +604,22 @@ def test_search_with_user_search_negative():
             "imageUrl": "https://example.com/image1.jpg",
         },
     )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": "seller789",
+            "sellerName": "janedoe",
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "SOLD",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "imageUrl": "https://example.com/image2.jpg",
+        },
+    )
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
@@ -595,9 +633,10 @@ def test_search_with_user_search_negative():
     )
     assert response.status_code == 200
     assert response.json() == {"items": [], "totalItems": 0}
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_search_type():
+def test_search_with_invalid_search_type(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -620,9 +659,10 @@ def test_search_with_invalid_search_type():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_only_return_results_within_5km_of_location():
+def test_only_return_results_within_5km_of_location(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -681,9 +721,10 @@ def test_only_return_results_within_5km_of_location():
         ],
         "totalItems": 1,
     }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_missing_latitude():
+def test_search_with_missing_latitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -703,9 +744,10 @@ def test_search_with_missing_latitude():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_missing_longitude():
+def test_search_with_missing_longitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -725,9 +767,10 @@ def test_search_with_missing_longitude():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_out_of_bounds_latitude():
+def test_search_with_out_of_bounds_latitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -739,9 +782,10 @@ def test_search_with_out_of_bounds_latitude():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "latitude must be between -90 and 90"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_out_of_bounds_longitude():
+def test_search_with_out_of_bounds_longitude(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -753,9 +797,10 @@ def test_search_with_out_of_bounds_longitude():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "longitude must be between -180 and 180"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_sorting_by_relevance():
+def test_search_with_sorting_by_relevance(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -824,9 +869,10 @@ def test_search_with_sorting_by_relevance():
     assert results["items"][1]["listingID"] == "ghi789"
     assert results["items"][2]["listingID"] == "abc123"
     assert results["totalItems"] == 3
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_price_asc():
+def test_search_with_sorting_by_price_asc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -878,9 +924,10 @@ def test_search_with_sorting_by_price_asc():
     assert len(results["items"]) > 0
     assert results["items"][0]["price"] == 30.00
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "for")
 
 
-def test_search_with_sorting_by_price_desc():
+def test_search_with_sorting_by_price_desc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -932,9 +979,10 @@ def test_search_with_sorting_by_price_desc():
     assert len(results["items"]) > 0
     assert results["items"][0]["price"] == 450.00
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "for")
 
 
-def test_search_with_sorting_by_listed_time_asc():
+def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -987,9 +1035,10 @@ def test_search_with_sorting_by_listed_time_asc():
     assert results["items"][0]["listingID"] == "abc123"
     assert results["items"][1]["listingID"] == "def456"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_listed_time_desc():
+def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1042,9 +1091,10 @@ def test_search_with_sorting_by_listed_time_desc():
     assert results["items"][0]["listingID"] == "def456"
     assert results["items"][1]["listingID"] == "abc123"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_distance_asc():
+def test_search_with_sorting_by_distance_asc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1097,9 +1147,10 @@ def test_search_with_sorting_by_distance_asc():
     assert results["items"][0]["listingID"] == "abc123"
     assert results["items"][1]["listingID"] == "def456"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_distance_desc():
+def test_search_with_sorting_by_distance_desc(mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1152,9 +1203,10 @@ def test_search_with_sorting_by_distance_desc():
     assert results["items"][0]["listingID"] == "def456"
     assert results["items"][1]["listingID"] == "abc123"
     assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_sorting_criteria():
+def test_search_with_invalid_sorting_criteria(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1181,9 +1233,10 @@ def test_search_with_invalid_sorting_criteria():
             }
         ]
     }
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_pagination():
+def test_search_with_pagination(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1270,8 +1323,12 @@ def test_search_with_pagination():
     assert results["items"][4]["listingID"] == "listing14"
     assert results["totalItems"] == 15
 
+    # Check that insert_user_search was awaited 3 times
+    assert mock_insert_user_search.await_count == 3
+    mock_insert_user_search.assert_any_await(5, "Item")
 
-def test_search_with_missing_pagination_parameters():
+
+def test_search_with_missing_pagination_parameters(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1311,9 +1368,10 @@ def test_search_with_missing_pagination_parameters():
     assert results["items"][0]["listingID"] == "listing0"
     assert results["items"][19]["listingID"] == "listing19"
     assert results["totalItems"] == 21
+    mock_insert_user_search.assert_awaited_once_with(5, "Item")
 
 
-def test_search_with_negative_page_number():
+def test_search_with_negative_page_number(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1327,9 +1385,10 @@ def test_search_with_negative_page_number():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "page cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_zero_page_number():
+def test_search_with_zero_page_number(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1343,9 +1402,10 @@ def test_search_with_zero_page_number():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "page cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_negative_limit():
+def test_search_with_negative_limit(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1359,9 +1419,10 @@ def test_search_with_negative_limit():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "limit cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_zero_limit():
+def test_search_with_zero_limit(mock_insert_user_search):
     response = client.get(
         "/api/search",
         headers={"Authorization": "Bearer testtoken"},
@@ -1375,9 +1436,10 @@ def test_search_with_zero_limit():
     )
     assert response.status_code == 422
     assert response.json() == {"detail": "limit cannot be zero or negative"}
+    mock_insert_user_search.assert_not_awaited()
 
 
-def test_total_items_count_with_multiple_listings():
+def test_total_items_count_with_multiple_listings(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1417,9 +1479,10 @@ def test_total_items_count_with_multiple_listings():
     assert "totalItems" in results
     assert len(results["items"]) == 5
     assert results["totalItems"] == 10
+    mock_insert_user_search.assert_awaited_once_with(5, "Item")
 
 
-def test_total_items_count_with_filter():
+def test_total_items_count_with_filter(mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1460,3 +1523,532 @@ def test_total_items_count_with_filter():
     assert "totalItems" in results
     assert len(results["items"]) == 5
     assert results["totalItems"] == 10
+    mock_insert_user_search.assert_awaited_once_with(5, "Item")
+
+
+def test_reindex_listing_created():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Listing added successfully."}
+
+    es.indices.refresh(index=TEST_INDEX)
+    es_response = es.get(index=TEST_INDEX, id="test123")
+
+    assert es_response["found"]
+    assert es_response["_source"]["listingId"] == "test123"
+    assert es_response["_source"]["sellerId"] == "seller123"
+    assert es_response["_source"]["sellerName"] == "test_seller"
+    assert es_response["_source"]["title"] == "Test Product"
+    assert es_response["_source"]["description"] == "This is a test product."
+    assert es_response["_source"]["price"] == 100.0
+    assert es_response["_source"]["location"] == {"lat": 45.4215, "lon": -75.6972}
+    assert es_response["_source"]["status"] == "AVAILABLE"
+    assert es_response["_source"]["dateCreated"] == "2024-06-01T12:00:00Z"
+    assert es_response["_source"]["imageUrl"] == "https://example.com/image.jpg"
+
+
+def test_reindex_listing_created_with_missing_field():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        # "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "missing",
+                "loc": ["body", "imageUrl"],
+                "msg": "Field required",
+                "input": {
+                    "listingId": "test123",
+                    "sellerId": "seller123",
+                    "sellerName": "test_seller",
+                    "title": "Test Product",
+                    "description": "This is a test product.",
+                    "price": 100.0,
+                    "location": {"lat": 45.4215, "lon": -75.6972},
+                    "status": "AVAILABLE",
+                    "dateCreated": "2024-06-01T12:00:00Z",
+                },
+            }
+        ]
+    }
+
+
+def test_reindex_listing_created_with_invalid_price():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": -100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {"detail": "price cannot be negative"}
+
+
+def test_reindex_listing_created_with_invalid_latitude():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 95.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "ctx": {
+                    "le": 90.0,
+                },
+                "input": 95.4215,
+                "loc": [
+                    "body",
+                    "location",
+                    "lat",
+                ],
+                "msg": "Input should be less than or equal to 90",
+                "type": "less_than_equal",
+            },
+        ],
+    }
+
+
+def test_reindex_listing_created_with_invalid_longitude():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -195.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "ctx": {
+                    "ge": -180.0,
+                },
+                "input": -195.6972,
+                "loc": [
+                    "body",
+                    "location",
+                    "lon",
+                ],
+                "msg": "Input should be greater than or equal to -180",
+                "type": "greater_than_equal",
+            },
+        ],
+    }
+
+
+def test_reindex_listing_created_and_search(mock_insert_user_search):
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Listing added successfully."}
+
+    es.indices.refresh(index=TEST_INDEX)
+
+    response = client.get(
+        "/api/search",
+        headers={"Authorization": "Bearer testtoken"},
+        params={
+            "query": "Test Product",
+            "latitude": 45.4215,
+            "longitude": -75.6972,
+        },
+    )
+
+    assert response.status_code == 200
+    mock_insert_user_search.assert_awaited_once_with(5, "Test Product")
+    results = response.json()
+    assert results["totalItems"] == 1
+    assert results["items"][0]["listingID"] == "test123"
+    assert results["items"][0]["title"] == "Test Product"
+    assert results["items"][0]["sellerID"] == "seller123"
+    assert results["items"][0]["sellerName"] == "test_seller"
+    assert results["items"][0]["price"] == 100.0
+    assert results["items"][0]["imageUrl"] == "https://example.com/image.jpg"
+
+
+def test_reindex_listing_edited():
+    # Create a listing first
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+
+    # Edit the listing
+    edited_listing_data = listing_data.copy()
+    edited_listing_data["title"] = "Updated Test Product"
+    edited_listing_data["price"] = 150.0
+
+    response = client.patch(
+        "/api/search/reindex/listing-edited",
+        headers={"Authorization": "Bearer testtoken"},
+        json=edited_listing_data,
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Listing edited successfully."}
+
+    es.indices.refresh(index=TEST_INDEX)
+    es_response = es.get(index=TEST_INDEX, id="test123")
+
+    assert es_response["found"]
+    assert es_response["_source"]["title"] == "Updated Test Product"
+    assert es_response["_source"]["price"] == 150.0
+
+
+def test_reindex_listing_edited_with_invalid_price():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+
+    edited_listing_data = listing_data.copy()
+    edited_listing_data["price"] = -100.0
+
+    response = client.patch(
+        "/api/search/reindex/listing-edited",
+        headers={"Authorization": "Bearer testtoken"},
+        json=edited_listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {"detail": "price cannot be negative"}
+
+
+def test_reindex_listing_edited_with_invalid_latitude():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+
+    edited_listing_data = listing_data.copy()
+    edited_listing_data["location"]["lat"] = 95.4215
+
+    response = client.patch(
+        "/api/search/reindex/listing-edited",
+        headers={"Authorization": "Bearer testtoken"},
+        json=edited_listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "ctx": {
+                    "le": 90.0,
+                },
+                "input": 95.4215,
+                "loc": [
+                    "body",
+                    "location",
+                    "lat",
+                ],
+                "msg": "Input should be less than or equal to 90",
+                "type": "less_than_equal",
+            },
+        ],
+    }
+
+
+def test_reindex_listing_edited_with_invalid_longitude():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+
+    edited_listing_data = listing_data.copy()
+    edited_listing_data["location"]["lon"] = -195.6972
+
+    response = client.patch(
+        "/api/search/reindex/listing-edited",
+        headers={"Authorization": "Bearer testtoken"},
+        json=edited_listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "ctx": {
+                    "ge": -180.0,
+                },
+                "input": -195.6972,
+                "loc": [
+                    "body",
+                    "location",
+                    "lon",
+                ],
+                "msg": "Input should be greater than or equal to -180",
+                "type": "greater_than_equal",
+            },
+        ],
+    }
+
+
+def test_reindex_listing_edited_with_missing_field():
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+
+    edited_listing_data = listing_data.copy()
+    del edited_listing_data["imageUrl"]
+
+    response = client.patch(
+        "/api/search/reindex/listing-edited",
+        headers={"Authorization": "Bearer testtoken"},
+        json=edited_listing_data,
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "type": "missing",
+                "loc": ["body", "imageUrl"],
+                "msg": "Field required",
+                "input": {
+                    "listingId": "test123",
+                    "sellerId": "seller123",
+                    "sellerName": "test_seller",
+                    "title": "Test Product",
+                    "description": "This is a test product.",
+                    "price": 100.0,
+                    "location": {"lat": 45.4215, "lon": -75.6972},
+                    "status": "AVAILABLE",
+                    "dateCreated": "2024-06-01T12:00:00Z",
+                },
+            }
+        ]
+    }
+
+
+def test_reindex_listing_deleted():
+    # Create a listing first
+    listing_data = {
+        "listingId": "test123",
+        "sellerId": "seller123",
+        "sellerName": "test_seller",
+        "title": "Test Product",
+        "description": "This is a test product.",
+        "price": 100.0,
+        "location": {"lat": 45.4215, "lon": -75.6972},
+        "status": "AVAILABLE",
+        "dateCreated": "2024-06-01T12:00:00Z",
+        "imageUrl": "https://example.com/image.jpg",
+    }
+
+    response = client.post(
+        "/api/search/reindex/listing-created",
+        headers={"Authorization": "Bearer testtoken"},
+        json=listing_data,
+    )
+
+    assert response.status_code == 200
+
+    # Delete the listing
+    response = client.delete(
+        "/api/search/reindex/listing-deleted",
+        headers={"Authorization": "Bearer testtoken"},
+        params={"listingId": "test123"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Listing deleted successfully."}
+
+    es.indices.refresh(index=TEST_INDEX)
+
+    with pytest.raises(NotFoundError):
+        es.get(index=TEST_INDEX, id="test123")
+
+
+def test_reindex_listing_deleted_with_missing_listingId():
+    response = client.delete(
+        "/api/search/reindex/listing-deleted",
+        headers={"Authorization": "Bearer testtoken"},
+        params={},
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                "input": None,
+                "loc": ["query", "listingId"],
+                "msg": "Field required",
+                "type": "missing",
+            }
+        ]
+    }

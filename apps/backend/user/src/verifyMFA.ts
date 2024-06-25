@@ -11,8 +11,8 @@ const verifyMFA = async (
 ) => {
   const { email, token } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: "Email is required" });
+  if (!email || !token) {
+    return res.status(400).json({ error: "Email and totp token is required" });
   }
 
   const user = await db.oneOrNone<User>(
@@ -34,7 +34,7 @@ const verifyMFA = async (
 
   const invalid = totp.validate({ token });
 
-  if (!invalid) {
+  if (!invalid && invalid !== null) {
     return res
       .status(200)
       .json({ message: "Valid token, authentication success" });

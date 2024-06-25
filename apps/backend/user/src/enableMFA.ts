@@ -27,6 +27,10 @@ const enableMFA = async (
     return res.status(404).json({ error: "User not found" });
   }
 
+  if (user.secret) {
+    return res.status(400).json({ error: "MFA is already enabled" });
+  }
+
   // Generate secret key for user
   const secret_key = generateBase32Secret();
   user.secret = secret_key;

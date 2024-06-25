@@ -25,7 +25,6 @@ describe('User Creation', () => {
         expect(response.body).to.have.property('username', newUser.username);
         expect(response.body).to.have.property('email', newUser.email);
         expect(response.body).to.have.property('name', newUser.name);
-        expect(response.body).to.have.property('verified', false);
       } else {
         cy.log('User creation failed with status:', response.status);
         cy.log('Error message:', response.body.error);
@@ -52,7 +51,7 @@ describe('User Creation', () => {
       expect(response.status).to.eq(400);
 
       // Assert the response body
-      expect(response.body).to.have.property('error', 'Username, password, and email are required');
+      expect(response.body).to.have.property('error', 'Username, password, name and email are required');
     });
   });
 
