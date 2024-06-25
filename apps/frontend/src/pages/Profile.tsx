@@ -14,7 +14,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance";
 import useUser from "../hooks/useUser";
 import { User } from "../types";
-import { useParams } from "react-router-dom";
 import SearchBar from "../components/searchBar";
 
 interface ImageURLObject {
