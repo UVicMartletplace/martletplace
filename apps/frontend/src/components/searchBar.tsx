@@ -191,6 +191,9 @@ const SearchBar = () => {
         boxShadow: "0px 4px 6px #808080",
         paddingBottom: "10px",
         marginBottom: "10px",
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
       }}
     >
       <Grid item>

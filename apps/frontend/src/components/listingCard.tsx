@@ -5,10 +5,10 @@ import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 
-interface ListingObject {
+export interface ListingObject {
   listingID: string;
-  sellerID: string;
-  sellerName: string;
+  sellerID?: string;
+  sellerName?: string;
   title: string;
   description: string;
   price: number;
@@ -19,14 +19,24 @@ interface ListingObject {
 interface ListingCardProps {
   searchPerformed: boolean;
   listing: ListingObject;
+  canEdit?: boolean;
 }
 
-const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
+const ListingCard = ({
+  searchPerformed,
+  listing,
+  canEdit = false,
+}: ListingCardProps) => {
   const navigate = useNavigate();
   const [notInterested, setNotInterested] = useState(false);
 
   const handleListingClick = () => {
     navigate(`/listing/${listing.listingID}`);
+  };
+
+  const handleCanEdit = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    navigate(`/listing/edit/${listing.listingID}`);
   };
 
   const priceFormatter = new Intl.NumberFormat("en-CA", {
@@ -106,9 +116,9 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
               textTransform: "none",
               width: "calc(100% - 20px)",
             }}
-            onClick={handleNotInterested}
+            onClick={canEdit ? handleCanEdit : handleNotInterested}
           >
-            Not interested
+            {canEdit ? "Edit" : "Not interested"}
           </Button>
         </Grid>
       )}
@@ -119,9 +129,11 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
         <Typography variant="body2" gutterBottom>
           {listing.price !== 0 ? priceFormatter.format(listing.price) : "Free"}
         </Typography>
-        <Typography variant="body2" gutterBottom>
-          For Sale By: {listing.sellerName}
-        </Typography>
+        {!canEdit && (
+          <Typography variant="body2" gutterBottom>
+            For Sale By: {listing.sellerName}
+          </Typography>
+        )}
         <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
           Posted: {convertDate(listing.dateCreated)}
         </Typography>

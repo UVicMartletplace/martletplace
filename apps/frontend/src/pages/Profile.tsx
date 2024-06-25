@@ -13,6 +13,7 @@ import { useStyles } from "../styles/pageStyles";
 import { ChangeEvent, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance";
 import { useParams } from "react-router-dom";
+import SearchBar from "../components/searchBar";
 
 interface ImageURLObject {
   url: string;
@@ -184,6 +185,7 @@ const Profile = () => {
       }}
     >
       {isDesktop && <AccountSidebar selectedItem="My Profile" />}
+      {!isDesktop && <SearchBar />}
       <Typography variant={"h4"}>My Profile</Typography>
       <Avatar
         src={imageURL}
