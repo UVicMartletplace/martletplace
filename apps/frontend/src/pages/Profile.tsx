@@ -184,8 +184,11 @@ const Profile = () => {
         alignItems: "center",
       }}
     >
-      {isDesktop && <AccountSidebar selectedItem="My Profile" />}
-      {!isDesktop && <SearchBar />}
+      {isDesktop ? (
+        <AccountSidebar selectedItem="My Listings" />
+      ) : (
+        <SearchBar />
+      )}
       <Typography variant={"h4"}>My Profile</Typography>
       <Avatar
         src={imageURL}

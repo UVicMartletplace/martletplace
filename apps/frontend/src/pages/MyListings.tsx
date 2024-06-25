@@ -54,9 +54,12 @@ const MyListings = () => {
         alignItems: "center",
       }}
     >
-      {isDesktop && <AccountSidebar selectedItem="My Listings" />}
-      {!isDesktop && <SearchBar />}
-      <Typography variant={"h4"}>My Listings</Typography>
+      {isDesktop ? (
+        <AccountSidebar selectedItem="My Listings" />
+      ) : (
+        <SearchBar />
+      )}
+      <Typography variant="h4">My Listings</Typography>
       <Grid
         container
         direction="row"

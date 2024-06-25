@@ -104,22 +104,37 @@ const ListingCard = ({
       </Grid>
       {!searchPerformed && (
         <Grid item xs={12} sx={{ width: "100%" }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: notInterested
-                ? colors.martletplaceGrey
-                : "white",
-              color: "black",
-              outline: "1px solid #808080",
-              "&:hover": { backgroundColor: colors.martletplaceGrey },
-              textTransform: "none",
-              width: "calc(100% - 20px)",
-            }}
-            onClick={canEdit ? handleCanEdit : handleNotInterested}
-          >
-            {canEdit ? "Edit" : "Not interested"}
-          </Button>
+          {canEdit ? (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: colors.martletplaceNavyBlue,
+                color: colors.martletplaceWhite,
+                outline: "1px solid #808080",
+                "&:hover": { backgroundColor: colors.martletplaceBlueHover },
+                textTransform: "none",
+                width: "calc(100% - 20px)",
+              }}
+              onClick={handleCanEdit}
+            >
+              Edit
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: colors.martletplaceWhite,
+                color: "black",
+                outline: "1px solid #808080",
+                "&:hover": { backgroundColor: colors.martletplaceGrey },
+                textTransform: "none",
+                width: "calc(100% - 20px)",
+              }}
+              onClick={handleNotInterested}
+            >
+              Not interested
+            </Button>
+          )}
         </Grid>
       )}
       <Grid item xs={12} sx={{ width: "100%" }}>

@@ -303,7 +303,7 @@ const SearchBar = () => {
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
             <MenuItem onClick={handleAccountRoute}>My Profile</MenuItem>
-            <MenuItem onClick={handleListingRoute}>My Listing</MenuItem>
+            <MenuItem onClick={handleListingRoute}>My Listings</MenuItem>
             <MenuItem onClick={handleMessageRoute}>Messaging</MenuItem>
           </Menu>
         </>
