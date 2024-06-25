@@ -29,7 +29,7 @@ function App() {
         {/* TODO: Give path a listing ID?*/}
         <Route path="/messages" element={<Messages />} />
         {/* If not logged in redirect to login page */}
-        <Route path="/" element={<Homepage />} />
+        <Route path="/:query?" element={<Homepage />} />
       </Routes>
     </Router>
   );

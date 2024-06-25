@@ -50,7 +50,7 @@ describe("<ViewListing/>", () => {
     cy.contains("Sold by: Merlin the Wizard").should("be.visible");
     cy.contains("Posted on: Sat May 24 1980").should("be.visible");
     cy.contains("Message Seller").should("be.visible");
-    cy.get("img").should("have.length", 5);
+    cy.get("#carousel_img_box > img").should("have.length", 5);
   });
 
   it("should increment the image and change the visibility", () => {
@@ -76,16 +76,16 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
-    cy.get("img").should("have.length", 5);
+    cy.get("#carousel_img_box > img").should("have.length", 5);
     for (let x = 1; x < 5; x++) {
       cy.get("#carousel_index").should("have.text", x.toString());
       cy.get("#carousel_right").click();
-      cy.get("img").eq(x).should("be.visible");
+      cy.get("#carousel_img_box > img").eq(x).should("be.visible");
     }
 
     for (let x = 5; x > 1; x--) {
       cy.get("#carousel_index").should("have.text", x.toString());
-      cy.get("img")
+      cy.get("#carousel_img_box > img")
         .eq(x - 1)
         .should("be.visible");
       cy.get("#carousel_left").click();
