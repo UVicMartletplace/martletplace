@@ -21,7 +21,6 @@ const updateReview = async (
       `UPDATE reviews
        SET review = $1,
            rating_value = $2,
-           modified_at = NOW(),
             listing_id = $3
        WHERE review_id = $4
        RETURNING *`,
