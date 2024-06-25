@@ -1,10 +1,11 @@
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends
 import pandas as pd
-from sqlmodel import select
+from sqlalchemy import insert
+from sqlmodel import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.sql_models import Users, User_Clicks, User_Searches
+from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches
 from src.api_models import ListingSummary, Review
 from src.db import get_session
 from src.recommender import Recommender
@@ -31,12 +32,12 @@ async def get_recommendations(
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
     )
-    items_clicked = [item.listing_id for item in items_clicked]
+    items_clicked = [] #["B07WJK2116", "B07JPKH58Y"]# [item.listing_id for item in items_clicked]
 
     terms_searched = await session.exec(
         select(User_Searches).where(User_Searches.user_id == user_id)
     )
-    terms_searched = [term.search_term for term in terms_searched]
+    terms_searched = ["chocolate", "moisturizer"]#[term.search_term for term in terms_searched]
 
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
@@ -77,36 +78,44 @@ async def get_recommendations(
     return listing_summaries
 
 
-@app.post("/api/user-preferences/stop-suggesting-item/{id}")
-async def stop_suggesting_item(authorization: str, id: str):
-    # actual logic will go here
+@app.post("/api/recommendations/stop/{id}")
+async def stop_suggesting_item(authorization: str, id: str, session: AsyncSession = Depends(get_session)):
+    user_id = int(authorization) if authorization.isdigit() else None
+    users = await session.exec(select(Users).where(Users.user_id == user_id))
+    user = users.first()
+    if user is None:
+        raise HTTPException(
+            status_code=404, detail="User not found: " + str(authorization)
+        )
+    
+    await session.exec(insert(User_Preferences, values={"user_id": user_id, "listing_id": id, "weight": 1.0}))
 
     return {"message": "Preference updated successfully."}
 
 
-@app.put("/api/user-preferences/item-click")
-async def item_click(authorization: str, id: str):
-    # actual logic will go here
+# @app.put("/api/user-preferences/item-click")
+# async def item_click(authorization: str, id: str):
+#     # actual logic will go here
 
-    return {"message": "Item click recorded successfully."}
-
-
-@app.put("/api/user-preferences/item-buy")
-async def item_buy(authorization: str, id: str):
-    # actual logic will go here
-
-    return {"message": "Item purchase recorded successfully."}
+#     return {"message": "Item click recorded successfully."}
 
 
-@app.put("/api/user-preferences/search-term")
-async def search_term(authorization: str, search_term: str):
-    # actual logic will go here
+# @app.put("/api/user-preferences/item-buy")
+# async def item_buy(authorization: str, id: str):
+#     # actual logic will go here
 
-    return {"message": "Search term recorded successfully."}
+#     return {"message": "Item purchase recorded successfully."}
 
 
-@app.put("/api/user-preferences/review-add")
-async def review_add(authorization: str, review: Review):
-    # actual logic will go here
+# @app.put("/api/user-preferences/search-term")
+# async def search_term(authorization: str, search_term: str):
+#     # actual logic will go here
 
-    return {"message": "Review recorded successfully."}
+#     return {"message": "Search term recorded successfully."}
+
+
+# @app.put("/api/user-preferences/review-add")
+# async def review_add(authorization: str, review: Review):
+#     # actual logic will go here
+
+#     return {"message": "Review recorded successfully."}
