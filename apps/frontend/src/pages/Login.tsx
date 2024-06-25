@@ -32,6 +32,7 @@ const Login = () => {
       const response = await axios.post("/api/user/login", {
         email,
         password,
+        totpCode,
       });
 
       setUser(response.data as User);
