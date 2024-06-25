@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libhdf5-dev \
     gcc \
-    g++
+    g++ \
+    curl
 
 COPY ./requirements.txt ./
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
