@@ -1,10 +1,9 @@
 describe('Update Listing Endpoint', () => {
-  const baseUrl = 'http://localhost:8212/api/listing';
 
   it('should update a listing successfully', () => {
     cy.request({
       method: 'PATCH',
-      url: `${baseUrl}/1`, // assuming listing with ID 1 exists
+      url: '/api/listing/1', // assuming listing with ID 1 exists
       body: {
         listing: {
           title: 'Updated Listing One',
@@ -38,7 +37,7 @@ describe('Update Listing Endpoint', () => {
   it('should fail to update a non-existent listing', () => {
     cy.request({
       method: 'PATCH',
-      url: `${baseUrl}/9999`, // assuming listing with ID 9999 does not exist
+      url: '/api/listing/9999', // assuming listing with ID 9999 does not exist
       body: {
         listing: {
           title: 'Updated Listing Non-existent',

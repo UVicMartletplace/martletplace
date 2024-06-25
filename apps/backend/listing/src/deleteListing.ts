@@ -11,7 +11,7 @@ const deleteListing = async (
   const { id } = req.params;
 
   if (!id) {
-    console.log("request body empty");
+    console.error("request body empty");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -23,13 +23,13 @@ const deleteListing = async (
     );
 
     if (result.rowCount === 0) {
-      console.log("listing not found");
+      console.error("listing not found");
       return res.status(404).json({ error: "Listing not found" });
     }
 
     return res.status(200).json({ message: "Listing deleted successfully" });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
