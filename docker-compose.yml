@@ -164,10 +164,12 @@ services:
       - database
       - elasticsearch
     volumes:
-      - ./apps/data/pgsync/config:/pgsync/config
+      - ./apps/data/pgsync/config:/app/config
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
+      - PG_USER=martletplace
+      - PG_PASSWORD=johuigytfrdcv
     networks:
       - datalayer-database
       - datalayer-elasticsearch
