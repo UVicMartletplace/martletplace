@@ -3,7 +3,7 @@ import { IDatabase } from "pg-promise";
 import { User } from "./models/user";
 
 import OTPAuth from "otpauth";
-import * as base32 from "hi-base32";
+import { encode } from "hi-base32";
 import QRCode from "qrcode";
 import crypto from "crypto";
 
@@ -19,7 +19,7 @@ const enableMFA = async (
   }
 
   const user = await db.oneOrNone<User>(
-    "SELECT user_id, username, email, password, name, bio, profile_pic_url, verified FROM users WHERE email = $1",
+    "SELECT user_id, username, email, password, secret, name, bio, profile_pic_url, verified FROM users WHERE email = $1",
     [email],
   );
 
@@ -89,7 +89,7 @@ const enableMFA = async (
 
 const generateBase32Secret = () => {
   const buffer = crypto.randomBytes(15);
-  const base32secret = base32.encode(buffer).toString().replace(/=/g, "");
+  const base32secret = encode(buffer).toString().replace(/=/g, "");
   return base32secret.substring(0, 24);
 };
 

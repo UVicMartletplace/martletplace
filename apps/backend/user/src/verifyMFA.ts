@@ -32,9 +32,9 @@ const verifyMFA = async (
     secret: user.secret!,
   });
 
-  const invalid = totp.validate({ token });
+  const isValid = totp.validate({ token });
 
-  if (!invalid && invalid !== null) {
+  if (isValid === 0) {
     return res
       .status(200)
       .json({ message: "Valid token, authentication success" });
