@@ -16,7 +16,7 @@ const createReview = async (
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
-  if (stars < 1 || stars > 5 ){
+  if (stars < 1 || stars > 5) {
     console.error("invalid rating value");
     return res.status(400).json({ error: "invalid rating value" });
   }
