@@ -22,11 +22,13 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       isPasswordValid = true;
     } else {
       const maybePassword = user?.password || "bananas";
-      isPasswordValid = await bcrypt.compare(password, maybePassword)
+      isPasswordValid = await bcrypt.compare(password, maybePassword);
     }
 
     if (!isPasswordValid || !user) {
-      return res.status(401).json({ error: "Invalid email or password", user: user });
+      return res
+        .status(401)
+        .json({ error: "Invalid email or password", user: user });
     }
 
     if (!user.verified) {
