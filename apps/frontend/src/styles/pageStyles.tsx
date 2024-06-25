@@ -1,7 +1,6 @@
 import { colors } from "./colors";
 
 export const vars = Object.freeze({
-  pageHeaderHeight: "3rem",
   messagesSendBoxHeight: "4rem",
 });
 
@@ -164,21 +163,17 @@ export const useStyles = () => ({
     padding: "10px 0",
     width: "45%",
   },
+
   // Messages page styles
-  messagesBox: {
-    height: `calc(100vh - ${vars.pageHeaderHeight})`,
-  },
   messagesConvSidebar: {
     overflowY: "scroll",
-    width: "40rem",
+    width: "20rem",
     height: "100%",
     borderRight: "2px solid",
     borderColor: colors.martletplaceGrey,
-  },
-  messagesMainBox: {
-    // Contains both the messages and the send box
-    width: "100%",
-    height: `calc(100vh - ${vars.messagesSendBoxHeight} - ${vars.pageHeaderHeight})`,
+    "@media (max-width: 740px)": {
+      width: "100%",
+    },
   },
   messagesMessagesBox: {
     height: "100%",
@@ -224,7 +219,7 @@ export const useStyles = () => ({
   },
   messagesConvBox: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "row" as "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: "1rem",
@@ -236,5 +231,20 @@ export const useStyles = () => ({
     width: "40px",
     height: "40px",
     borderRadius: "50%",
+  },
+  messagesConvPreviewText: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  messagesHideThreadButton: {
+    position: "absolute",
+    top: "0.5rem",
+    left: "0.5rem",
+    backgroundColor: colors.martletplaceNavyBlue,
+    color: colors.martletplaceWhite,
+    "&:hover": {
+      backgroundColor: colors.martletplaceBlueHover,
+    },
   },
 });
