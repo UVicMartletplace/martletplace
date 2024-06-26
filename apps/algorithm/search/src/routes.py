@@ -1,14 +1,12 @@
 import os
 from typing import Dict, Any
 
-from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import NotFoundError
+from elasticsearch import Elasticsearch, NotFoundError
 from fastapi import APIRouter, HTTPException, Header
 
 from .config import DEFAULT_INDEX, DISTANCE_TO_SEARCH_WITHIN, ES_ENDPOINT
 from .database import insert_user_search
 from .enums import Status, SearchType, Sort
-from .models import Listing
 from .validation import validate_search_params
 
 search_router = APIRouter()
@@ -53,7 +51,7 @@ async def search(
         ]
     elif searchType == "USERS":
         must_conditions = [
-            {"match": {"sellerName": query}},
+            {"match": {"users.name": query}},
             {"match": {"status": status}},
         ]
     else:
@@ -117,12 +115,12 @@ async def search(
         {
             "listingID": hit["_source"]["listingId"],
             "sellerID": hit["_source"]["sellerId"],
-            "sellerName": hit["_source"]["sellerName"],
+            "sellerName": hit["_source"]["users"]["name"],
             "title": hit["_source"]["title"],
             "description": hit["_source"]["description"],
             "price": hit["_source"]["price"],
             "dateCreated": hit["_source"]["dateCreated"],
-            "imageUrl": hit["_source"]["imageUrl"],
+            "imageUrl": hit["_source"]["image_urls"][0] if hit["_source"]["image_urls"] else None,
         }
         for hit in response["hits"]["hits"]
     ]
@@ -134,33 +132,3 @@ async def search(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"items": results, "totalItems": total_items}
-
-
-@search_router.post("/api/search/reindex/listing-created")
-async def post_listing(listing: Listing, authorization: str = Header(None)):
-    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    if listing.price < 0:
-        raise HTTPException(status_code=422, detail="price cannot be negative")
-
-    es.index(index=INDEX, id=listing.listingId, body=listing.dict())
-
-    return {"message": "Listing added successfully."}
-
-
-@search_router.patch("/api/search/reindex/listing-edited")
-async def patch_listing(listing: Listing, authorization: str = Header(None)):
-    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    if listing.price < 0:
-        raise HTTPException(status_code=422, detail="price cannot be negative")
-
-    es.index(index=INDEX, id=listing.listingId, body=listing.dict())
-
-    return {"message": "Listing edited successfully."}
-
-
-@search_router.delete("/api/search/reindex/listing-deleted")
-async def delete_listing(listingId: str, authorization: str = Header(None)):
-    INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-    es.delete(index=INDEX, id=listingId)
-
-    return {"message": "Listing deleted successfully."}
