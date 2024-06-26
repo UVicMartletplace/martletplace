@@ -64,6 +64,7 @@ const Profile = () => {
     try {
       return url.startsWith("data:image/");
     } catch (error) {
+      console.error("Error validating image:", error);
       return false;
     }
   };
@@ -97,6 +98,7 @@ const Profile = () => {
           setImageURL(base64String);
 
           if (!isImageValid(base64String)) {
+            setImageURL(originalProfile.profilePictureUrl);
             alert("Invalid image type. Please upload a valid image file.");
             return;
           }
