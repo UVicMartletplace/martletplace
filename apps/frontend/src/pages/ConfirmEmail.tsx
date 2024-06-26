@@ -18,7 +18,7 @@ const ConfirmEmail = () => {
     };
 
     confirmEmail();
-  }, [token]);
+  }, [token, navigate]);
 
   return (
     <div>
