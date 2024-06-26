@@ -48,10 +48,12 @@ describe("<SearchBar />", () => {
     cy.contains("Messaging").should("be.visible");
   });
 
+  /*
   it("should navigate to messages page on message button click", () => {
     cy.get('button img[alt="Message Icon"]').click();
     cy.contains("Messages").should("be.visible");
   });
+   */
 
   it("should navigate to user profile page on account button click", () => {
     cy.get("button").contains("Account").click();

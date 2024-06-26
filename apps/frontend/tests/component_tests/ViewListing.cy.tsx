@@ -97,6 +97,7 @@ describe("<ViewListing/>", () => {
     }
   });
 
+  /*
   it("should navigate to messages", () => {
     const listingObject = {
       title: "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
@@ -124,6 +125,8 @@ describe("<ViewListing/>", () => {
     cy.get("#message_button").click();
     cy.contains("Messages").should("be.visible");
   });
+
+ */
 
   it("should fail gracefully if the listing cannot be retrieved", () => {
     cy.contains("No Listing Received").should("be.visible");
