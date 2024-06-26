@@ -78,9 +78,9 @@ const EditListing = () => {
             title: title || "",
             description: description || "",
             price: +price || 0,
-            status: status || "AVAILABLE",
             images: images || [],
           },
+          status: status || "AVAILABLE",
         }));
         setListingValid(true);
       })
@@ -219,7 +219,7 @@ const EditListing = () => {
       ...prevState,
       status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
-    console.log("LISTING OBJECT")
+    console.log("LISTING OBJECT", newListingObject)
   };
 
   const handleDelete = () => {
