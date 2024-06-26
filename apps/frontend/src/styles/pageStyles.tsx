@@ -1,7 +1,4 @@
-import zIndex from "@mui/material/styles/zIndex";
 import { colors } from "./colors";
-import CreateListing from "../pages/CreateListing";
-import { LogoDev } from "@mui/icons-material";
 
 export const useStyles = () => ({
   // Login and Create Account page styles
