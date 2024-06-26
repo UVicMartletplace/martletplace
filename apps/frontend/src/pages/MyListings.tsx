@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import SearchBar from "../components/searchBar";
 import _axios_instance from "../_axios_instance";
 
+interface ImageUrls {
+  url: string;
+}
+
 interface MyListing {
   listingID: string;
   title: string;
@@ -14,7 +18,7 @@ interface MyListing {
   status: string;
   dateCreated: string;
   dateModified: string;
-  imageUrl: string[];
+  images: ImageUrls[];
 }
 
 const MyListings = () => {
@@ -33,7 +37,7 @@ const MyListings = () => {
             description: listing.description,
             price: listing.price,
             dateCreated: listing.dateCreated,
-            imageUrl: listing.imageUrl.length > 0 ? listing.imageUrl[0] : "",
+            imageUrl: listing.images.length > 0 ? listing.images[0].url : "",
           };
         });
         setListingObjects(modifiedListings);

@@ -28,7 +28,7 @@ describe("<MyListings />", () => {
       status: "AVAILABLE",
       dateCreated: "2021-11-01T00:00:00.000Z",
       dateModified: "2021-11-01T00:00:00.000Z",
-      imageUrl: "https://picsum.photos/200/300",
+      images: [{ url: "https://picsum.photos/200/300" }],
     };
 
     // Stubbing network request for getting profile information
@@ -54,17 +54,6 @@ describe("<MyListings />", () => {
   it("lets users edit listings", () => {
     const expectedListingsObject = [
       {
-        listingID: "1",
-        title: "Test Listing",
-        description: "A test listing",
-        price: 50,
-        location: "Test Location",
-        status: "AVAILABLE",
-        dateCreated: "2021-11-01T00:00:00.000Z",
-        dateModified: "2021-11-01T00:00:00.000Z",
-        imageUrl: "https://picsum.photos/200/300",
-      },
-      {
         listingID: "2",
         title: "Test Listing 2",
         description: "Another test listing",
@@ -73,7 +62,7 @@ describe("<MyListings />", () => {
         status: "AVAILABLE",
         dateCreated: "2021-11-01T00:00:00.000Z",
         dateModified: "2021-11-01T00:00:00.000Z",
-        imageUrl: "https://picsum.photos/200/300",
+        images: [{ url: "https://picsum.photos/200/300" }],
       },
     ];
 
