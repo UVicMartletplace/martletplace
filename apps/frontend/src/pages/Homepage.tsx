@@ -128,7 +128,7 @@ const Homepage = () => {
       if (initialRender.current) {
         initialRender.current = false;
         _axios_instance
-          .get("/recommendations", { params: { page: 1, limit: 24 } })
+          .get("/recommendations", { params: { authorization: 5, page: 1, limit: 24 } })
           .then((response) => {
             setListingObjects(response.data);
           })
