@@ -4,7 +4,6 @@ import {
   CardContent,
   Container,
   Grid,
-  Link,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -121,7 +120,7 @@ const ViewListing = () => {
                     : "Free"}
                 </Typography>
                 <Typography variant={"body1"}>
-                  Sold by: <Link>{listingObject.seller_profile.name}</Link>
+                  Sold by: {listingObject.seller_profile.name}
                 </Typography>
                 <Typography variant={"body1"}>
                   Distance:{" "}
