@@ -15,7 +15,7 @@ describe("<SearchBar />", () => {
             <Route path="/user/profile" element={<Profile />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>
+      </TestProviders>,
     );
     cy.viewport(1280, 720);
   });
