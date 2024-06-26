@@ -12,7 +12,7 @@ describe("<SearchBar />", () => {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/messages" element={<Messages />} />\
-            <Route path="/user" element={<Profile />} />
+            <Route path="/user/profile" element={<Profile />} />
           </Routes>
         </MemoryRouter>
       </TestProviders>
