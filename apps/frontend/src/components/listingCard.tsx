@@ -52,7 +52,7 @@ const ListingCard = ({
   const handleNotInterested = () => {
     setNotInterested(true);
     _axios_instance
-      .post("/recomendations/stop", { id: listing.listingID })
+      .post("/recommendations/stop", { id: listing.listingID })
       .catch((error) => {
         console.error("Error stopping recommendations:", error);
       });
