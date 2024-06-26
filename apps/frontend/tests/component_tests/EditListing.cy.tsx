@@ -170,7 +170,10 @@ describe("<EditListing />", () => {
       });
     }).as("patchListing");
 
+    cy.get("#status-button", { timeout: 10000 }).should("be.visible").click();
+
     cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
+
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;
