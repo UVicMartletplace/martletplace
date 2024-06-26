@@ -51,11 +51,11 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setPriceError("");
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
     } else if (maxPrice !== null && newMinPrice > maxPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price",
+        "This price is not valid, please make sure the min price is less than the max price"
       );
     } else {
       setPriceError("");
@@ -72,11 +72,11 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setPriceError("");
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
     } else if (minPrice !== null && newMaxPrice < minPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price",
+        "This price is not valid, please make sure the min price is less than the max price"
       );
     } else {
       setPriceError("");
@@ -169,7 +169,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Min"
-            value={minPrice ?? ""}
+            value={minPrice === null ? "" : minPrice}
             onChange={handleMinPriceChange}
             type="number"
             error={!!priceError}
@@ -181,7 +181,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Max"
-            value={maxPrice ?? ""}
+            value={maxPrice === null ? "" : maxPrice}
             onChange={handleMaxPriceChange}
             type="number"
             error={!!priceError}
