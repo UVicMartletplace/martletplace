@@ -23,6 +23,7 @@ interface ListingObject {
   seller_profile: {
     userID: string;
     name: string;
+    username: string;
   };
   dateCreated: string;
   distance: number;
@@ -42,7 +43,7 @@ const ViewListing = () => {
     title: "Sorry This Listing Cannot Be Loaded",
     description: "Please Try again Later",
     price: 0,
-    seller_profile: { name: "John Smith", userID: "" },
+    seller_profile: { name: "John Smith", userID: "", username: "" },
     dateCreated: "2024-05-23T15:30:00Z",
     distance: 0,
     images: [{ url: "https://picsum.photos/1200/400" }],
@@ -81,6 +82,7 @@ const ViewListing = () => {
       navigate("/listing/edit/${id}");
     } else {
       //TODO Add a path for id
+      window.location.href = `mailto:${listingObject.seller_profile.username}@uvic.ca?subject=${listingObject.title.replace(/\s/g, "")}`;
       navigate("/messages");
     }
   };
