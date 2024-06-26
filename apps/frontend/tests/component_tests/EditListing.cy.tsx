@@ -170,8 +170,6 @@ describe("<EditListing />", () => {
       });
     }).as("patchListing");
 
-    cy.get("#status-button").click();
-
     cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
