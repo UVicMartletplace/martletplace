@@ -147,7 +147,6 @@ services:
     volumes: []
     environment:
       - ELASTIC_PASSWORD=serxdfcghjfc
-    #ports: [ 8311:8311 ]
     networks: [ datalayer-elasticsearch, pgsync-elasticsearch, search-elasticsearch ]
     mem_limit: 1GB
 
