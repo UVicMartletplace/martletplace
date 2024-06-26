@@ -35,7 +35,6 @@ interface ListingObject {
   images: ImageURLObject[];
 }
 
-
 interface NewListingObject {
   listing: ListingObject;
   status: string;
@@ -63,7 +62,7 @@ const EditListing = () => {
       },
       images: [],
     },
-    status: "AVAILABLE"
+    status: "AVAILABLE",
   });
 
   useEffect(() => {
@@ -219,7 +218,7 @@ const EditListing = () => {
       ...prevState,
       status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
-    console.log("LISTING OBJECT", newListingObject)
+    console.log("LISTING OBJECT", newListingObject);
   };
 
   const handleDelete = () => {
