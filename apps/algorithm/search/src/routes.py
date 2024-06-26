@@ -72,25 +72,28 @@ async def search(
             price_range["lte"] = maxPrice
         search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
 
-    search_body["query"]["bool"]["filter"].append(
-        {
-            "geo_distance": {
-                "distance": DISTANCE_TO_SEARCH_WITHIN,
-                "location": {"lat": latitude, "lon": longitude},
-            }
-        }
-    )
+    # Commenting out the location-based filtering
+    # search_body["query"]["bool"]["filter"].append(
+    #     {
+    #         "geo_distance": {
+    #             "distance": DISTANCE_TO_SEARCH_WITHIN,
+    #             "location": {"lat": latitude, "lon": longitude},
+    #         }
+    #     }
+    # )
 
+    # Commenting out the location-based sorting
     if "DISTANCE" in sort:
-        search_body["sort"].append(
-            {
-                "_geo_distance": {
-                    "location": {"lat": latitude, "lon": longitude},
-                    "order": "asc" if sort == "DISTANCE_ASC" else "desc",
-                    "unit": "km",
-                }
-            }
-        )
+        pass
+        # search_body["sort"].append(
+        #     {
+        #         "_geo_distance": {
+        #             "location": {"lat": latitude, "lon": longitude},
+        #             "order": "asc" if sort == "DISTANCE_ASC" else "desc",
+        #             "unit": "km",
+        #         }
+        #     }
+        # )
     else:
         sort_options = {
             "RELEVANCE": "_score",
