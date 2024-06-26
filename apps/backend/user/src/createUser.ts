@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import bcrypt from "bcryptjs";
-import { enableMFA } from "./enableMFA";
+import { totpSecretGen } from "./totpSecretGen";
 
 // createUser route
 const createUser = async (
@@ -38,13 +38,16 @@ const createUser = async (
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  // Create MFA token prior to returning user
+  const totp_secret = await totpSecretGen();
+
   const query = `
-    INSERT INTO users (username, email, password, name, verified)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING user_id, username, email, name, bio, profile_pic_url;
+    INSERT INTO users (username, email, password, totp_secret, name, verified)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING user_id, username, email, totp_secret, name, bio, profile_pic_url;
   `;
 
-  const values = [username, email, hashedPassword, name, false];
+  const values = [username, email, hashedPassword, totp_secret, name, false];
 
   // Insert user into database
   try {
@@ -53,10 +56,6 @@ const createUser = async (
     if (!user) {
       return res.status(500).json({ error: "User not created" });
     }
-
-    // Create MFA token prior to returning user
-    const totp_secret = await enableMFA(email, res, db);
-    user.totp_secret = totp_secret;
 
     return res.status(201).send(user);
   } catch (err) {

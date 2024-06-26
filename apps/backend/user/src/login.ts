@@ -30,9 +30,9 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    if (!user.verified) {
-      return res.status(401).json({ error: "User is not verified" });
-    }
+    // if (!user.verified) {
+    //   return res.status(401).json({ error: "User is not verified" });
+    // }
 
     // Verify MFA totp token
     // Only vdo this if user obj has a secret key

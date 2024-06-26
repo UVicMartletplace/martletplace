@@ -25,6 +25,7 @@ describe('User Creation', () => {
         expect(response.body).to.have.property('username', newUser.username);
         expect(response.body).to.have.property('email', newUser.email);
         expect(response.body).to.have.property('name', newUser.name);
+        expect(response.body).to.have.property('totp_secret');
       } else {
         cy.log('User creation failed with status:', response.status);
         cy.log('Error message:', response.body.error);
