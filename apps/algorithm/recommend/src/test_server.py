@@ -12,5 +12,3 @@ def test_get_recommendations():
     )
     assert response.status_code == 200
     assert len(response.json()) == 10
-
-
