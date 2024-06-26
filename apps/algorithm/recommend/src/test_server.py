@@ -6,7 +6,7 @@ client = TestClient(app)
 
 def test_get_recommendations():
     response = client.get(
-        "/api/recommendations",
+        "/api/recommendations?authorization=1",
         headers={"authorization": "1"},
         params={"page": 1, "limit": 10},
     )
@@ -16,7 +16,7 @@ def test_get_recommendations():
 
 # def test_get_recommendations_invalid_user():
 #     response = client.get(
-#         "/api/recommendations",
+#         "/api/recommendations?authorization=abc",
 #         headers={"authorization": "abc"},
 #         params={"page": 1, "limit": 10},
 #     )
@@ -26,7 +26,7 @@ def test_get_recommendations():
 
 # def test_get_recommendations_no_recommendations():
 #     response = client.get(
-#         "/api/recommendations",
+#         "/api/recommendations?authorization=2",
 #         headers={"authorization": "2"},
 #         params={"page": 1, "limit": 0},
 #     )

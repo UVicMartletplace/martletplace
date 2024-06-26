@@ -26,9 +26,9 @@ class Recommender:
             )
         except FileNotFoundError:
             os.makedirs("/app/src/training", exist_ok=True)
-            data_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.0/processed_data.csv"
-            cosine_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.0/cosine_similarity_matrix.npy"
-            item_vectors_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.0/normalized_item_vectors.npy"
+            data_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.1/processed_data.csv"
+            cosine_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.1/cosine_similarity_matrix.npy"
+            item_vectors_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.1/normalized_item_vectors.npy"
 
             self.download_file(data_url, "/app/src/training/processed_data.csv")
             self.download_file(
@@ -125,8 +125,6 @@ class Recommender:
         the recommender works, by calculating the "similarity" of the search
         terms to the items in the data, and then returning the most similar items.
         """
-        if not search_terms:
-            return np.array([])
         search_tfidf_tensor = Recommender.generate_tfidf_vector(search_terms, self.data)
         normalized_search_vectors = tf.nn.l2_normalize(search_tfidf_tensor, axis=1)
         aggregated_search_vector = tf.reduce_mean(

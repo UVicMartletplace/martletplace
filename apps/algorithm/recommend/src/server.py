@@ -1,3 +1,6 @@
+import ast
+import json
+import re
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends, Header
 import pandas as pd
@@ -16,9 +19,9 @@ recommender = Recommender()
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
 async def get_recommendations(
+    authorization: str,
     page: int = 1,
     limit: int = 20,
-    authorization: str = Header(None),
     session: AsyncSession = Depends(get_session),
 ):
     user_id = int(authorization) if authorization.isdigit() else None
@@ -39,42 +42,61 @@ async def get_recommendations(
     )
     terms_searched = [term.search_term for term in terms_searched]
 
+    await session.close()
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
     )
     if recommended_listings.size == 0:
         return []
-    # remove rows with NaN values
-    recommended_listings.dropna(inplace=True)
+    # replace rows with NaN values with 0s
+    recommended_listings = recommended_listings.fillna(0)
+
     columns = [
-        "sellerID",
-        "dateCreated",
-        "Category",
+        "listing_id",
+        "seller_id",
+        "buyer_id",
         "title",
-        "description",
-        "Price",
-        "listingID",
-        "imageUrl",
         "price",
-        "sellerName",
-        "combined_features",
+        "location",
+        "status",
+        "description",
+        "image_urls",
+        "created_at",
+        "modified_at",
+        "combined_features"
     ]
 
     recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
-    listing_summaries = [
-        ListingSummary(
-            listingID=row["listingID"],
-            sellerID=row["sellerID"],
-            sellerName=row["sellerName"],
+    listing_summaries = []
+    for _, row in recommended_listings.iterrows():
+        # this is so cursed, but since image urls are stored as a string of a python list, we gotta do this
+        try:
+            img_urls = ast.literal_eval(row['image_urls'])
+        except (ValueError, SyntaxError):
+            img_urls = []
+        # the locations are stored as html 💀 so parse out the longitude and latitude
+        pattern = re.compile(r"latitude=([-\d\.]+) longitude=([-\d\.]+)")
+        match = pattern.search(row["location"])
+        if match:
+            latitude, longitude = match.groups()
+            loc = {"latitude": float(latitude), "longitude": float(longitude)}
+        else:
+            loc = {"latitude": 0, "longitude": 0}
+        listing_summary = ListingSummary(
+            listing_id=row["listing_id"],
+            seller_id=row["seller_id"],
+            buyer_id=row["buyer_id"],
             title=row["title"],
+            price=row["price"],
+            location=loc,
+            status=row["status"],
             description=row["description"],
-            price=row["Price"],
-            dateCreated=row["dateCreated"],
-            imageUrl=row["imageUrl"],
+            image_urls=img_urls,
+            created_at=row["created_at"],
+            modified_at=row["modified_at"],
         )
-        for _, row in recommended_listings.iterrows()
-    ]
+        listing_summaries.append(listing_summary)
     return listing_summaries
 
 
