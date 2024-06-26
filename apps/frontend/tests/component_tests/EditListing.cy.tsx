@@ -126,6 +126,8 @@ describe("<EditListing />", () => {
       .type("{selectAll}0")
       .should("have.value", "0");
 
+    cy.get("#submit-button").should('exist')
+
     cy.get("#submit-button").click();
 
     cy.wait("@patchListing").then((interception) => {
