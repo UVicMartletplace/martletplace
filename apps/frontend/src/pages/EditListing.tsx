@@ -66,8 +66,9 @@ const EditListing = () => {
   });
 
   useEffect(() => {
-    _axios_instance.get(`/listing/${id}`)
-      .then(response => {
+    _axios_instance
+      .get(`/listing/${id}`)
+      .then((response) => {
         const { title, description, price, status, images } = response.data;
         setNewListingObject((prevState) => ({
           ...prevState,
