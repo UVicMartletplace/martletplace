@@ -174,6 +174,8 @@ const Profile = () => {
       <Box
         sx={{
           display: "flex",
+          position: "relative",
+          zIndex: 1,
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",

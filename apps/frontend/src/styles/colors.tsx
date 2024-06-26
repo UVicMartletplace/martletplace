@@ -1,6 +1,7 @@
 export const colors = {
   martletplaceBlack: "#000000",
   martletplaceNavyBlue: "#001647",
+  martletplaceLightBlue: "#00B1FF",
   martletplaceBlueHover: "#003366",
   martletplaceGrey: "#808080",
   martletplaceYellow: "#ffb42c",

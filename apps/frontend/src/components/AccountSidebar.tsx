@@ -25,7 +25,7 @@ const AccountSidebar = ({ selectedItem }: { selectedItem: string }) => {
   return (
     <>
       <SearchBar />
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ zIndex: 1 }}>
         <Drawer variant="permanent" sx={styles.drawer}>
           <Divider />
           <List>
@@ -53,11 +53,17 @@ const AccountSidebar = ({ selectedItem }: { selectedItem: string }) => {
               selected={selectedItem === "My Reviews"}
             />
             <Divider />
+            {/* Create listing Button */}
+            <ListItem
+              onClick={() => navigate("/listing/new")}
+              sx={styles.CreateListingButton}
+            >
+              <Typography variant="h5">Create Listing</Typography>
+            </ListItem>
+            <Divider />
             {/* Logout Button */}
-            <ListItem onClick={handleLogout} sx={styles.listItemButton}>
-              <Typography variant="h5" color="red">
-                Logout
-              </Typography>
+            <ListItem onClick={handleLogout} sx={styles.logOutButton}>
+              <Typography variant="h5">Logout</Typography>
             </ListItem>
           </List>
         </Drawer>

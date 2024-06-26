@@ -193,8 +193,8 @@ const SearchBar = () => {
         paddingBottom: "10px",
         marginBottom: "10px",
         position: "sticky",
-        top: 0,
-        zIndex: 1000,
+        top: -1,
+        zIndex: 10,
       }}
     >
       <Grid item>
@@ -306,6 +306,9 @@ const SearchBar = () => {
             <MenuItem onClick={handleAccountRoute}>My Profile</MenuItem>
             <MenuItem onClick={handleListingRoute}>My Listings</MenuItem>
             <MenuItem onClick={handleMessageRoute}>Messaging</MenuItem>
+            <MenuItem onClick={() => navigate("/listing/new")}>
+              Create Listing
+            </MenuItem>
           </Menu>
         </>
       )}

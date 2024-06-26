@@ -245,7 +245,7 @@ const Homepage = () => {
           direction="row"
           alignItems="center"
           justifyContent="center"
-          spacing={0}
+          spacing={2}
           key="grid-listings"
         >
           {Array.isArray(listingObjects) &&
