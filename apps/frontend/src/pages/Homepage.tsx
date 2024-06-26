@@ -128,7 +128,7 @@ const Homepage = () => {
       if (initialRender.current) {
         initialRender.current = false;
         _axios_instance
-        // remove hardcoded authorization once it can correctly be handled/after Sprint2 demo.
+          // remove hardcoded authorization once it can correctly be handled/after Sprint2 demo.
           .get("/recommendations", {
             params: { authorization: 5, page: 1, limit: 24 },
           })
