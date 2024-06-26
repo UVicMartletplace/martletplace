@@ -13,11 +13,17 @@ import Profile from "./pages/Profile";
 import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AuthRoute from "./components/Auth/AuthRoute";
+import ConfirmEmail from "./pages/ConfirmEmail";
 
 function App() {
   return (
     <UserProvider>
       <Router>
+        {/* Not wrapped intentionally */}
+          <Route
+            path="/confirm/:token"
+            element={<ConfirmEmail />}
+          />
         <Routes>
           {/* Auth Routes */}
           <Route
