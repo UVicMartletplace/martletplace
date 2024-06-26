@@ -107,15 +107,13 @@ const Homepage = () => {
         limit,
       },
     });
-
-    console.log("Full Request URL:", fullUrl);
     setSearchObject(searchObject);
     _axios_instance
-      .get("/search", { params: { ...searchObject } })
+      .get(fullUrl)
       .then((response) => {
-        setListingObjects(response.data.listings);
-        setTotalPages(Math.ceil(response.data.totalListings / 6));
-        setTotalItems(response.data.totalListings);
+        setListingObjects(response.data.items);
+        setTotalPages(Math.ceil(response.data.totalItems / 6));
+        setTotalItems(response.data.totalItems);
       })
       .catch((error) => {
         console.error("Error fetching listings:", error);
@@ -154,9 +152,11 @@ const Homepage = () => {
             break;
           case "minPrice":
             searchObject.minPrice = isNaN(+value) ? null : +value;
+            if (searchObject.minPrice === 0) searchObject.minPrice = null;
             break;
           case "maxPrice":
             searchObject.maxPrice = isNaN(+value) ? null : +value;
+            if (searchObject.maxPrice === 0) searchObject.maxPrice = null;
             break;
           case "status":
             searchObject.status = value;

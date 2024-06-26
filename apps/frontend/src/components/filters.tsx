@@ -169,7 +169,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Min"
-            value={minPrice ?? ""}
+            value={minPrice === null ? "" : minPrice}
             onChange={handleMinPriceChange}
             type="number"
             error={!!priceError}
@@ -181,7 +181,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Max"
-            value={maxPrice ?? ""}
+            value={maxPrice === null ? "" : maxPrice}
             onChange={handleMaxPriceChange}
             type="number"
             error={!!priceError}

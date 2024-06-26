@@ -25,7 +25,7 @@ describe("<Homepage />", () => {
     },
   ];
   const listingObjects = {
-    listings: [
+    items: [
       {
         listingID: "A23F29039B23",
         sellerID: "A23F29039B23",
@@ -87,7 +87,7 @@ describe("<Homepage />", () => {
         imageUrl: "https://picsum.photos/200/305",
       },
     ],
-    totalListings: 6,
+    totalItems: 6,
   };
 
   beforeEach(() => {
@@ -128,7 +128,7 @@ describe("<Homepage />", () => {
   });
 
   it("sorts listings by Price Ascending", () => {
-    cy.get('input[placeholder="Search"]').type("Calculus Textbook{enter}");
+    cy.get('input[placeholder="Search"]').type("Textbook{enter}");
     cy.wait("@searchListings");
     cy.contains("Sort By").should("be.visible");
     cy.contains("Relevance").click();
@@ -144,23 +144,20 @@ describe("<Homepage />", () => {
   });
 
   it("Performs a search and displays listings", () => {
-    cy.get('input[placeholder="Search"]').type("Calculus Textbook{enter}");
+    cy.get('input[placeholder="Search"]').type("Textbook{enter}");
 
     cy.wait("@searchListings");
 
     // Verify that listings are displayed
-    cy.get(".listing-card").should(
-      "have.length",
-      listingObjects.listings.length
-    );
+    cy.get(".listing-card").should("have.length", listingObjects.items.length);
 
     // Verify the contents of the first listing
     cy.get(".listing-card")
       .first()
       .within(() => {
-        cy.contains(listingObjects.listings[0].title).should("be.visible");
-        cy.contains(listingObjects.listings[0].sellerName).should("be.visible");
-        cy.contains(listingObjects.listings[0].price).should("be.visible");
+        cy.contains(listingObjects.items[0].title).should("be.visible");
+        cy.contains(listingObjects.items[0].sellerName).should("be.visible");
+        cy.contains(listingObjects.items[0].price).should("be.visible");
       });
   });
 
@@ -171,9 +168,6 @@ describe("<Homepage />", () => {
         cy.get("button").contains("Not interested").click();
       });
 
-    cy.get(".listing-card").should(
-      "have.length",
-      listingObjects.listings.length
-    );
+    cy.get(".listing-card").should("have.length", listingObjects.items.length);
   });
 });
