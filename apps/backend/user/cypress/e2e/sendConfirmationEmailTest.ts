@@ -1,5 +1,5 @@
 describe('Send Confirmation Email Endpoint', () => {
-  const baseUrl = 'http://localhost:8211/api/user/send-confirmation-email';
+  const baseUrl = 'http://localhost/api/user/send-confirmation-email';
   
   it('should send a confirmation email successfully', () => {
     const email = 'test@example.com';

@@ -1,5 +1,5 @@
 describe('User Creation', () => {
-  const baseUrl = 'http://localhost:8211/api/user';
+  const baseUrl = 'http://localhost/api/user';
 
   it('should create a new user', () => {
     // Define the new user data
