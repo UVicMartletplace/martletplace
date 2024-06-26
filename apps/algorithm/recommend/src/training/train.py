@@ -8,6 +8,7 @@ import src.db as db
 # Confirms if your computer is ideally using a GPU-accelerated version of TensorFlow.
 print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))
 
+
 async def main():
     session = await db.get_async_session()
     listings = await session.exec(text("SELECT * FROM listings"))
@@ -32,7 +33,9 @@ async def main():
         doc_len = len(seq)
         for word, freq in word_freq.items():
             tf_value = freq / doc_len
-            idf_value = np.log(len(data) / (1 + sum([1 for s in sequences if word in s])))
+            idf_value = np.log(
+                len(data) / (1 + sum([1 for s in sequences if word in s]))
+            )
             tfidf_matrix[i, word] = tf_value * idf_value
 
     tfidf_tensor = tf.convert_to_tensor(tfidf_matrix, dtype=tf.float32)

@@ -1,5 +1,4 @@
 import ast
-import json
 import re
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends, Header
@@ -63,7 +62,7 @@ async def get_recommendations(
         "image_urls",
         "created_at",
         "modified_at",
-        "combined_features"
+        "combined_features",
     ]
 
     recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
@@ -72,7 +71,7 @@ async def get_recommendations(
     for _, row in recommended_listings.iterrows():
         # this is so cursed, but since image urls are stored as a string of a python list, we gotta do this
         try:
-            img_urls = ast.literal_eval(row['image_urls'])
+            img_urls = ast.literal_eval(row["image_urls"])
         except (ValueError, SyntaxError):
             img_urls = []
         # the locations are stored as html 💀 so parse out the longitude and latitude
