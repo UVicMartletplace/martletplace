@@ -1,6 +1,10 @@
 export type MessageType = {
-  text: string;
+  message_id: string;
   sender_id: string;
+  receiver_id: string;
+  listing_id: string;
+  message_body: string;
+  created_at: string;
 };
 
 // Uniquely identified by a listing id and two user ids
@@ -9,13 +13,13 @@ export type ThreadType = {
   other_participant: {
     user_id: string;
     name: string;
-    profilePicture: string;
+    profile_pic_url: string;
   };
   last_message: {
     sender_id: string;
     receiver_id: string;
     listing_id: string;
     content: string;
-    sent_at: string;
+    created_at: string;
   };
 };
