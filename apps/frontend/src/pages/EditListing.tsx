@@ -272,7 +272,7 @@ const EditListing = () => {
       <SearchBar />
       <Container>
         {listingValid ? (
-          <Card>
+          <Card sx={{ marginTop: "32px" }}>
             <CardContent>
               <Typography variant="h2">Edit Listing</Typography>
               <Grid container spacing={1}>
