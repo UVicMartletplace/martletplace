@@ -34,12 +34,13 @@ const patchUser = async (
   const hasSpecialChar = /(?=.*\W)/.test(password);
   const hasMinLength = password.length >= 8;
 
-  if ( password !== "" &&
+  if (
+    password !== "" &&
     (!hasDigit ||
-    !hasLowercase ||
-    !hasUppercase ||
-    !hasSpecialChar ||
-    !hasMinLength)
+      !hasLowercase ||
+      !hasUppercase ||
+      !hasSpecialChar ||
+      !hasMinLength)
   ) {
     return res
       .status(400)
