@@ -139,8 +139,9 @@ const Homepage = () => {
       }
     } else {
       let match;
-      const regex = /\?([^&=]+)=([^&]*)/g;
-      while ((match = regex.exec(location.search)) !== null) {
+      const regex = /([^&=]+)=([^&]*)/g;
+      const searchString = location.search.slice(1);
+      while ((match = regex.exec(searchString)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
 
@@ -183,7 +184,7 @@ const Homepage = () => {
       setSearchObject(searchObject);
       handleSearch(searchObject);
     }
-  }, [location.pathname, searchObject, location.search]);
+  }, [location, searchObject]);
 
   return (
     <>

@@ -102,7 +102,6 @@ const SearchBar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("IN USE EFFECT", location);
     const searchObject: SearchObject = {
       query: "",
       minPrice: null,
@@ -115,16 +114,14 @@ const SearchBar = () => {
       page: 1,
       limit: 6,
     };
-    console.log("Location Pathname:", location.pathname);
-    if (location.pathname === "/query?") {
+    if (location.pathname === "/query") {
       //Something was searched
-      const regex = /\?([^&=]+)=([^&]*)/g;
+      const regex = /([^&=]+)=([^&]*)/g;
+      const searchString = location.search.slice(1);
       let match;
-      console.log("Location Search:", location.search);
-      while ((match = regex.exec(location.search))) {
+      while ((match = regex.exec(searchString)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
-        console.log("Key:", key, "Value:", value);
         switch (key) {
           case "query":
             searchObject.query = value;
@@ -163,7 +160,7 @@ const SearchBar = () => {
     }
     setSearchInput(searchObject.query);
     setFilters(searchObject);
-  }, [location.pathname, location.search, query]);
+  }, [location, query]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
