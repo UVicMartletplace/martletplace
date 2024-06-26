@@ -200,7 +200,7 @@ export const useStyles = () => ({
     overflowY: "scroll",
 
     display: "flex",
-    flexDirection: "column-reverse" as "column-reverse",
+    flexDirection: "column-reverse" as const,
     alignItems: "center",
     gap: "1rem",
 
@@ -239,7 +239,7 @@ export const useStyles = () => ({
   },
   messagesConvBox: {
     display: "flex",
-    flexDirection: "row" as "row",
+    flexDirection: "row" as const,
     alignItems: "center",
     justifyContent: "space-between",
     gap: "1rem",
