@@ -18,7 +18,7 @@ recommender = Recommender()
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
 async def get_recommendations(
-    authorization: str,
+    authorization: str = "5",
     page: int = 1,
     limit: int = 20,
     session: AsyncSession = Depends(get_session),
