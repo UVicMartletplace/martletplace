@@ -2,8 +2,7 @@ describe('Confirm Email Endpoint', () => {
   const baseUrl = 'http://localhost/api/user/confirm-email';
   
   it('should confirm the email successfully', () => {
-    // Mock the token extraction and user ID logic if needed
-    const userId = 2; // Hardcoded as per your initial code
+    const userId = 2;
 
     cy.request({
       method: 'POST',
