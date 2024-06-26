@@ -12,7 +12,7 @@ class Recommender:
     def download_file(self, url, destination):
         response = requests.get(url)
         response.raise_for_status()
-        with open(destination, 'wb') as f:
+        with open(destination, "wb") as f:
             f.write(response.content)
 
     def load_model(self):
@@ -31,13 +31,20 @@ class Recommender:
             item_vectors_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.0/normalized_item_vectors.npy"
 
             self.download_file(data_url, "/app/src/training/processed_data.csv")
-            self.download_file(cosine_url, "/app/src/training/cosine_similarity_matrix.npy")
-            self.download_file(item_vectors_url, "/app/src/training/normalized_item_vectors.npy")
+            self.download_file(
+                cosine_url, "/app/src/training/cosine_similarity_matrix.npy"
+            )
+            self.download_file(
+                item_vectors_url, "/app/src/training/normalized_item_vectors.npy"
+            )
 
             self.data = pd.read_csv("/app/src/training/processed_data.csv")
-            self.cosine_similarity_matrix = np.load("/app/src/training/cosine_similarity_matrix.npy")
-            self.normalized_item_vectors = np.load("/app/src/training/normalized_item_vectors.npy")
-            
+            self.cosine_similarity_matrix = np.load(
+                "/app/src/training/cosine_similarity_matrix.npy"
+            )
+            self.normalized_item_vectors = np.load(
+                "/app/src/training/normalized_item_vectors.npy"
+            )
 
     def recommend(self, items_clicked, terms_searched, page, limit):
         """
