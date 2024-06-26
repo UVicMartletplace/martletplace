@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 
-const confirmEmail = async (req: Request, res: Response, db: IDatabase<object>, ) => {
+const confirmEmail = async (
+  req: Request,
+  res: Response,
+  db: IDatabase<object>,
+) => {
   const code = req.body.code;
   console.log(code); // here so code is not an unused variable
   const userId = 2; // get from code (jwt token)

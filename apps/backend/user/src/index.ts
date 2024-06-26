@@ -53,7 +53,9 @@ app.patch("/api/user", (req, res) => patchUser(req, res, db));
 app.delete("/api/user", (req, res) => deleteUser(req, res, db));
 
 // Send Confirmation Email
-app.post("/api/user/send-confirmation-email", (req, res) => sendConfirmationEmail(req, res));
+app.post("/api/user/send-confirmation-email", (req, res) =>
+  sendConfirmationEmail(req, res),
+);
 
 // Confirm Email
 app.post("/api/user/confirm-email", (req, res) => confirmEmail(req, res, db));
