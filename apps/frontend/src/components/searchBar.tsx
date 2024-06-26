@@ -37,7 +37,7 @@ const SearchBar = () => {
   };
 
   const handleAccountRoute = () => {
-    navigate("/user");
+    navigate("/user/profile");
   };
 
   const handleReload = () => {
@@ -46,7 +46,7 @@ const SearchBar = () => {
   };
 
   const handleListingRoute = () => {
-    navigate("/listing/view");
+    navigate("/user/listings");
   };
 
   const [showFilters, setShowFilters] = useState(false);
@@ -114,11 +114,12 @@ const SearchBar = () => {
       page: 1,
       limit: 6,
     };
-    if (query !== undefined) {
+    if (location.pathname === "/query") {
       //Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
+      const searchString = location.search.slice(1);
       let match;
-      while ((match = regex.exec(query))) {
+      while ((match = regex.exec(searchString)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
         switch (key) {
@@ -159,7 +160,7 @@ const SearchBar = () => {
     }
     setSearchInput(searchObject.query);
     setFilters(searchObject);
-  }, [location.pathname, query]);
+  }, [location, query]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {

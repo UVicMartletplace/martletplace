@@ -17,7 +17,7 @@ describe('Update User Endpoint', () => {
       expect(response.status).to.eq(200);
       expect(response.body.user).to.have.property('id', 3);
       expect(response.body.user).to.have.property('username', 'PatchedUserTest');
-      expect(response.body.user).to.have.property('email', 'user3@example.com');
+      expect(response.body.user).to.have.property('email', 'user3@uvic.ca');
       expect(response.body.user).to.have.property('name', 'Patched user test');
       expect(response.body.user).to.have.property('bio', 'Hi! Im a patched user!');
       expect(response.body.user).to.have.property('profileUrl', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper');

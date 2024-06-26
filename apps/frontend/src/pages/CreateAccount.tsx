@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, FormEvent } from "react";
 import {
   Box,
   Button,
@@ -28,7 +28,7 @@ const CreateAccount = () => {
 
   const navigate = useNavigate();
 
-  const handleCreateAccount = async (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: FormEvent) => {
     e.preventDefault();
 
     // Check if email is a valid UVic email
@@ -36,7 +36,6 @@ const CreateAccount = () => {
       setEmailError("Please enter a valid UVic email.");
       return;
     } else {
-      // Clear email error if valid
       setEmailError("");
     }
 
@@ -44,13 +43,11 @@ const CreateAccount = () => {
     const usernameFormat = /^[a-zA-Z0-9]{1,20}$/;
 
     if (!usernameFormat.test(username)) {
-      // Add or update an error state for username validation
       setUsernameError(
         "Username must be between 1 and 20 characters and only contain letters or numbers.",
       );
       return;
     } else {
-      // Clear username error if valid
       setUsernameError("");
     }
 
@@ -61,31 +58,24 @@ const CreateAccount = () => {
       /[0-9]/.test(password) &&
       /[\W_]/.test(password)
     ) {
-      // Clear error message if password is valid
       setPasswordError("");
     } else {
       setPasswordError("Password does not meet the requirements.");
       return;
     }
 
-    axios
-      .post("/api/user", {
+    try {
+      await axios.post("/api/user", {
+        name,
+        username,
         email,
         password,
-      })
-      .then(function (response) {
-        console.log(response);
-        navigate("/");
-      })
-      .catch(function (error) {
-        console.error(error);
-        alert("Failed to create account. Please try again.");
-
-        // Handle server errors here
       });
 
-    // Temporary navigation to homepage until backend is ready: ticket #141
-    navigate("/");
+      navigate("/login");
+    } catch (error) {
+      alert("Failed to create account. Please try again.");
+    }
   };
 
   return (

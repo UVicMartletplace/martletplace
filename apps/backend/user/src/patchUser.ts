@@ -35,11 +35,12 @@ const patchUser = async (
   const hasMinLength = password.length >= 8;
 
   if (
-    !hasDigit ||
-    !hasLowercase ||
-    !hasUppercase ||
-    !hasSpecialChar ||
-    !hasMinLength
+    password !== "" &&
+    (!hasDigit ||
+      !hasLowercase ||
+      !hasUppercase ||
+      !hasSpecialChar ||
+      !hasMinLength)
   ) {
     return res
       .status(400)
@@ -78,7 +79,7 @@ const patchUser = async (
       patchedUser.name,
       patchedUser.bio,
       patchedUser.profile_pic_url,
-      hashedPassword,
+      patchedUser.password,
       id,
     ]);
 

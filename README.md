@@ -13,7 +13,11 @@ git clone https://github.com/UVicMartletplace/martletplace && cd martletplace
 docker compose up --build
 ```
 
-The development environment is now running and accesible at [http://local.martletplace.ca/](http://local.martletplace.ca/)
+The development environment is now running and accessible at [http://local.martletplace.ca/](http://local.martletplace.ca/)
+
+### Testing
+
+GitHub Actions will automatically run the entire test suite on each commit as part of each service's workflow. These results can be viewed by clicking on the green checkmark besides the most recent commit on `master` (or alternatively viewed in the `Actions` tab). To manually test, run the `test.sh` file in the root of the project. This will run the tests for all services sequentially.
 
 ## System Architecture
 

@@ -1,5 +1,6 @@
 import EditListing from "../../src/pages/EditListing";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import TestProviders from "../utils/TestProviders";
 
 const listingObject = {
   listingID: "A23F29039B23",
@@ -44,24 +45,30 @@ const listingObject = {
 describe("<EditListing />", () => {
   beforeEach(() => {
     cy.mount(
-      <MemoryRouter initialEntries={[`/listing/edit/1`]}>
-        <Routes>
-          <Route path="/listing/edit/:id" element={<EditListing />} />
-        </Routes>
-      </MemoryRouter>,
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
+          <Routes>
+            <Route path="/listing/edit/:id" element={<EditListing />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
     );
     cy.viewport(1280, 720);
-    cy.intercept("GET", "/api/listing/1", {
-      statusCode: 200,
-      body: listingObject,
+    cy.intercept("GET", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: listingObject,
+      });
     }).as("getListing");
   });
 
   it("renders", () => {
     // see: https://on.cypress.io/mounting-react
 
-    cy.intercept("PATCH", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("patchListing");
 
     cy.contains("Edit Listing").should("be.visible");
@@ -83,15 +90,17 @@ describe("<EditListing />", () => {
       },
     };
 
-    cy.intercept("PATCH", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("patchListing");
 
     cy.contains("Edit Listing").should("be.visible");
 
     cy.get("#field-description").should(
       "have.value",
-      listingObject.description,
+      listingObject.description
     );
 
     cy.get("#field-description").type("HELLO");
@@ -109,7 +118,7 @@ describe("<EditListing />", () => {
       .type("This is a bad textbook like the one used with SENG 474")
       .should(
         "have.value",
-        "This is a bad textbook like the one used with SENG 474",
+        "This is a bad textbook like the one used with SENG 474"
       );
 
     cy.get("#field-price")
@@ -128,8 +137,10 @@ describe("<EditListing />", () => {
   });
 
   it("Deletes listing correctly", () => {
-    cy.intercept("DELETE", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("DELETE", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("deleteListing");
 
     cy.get("#delete-button").click();
@@ -153,8 +164,10 @@ describe("<EditListing />", () => {
       },
     };
 
-    cy.intercept("PATCH", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("patchListing");
 
     cy.get("#status-button").click();

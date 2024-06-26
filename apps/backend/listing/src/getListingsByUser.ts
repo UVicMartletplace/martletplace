@@ -29,6 +29,7 @@ const getListingsByUser = async (
     );
 
     if (!listings.length) {
+      console.error("no listings found for this user");
       return res.status(404).json({ error: "No listings found for this user" });
     }
 
@@ -46,7 +47,7 @@ const getListingsByUser = async (
 
     return res.status(200).json(responseListings);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
