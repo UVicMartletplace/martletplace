@@ -15,20 +15,27 @@ import { useStyles } from "../styles/pageStyles.tsx";
 import { colors } from "../styles/colors.tsx";
 import SearchBar from "../components/searchBar.tsx";
 import Reviews, { Review } from "../components/Reviews.tsx";
+import useUser from "../hooks/useUser.ts";
 
 interface ListingObject {
   title: string;
   description: string;
   price: number;
-  seller_profile: { name: string };
+  seller_profile: {
+    userID: string;
+    name: string;
+  };
   dateCreated: string;
   distance: number;
   images: { url: string }[];
   reviews?: Review[];
+  status: string;
 }
 
 const ViewListing = () => {
   const classes = useStyles();
+
+  const user = useUser().user;
   const [listingReceived, setListingReceived] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -36,10 +43,11 @@ const ViewListing = () => {
     title: "Sorry This Listing Cannot Be Loaded",
     description: "Please Try again Later",
     price: 0,
-    seller_profile: { name: "John Smith" },
+    seller_profile: { name: "John Smith", userID: "" },
     dateCreated: "2024-05-23T15:30:00Z",
     distance: 0,
     images: [{ url: "https://picsum.photos/1200/400" }],
+    status: "AVAILABLE",
   });
 
   // Load the listing from the api given an ID
@@ -67,9 +75,15 @@ const ViewListing = () => {
     return dateTimeObject.toDateString();
   };
 
-  // TODO Make the routing with auth work properly
-  const handleNavToMessages = () => {
-    navigate("/messages");
+  const handleNavToMessagesAndEdit = () => {
+    console.log("User ID", user?.id);
+    console.log("Seller ID", listingObject.seller_profile.userID);
+    if (user?.id === listingObject.seller_profile.userID) {
+      navigate("/listing/edit/${id}");
+    } else {
+      //TODO Add a path for id
+      navigate("/messages");
+    }
   };
 
   return (
@@ -118,21 +132,30 @@ const ViewListing = () => {
                 <Typography variant={"body1"}>
                   Posted on: {convertDate(listingObject.dateCreated)}
                 </Typography>
+                {listingObject.status === "SOLD" ? (
+                  <Typography variant="h1" sx={{ color: "red" }}>
+                    SOLD
+                  </Typography>
+                ) : null}
                 <Button
                   type="button"
                   variant="contained"
                   fullWidth
                   sx={classes.button}
-                  onClick={handleNavToMessages}
+                  onClick={handleNavToMessagesAndEdit}
                   id={"message_button"}
                 >
-                  Message Seller
+                  {user?.id === listingObject.seller_profile.userID
+                    ? "Edit Listing"
+                    : "Message Seller"}
                 </Button>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={6}>
-                <Carousel
-                  imageURLs={listingObject.images.map((image) => image.url)}
-                />
+                {listingObject.images.length !== 0 ? (
+                  <Carousel
+                    imageURLs={listingObject.images.map((image) => image.url)}
+                  />
+                ) : null}
               </Grid>
             </Grid>
             <Reviews reviews={listingObject.reviews ?? []} />
