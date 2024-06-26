@@ -83,16 +83,18 @@ async def get_recommendations(
         else:
             loc = {"latitude": 0, "longitude": 0}
         listing_summary = ListingSummary(
-            listing_id=row["listing_id"],
-            seller_id=row["seller_id"],
-            buyer_id=row["buyer_id"],
+            listingID=row["listing_id"],
+            sellerID=row["seller_id"],
+            # Will query for actual seller name later.
+            sellerName="Seller",
+            buyerID=row["buyer_id"],
             title=str(row["title"]),
             price=row["price"],
             location=loc,
             status=str(row["status"]),
             description=str(row["description"]),
-            image_urls=img_urls,
-            created_at=row["created_at"],
+            imageUrl=str(img_urls[0]),
+            dateCreated=row["created_at"],
             modified_at=row["modified_at"],
         )
         listing_summaries.append(listing_summary)
