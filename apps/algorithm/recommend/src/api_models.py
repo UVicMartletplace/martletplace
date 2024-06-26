@@ -4,13 +4,14 @@ from datetime import datetime, timezone
 
 
 class ListingSummary(BaseModel):
-    listing_id: Optional[int] = Field(
+    listingID: Optional[int] = Field(
         default=None, description="The primary key for the listing."
     )
-    seller_id: int = Field(
+    sellerID: int = Field(
         ..., description="The ID of the seller, foreign key to users."
     )
-    buyer_id: Optional[int] = Field(
+    sellerName: str = Field(..., description="The name of the seller.")
+    buyerID: Optional[int] = Field(
         default=None, description="The ID of the buyer, if any."
     )
     title: str = Field(..., description="The title of the listing.")
@@ -22,10 +23,11 @@ class ListingSummary(BaseModel):
     description: Optional[str] = Field(
         default=None, description="A detailed description of the listing."
     )
-    image_urls: List[str] = Field(
-        default=[], description="A list of URLs for images associated with the listing."
+    imageUrl: str = Field(
+        default=...,
+        description="The URL for the first image associated with the listing.",
     )
-    created_at: datetime = Field(
+    dateCreated: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         description="The UTC timestamp when the listing was created.",
     )
