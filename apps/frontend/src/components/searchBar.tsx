@@ -33,7 +33,10 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const handleMessageRoute = () => {
-    navigate("/messages");
+    // TODO Fix
+    window.location.href = `mailto:example@example.com?subject=MessagingMock`;
+
+    //navigate("/messages");
   };
 
   const handleAccountRoute = () => {
