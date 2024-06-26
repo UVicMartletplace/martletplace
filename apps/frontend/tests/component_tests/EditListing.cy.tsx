@@ -60,6 +60,7 @@ describe("<EditListing />", () => {
         body: listingObject,
       });
     }).as("getListing");
+    cy.wait("@getListing");
   });
 
   it("renders", () => {

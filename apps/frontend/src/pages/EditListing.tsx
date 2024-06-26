@@ -369,8 +369,6 @@ const EditListing = () => {
                           >
                             Delete Posting
                           </Button>
-
-                          {newListingObject.listing.status === "AVAILABLE"?
                           <Button
                             sx={{
                               display: "inline",
@@ -387,28 +385,11 @@ const EditListing = () => {
                             variant="contained"
                             id="status-button"
                             onClick={handleUpdateStatus}
-                          > Mark Purchased
+                          >
+                            {newListingObject.listing.status === "AVAILABLE"
+                              ? "Mark Purchased"
+                              : "Mark Not Purchased"}
                           </Button>
-                            :
-                            <Button
-                            sx={{
-                              display: "inline",
-                              mt: 2,
-                              backgroundColor: colors.martletplaceYellow,
-                              "&:hover": {
-                                backgroundColor: colors.martletplaceYellowHover,
-                              },
-                              textTransform: "none",
-                              fontSize: "16px",
-                              padding: "10px 20px",
-                              margin: "10px",
-                            }}
-                            variant="contained"
-                            id="status-button"
-                            onClick={handleUpdateStatus}
-                          >Mark Not Purchased
-                          </Button>
-                          }
                         </Box>
                       </Box>
                     </form>
