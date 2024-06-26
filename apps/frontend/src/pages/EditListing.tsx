@@ -33,11 +33,12 @@ interface ListingObject {
   price: number;
   location: LocationObject;
   images: ImageURLObject[];
-  status: string;
 }
+
 
 interface NewListingObject {
   listing: ListingObject;
+  status: string;
 }
 
 const EditListing = () => {
@@ -61,8 +62,8 @@ const EditListing = () => {
         longitude: -123.3108,
       },
       images: [],
-      status: "AVAILABLE",
     },
+    status: "AVAILABLE"
   });
 
   useEffect(() => {
@@ -218,7 +219,7 @@ const EditListing = () => {
       ...prevState,
       listing: {
         ...prevState.listing,
-        status: prevState.listing.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
+        status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
       },
     }));
   };
@@ -384,7 +385,7 @@ const EditListing = () => {
                             id="status-button"
                             onClick={handleUpdateStatus}
                           >
-                            {newListingObject.listing.status === "AVAILABLE"
+                            {newListingObject.status === "AVAILABLE"
                               ? "Mark Purchased"
                               : "Mark Not Purchased"}
                           </Button>
