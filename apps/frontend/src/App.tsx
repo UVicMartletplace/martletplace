@@ -20,8 +20,8 @@ function App() {
     <UserProvider>
       <Router>
         {/* Not wrapped intentionally */}
-        <Route path="/confirm/:token" element={<ConfirmEmail />} />
         <Routes>
+          <Route path="/confirm/:token" element={<ConfirmEmail />} />
           {/* Auth Routes */}
           <Route
             path="/user/login"
