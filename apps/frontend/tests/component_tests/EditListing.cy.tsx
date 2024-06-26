@@ -166,6 +166,16 @@ describe("<EditListing />", () => {
       },
     };
 
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
+          <Routes>
+            <Route path="/listing/edit/:id" element={<EditListing />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+    );
+
     cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
