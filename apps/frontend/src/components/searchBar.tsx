@@ -37,7 +37,7 @@ const SearchBar = () => {
   };
 
   const handleAccountRoute = () => {
-    navigate("/user");
+    navigate("/user/profile");
   };
 
   const handleReload = () => {
@@ -46,7 +46,7 @@ const SearchBar = () => {
   };
 
   const handleListingRoute = () => {
-    navigate("/listing/view");
+    navigate("/user/listings");
   };
 
   const [showFilters, setShowFilters] = useState(false);
@@ -96,12 +96,14 @@ const SearchBar = () => {
     });
 
     navigate(`/query?${params.toString()}`);
+
   };
 
   const { query } = useParams();
   const location = useLocation();
 
   useEffect(() => {
+    console.log("IN USE EFFECT",location)
     const searchObject: SearchObject = {
       query: "",
       minPrice: null,
@@ -114,13 +116,14 @@ const SearchBar = () => {
       page: 1,
       limit: 6,
     };
-    if (query !== undefined) {
+    if (location.pathname !== "/") {
       //Something was searched
-      const regex = /([^&=]+)=([^&]*)/g;
+      const regex = /\?([^&=]+)=([^&]*)/g;
       let match;
-      while ((match = regex.exec(query))) {
+      while ((match = regex.exec(location.search))) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
+        console.log("Key:", key, "Value:", value);
         switch (key) {
           case "query":
             searchObject.query = value;

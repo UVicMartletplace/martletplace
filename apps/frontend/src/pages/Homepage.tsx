@@ -109,7 +109,7 @@ const Homepage = () => {
     console.log("Full Request URL:", fullUrl);
     setSearchObject(searchObject);
     _axios_instance
-      .get("/search", { params: { searchObject } })
+      .get("/search", { params: { ...searchObject } })
       .then((response) => {
         setListingObjects(response.data.listings);
         setTotalPages(Math.ceil(response.data.totalListings / 6));
@@ -128,7 +128,7 @@ const Homepage = () => {
       if (initialRender.current) {
         initialRender.current = false;
         _axios_instance
-          .get("/recomendations", { params: { page: 1, limit: 24 } })
+          .get("/recommendations", { params: { page: 1, limit: 24 } })
           .then((response) => {
             setListingObjects(response.data);
           })
@@ -139,8 +139,8 @@ const Homepage = () => {
       }
     } else {
       let match;
-      const regex = /([^&=]+)=([^&]*)/g;
-      while ((match = regex.exec(location.pathname)) !== null) {
+      const regex = /\?([^&=]+)=([^&]*)/g;
+      while ((match = regex.exec(location.search)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
 
