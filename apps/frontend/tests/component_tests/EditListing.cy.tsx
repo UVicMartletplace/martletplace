@@ -60,11 +60,11 @@ describe("<EditListing />", () => {
         body: listingObject,
       });
     }).as("getListing");
-    cy.wait("@getListing");
   });
 
   it("renders", () => {
     // see: https://on.cypress.io/mounting-react
+    cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
@@ -90,6 +90,7 @@ describe("<EditListing />", () => {
         status: "AVAILABLE",
       },
     };
+    cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
@@ -164,6 +165,8 @@ describe("<EditListing />", () => {
         status: "SOLD",
       },
     };
+
+    cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
