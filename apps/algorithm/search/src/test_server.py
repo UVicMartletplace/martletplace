@@ -64,7 +64,7 @@ def test_search_for_existing_listing(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -110,7 +110,7 @@ def test_search_for_multiple_listings(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -126,7 +126,7 @@ def test_search_for_multiple_listings(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -212,7 +212,7 @@ def test_search_with_price_range(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -260,7 +260,7 @@ def test_search_with_too_low_price_range_fail(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -294,7 +294,7 @@ def test_search_with_too_high_price_range_fail(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -377,7 +377,7 @@ def test_search_with_status(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -393,7 +393,7 @@ def test_search_with_status(mock_insert_user_search):
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -440,7 +440,7 @@ def test_search_with_status_sold(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -456,7 +456,7 @@ def test_search_with_status_sold(mock_insert_user_search):
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -529,7 +529,7 @@ def test_search_with_user_search(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -545,7 +545,7 @@ def test_search_with_user_search(mock_insert_user_search):
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -592,7 +592,7 @@ def test_search_with_user_search_negative(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -608,7 +608,7 @@ def test_search_with_user_search_negative(mock_insert_user_search):
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -805,7 +805,7 @@ def test_search_with_sorting_by_relevance(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image3.jpg"],
-            "users": {"name": "wally monga"}
+            "users": {"name": "wally monga"},
         },
     )
     es.index(
@@ -821,7 +821,7 @@ def test_search_with_sorting_by_relevance(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -837,7 +837,7 @@ def test_search_with_sorting_by_relevance(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -877,7 +877,7 @@ def test_search_with_sorting_by_price_asc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -893,7 +893,7 @@ def test_search_with_sorting_by_price_asc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -932,7 +932,7 @@ def test_search_with_sorting_by_price_desc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -948,7 +948,7 @@ def test_search_with_sorting_by_price_desc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -987,7 +987,7 @@ def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -1003,7 +1003,7 @@ def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1043,7 +1043,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -1059,7 +1059,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1215,11 +1215,11 @@ def test_search_with_invalid_sorting_criteria(mock_insert_user_search):
                 "type": "enum",
                 "loc": ["query", "sort"],
                 "msg": "Input should be 'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', "
-                       "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
+                "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
                 "input": "INVALID_SORT",
                 "ctx": {
                     "expected": "'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', 'LISTED_TIME_DESC', "
-                                "'DISTANCE_ASC' or 'DISTANCE_DESC'"
+                    "'DISTANCE_ASC' or 'DISTANCE_DESC'"
                 },
             }
         ]
@@ -1240,7 +1240,7 @@ def test_search_with_pagination(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
-            "users": {"name": f"seller_name{i}"}
+            "users": {"name": f"seller_name{i}"},
         }
         for i in range(15)
     ]
@@ -1333,7 +1333,7 @@ def test_search_with_missing_pagination_parameters(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
-            "users": {"name": f"seller_name{i}"}
+            "users": {"name": f"seller_name{i}"},
         }
         for i in range(21)
     ]
@@ -1445,7 +1445,7 @@ def test_total_items_count_with_multiple_listings(mock_insert_user_search):
             "status": "AVAILABLE",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
-            "users": {"name": f"seller_name{i}"}
+            "users": {"name": f"seller_name{i}"},
         }
         for i in range(10)
     ]
@@ -1489,7 +1489,7 @@ def test_total_items_count_with_filter(mock_insert_user_search):
             "status": "AVAILABLE" if i % 2 == 0 else "SOLD",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
-            "users": {"name": f"seller_name{i}"}
+            "users": {"name": f"seller_name{i}"},
         }
         for i in range(20)
     ]
