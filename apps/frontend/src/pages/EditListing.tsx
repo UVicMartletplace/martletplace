@@ -217,11 +217,9 @@ const EditListing = () => {
   const handleUpdateStatus = () => {
     setNewListingObject((prevState) => ({
       ...prevState,
-      listing: {
-        ...prevState.listing,
-        status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
-      },
+      status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
+    console.log("LISTING OBJECT")
   };
 
   const handleDelete = () => {
