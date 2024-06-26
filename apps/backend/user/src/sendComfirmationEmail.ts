@@ -2,7 +2,11 @@ import axios from "axios";
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 
-const sendConfirmationEmail = async (req: Request, res: Response, db: IDatabase<object>) => {
+const sendConfirmationEmail = async (
+  req: Request,
+  res: Response,
+  db: IDatabase<object>,
+) => {
   const email = req.body.email;
 
   if (!email) {
@@ -16,10 +20,10 @@ const sendConfirmationEmail = async (req: Request, res: Response, db: IDatabase<
   let userId;
 
   try {
-    userId = await db.oneOrNone(query, [email])
+    userId = await db.oneOrNone(query, [email]);
     if (!userId) {
       return res.status(404).json({ error: "User not found" });
-    }  
+    }
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
@@ -41,11 +45,9 @@ const sendConfirmationEmail = async (req: Request, res: Response, db: IDatabase<
 
     return res.status(200).json({ message: "Verification email sent" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        error: "Verification email could not be sent, please try again",
-      });
+    return res.status(500).json({
+      error: "Verification email could not be sent, please try again",
+    });
   }
 };
 
