@@ -54,7 +54,7 @@ app.delete("/api/user", (req, res) => deleteUser(req, res, db));
 
 // Send Confirmation Email
 app.post("/api/user/send-confirmation-email", (req, res) =>
-  sendConfirmationEmail(req, res),
+  sendConfirmationEmail(req, res, db),
 );
 
 // Confirm Email
