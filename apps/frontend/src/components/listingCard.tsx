@@ -63,17 +63,13 @@ const ListingCard = ({
       container
       direction="column"
       alignItems="stretch"
-      justifyContent="space-between"
-      spacing={1}
       sx={{
-        margin: "1.5%",
         cursor: "pointer",
         background: notInterested ? colors.martletplaceNotInterested : "none",
         pointerEvents: notInterested ? "none" : "auto",
         borderRadius: "8px",
         paddingBottom: "8px",
-        width: "100%",
-        maxWidth: "300px",
+        width: "260px",
         height: "100%", // Added to ensure all cards have the same height
         "@media (max-width: 600px)": {
           maxWidth: "none",
@@ -99,8 +95,7 @@ const ListingCard = ({
           alt={listing.title}
           style={{
             width: "100%",
-            height: "auto",
-            maxHeight: "200px",
+            height: "160px",
             objectFit: "cover",
             borderRadius: "8px",
           }}
