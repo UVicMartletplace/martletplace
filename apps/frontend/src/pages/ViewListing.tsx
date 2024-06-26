@@ -103,7 +103,7 @@ const ViewListing = () => {
           <CardContent>
             <Grid container spacing={2}>
               <Grid item sm={12} md={12} lg={6}>
-                <Typography variant={"h2"}>
+                <Typography variant={"h5"}>
                   {listingObject?.title ?? "Title not received"}
                 </Typography>
                 <Typography variant={"body1"}>
@@ -124,12 +124,6 @@ const ViewListing = () => {
                 </Typography>
                 <Typography variant={"body1"}>
                   Sold by: {listingObject.seller_profile.name}
-                </Typography>
-                <Typography variant={"body1"}>
-                  Distance:{" "}
-                  {listingObject.distance !== 0
-                    ? listingObject.distance + "km"
-                    : "Unknown"}
                 </Typography>
                 <Typography variant={"body1"}>
                   Posted on: {convertDate(listingObject.dateCreated)}
@@ -167,5 +161,4 @@ const ViewListing = () => {
     </>
   );
 };
-
 export default ViewListing;

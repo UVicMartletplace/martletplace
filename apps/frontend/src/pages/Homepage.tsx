@@ -8,6 +8,8 @@ import {
   MenuItem,
   SelectChangeEvent,
   InputLabel,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
 import ListingCard, { ListingObject } from "../components/listingCard.tsx";
@@ -186,6 +188,9 @@ const Homepage = () => {
     }
   }, [location, searchObject]);
 
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
+
   return (
     <>
       <SearchBar />
@@ -243,10 +248,15 @@ const Homepage = () => {
         <Grid
           container
           direction="row"
-          alignItems="center"
-          justifyContent="center"
-          spacing={2}
+          spacing={4}
           key="grid-listings"
+          justifyContent="center"
+          alignContent="flex-end"
+          sx={{
+            gap: 8,
+            paddingTop: "40px",
+            paddingLeft: isDesktop ? "0px" : "20px",
+          }}
         >
           {Array.isArray(listingObjects) &&
             listingObjects.map((listing: ListingObject) => (

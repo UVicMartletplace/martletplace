@@ -31,7 +31,7 @@ const ListingCard = ({
   const [notInterested, setNotInterested] = useState(false);
 
   const handleListingClick = () => {
-    navigate(`/listing/${listing.listingID}`);
+    navigate(`/listing/view/${listing.listingID}`);
   };
 
   const handleCanEdit = (event: React.MouseEvent) => {
@@ -70,7 +70,6 @@ const ListingCard = ({
         borderRadius: "8px",
         paddingBottom: "8px",
         width: "260px",
-        height: "100%", // Added to ensure all cards have the same height
         "@media (max-width: 600px)": {
           maxWidth: "none",
           width: "calc(100% - 20px)",

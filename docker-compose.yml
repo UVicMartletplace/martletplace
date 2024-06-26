@@ -88,7 +88,7 @@ services:
     environment:
       - DB_ENDPOINT=postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
       - ES_ENDPOINT=https://elastic:serxdfcghjfc@elasticsearch:8311
-    networks: [ proxy-search, search-datalayer ]
+    networks: [ proxy-search, search-datalayer, search-elasticsearch ]
 
   recommend:
     build: apps/algorithm/recommend
@@ -125,6 +125,7 @@ services:
       - message-datalayer
       - search-datalayer
       - recommend-datalayer
+      - pgsync-datalayer
 
   database:
     build: apps/data/database
@@ -146,8 +147,37 @@ services:
     volumes: []
     environment:
       - ELASTIC_PASSWORD=serxdfcghjfc
-    networks: [ datalayer-elasticsearch, search-datalayer ]
+    networks: [ datalayer-elasticsearch, pgsync-elasticsearch, search-elasticsearch ]
     mem_limit: 1GB
+
+  pgsync:
+    build: apps/data/pgsync
+    container_name: martletplace_pgsync
+    depends_on:
+      datalayer:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    environment:
+      - PG_HOST=datalayer
+      - PG_PORT=8300
+      - PG_USER=martletplace
+      - PG_PASSWORD=johuigytfrdcv
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=8311
+      - ELASTICSEARCH_USER=elastic
+      - ELASTICSEARCH_PASSWORD=serxdfcghjfc
+      - ELASTICSEARCH_SCHEME=https
+      - ELASTICSEARCH_VERIFY_CERTS=False
+      - REDIS_HOST=cache
+      - REDIS_PORT=8313
+      - REDIS_DB=0
+    networks:
+      - pgsync-datalayer
+      - pgsync-elasticsearch
+      - pgsync-cache
 
   cache:
     build: apps/data/cache
@@ -157,6 +187,7 @@ services:
     volumes: []
     environment:
       - DFLY_port=8313
+    networks: [ pgsync-cache ]
 
 networks:
   proxy-frontend:
@@ -171,8 +202,12 @@ networks:
   review-datalayer:
   message-datalayer:
   search-datalayer:
+  search-elasticsearch:
   recommend-datalayer:
   datalayer-database:
   datalayer-elasticsearch:
   datalayer-cache:
   datalayer-blob:
+  pgsync-datalayer:
+  pgsync-elasticsearch:
+  pgsync-cache:
