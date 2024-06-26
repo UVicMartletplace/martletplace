@@ -51,7 +51,7 @@ describe("<EditListing />", () => {
             <Route path="/listing/edit/:id" element={<EditListing />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>
+      </TestProviders>,
     );
     cy.viewport(1280, 720);
     cy.intercept("GET", "/api/listing/1", (req) => {
@@ -102,7 +102,7 @@ describe("<EditListing />", () => {
 
     cy.get("#field-description").should(
       "have.value",
-      listingObject.description
+      listingObject.description,
     );
 
     cy.get("#field-description").type("HELLO");
@@ -120,7 +120,7 @@ describe("<EditListing />", () => {
       .type("This is a bad textbook like the one used with SENG 474")
       .should(
         "have.value",
-        "This is a bad textbook like the one used with SENG 474"
+        "This is a bad textbook like the one used with SENG 474",
       );
 
     cy.get("#field-price")
@@ -173,7 +173,7 @@ describe("<EditListing />", () => {
             <Route path="/listing/edit/:id" element={<EditListing />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>
+      </TestProviders>,
     );
 
     cy.wait("@getListing");
@@ -187,7 +187,6 @@ describe("<EditListing />", () => {
     cy.get("#status-button", { timeout: 10000 }).should("be.visible").click();
 
     cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
-
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;
