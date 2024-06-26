@@ -1,16 +1,8 @@
 describe('Get Listing by ID Endpoint', () => {
-  const baseUrl = 'http://localhost:8212/api/listing';
-
   it('should retrieve a listing successfully and calculate zero distance for same coordinates', () => {
     cy.request({
       method: 'GET',
-      url: `${baseUrl}/1`, // assuming listing with ID 1 exists
-      body: {
-        user_location: {
-          latitude: 40.7128,  // same as listing 1 latitude
-          longitude: -74.0060 // same as listing 1 longitude
-        }
-      }
+      url: '/api/listing/1' // assuming listing with ID 1 exists
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('listingID', 1);
@@ -29,14 +21,8 @@ describe('Get Listing by ID Endpoint', () => {
   it('should fail to retrieve a non-existent listing', () => {
     cy.request({
       method: 'GET',
-      url: `${baseUrl}/9999`, // assuming listing with ID 9999 does not exist
-      failOnStatusCode: false,
-      body: {
-        user_location: {
-          latitude: 40.7128, // any valid latitude
-          longitude: -74.0060 // any valid longitude
-        }
-      }
+      url: '/api/listing/9999', // assuming listing with ID 9999 does not exist
+      failOnStatusCode: false
     }).then((response) => {
       expect(response.status).to.eq(404);
       expect(response.body).to.have.property('error', 'Listing not found');

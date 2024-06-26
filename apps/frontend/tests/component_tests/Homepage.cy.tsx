@@ -96,7 +96,7 @@ describe("<Homepage />", () => {
       body: listingObjects,
     }).as("searchListings");
 
-    cy.intercept("GET", "/api/recomendations*", {
+    cy.intercept("GET", "/api/recommendations*", {
       statusCode: 200,
       body: recomendationsObject,
     }).as("recomendations");

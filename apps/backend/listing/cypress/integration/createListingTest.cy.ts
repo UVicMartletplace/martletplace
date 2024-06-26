@@ -1,10 +1,9 @@
 describe('Create Listing Endpoint', () => {
-  const baseUrl = 'http://localhost:8212/api/listing';
 
   it('should create a new listing successfully', () => {
     cy.request({
       method: 'POST',
-      url: baseUrl,
+      url: '/api/listing',
       body: {
         listing: {
           title: 'Sample Listing',
@@ -35,7 +34,7 @@ describe('Create Listing Endpoint', () => {
   it('should fail to create a new listing with missing parameters', () => {
     cy.request({
       method: 'POST',
-      url: baseUrl,
+      url: '/api/listing',
       body: {
         listing: {
           title: 'Sample Listing',

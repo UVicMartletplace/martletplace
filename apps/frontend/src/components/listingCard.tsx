@@ -5,10 +5,10 @@ import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 
-interface ListingObject {
+export interface ListingObject {
   listingID: string;
-  sellerID: string;
-  sellerName: string;
+  sellerID?: string;
+  sellerName?: string;
   title: string;
   description: string;
   price: number;
@@ -19,14 +19,24 @@ interface ListingObject {
 interface ListingCardProps {
   searchPerformed: boolean;
   listing: ListingObject;
+  canEdit?: boolean;
 }
 
-const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
+const ListingCard = ({
+  searchPerformed,
+  listing,
+  canEdit = false,
+}: ListingCardProps) => {
   const navigate = useNavigate();
   const [notInterested, setNotInterested] = useState(false);
 
   const handleListingClick = () => {
     navigate(`/listing/${listing.listingID}`);
+  };
+
+  const handleCanEdit = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    navigate(`/listing/edit/${listing.listingID}`);
   };
 
   const priceFormatter = new Intl.NumberFormat("en-CA", {
@@ -52,30 +62,30 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
     <Grid
       container
       direction="column"
-      alignItems="flex-start"
-      justifyContent="flex-start"
-      spacing={3}
-      maxWidth="29vw"
+      alignItems="stretch"
       sx={{
-        margin: "1.5%",
         cursor: "pointer",
         background: notInterested ? colors.martletplaceNotInterested : "none",
         pointerEvents: notInterested ? "none" : "auto",
         borderRadius: "8px",
         paddingBottom: "8px",
+        width: "260px",
+        height: "100%", // Added to ensure all cards have the same height
+        "@media (max-width: 600px)": {
+          maxWidth: "none",
+          width: "calc(100% - 20px)",
+        },
       }}
       className="listing-card"
       onClick={handleListingClick}
     >
       <Grid
         item
-        xs={12}
         sx={{
-          width: "90%",
+          width: "100%",
           maxHeight: "40vh",
           display: "flex",
           justifyContent: "center",
-          alignSelf: "left",
           overflow: "hidden",
           borderRadius: "8px",
         }}
@@ -85,46 +95,74 @@ const ListingCard = ({ searchPerformed, listing }: ListingCardProps) => {
           alt={listing.title}
           style={{
             width: "100%",
-            height: "auto",
+            height: "160px",
             objectFit: "cover",
             borderRadius: "8px",
-            margin: "0px",
           }}
         />
       </Grid>
-      {!searchPerformed && (
-        <Grid item xs={12} sx={{ width: "100%" }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: notInterested
-                ? colors.martletplaceGrey
-                : "white",
-              color: "black",
-              outline: "1px solid #808080",
-              "&:hover": { backgroundColor: colors.martletplaceGrey },
-              textTransform: "none",
-              width: "calc(100% - 20px)",
-            }}
-            onClick={handleNotInterested}
-          >
-            Not interested
-          </Button>
+      <Grid
+        item
+        container
+        direction="column"
+        justifyContent="space-between"
+        flexGrow={1}
+      >
+        <Grid item>
+          <Typography variant="body1" gutterBottom>
+            {listing.title}
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            {listing.price !== 0
+              ? priceFormatter.format(listing.price)
+              : "Free"}
+          </Typography>
+          {!canEdit && (
+            <Typography variant="body2" gutterBottom>
+              For Sale By: {listing.sellerName}
+            </Typography>
+          )}
+          <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
+            Posted: {convertDate(listing.dateCreated)}
+          </Typography>
         </Grid>
-      )}
-      <Grid item xs={12} sx={{ width: "100%" }}>
-        <Typography variant="body1" gutterBottom>
-          {listing.title}
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          {listing.price !== 0 ? priceFormatter.format(listing.price) : "Free"}
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          For Sale By: {listing.sellerName}
-        </Typography>
-        <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
-          Posted: {convertDate(listing.dateCreated)}
-        </Typography>
+        {!searchPerformed && (
+          <Grid item sx={{ width: "100%", marginTop: "auto" }}>
+            {canEdit ? (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: colors.martletplaceNavyBlue,
+                  color: colors.martletplaceWhite,
+                  outline: "1px solid #808080",
+                  "&:hover": { backgroundColor: colors.martletplaceBlueHover },
+                  textTransform: "none",
+                  width: "100%",
+                  margin: "5px 0",
+                }}
+                onClick={handleCanEdit}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: colors.martletplaceWhite,
+                  color: "black",
+                  outline: "1px solid #808080",
+                  "&:hover": { backgroundColor: colors.martletplaceGrey },
+                  textTransform: "none",
+                  width: "100%",
+                  margin: "5px 0",
+                }}
+                onClick={handleNotInterested}
+              >
+                Not interested
+              </Button>
+            )}
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

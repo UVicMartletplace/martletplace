@@ -3,37 +3,34 @@ import { Box, Button, TextField, Typography, Link } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "../styles/pageStyles";
+import useUser from "../hooks/useUser";
 import axios from "axios";
+import { User } from "../types";
 
 const Login = () => {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const isFormIncomplete = !email || !password;
+  const { setUser } = useUser();
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    axios
-      .post("/api/login", {
+    try {
+      const response = await axios.post("/api/user/login", {
         email,
         password,
-      })
-      .then(function (response) {
-        console.log(response);
-        navigate("/");
-      })
-      .catch(function (error) {
-        console.error("Login failed:", error);
-        setError(
-          "Login unsuccessful. Invalid username and password combination",
-        );
       });
 
-    // Temporary navigation to homepage until backend is ready: ticket #140
-    navigate("/");
+      setUser(response.data as User);
+
+      navigate("/");
+    } catch (error) {
+      setError("Login unsuccessful. Invalid username and password combination");
+    }
   };
 
   return (

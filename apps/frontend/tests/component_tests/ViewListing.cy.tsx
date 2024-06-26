@@ -1,17 +1,20 @@
 import ViewListing from "../../src/pages/ViewListing.tsx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Messages from "../../src/pages/messages/Messages.tsx";
+import TestProviders from "../utils/TestProviders.tsx";
 
 describe("<ViewListing/>", () => {
   beforeEach(() => {
     // Mount the component
     cy.mount(
-      <MemoryRouter initialEntries={[`/listing/view/1`]}>
-        <Routes>
-          <Route path="/listing/view/:id" element={<ViewListing />} />
-          <Route path="/messages" element={<Messages />} />
-        </Routes>
-      </MemoryRouter>
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/view/1`]}>
+          <Routes>
+            <Route path="/listing/view/:id" element={<ViewListing />} />
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>,
     );
     cy.viewport(1280, 720);
   });
@@ -22,7 +25,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -32,6 +35,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "SOLD",
     };
     // Mock axios response
     cy.intercept("GET", "/api/listing/1", {
@@ -41,10 +45,10 @@ describe("<ViewListing/>", () => {
 
     // Assertions to verify the rendered content
     cy.contains(
-      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
+      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
     ).should("be.visible");
     cy.contains(
-      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!"
+      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!",
     ).should("be.visible");
     cy.contains("Price: $20,000.00").should("be.visible");
     cy.contains("Sold by: Merlin the Wizard").should("be.visible");
@@ -59,7 +63,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -69,6 +73,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "AVAILABLE",
     };
     // Mock axios response
     cy.intercept("GET", "/api/listing/1", {
@@ -98,7 +103,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -108,6 +113,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "AVAILABLE",
     };
     // Mock axios response
     cy.intercept("GET", "/api/listing/1", {
@@ -129,7 +135,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -139,6 +145,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "AVAILABLE",
       reviews: [
         {
           listing_review_id: 1,
@@ -163,7 +170,7 @@ describe("<ViewListing/>", () => {
     // Assertions to verify the rendered content
     cy.contains("John Doe").should("be.visible");
     cy.contains("This is the best product I have ever bought!").should(
-      "be.visible"
+      "be.visible",
     );
   });
 
@@ -173,7 +180,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -183,6 +190,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "AVAILABLE",
       reviews: [
         {
           listing_review_id: "1",
@@ -239,7 +247,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -249,6 +257,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "AVAILABLE",
       reviews: [
         {
           listing_review_id: "1",
@@ -301,7 +310,7 @@ describe("<ViewListing/>", () => {
       description:
         "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria! Each tear is carefully harvested under the light of a full moon and comes with a certificate of authenticity. Sprinkle them on your morning cereal for an extra magical start to your day!",
       price: 20000,
-      seller_profile: { name: "Merlin the Wizard" },
+      seller_profile: { name: "Merlin the Wizard", userID: "A13097430" },
       dateCreated: "1980-05-24T15:30:00Z",
       distance: 420.1,
       images: [
@@ -311,6 +320,7 @@ describe("<ViewListing/>", () => {
         { url: "https://picsum.photos/200/230" },
         { url: "https://picsum.photos/200/100" },
       ],
+      status: "AVAILABLE",
       reviews: [
         {
           listing_review_id: "1",

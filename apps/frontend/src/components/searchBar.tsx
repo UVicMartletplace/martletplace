@@ -37,7 +37,7 @@ const SearchBar = () => {
   };
 
   const handleAccountRoute = () => {
-    navigate("/user");
+    navigate("/user/profile");
   };
 
   const handleReload = () => {
@@ -46,7 +46,7 @@ const SearchBar = () => {
   };
 
   const handleListingRoute = () => {
-    navigate("/listing/view");
+    navigate("/user/listings");
   };
 
   const [showFilters, setShowFilters] = useState(false);
@@ -114,11 +114,12 @@ const SearchBar = () => {
       page: 1,
       limit: 6,
     };
-    if (query !== undefined) {
+    if (location.pathname === "/query") {
       //Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
+      const searchString = location.search.slice(1);
       let match;
-      while ((match = regex.exec(query))) {
+      while ((match = regex.exec(searchString)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
         switch (key) {
@@ -159,7 +160,7 @@ const SearchBar = () => {
     }
     setSearchInput(searchObject.query);
     setFilters(searchObject);
-  }, [location.pathname, query]);
+  }, [location, query]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -191,6 +192,9 @@ const SearchBar = () => {
         boxShadow: "0px 4px 6px #808080",
         paddingBottom: "10px",
         marginBottom: "10px",
+        position: "sticky",
+        top: -1,
+        zIndex: 10,
       }}
     >
       <Grid item>
@@ -300,8 +304,11 @@ const SearchBar = () => {
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
             <MenuItem onClick={handleAccountRoute}>My Profile</MenuItem>
-            <MenuItem onClick={handleListingRoute}>My Listing</MenuItem>
+            <MenuItem onClick={handleListingRoute}>My Listings</MenuItem>
             <MenuItem onClick={handleMessageRoute}>Messaging</MenuItem>
+            <MenuItem onClick={() => navigate("/listing/new")}>
+              Create Listing
+            </MenuItem>
           </Menu>
         </>
       )}

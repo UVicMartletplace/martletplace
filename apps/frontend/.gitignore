@@ -22,9 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
+../../idea
 # Frontend
 coverage
 .nyc_output
 .idea/
 cypress/screenshots
+vite.config.ts.timestamp*

@@ -8,7 +8,7 @@ describe('Get User by ID Endpoint', () => {
     }).then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('username', 'user4');
-      expect(response.body).to.have.property('email', 'user4@example.com');
+      expect(response.body).to.have.property('email', 'user4@uvic.ca');
       expect(response.body).to.have.property('name', 'User Four');
       expect(response.body).to.have.property('bio', 'Bio for user four');
       expect(response.body).to.have.property('profileUrl', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel');

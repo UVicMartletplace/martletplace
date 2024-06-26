@@ -107,6 +107,8 @@ export const useStyles = () => ({
   drawer: {
     width: "350px",
     flexShrink: 0,
+    position: "relative",
+    zIndex: 5,
     "& .MuiDrawer-paper": {
       width: "350px",
       boxSizing: "border-box",
@@ -152,6 +154,7 @@ export const useStyles = () => ({
     width: "45%",
     marginRight: "10px",
     marginLeft: "15px",
+    marginBottom: "30px",
   },
 
   cancelButton: {
@@ -162,6 +165,21 @@ export const useStyles = () => ({
     fontSize: "16px",
     padding: "10px 0",
     width: "45%",
+    marginBottom: "30px",
+  },
+  CreateListingButton: {
+    backgroundColor: colors.martletplaceYellow,
+    color: colors.martletplaceWhite,
+    "&:hover": { backgroundColor: colors.martletplaceYellowHover },
+    fontSize: "16px",
+    height: "80px",
+  },
+  logOutButton: {
+    backgroundColor: colors.martletplaceNavyBlue,
+    color: colors.martletplaceWhite,
+    "&:hover": { backgroundColor: colors.martletplaceBlueHover },
+    fontSize: "16px",
+    height: "80px",
   },
 
   // Messages page styles
