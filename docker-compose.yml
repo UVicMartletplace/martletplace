@@ -96,7 +96,9 @@ services:
     restart: unless-stopped
     depends_on: []
     volumes: [ ./apps/algorithm/recommend/src:/app/src ]
-    environment: []
+    environment:
+      # needs to be postgresql+asyncpg for sqlalchemy to be happy
+      - DB_ENDPOINT=postgresql+asyncpg://martletplace:johuigytfrdcv@datalayer:8300/martletplace
     networks: [ proxy-recommend, recommend-datalayer ]
 
   datalayer:

@@ -1,87 +1,151 @@
+import ast
+import re
 from typing import List
+from fastapi import FastAPI, HTTPException, Depends, Header
+import pandas as pd
+from sqlalchemy import insert
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches
+from src.api_models import ListingSummary
+from src.db import get_session
+from src.recommender import Recommender
 
 app = FastAPI()
-
-
-# Define Pydantic models
-class ListingSummary(BaseModel):
-    listingID: str = Field(..., example="A23F29039B23")
-    sellerID: str = Field(..., example="A23F29039B23")
-    sellerName: str = Field(..., example="John Johnson")
-    title: str = Field(..., example="Used Calculus Textbook")
-    description: str = Field(..., example="No wear and tear, drop-off available.")
-    price: float = Field(..., example=50)
-    dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
-    imageUrl: str = Field(..., example="image URL for first Image")
-
-
-class Review(BaseModel):
-    listing_rating_id: str = Field(..., example="A23F29039B23")
-    listing_review_id: str = Field(..., example="A523F29039B23")
-    reviewerName: str = Field(..., example="John Doe")
-    stars: int = Field(..., example=5)
-    comment: str = Field(
-        ...,
-        example="Great seller, the item was exactly as described and in perfect condition.",
-    )
-    userID: str = Field(..., example="A23434B090934")
-    listingID: str = Field(..., example="A23F29039B23")
-    dateCreated: str = Field(..., example="2024-05-23T15:30:00Z")
-    dateModified: str = Field(..., example="2024-05-23T15:30:00Z")
+recommender = Recommender()
 
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
-async def get_recommendations(authorization: str, page: int = 1, limit: int = 20):
-    # actual logic will go here
+async def get_recommendations(
+    authorization: str,
+    page: int = 1,
+    limit: int = 20,
+    session: AsyncSession = Depends(get_session),
+):
+    user_id = int(authorization) if authorization.isdigit() else None
+    users = await session.exec(select(Users).where(Users.user_id == user_id))
+    user = users.first()
+    if user is None:
+        raise HTTPException(
+            status_code=404, detail="User not found: " + str(authorization)
+        )
 
-    # This is a dummy response
-    return [
-        {
-            "listingID": "A23F29039B23",
-            "sellerID": "A23F29039B23",
-            "sellerName": "John Johnson",
-            "title": "Used Calculus Textbook",
-            "description": "No wear and tear, drop-off available.",
-            "price": 50,
-            "dateCreated": "2024-05-23T15:30:00Z",
-            "imageUrl": "image URL for first Image",
-        }
+    items_clicked = await session.exec(
+        select(User_Clicks).where(User_Clicks.user_id == user_id)
+    )
+    items_clicked = [item.listing_id for item in items_clicked]
+
+    terms_searched = await session.exec(
+        select(User_Searches).where(User_Searches.user_id == user_id)
+    )
+    terms_searched = [term.search_term for term in terms_searched]
+
+    await session.close()
+    recommended_listings = recommender.recommend(
+        items_clicked, terms_searched, page, limit
+    )
+    if recommended_listings.size == 0:
+        return []
+    # replace rows with NaN values with 0s
+    recommended_listings = recommended_listings.fillna(0)
+
+    columns = [
+        "listing_id",
+        "seller_id",
+        "buyer_id",
+        "title",
+        "price",
+        "location",
+        "status",
+        "description",
+        "image_urls",
+        "created_at",
+        "modified_at",
+        "combined_features",
     ]
 
+    recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
-@app.post("/api/user-preferences/stop-suggesting-item/{id}")
-async def stop_suggesting_item(authorization: str, id: str):
-    # actual logic will go here
+    listing_summaries = []
+    for _, row in recommended_listings.iterrows():
+        # this is so cursed, but since image urls are stored as a string of a python list, we gotta do this
+        try:
+            img_urls = ast.literal_eval(row["image_urls"])
+        except (ValueError, SyntaxError):
+            img_urls = []
+        # the locations are stored as html 💀 so parse out the longitude and latitude
+        pattern = re.compile(r"latitude=([-\d\.]+) longitude=([-\d\.]+)")
+        match = pattern.search(row["location"])
+        if match:
+            latitude, longitude = match.groups()
+            loc = {"latitude": float(latitude), "longitude": float(longitude)}
+        else:
+            loc = {"latitude": 0, "longitude": 0}
+        listing_summary = ListingSummary(
+            listing_id=row["listing_id"],
+            seller_id=row["seller_id"],
+            buyer_id=row["buyer_id"],
+            title=str(row["title"]),
+            price=row["price"],
+            location=loc,
+            status=str(row["status"]),
+            description=str(row["description"]),
+            image_urls=img_urls,
+            created_at=row["created_at"],
+            modified_at=row["modified_at"],
+        )
+        listing_summaries.append(listing_summary)
+    return listing_summaries
+
+
+@app.post("/api/recommendations/stop/{id}")
+async def stop_suggesting_item(
+    id: str,
+    authorization: str = Header(None),
+    session: AsyncSession = Depends(get_session),
+):
+    user_id = int(authorization) if authorization.isdigit() else None
+    users = await session.exec(select(Users).where(Users.user_id == user_id))
+    user = users.first()
+    if user is None:
+        raise HTTPException(
+            status_code=404, detail="User not found: " + str(authorization)
+        )
+
+    await session.exec(
+        insert(
+            User_Preferences,
+            values={"user_id": user_id, "listing_id": id, "weight": 1.0},
+        )
+    )
 
     return {"message": "Preference updated successfully."}
 
 
-@app.put("/api/user-preferences/item-click")
-async def item_click(authorization: str, id: str):
-    # actual logic will go here
+# @app.put("/api/user-preferences/item-click")
+# async def item_click(authorization: str, id: str):
+#     # actual logic will go here
 
-    return {"message": "Item click recorded successfully."}
-
-
-@app.put("/api/user-preferences/item-buy")
-async def item_buy(authorization: str, id: str):
-    # actual logic will go here
-
-    return {"message": "Item purchase recorded successfully."}
+#     return {"message": "Item click recorded successfully."}
 
 
-@app.put("/api/user-preferences/search-term")
-async def search_term(authorization: str, search_term: str):
-    # actual logic will go here
+# @app.put("/api/user-preferences/item-buy")
+# async def item_buy(authorization: str, id: str):
+#     # actual logic will go here
 
-    return {"message": "Search term recorded successfully."}
+#     return {"message": "Item purchase recorded successfully."}
 
 
-@app.put("/api/user-preferences/review-add")
-async def review_add(authorization: str, review: Review):
-    # actual logic will go here
+# @app.put("/api/user-preferences/search-term")
+# async def search_term(authorization: str, search_term: str):
+#     # actual logic will go here
 
-    return {"message": "Review recorded successfully."}
+#     return {"message": "Search term recorded successfully."}
+
+
+# @app.put("/api/user-preferences/review-add")
+# async def review_add(authorization: str, review: Review):
+#     # actual logic will go here
+
+#     return {"message": "Review recorded successfully."}
