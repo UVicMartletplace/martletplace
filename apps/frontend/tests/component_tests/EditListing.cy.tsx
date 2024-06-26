@@ -51,7 +51,7 @@ describe("<EditListing />", () => {
             <Route path="/listing/edit/:id" element={<EditListing />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>
+      </TestProviders>,
     );
     cy.viewport(1280, 720);
     cy.intercept("GET", "/api/listing/1", (req) => {
@@ -64,6 +64,7 @@ describe("<EditListing />", () => {
 
   it("renders", () => {
     // see: https://on.cypress.io/mounting-react
+    cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
@@ -89,6 +90,7 @@ describe("<EditListing />", () => {
         status: "AVAILABLE",
       },
     };
+    cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
@@ -100,7 +102,7 @@ describe("<EditListing />", () => {
 
     cy.get("#field-description").should(
       "have.value",
-      listingObject.description
+      listingObject.description,
     );
 
     cy.get("#field-description").type("HELLO");
@@ -118,7 +120,7 @@ describe("<EditListing />", () => {
       .type("This is a bad textbook like the one used with SENG 474")
       .should(
         "have.value",
-        "This is a bad textbook like the one used with SENG 474"
+        "This is a bad textbook like the one used with SENG 474",
       );
 
     cy.get("#field-price")
@@ -126,7 +128,7 @@ describe("<EditListing />", () => {
       .type("{selectAll}0")
       .should("have.value", "0");
 
-    cy.get("#submit-button").click();
+    cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;
@@ -164,15 +166,27 @@ describe("<EditListing />", () => {
       },
     };
 
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
+          <Routes>
+            <Route path="/listing/edit/:id" element={<EditListing />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>,
+    );
+
+    cy.wait("@getListing");
+
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
         statusCode: 200,
       });
     }).as("patchListing");
 
-    cy.get("#status-button").click();
+    cy.get("#status-button", { timeout: 10000 }).should("be.visible").click();
 
-    cy.get("#submit-button").click();
+    cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;

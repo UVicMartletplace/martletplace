@@ -66,9 +66,9 @@ const EditListing = () => {
   });
 
   useEffect(() => {
-    const fetchListing = async () => {
-      try {
-        const response = await _axios_instance.get(`/listing/${id}`);
+    _axios_instance
+      .get(`/listing/${id}`)
+      .then((response) => {
         const { title, description, price, status, images } = response.data;
         setNewListingObject((prevState) => ({
           ...prevState,
@@ -82,12 +82,10 @@ const EditListing = () => {
           },
         }));
         setListingValid(true);
-      } catch (error) {
-        alert("Listing not updated successfully");
-      }
-    };
-
-    fetchListing();
+      })
+      .catch(() => {
+        alert("Listing not available");
+      });
   }, [id]);
 
   const updateNewListingPayload = (
