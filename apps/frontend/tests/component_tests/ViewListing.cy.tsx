@@ -14,7 +14,7 @@ describe("<ViewListing/>", () => {
             <Route path="/messages" element={<Messages />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>,
+      </TestProviders>
     );
     cy.viewport(1280, 720);
   });
@@ -45,10 +45,10 @@ describe("<ViewListing/>", () => {
 
     // Assertions to verify the rendered content
     cy.contains(
-      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
+      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
     ).should("be.visible");
     cy.contains(
-      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!",
+      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!"
     ).should("be.visible");
     cy.contains("Price: $20,000.00").should("be.visible");
     cy.contains("Sold by: Merlin the Wizard").should("be.visible");
@@ -122,7 +122,7 @@ describe("<ViewListing/>", () => {
     }).as("getListing");
 
     cy.get("#message_button").click();
-    cy.contains("Messages").should("be.visible");
+    cy.contains("Conversations").should("be.visible");
   });
 
   it("should fail gracefully if the listing cannot be retrieved", () => {
@@ -170,7 +170,7 @@ describe("<ViewListing/>", () => {
     // Assertions to verify the rendered content
     cy.contains("John Doe").should("be.visible");
     cy.contains("This is the best product I have ever bought!").should(
-      "be.visible",
+      "be.visible"
     );
   });
 
