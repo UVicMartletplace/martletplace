@@ -4,7 +4,7 @@ from typing import Dict, Any
 from elasticsearch import Elasticsearch, NotFoundError
 from fastapi import APIRouter, HTTPException, Header
 
-from .config import DEFAULT_INDEX, DISTANCE_TO_SEARCH_WITHIN, ES_ENDPOINT
+from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
 from .enums import Status, SearchType, Sort
 from .validation import validate_search_params
