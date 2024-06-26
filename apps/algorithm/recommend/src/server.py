@@ -82,7 +82,7 @@ async def get_recommendations(
 async def stop_suggesting_item(
     id: str,
     authorization: str = Header(None),
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
 ):
     user_id = int(authorization) if authorization.isdigit() else None
     users = await session.exec(select(Users).where(Users.user_id == user_id))
