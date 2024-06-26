@@ -34,7 +34,16 @@
                         }
                     }
                 }
-            ]
+            ],
+            "transform":
+            {
+                "rename":
+                {
+                    "listing_id": "listingId",
+                    "seller_id": "sellerId",
+                    "created_at": "dateCreated"
+                }
+            }
         }
     }
 ]
