@@ -1,0 +1,49 @@
+[
+    {
+        "database": "martletplace",
+        "nodes": {
+            "table": "listings",
+            "columns": [
+                "listing_id",
+                "seller_id",
+                "title",
+                "price",
+                "location",
+                "status",
+                "description",
+                "image_urls",
+                "created_at"
+            ],
+            "children": [
+                {
+                    "table": "users",
+                    "columns": [
+                        "name"
+                    ],
+                    "relationship":
+                    {
+                        "variant": "object",
+                        "type": "one_to_one",
+                        "foreign_key": {
+                            "child": [
+                                "user_id"
+                            ],
+                            "parent": [
+                                "seller_id"
+                            ]
+                        }
+                    }
+                }
+            ],
+            "transform":
+            {
+                "rename":
+                {
+                    "listing_id": "listingId",
+                    "seller_id": "sellerId",
+                    "created_at": "dateCreated"
+                }
+            }
+        }
+    }
+]

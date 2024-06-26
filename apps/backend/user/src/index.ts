@@ -7,6 +7,8 @@ import { patchUser } from "./patchUser";
 import { deleteUser } from "./deleteUser";
 import { login } from "./login";
 import { logout } from "./logout";
+import { sendConfirmationEmail } from "./sendComfirmationEmail";
+import { confirmEmail } from "./confirmEmail";
 
 const PORT = 8211;
 
@@ -49,6 +51,14 @@ app.patch("/api/user", (req, res) => patchUser(req, res, db));
 
 // Delete user
 app.delete("/api/user", (req, res) => deleteUser(req, res, db));
+
+// Send Confirmation Email
+app.post("/api/user/send-confirmation-email", (req, res) =>
+  sendConfirmationEmail(req, res, db),
+);
+
+// Confirm Email
+app.post("/api/user/confirm-email", (req, res) => confirmEmail(req, res, db));
 
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
