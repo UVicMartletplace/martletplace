@@ -38,13 +38,7 @@ class Recommender:
                 item_vectors_url, "/app/src/training/normalized_item_vectors.npy"
             )
 
-            self.data = pd.read_csv("/app/src/training/processed_data.csv")
-            self.cosine_similarity_matrix = np.load(
-                "/app/src/training/cosine_similarity_matrix.npy"
-            )
-            self.normalized_item_vectors = np.load(
-                "/app/src/training/normalized_item_vectors.npy"
-            )
+            self.load_model()
 
     def recommend(self, items_clicked, terms_searched, page, limit):
         """
