@@ -53,6 +53,7 @@ const Profile = () => {
       };
       setProfile(userObject);
       setOriginalProfile(userObject);
+      setImageURL(userObject.profilePictureUrl);
     } else {
       console.error("User data not found");
     }
