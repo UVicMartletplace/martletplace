@@ -8,6 +8,8 @@ import {
   MenuItem,
   SelectChangeEvent,
   InputLabel,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
 import ListingCard, { ListingObject } from "../components/listingCard.tsx";
@@ -58,7 +60,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -68,11 +70,11 @@ const Homepage = () => {
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    currentPage: number,
+    currentPage: number
   ) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
@@ -186,6 +188,9 @@ const Homepage = () => {
     }
   }, [location, searchObject]);
 
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
+
   return (
     <>
       <SearchBar />
@@ -243,10 +248,15 @@ const Homepage = () => {
         <Grid
           container
           direction="row"
-          alignItems="center"
-          justifyContent="center"
-          spacing={2}
+          spacing={4}
           key="grid-listings"
+          justifyContent="center"
+          alignContent="flex-end"
+          sx={{
+            gap: 8,
+            paddingTop: "40px",
+            paddingLeft: isDesktop ? "0px" : "20px",
+          }}
         >
           {Array.isArray(listingObjects) &&
             listingObjects.map((listing: ListingObject) => (
