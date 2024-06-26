@@ -1,5 +1,5 @@
 describe('Get User by ID Endpoint', () => {
-  const baseUrl = 'http://localhost/api/user';
+  const baseUrl = 'http://localhost:8211/api/user';
 
   it('should retrieve a user successfully', () => {
     cy.request({
