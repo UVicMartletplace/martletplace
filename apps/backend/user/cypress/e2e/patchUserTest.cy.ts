@@ -1,5 +1,5 @@
 describe('Update User Endpoint', () => {
-  const baseUrl = 'http://localhost:8211/api/user';
+  const baseUrl = 'http://localhost/api/user';
   
   it('should update a user successfully', () => {
     cy.request({

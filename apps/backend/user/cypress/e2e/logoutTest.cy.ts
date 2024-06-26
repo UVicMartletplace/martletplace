@@ -1,5 +1,5 @@
 describe('Logout Endpoint', () => {
-    const baseUrl = 'http://localhost:8211/api/user/logout';
+    const baseUrl = 'http://localhost/api/user/logout';
     
     it('should log out a user successfully', () => {
       cy.request({

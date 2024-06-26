@@ -1,6 +1,6 @@
 
 describe('Login Endpoint', () => {
-  const baseUrl = 'http://localhost:8211/api/user/login';
+  const baseUrl = 'http://localhost/api/user/login';
 
   it('should fail to log in with invalid email', () => {
     const invalidEmailCredentials = {
