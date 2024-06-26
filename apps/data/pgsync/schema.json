@@ -6,25 +6,32 @@
             "columns": [
                 "listing_id",
                 "seller_id",
-                "buyer_id",
                 "title",
                 "price",
                 "location",
                 "status",
                 "description",
                 "image_urls",
-                "created_at",
-                "modified_at"
+                "created_at"
             ],
             "children": [
                 {
                     "table": "users",
                     "columns": [
-                        "user_id"
+                        "name"
                     ],
-                    "relationship": {
+                    "relationship":
+                    {
                         "variant": "object",
-                        "type": "one_to_one"
+                        "type": "one_to_one",
+                        "foreign_key": {
+                            "child": [
+                                "user_id"
+                            ],
+                            "parent": [
+                                "seller_id"
+                            ]
+                        }
                     }
                 }
             ]
