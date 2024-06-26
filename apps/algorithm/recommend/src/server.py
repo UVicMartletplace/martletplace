@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 import pandas as pd
 from sqlalchemy import insert
 from sqlmodel import select
@@ -16,9 +16,9 @@ recommender = Recommender()
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
 async def get_recommendations(
-    authorization: str,
     page: int = 1,
     limit: int = 20,
+    authorization: str = Header(None),
     session: AsyncSession = Depends(get_session),
 ):
     user_id = int(authorization) if authorization.isdigit() else None
@@ -80,7 +80,9 @@ async def get_recommendations(
 
 @app.post("/api/recommendations/stop/{id}")
 async def stop_suggesting_item(
-    authorization: str, id: str, session: AsyncSession = Depends(get_session)
+    id: str,
+    authorization: str = Header(None),
+    session: AsyncSession = Depends(get_session)
 ):
     user_id = int(authorization) if authorization.isdigit() else None
     users = await session.exec(select(Users).where(Users.user_id == user_id))
