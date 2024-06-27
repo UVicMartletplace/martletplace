@@ -26,9 +26,12 @@ The recommender is built using TensorFlow, with its API in FastAPI.
    the homepage at `http://localhost/`. Once you make an account, you can see
    the default recommendations. Perform a search using the search bar. Note that
    our dataset is limited, so you may want to stick with items we have (some
-   good termsinclude chocolate, hat, perfume, etc). Then, navigate back to the
-   homepage, and noticethat some of your recommendations have changed. The term
+   good terms include chocolate, hat, perfume, etc). Then, navigate back to the
+   homepage, and notice that some of your recommendations have changed. The term
    you searched may appear in the title of these items, or their descriptions.
+   It's also possible that searches may be flaky, as Elasticsearch likes to fail
+   for reasons currently unknown. If you're getting `502` errors while hitting
+   the search endpoint, let us know and we can just demo it for you in lab.
 
    Note that the recommender works for item clicks as well, but we have no way
    for you to test this. We can demonstrate this to you during a lab if necessary.
