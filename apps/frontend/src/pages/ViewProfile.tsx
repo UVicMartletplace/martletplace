@@ -1,4 +1,4 @@
-import { Avatar, Box, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import _axios_instance from "../_axios_instance";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -70,10 +70,10 @@ const ViewProfile = () => {
             textAlign: "center",
           }}
         >
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom id="username">
             <strong>Username:</strong> {profile.username}
           </Typography>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom id="name">
             <strong>Name:</strong> {profile.name}
           </Typography>
           <Box

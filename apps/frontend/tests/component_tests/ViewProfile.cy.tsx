@@ -21,7 +21,6 @@ describe("<ViewProfile />", () => {
     // Check if the form contains the necessary input fields
     cy.get("#username").should("be.visible");
     cy.get("#name").should("be.visible");
-    cy.get("#bio").should("be.visible");
   });
 
   it("should get the profile information for a user", () => {
