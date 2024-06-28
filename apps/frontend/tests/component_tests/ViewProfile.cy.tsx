@@ -48,5 +48,16 @@ describe("<ViewProfile />", () => {
         expect(interception.response.body).to.deep.equal(expectedProfileObject);
       }
     });
+
+    cy.contains("Username: " + expectedProfileObject.username).should(
+      "be.visible"
+    );
+    cy.contains("Name: " + expectedProfileObject.name).should("be.visible");
+    cy.contains(expectedProfileObject.bio).should("be.visible");
+    cy.get("div#profile_picture > img").should(
+      "have.attr",
+      "src",
+      expectedProfileObject.profileUrl
+    );
   });
 });
