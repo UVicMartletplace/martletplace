@@ -25,15 +25,16 @@ const ViewProfile = () => {
 
   // Load the profile info for another user from the api given an ID
   useEffect(() => {
-    console.log(`Fetching data for userID: ${id}`);
-    _axios_instance
-      .get("/user/" + id)
-      .then((response) => {
+    const fetchProfile = async () => {
+      try {
+        const response = await _axios_instance.get("/user/" + id);
         setProfile(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching profile data:", error);
-      });
+      }
+    };
+
+    fetchProfile();
   }, [id]);
 
   return (
@@ -58,36 +59,37 @@ const ViewProfile = () => {
           sx={{ width: 150, height: 150, mt: 2, mb: 2 }}
           id="profile_picture"
         />
-        <Box sx={{ mt: 2, width: "80%", maxWidth: "400px", height: "50px" }}>
-          <TextField
-            label="Username"
-            variant="outlined"
-            sx={{ width: "100%" }}
-            margin="normal"
-            value={profile.username}
-            id="username"
-            disabled={true}
-          />
-          <TextField
-            label="Name"
-            variant="outlined"
-            sx={{ width: "100%" }}
-            margin="normal"
-            value={profile.name}
-            id="name"
-            disabled={true}
-          />
-          <TextField
-            label="Bio"
-            variant="outlined"
-            sx={{ width: "100%" }}
-            margin="normal"
-            multiline
-            rows={4}
-            value={profile.bio}
-            id="bio"
-            disabled={true}
-          />
+        <Box
+          sx={{
+            mt: 2,
+            maxWidth: "300px",
+            padding: "20px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            backgroundColor: "#f9f9f9",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            <strong>Username:</strong> {profile.username}
+          </Typography>
+          <Typography variant="h6" gutterBottom>
+            <strong>Name:</strong> {profile.name}
+          </Typography>
+          <Box
+            sx={{
+              whiteSpace: "pre-line",
+              textAlign: "left",
+              mt: 1,
+              padding: "10px",
+              fontSize: "16px",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              backgroundColor: "#fff",
+            }}
+          >
+            {profile.bio}
+          </Box>
         </Box>
       </Box>
     </>
