@@ -3,10 +3,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { authenticate_request } from "../../lib/src/auth";
 import pgPromise from "pg-promise";
-import {
-  getMessageThreads,
-  useValidateGetMessageThreads,
-} from "./getMessageThreads";
+import { getMessageThreads } from "./getMessageThreads";
 import { getMessages, useValidateGetMessages } from "./getMessages";
 import { createMessage, useValidateCreateMessage } from "./createMessage";
 
@@ -40,7 +37,7 @@ app.get(
   useValidateGetMessages,
   (req, res) => getMessages(req, res, db),
 );
-app.get("/api/messages/overview", useValidateGetMessageThreads, (req, res) =>
+app.get("/api/messages/overview", (req, res) =>
   getMessageThreads(req, res, db),
 );
 
