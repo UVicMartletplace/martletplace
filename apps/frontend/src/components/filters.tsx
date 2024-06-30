@@ -49,20 +49,33 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     const newMinPrice = +event.target.value;
     if (event.target.value === "") {
       setPriceError("");
+      setMinPrice(null);
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
+    } else if (newMinPrice === null) {
+      setPriceError("");
+      setMinPrice(null);
     } else if (maxPrice !== null && newMinPrice > maxPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price",
+        "This price is not valid, please make sure the min price is less than the max price"
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       setMinPrice(priceValue >= 0 ? priceValue : priceValue * -1);
     }
-    setMinPrice(event.target.value ? Number(event.target.value) : null);
+    if (priceError === "") {
+      onFilterChange({
+        minPrice: event.target.value === "" ? null : +event.target.value,
+        maxPrice: maxPrice,
+        status: status,
+        searchType: type,
+        latitude: latitude,
+        longitude: longitude,
+      });
+    }
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -70,32 +83,60 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     const newMaxPrice = +event.target.value;
     if (event.target.value === "") {
       setPriceError("");
+      setMaxPrice(null);
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
+        "This price is not valid, please make sure the value is positive and in the form xx.xx"
       );
+    } else if (newMaxPrice === null) {
+      setPriceError("");
+      setMaxPrice(null);
     } else if (minPrice !== null && newMaxPrice < minPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price",
+        "This price is not valid, please make sure the min price is less than the max price"
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       setMaxPrice(priceValue >= 0 ? priceValue : priceValue * -1);
     }
-    setMaxPrice(event.target.value ? Number(event.target.value) : null);
+    if (priceError === "") {
+      onFilterChange({
+        minPrice: minPrice,
+        maxPrice: event.target.value === "" ? null : +event.target.value,
+        status: status,
+        searchType: type,
+        latitude: latitude,
+        longitude: longitude,
+      });
+    }
   };
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
     setStatus(event.target.value);
+    onFilterChange({
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      status: event.target.value,
+      searchType: type,
+      latitude: latitude,
+      longitude: longitude,
+    });
   };
 
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     setType(event.target.value);
+    onFilterChange({
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      status: status,
+      searchType: event.target.value,
+      latitude: latitude,
+      longitude: longitude,
+    });
   };
 
   const handleApplyFilters = () => {
-    // Pass the current filter values to the parent component only when "Apply Filters" button is clicked
     onFilterChange({
       minPrice: minPrice,
       maxPrice: maxPrice,
@@ -169,7 +210,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Min"
-            value={minPrice === null ? "" : minPrice}
+            value={minPrice === 0 ? "" : minPrice}
             onChange={handleMinPriceChange}
             type="number"
             error={!!priceError}
@@ -181,7 +222,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Max"
-            value={maxPrice === null ? "" : maxPrice}
+            value={maxPrice === 0 ? "" : maxPrice}
             onChange={handleMaxPriceChange}
             type="number"
             error={!!priceError}
@@ -250,14 +291,6 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
           justifyContent: "center",
         }}
       >
-        <Button
-          type="submit"
-          variant="contained"
-          sx={classes.button}
-          onClick={handleApplyFilters}
-        >
-          Apply Filters
-        </Button>
         <Button
           type="submit"
           variant="contained"
