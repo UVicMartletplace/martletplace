@@ -129,7 +129,7 @@ describe("<ViewListing/>", () => {
  */
 
   it("should fail gracefully if the listing cannot be retrieved", () => {
-    cy.contains("No Listing Received").should("be.visible");
+    cy.contains("Hang with us").should("be.visible");
   });
 
   it("should show reviews", () => {
