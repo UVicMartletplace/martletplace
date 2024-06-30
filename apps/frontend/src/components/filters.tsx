@@ -52,30 +52,29 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setMinPrice(null);
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+        "This price is not valid, please make sure the value is positive and in the form xx.xx",
       );
     } else if (newMinPrice === null) {
       setPriceError("");
       setMinPrice(null);
     } else if (maxPrice !== null && newMinPrice > maxPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price"
+        "This price is not valid, please make sure the min price is less than the max price",
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       setMinPrice(priceValue >= 0 ? priceValue : priceValue * -1);
     }
-    if (priceError === "") {
-      onFilterChange({
-        minPrice: event.target.value === "" ? null : +event.target.value,
-        maxPrice: maxPrice,
-        status: status,
-        searchType: type,
-        latitude: latitude,
-        longitude: longitude,
-      });
-    }
+    setMinPrice(newMinPrice === null ? null : +newMinPrice);
+    onFilterChange({
+      minPrice: event.target.value === "" ? null : +event.target.value,
+      maxPrice: maxPrice,
+      status: status,
+      searchType: type,
+      latitude: latitude,
+      longitude: longitude,
+    });
   };
 
   const handleMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -86,30 +85,29 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setMaxPrice(null);
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+        "This price is not valid, please make sure the value is positive and in the form xx.xx",
       );
     } else if (newMaxPrice === null) {
       setPriceError("");
       setMaxPrice(null);
     } else if (minPrice !== null && newMaxPrice < minPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price"
+        "This price is not valid, please make sure the min price is less than the max price",
       );
     } else {
       setPriceError("");
       const priceValue: number = +event.target.value;
       setMaxPrice(priceValue >= 0 ? priceValue : priceValue * -1);
     }
-    if (priceError === "") {
-      onFilterChange({
-        minPrice: minPrice,
-        maxPrice: event.target.value === "" ? null : +event.target.value,
-        status: status,
-        searchType: type,
-        latitude: latitude,
-        longitude: longitude,
-      });
-    }
+    setMaxPrice(newMaxPrice === null ? null : +newMaxPrice);
+    onFilterChange({
+      minPrice: minPrice,
+      maxPrice: event.target.value === "" ? null : +event.target.value,
+      status: status,
+      searchType: type,
+      latitude: latitude,
+      longitude: longitude,
+    });
   };
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
@@ -210,7 +208,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Min"
-            value={minPrice === 0 ? "" : minPrice}
+            value={minPrice === null ? "" : minPrice}
             onChange={handleMinPriceChange}
             type="number"
             error={!!priceError}
@@ -222,7 +220,7 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
             id="outlined-adornment-amount"
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
             placeholder="Max"
-            value={maxPrice === 0 ? "" : maxPrice}
+            value={maxPrice === null ? "" : maxPrice}
             onChange={handleMaxPriceChange}
             type="number"
             error={!!priceError}
