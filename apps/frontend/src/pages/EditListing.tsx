@@ -18,6 +18,7 @@ import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
+import Spinner from "../components/Spinner.tsx";
 
 interface ImageURLObject {
   url: string;
@@ -415,10 +416,7 @@ const EditListing = () => {
             </CardContent>
           </Card>
         ) : (
-          <Typography>
-            Sorry, we were unable to get this listing. Please try again or
-            contact for support.
-          </Typography>
+          <Spinner text="This listing doesn't seem to be available at the moment" />
         )}
       </Container>
     </>
