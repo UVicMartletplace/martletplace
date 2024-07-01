@@ -1,6 +1,6 @@
 import { MemoryRouter } from "react-router-dom";
 import Homepage from "../../src/pages/Homepage";
-import UserProvider from "../../src/contexts/UserProvider"; // Adjust the path to your UserProvider
+import UserProvider from "../../src/contexts/UserProvider";
 
 describe("<Homepage />", () => {
   const recomendationsObject = [
