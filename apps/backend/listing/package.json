@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "cypress run",
-    "test:ci": "cypress run --headless",
+    "test": "vitest",
+    "test:ci": "vitest",
     "lint": "eslint src/**/*.ts",
     "format": "prettier src/ --write",
     "format:ci": "prettier src/ --check"
@@ -19,7 +19,6 @@
     "@types/node": "^20.12.13",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
-    "cypress": "^13.11.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "geolib": "^3.3.4",
