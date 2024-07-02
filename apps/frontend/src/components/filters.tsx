@@ -52,14 +52,14 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setMinPrice(null);
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+        "This price is not valid, please make sure the value is positive and in the form xx.xx",
       );
     } else if (newMinPrice === null) {
       setPriceError("");
       setMinPrice(null);
     } else if (maxPrice !== null && newMinPrice > maxPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price"
+        "This price is not valid, please make sure the min price is less than the max price",
       );
     } else {
       setPriceError("");
@@ -68,8 +68,12 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     }
     setMinPrice(newMinPrice === null ? null : +newMinPrice);
     onFilterChange({
-      ...filters,
       minPrice: event.target.value === "" ? null : +event.target.value,
+      maxPrice: maxPrice,
+      status: status,
+      searchType: type,
+      latitude: latitude,
+      longitude: longitude,
     });
   };
 
@@ -81,14 +85,14 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
       setMaxPrice(null);
     } else if (!regex.test(event.target.value)) {
       setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx"
+        "This price is not valid, please make sure the value is positive and in the form xx.xx",
       );
     } else if (newMaxPrice === null) {
       setPriceError("");
       setMaxPrice(null);
     } else if (minPrice !== null && newMaxPrice < minPrice) {
       setPriceError(
-        "This price is not valid, please make sure the min price is less than the max price"
+        "This price is not valid, please make sure the min price is less than the max price",
       );
     } else {
       setPriceError("");
@@ -97,24 +101,36 @@ const Filters = ({ filters, onFilterChange }: FiltersProps) => {
     }
     setMaxPrice(newMaxPrice === null ? null : +newMaxPrice);
     onFilterChange({
-      ...filters,
+      minPrice: minPrice,
       maxPrice: event.target.value === "" ? null : +event.target.value,
+      status: status,
+      searchType: type,
+      latitude: latitude,
+      longitude: longitude,
     });
   };
 
   const handleStatusChange = (event: SelectChangeEvent<string>) => {
     setStatus(event.target.value);
     onFilterChange({
-      ...filters,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
       status: event.target.value,
+      searchType: type,
+      latitude: latitude,
+      longitude: longitude,
     });
   };
 
   const handleTypeChange = (event: SelectChangeEvent<string>) => {
     setType(event.target.value);
     onFilterChange({
-      ...filters,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      status: status,
       searchType: event.target.value,
+      latitude: latitude,
+      longitude: longitude,
     });
   };
 
