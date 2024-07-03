@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "vitest",
-    "test:ci": "vitest",
+    "test": "vitest run",
+    "test:ci": "vitest run",
     "lint": "eslint src/**/*.ts",
     "format": "prettier src/ --write",
     "format:ci": "prettier src/ --check"
