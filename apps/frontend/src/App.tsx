@@ -8,11 +8,12 @@ import EditListing from "./pages/EditListing";
 import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
 import MyListings from "./pages/MyListings";
-import Profile from "./pages/Profile";
 import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AuthRoute from "./components/Auth/AuthRoute";
 import ConfirmEmail from "./pages/ConfirmEmail";
+import ViewProfile from "./pages/ViewProfile";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -70,6 +71,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/profile/:id"
+            element={
+              <PrivateRoute>
+                <ViewProfile />
               </PrivateRoute>
             }
           />

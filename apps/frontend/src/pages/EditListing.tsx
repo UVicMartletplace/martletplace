@@ -18,6 +18,7 @@ import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
+import Spinner from "../components/Spinner.tsx";
 
 interface ImageURLObject {
   url: string;
@@ -33,11 +34,11 @@ interface ListingObject {
   price: number;
   location: LocationObject;
   images: ImageURLObject[];
-  status: string;
 }
 
 interface NewListingObject {
   listing: ListingObject;
+  status: string;
 }
 
 const EditListing = () => {
@@ -61,8 +62,8 @@ const EditListing = () => {
         longitude: -123.3108,
       },
       images: [],
-      status: "AVAILABLE",
     },
+    status: "AVAILABLE",
   });
 
   useEffect(() => {
@@ -77,9 +78,9 @@ const EditListing = () => {
             title: title || "",
             description: description || "",
             price: +price || 0,
-            status: status || "AVAILABLE",
             images: images || [],
           },
+          status: status || "AVAILABLE",
         }));
         setListingValid(true);
       })
@@ -216,11 +217,9 @@ const EditListing = () => {
   const handleUpdateStatus = () => {
     setNewListingObject((prevState) => ({
       ...prevState,
-      listing: {
-        ...prevState.listing,
-        status: prevState.listing.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
-      },
+      status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
+    console.log("LISTING OBJECT", newListingObject);
   };
 
   const handleDelete = () => {
@@ -384,7 +383,7 @@ const EditListing = () => {
                             id="status-button"
                             onClick={handleUpdateStatus}
                           >
-                            {newListingObject.listing.status === "AVAILABLE"
+                            {newListingObject.status === "AVAILABLE"
                               ? "Mark Purchased"
                               : "Mark Not Purchased"}
                           </Button>
@@ -417,10 +416,7 @@ const EditListing = () => {
             </CardContent>
           </Card>
         ) : (
-          <Typography>
-            Sorry, we were unable to get this listing. Please try again or
-            contact for support.
-          </Typography>
+          <Spinner text="This listing doesn't seem to be available at the moment" />
         )}
       </Container>
     </>
