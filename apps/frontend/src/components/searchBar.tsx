@@ -14,6 +14,8 @@ import { useState, ChangeEvent, useEffect } from "react";
 import Filters from "./filters";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import React from "react";
+import useUser from "../hooks/useUser";
+import { colors } from "../styles/colors";
 
 interface SearchObject {
   query: string;
@@ -31,6 +33,7 @@ interface SearchObject {
 const SearchBar = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const { logout } = useUser();
 
   const handleMessageRoute = () => {
     // TODO Fix
@@ -52,6 +55,11 @@ const SearchBar = () => {
     navigate("/user/listings");
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/user/login");
+  };
+
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [filters, setFilters] = useState<SearchObject>({
@@ -64,7 +72,7 @@ const SearchBar = () => {
     longitude: -123.3108,
     sort: "RELEVANCE",
     page: 1,
-    limit: 6,
+    limit: 8,
   });
 
   const toggleFilters = () => {
@@ -115,7 +123,7 @@ const SearchBar = () => {
       longitude: -123.3108,
       sort: "RELEVANCE",
       page: 1,
-      limit: 6,
+      limit: 8,
     };
     if (location.pathname === "/query") {
       //Something was searched
@@ -131,9 +139,11 @@ const SearchBar = () => {
             break;
           case "minPrice":
             searchObject.minPrice = isNaN(+value) ? null : +value;
+            if (value === "") searchObject.minPrice = null;
             break;
           case "maxPrice":
             searchObject.maxPrice = isNaN(+value) ? null : +value;
+            if (value === "") searchObject.maxPrice = null;
             break;
           case "status":
             searchObject.status = value;
@@ -311,6 +321,12 @@ const SearchBar = () => {
             <MenuItem onClick={handleMessageRoute}>Messaging</MenuItem>
             <MenuItem onClick={() => navigate("/listing/new")}>
               Create Listing
+            </MenuItem>
+            <MenuItem
+              onClick={handleLogout}
+              style={{ color: colors.martletplaceRed }}
+            >
+              Logout
             </MenuItem>
           </Menu>
         </>

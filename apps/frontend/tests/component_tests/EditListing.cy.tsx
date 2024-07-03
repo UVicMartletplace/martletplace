@@ -79,8 +79,8 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
-        status: "AVAILABLE",
       },
+      status: "AVAILABLE",
     };
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
@@ -165,8 +165,8 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
-        status: "SOLD",
       },
+      status: "SOLD",
     };
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {

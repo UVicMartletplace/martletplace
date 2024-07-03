@@ -39,6 +39,14 @@ const ListingCard = ({
     navigate(`/listing/edit/${listing.listingID}`);
   };
 
+  const handleViewProfile = (
+    sellerID: string | undefined,
+    event: React.MouseEvent,
+  ) => {
+    event.stopPropagation();
+    navigate(`/user/profile/${sellerID}`);
+  };
+
   const priceFormatter = new Intl.NumberFormat("en-CA", {
     style: "currency",
     currency: "CAD",
@@ -49,10 +57,11 @@ const ListingCard = ({
     return dateTimeObject.toDateString();
   };
 
-  const handleNotInterested = () => {
+  const handleNotInterested = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setNotInterested(true);
     _axios_instance
-      .post("/recommendations/stop", { id: listing.listingID })
+      .post("/recommendations/stop/" + listing.listingID)
       .catch((error) => {
         console.error("Error stopping recommendations:", error);
       });
@@ -69,11 +78,15 @@ const ListingCard = ({
         pointerEvents: notInterested ? "none" : "auto",
         borderRadius: "8px",
         paddingBottom: "8px",
-        width: "260px",
+        paddingRight: "15px",
+        paddingLeft: "15px",
+        width: "360px",
         "@media (max-width: 600px)": {
           maxWidth: "none",
           width: "calc(100% - 20px)",
         },
+        position: "relative",
+        zIndex: 2,
       }}
       className="listing-card"
       onClick={handleListingClick}
@@ -117,9 +130,18 @@ const ListingCard = ({
               : "Free"}
           </Typography>
           {!canEdit && (
-            <Typography variant="body2" gutterBottom>
-              For Sale By: {listing.sellerName}
-            </Typography>
+            <Button
+              onClick={(event) => handleViewProfile(listing.sellerID, event)}
+              style={{
+                textTransform: "none",
+                justifyContent: "start",
+                padding: 0,
+              }}
+            >
+              <Typography variant="body2" gutterBottom>
+                For sale by: {listing.sellerName}
+              </Typography>
+            </Button>
           )}
           <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
             Posted: {convertDate(listing.dateCreated)}
@@ -147,13 +169,17 @@ const ListingCard = ({
               <Button
                 variant="contained"
                 sx={{
-                  backgroundColor: colors.martletplaceWhite,
+                  backgroundColor: notInterested
+                    ? colors.martletplaceNotInterested
+                    : colors.martletplaceWhite,
                   color: "black",
                   outline: "1px solid #808080",
                   "&:hover": { backgroundColor: colors.martletplaceGrey },
                   textTransform: "none",
                   width: "100%",
                   margin: "5px 0",
+                  position: "relative",
+                  zIndex: 4,
                 }}
                 onClick={handleNotInterested}
               >
