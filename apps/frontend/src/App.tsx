@@ -7,7 +7,6 @@ import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
-import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
 import Profile from "./pages/Profile";
 import UserProvider from "./contexts/UserProvider";
@@ -71,14 +70,6 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/user/reviews"
-            element={
-              <PrivateRoute>
-                <MyReviews />
               </PrivateRoute>
             }
           />
