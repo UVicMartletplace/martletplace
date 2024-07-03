@@ -184,6 +184,17 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/view/1`]}>
+          <Routes>
+            <Route path="/listing/view/:id" element={<ViewListing />} />
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+    );
+
     cy.wait("@getListing");
 
     cy.get("#review_text").type("This is a great product!");
