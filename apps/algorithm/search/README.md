@@ -41,6 +41,6 @@ run `docker compose down -v` (-v deletes cached volumes which may be interfering
 
 ## To run automated tests:
 
-Open a separate terminal and run `docker exec -it martletplace_search bash`
+Once the application is built using `docker-compose up --build -d`, open a separate terminal and run `docker exec -it martletplace_search bash`
 
 In the resulting bash terminal, run `pytest src/test_server.py`
