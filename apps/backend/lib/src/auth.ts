@@ -6,10 +6,10 @@ interface UserToken {
   userId: number;
 }
 
-// Ensure that AuthenticatedRequest extends the base Request type
 export interface AuthenticatedRequest extends Request {
   user: UserToken;
-  body: any; // Add the body property to match the base Request type
+  // @typescript-eslint/no-explicit-any
+  body: any;
 }
 
 const SIGNOPTIONS: SignOptions = {
