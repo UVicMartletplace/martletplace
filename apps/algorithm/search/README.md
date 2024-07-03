@@ -2,10 +2,10 @@
 
 1. Clone repository.
 
-2. In martletplace directory run `docker-compose up -–build`. This step may take a while (few minutes to build) as it is
-   as large application.
+2. In martletplace directory run `docker-compose up --build -d`. This step may take a while (few minutes to build) as it is
+   as large application. The -d flag makes the process run in the background.
 
-3. Successful output looks like this at the end (takes a while):
+3. In a second terminal, run `docker-compose logs -f` to tail the logs as it builds. Successful output looks like this at the end (takes a while):
 
 ```
 	martletplace_database       | 2024-06-27 03:52:57.947 GMT [36] STATEMENT:  FETCH FORWARD 1 FROM "c_7fa83c326a80_3"
@@ -21,7 +21,7 @@ Failed build output contains this:
 ```
 
 If your terminal output does not match the successful output or contains the failed output,
-try `docker compose down -v` (-v deletes cached volumes which may be interfering with pgsync), then run `docker-compose –build` again.
+run `docker compose down -v` (-v deletes cached volumes which may be interfering with pgsync), then run `docker-compose --build -d` again.
 
 4. Once running, open your browser to localhost (no port necessary).
 
