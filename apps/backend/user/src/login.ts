@@ -32,17 +32,13 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     // }
 
     // Verify MFA totp token
-    // Only vdo this if user obj has a secret key
-    if (user.totp_secret) {
-      console.log("User has MFA enabled");
-      const isValid = await verifyMFA(user, totpCode);
-      if (!isValid) {
-        return res
-          .status(401)
-          .json({ error: "Invalid token, authentication failed" });
-      }
+    const isValid = await verifyMFA(user, totpCode);
+    if (!isValid) {
+      return res
+        .status(401)
+        .json({ error: "Invalid token, authentication failed" });
     }
-
+    
     let token = create_token({ userId: user.user_id });
     res.cookie("authorization", token, { httpOnly: true, sameSite: "strict" });
 

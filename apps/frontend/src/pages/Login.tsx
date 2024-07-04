@@ -20,7 +20,7 @@ const Login = () => {
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (/^\d*$/.test(totpCode) && totpCode.length === 6) {
+    if (/^\d{6}$/.test(totpCode)) {
       setTotpCode(totpCode);
       setError("");
     } else {

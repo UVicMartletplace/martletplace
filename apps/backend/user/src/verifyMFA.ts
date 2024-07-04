@@ -12,11 +12,7 @@ const verifyMFA = async (user: User, totp_secret: string) => {
 
   const isValid = totp.validate({ token: totp_secret });
 
-  if (isValid === 0) {
-    return true;
-  } else {
-    return false;
-  }
+  return isValid === 0;
 };
 
 export { verifyMFA };
