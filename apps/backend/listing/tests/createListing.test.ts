@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { createListing } from '../src/createListing';
 import { Request, Response } from 'express';
 import { IDatabase } from 'pg-promise';
+import { AuthenticatedRequest } from '../../lib/src/auth';
 
 describe('Create Listing Endpoint', () => {
   it('should create a new listing successfully', async () => {
@@ -21,7 +22,8 @@ describe('Create Listing Endpoint', () => {
           ],
         },
       },
-    } as unknown as Request;
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
@@ -97,7 +99,8 @@ describe('Create Listing Endpoint', () => {
           location: {},
         },
       },
-    } as unknown as Request;
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
