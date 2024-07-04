@@ -21,7 +21,7 @@ const SIGNOPTIONS: SignOptions = {
 export function authenticate_request(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const JWT_PUBLIC_KEY =
     process.env.JWT_PUBLIC_KEY ||
@@ -76,7 +76,7 @@ export function authenticate_request(
 
 export function create_token(
   user: UserToken,
-  pathRestriction?: string
+  pathRestriction?: string,
 ): string {
   const JWT_PRIVATE_KEY =
     process.env.JWT_PRIVATE_KEY ||
