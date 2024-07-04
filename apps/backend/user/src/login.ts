@@ -38,7 +38,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
         .status(401)
         .json({ error: "Invalid token, authentication failed" });
     }
-    
+
     let token = create_token({ userId: user.user_id });
     res.cookie("authorization", token, { httpOnly: true, sameSite: "strict" });
 
