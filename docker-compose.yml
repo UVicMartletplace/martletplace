@@ -1,6 +1,7 @@
 version: '2.2'
 
-x-ENV-JWT-PUBKEY: &shared_env_var
+x-ENV-VARS: &shared_env_var
+  DB_ENDPOINT: postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
   JWT_PUBLIC_KEY: |
     -----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj82D71KNQmYa2ZEUx/pI
@@ -11,7 +12,6 @@ x-ENV-JWT-PUBKEY: &shared_env_var
     lBIGx7SDnp8kP7yPSjY9OQeWhPy3azC88k72HxlunLoOqhKSOCyL4YRyjiZEFSy5
     pQIDAQAB
     -----END PUBLIC KEY-----
-  DB_ENDPOINT: postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
 
 services:
   frontend:

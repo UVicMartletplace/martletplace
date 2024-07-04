@@ -8,7 +8,7 @@ interface UserToken {
 
 export interface AuthenticatedRequest extends Request {
   user: UserToken;
-  // @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any;
 }
 
@@ -37,10 +37,7 @@ export function authenticate_request(
     "POST /api/user/send-confirmation-email",
     "POST /api/user/confirm-email",
   ];
-  if (
-    unauthenticatedRoutes.includes(path) ||
-    JWT_PUBLIC_KEY === "SKIP_VALIDATION"
-  ) {
+  if (unauthenticatedRoutes.includes(path)) {
     next();
     return;
   }
