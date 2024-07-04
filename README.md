@@ -9,11 +9,17 @@
 # Clone the repository
 git clone https://github.com/UVicMartletplace/martletplace && cd martletplace
 
-# To start developing, run the docker compose stack
-docker compose up --build
+# Run the docker compose stack with hot reloading
+docker compose up --build -d
+
+# View all container logs
+docker compose logs -f
+
+# When you want to shut it down
+docker compose down -v
 ```
 
-The development environment is now running and accessible at [http://local.martletplace.ca/](http://local.martletplace.ca/)
+The development environment is now running (give it ~1min to spin up) and accessible at [http://local.martletplace.ca/](http://local.martletplace.ca/)
 
 ### Testing
 
