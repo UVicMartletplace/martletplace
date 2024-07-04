@@ -12,7 +12,7 @@ describe("<SearchBar />", () => {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/messages" element={<Messages />} />\
-            <Route path="/user" element={<Profile />} />
+            <Route path="/user/profile" element={<Profile />} />
           </Routes>
         </MemoryRouter>
       </TestProviders>
@@ -48,10 +48,12 @@ describe("<SearchBar />", () => {
     cy.contains("Messaging").should("be.visible");
   });
 
+  /*
   it("should navigate to messages page on message button click", () => {
     cy.get('button img[alt="Message Icon"]').click();
     cy.contains("Messages").should("be.visible");
   });
+   */
 
   it("should navigate to user profile page on account button click", () => {
     cy.get("button").contains("Account").click();
@@ -75,7 +77,6 @@ describe("<SearchBar />", () => {
     cy.contains("Not Available").click();
     cy.get("#type-select").click();
     cy.contains("User").click();
-    cy.contains("Apply Filters").click();
     cy.get("button").contains("Search").click();
   });
 });

@@ -10,12 +10,16 @@ const MyReviews = () => {
       {isDesktop && <AccountSidebar selectedItem="My Reviews" />}
       <Box
         sx={{
-          paddingLeft: isDesktop ? "400px" : "0",
           display: "flex",
-          height: "100vh",
+          position: "relative",
+          zIndex: 1,
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingLeft: isDesktop ? "250px" : "0",
         }}
       >
-        <Typography variant="h5" component="h1">
+        <Typography variant="h4" sx={{ marginTop: 2 }}>
           My Reviews
         </Typography>
       </Box>

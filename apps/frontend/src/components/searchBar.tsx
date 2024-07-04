@@ -14,6 +14,8 @@ import { useState, ChangeEvent, useEffect } from "react";
 import Filters from "./filters";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import React from "react";
+import useUser from "../hooks/useUser";
+import { colors } from "../styles/colors";
 
 interface SearchObject {
   query: string;
@@ -31,13 +33,17 @@ interface SearchObject {
 const SearchBar = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const { logout } = useUser();
 
   const handleMessageRoute = () => {
-    navigate("/messages");
+    // TODO Fix
+    window.location.href = `mailto:example@example.com?subject=MessagingMock`;
+
+    //navigate("/messages");
   };
 
   const handleAccountRoute = () => {
-    navigate("/user");
+    navigate("/user/profile");
   };
 
   const handleReload = () => {
@@ -46,7 +52,12 @@ const SearchBar = () => {
   };
 
   const handleListingRoute = () => {
-    navigate("/listing/view");
+    navigate("/user/listings");
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/user/login");
   };
 
   const [showFilters, setShowFilters] = useState(false);
@@ -61,7 +72,7 @@ const SearchBar = () => {
     longitude: -123.3108,
     sort: "RELEVANCE",
     page: 1,
-    limit: 6,
+    limit: 8,
   });
 
   const toggleFilters = () => {
@@ -112,13 +123,14 @@ const SearchBar = () => {
       longitude: -123.3108,
       sort: "RELEVANCE",
       page: 1,
-      limit: 6,
+      limit: 8,
     };
-    if (query !== undefined) {
+    if (location.pathname === "/query") {
       //Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
+      const searchString = location.search.slice(1);
       let match;
-      while ((match = regex.exec(query))) {
+      while ((match = regex.exec(searchString)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
         switch (key) {
@@ -127,9 +139,11 @@ const SearchBar = () => {
             break;
           case "minPrice":
             searchObject.minPrice = isNaN(+value) ? null : +value;
+            if (value === "") searchObject.minPrice = null;
             break;
           case "maxPrice":
             searchObject.maxPrice = isNaN(+value) ? null : +value;
+            if (value === "") searchObject.maxPrice = null;
             break;
           case "status":
             searchObject.status = value;
@@ -159,7 +173,7 @@ const SearchBar = () => {
     }
     setSearchInput(searchObject.query);
     setFilters(searchObject);
-  }, [location.pathname, query]);
+  }, [location, query]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -192,8 +206,8 @@ const SearchBar = () => {
         paddingBottom: "10px",
         marginBottom: "10px",
         position: "sticky",
-        top: 0,
-        zIndex: 1000,
+        top: -1,
+        zIndex: 10,
       }}
     >
       <Grid item>
@@ -305,6 +319,15 @@ const SearchBar = () => {
             <MenuItem onClick={handleAccountRoute}>My Profile</MenuItem>
             <MenuItem onClick={handleListingRoute}>My Listings</MenuItem>
             <MenuItem onClick={handleMessageRoute}>Messaging</MenuItem>
+            <MenuItem onClick={() => navigate("/listing/new")}>
+              Create Listing
+            </MenuItem>
+            <MenuItem
+              onClick={handleLogout}
+              style={{ color: colors.martletplaceRed }}
+            >
+              Logout
+            </MenuItem>
           </Menu>
         </>
       )}

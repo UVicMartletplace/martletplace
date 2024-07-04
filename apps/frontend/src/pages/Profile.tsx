@@ -53,6 +53,7 @@ const Profile = () => {
       };
       setProfile(userObject);
       setOriginalProfile(userObject);
+      setImageURL(userObject.profilePictureUrl);
     } else {
       console.error("User data not found");
     }
@@ -96,6 +97,7 @@ const Profile = () => {
           setImageURL(base64String);
 
           if (!isImageValid(base64String)) {
+            setImageURL(originalProfile.profilePictureUrl);
             alert("Invalid image type. Please upload a valid image file.");
             return;
           }
@@ -172,6 +174,8 @@ const Profile = () => {
       <Box
         sx={{
           display: "flex",
+          position: "relative",
+          zIndex: 1,
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",

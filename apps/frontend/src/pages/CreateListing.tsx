@@ -16,6 +16,7 @@ import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
 import SearchBar from "../components/searchBar.tsx";
+import { useNavigate } from "react-router-dom";
 
 interface ImageURLObject {
   url: string;
@@ -42,12 +43,17 @@ const CreateListing = () => {
   const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
     [],
   );
-
+  const [location, setLocation] = useState<LocationObject>({
+    latitude: 48.463302,
+    longitude: -123.3108,
+  });
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
     "This field is required",
   );
   const [sent, setSent] = useState(false);
+
+  const navigate = useNavigate();
 
   // This newListingObject bundles all the listing data for upload to the server
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
@@ -72,14 +78,14 @@ const CreateListing = () => {
     if (!priceError && !titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
-      const successLocation: boolean = await asyncListingLocationWrapper();
 
-      if (successImages && successLocation) {
+      if (successImages) {
         _axios_instance
           .post("/listing", newListingObject)
           .then(() => {
             alert("Listing Created!");
             setSent(true);
+            navigate("/user/listings");
           })
           .catch(() => {
             alert("Listing Creation Failed");
@@ -120,10 +126,7 @@ const CreateListing = () => {
       if (imagesObjectArray) {
         const tempListingObject = newListingObject;
         tempListingObject.listing.images = imagesObjectArray;
-        setNewListingObject((prevState) => ({
-          ...prevState,
-          tempListingObject,
-        }));
+        setNewListingObject(tempListingObject);
         return true;
       } else {
         return false;
@@ -178,18 +181,11 @@ const CreateListing = () => {
         if (currentLatitude !== 0 && currentLongitude !== 0) {
           currentLocation.latitude = currentLatitude;
           currentLocation.longitude = currentLongitude;
+          setLocation(currentLocation);
+          updateNewListingPayload("location", currentLocation);
         }
       });
-      updateNewListingPayload("location", currentLocation);
       return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const asyncListingLocationWrapper = async (): Promise<boolean> => {
-    try {
-      return updateListingLocation();
     } catch (error) {
       return false;
     }
@@ -269,9 +265,9 @@ const CreateListing = () => {
     <>
       <SearchBar />
       <Container>
-        <Card>
+        <Card sx={{ marginTop: "32px" }}>
           <CardContent>
-            <Typography variant={"h2"}>Create Listing</Typography>
+            <Typography variant={"h5"}>Create Listing</Typography>
             <Grid container spacing={1}>
               <Grid item md={6} sm={12} xs={12}>
                 <Box>
@@ -311,6 +307,29 @@ const CreateListing = () => {
                       {priceError && (
                         <FormHelperText error>{priceError}</FormHelperText>
                       )}
+                      <Button
+                        variant="contained"
+                        id="location-button"
+                        onClick={updateListingLocation}
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceNavyBlue,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceBlueHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                      >
+                        Update Location
+                      </Button>
+                      <Typography>
+                        Current Location: {location.latitude} latitude and{" "}
+                        {location.longitude} longitude
+                      </Typography>
                     </FormControl>
                     <Box sx={{ display: "flex" }}>
                       <Button

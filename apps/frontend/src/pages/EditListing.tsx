@@ -18,6 +18,7 @@ import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
+import Spinner from "../components/Spinner.tsx";
 
 interface ImageURLObject {
   url: string;
@@ -33,11 +34,11 @@ interface ListingObject {
   price: number;
   location: LocationObject;
   images: ImageURLObject[];
-  status: string;
 }
 
 interface NewListingObject {
   listing: ListingObject;
+  status: string;
 }
 
 const EditListing = () => {
@@ -61,14 +62,14 @@ const EditListing = () => {
         longitude: -123.3108,
       },
       images: [],
-      status: "AVAILABLE",
     },
+    status: "AVAILABLE",
   });
 
   useEffect(() => {
-    const fetchListing = async () => {
-      try {
-        const response = await _axios_instance.get(`/listing/${id}`);
+    _axios_instance
+      .get(`/listing/${id}`)
+      .then((response) => {
         const { title, description, price, status, images } = response.data;
         setNewListingObject((prevState) => ({
           ...prevState,
@@ -77,17 +78,15 @@ const EditListing = () => {
             title: title || "",
             description: description || "",
             price: +price || 0,
-            status: status || "AVAILABLE",
             images: images || [],
           },
+          status: status || "AVAILABLE",
         }));
         setListingValid(true);
-      } catch (error) {
-        alert("Listing not updated successfully");
-      }
-    };
-
-    fetchListing();
+      })
+      .catch(() => {
+        alert("Listing not available");
+      });
   }, [id]);
 
   const updateNewListingPayload = (
@@ -135,7 +134,7 @@ const EditListing = () => {
           try {
             await _axios_instance.patch(`/listing/${id}`, newListingObject);
             alert("Listing Updated!");
-            navigate("/");
+            navigate("/user/listings");
           } catch (error) {
             alert("Listing Update Failed");
           }
@@ -218,11 +217,9 @@ const EditListing = () => {
   const handleUpdateStatus = () => {
     setNewListingObject((prevState) => ({
       ...prevState,
-      listing: {
-        ...prevState.listing,
-        status: prevState.listing.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
-      },
+      status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
+    console.log("LISTING OBJECT", newListingObject);
   };
 
   const handleDelete = () => {
@@ -274,9 +271,9 @@ const EditListing = () => {
       <SearchBar />
       <Container>
         {listingValid ? (
-          <Card>
+          <Card sx={{ marginTop: "32px" }}>
             <CardContent>
-              <Typography variant="h2">Edit Listing</Typography>
+              <Typography variant="h5">Edit Listing</Typography>
               <Grid container spacing={1}>
                 <Grid item md={6} sm={12} xs={12}>
                   <Box>
@@ -386,7 +383,7 @@ const EditListing = () => {
                             id="status-button"
                             onClick={handleUpdateStatus}
                           >
-                            {newListingObject.listing.status === "AVAILABLE"
+                            {newListingObject.status === "AVAILABLE"
                               ? "Mark Purchased"
                               : "Mark Not Purchased"}
                           </Button>
@@ -419,10 +416,7 @@ const EditListing = () => {
             </CardContent>
           </Card>
         ) : (
-          <Typography>
-            Sorry, we were unable to get this listing. Please try again or
-            contact for support.
-          </Typography>
+          <Spinner text="This listing doesn't seem to be available at the moment" />
         )}
       </Container>
     </>

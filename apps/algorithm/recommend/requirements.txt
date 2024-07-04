@@ -1,6 +1,12 @@
 fastapi
 pydantic
 uvicorn[standard]
+tensorflow
+pandas
+numpy
+sqlmodel
+sqlalchemy
+asyncpg
 
 ## Dev Dependencies
 ruff

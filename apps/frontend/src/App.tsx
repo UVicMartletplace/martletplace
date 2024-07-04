@@ -9,16 +9,20 @@ import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
 import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
-import Profile from "./pages/Profile";
 import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 import AuthRoute from "./components/Auth/AuthRoute";
+import ConfirmEmail from "./pages/ConfirmEmail";
+import ViewProfile from "./pages/ViewProfile";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <UserProvider>
       <Router>
+        {/* Not wrapped intentionally */}
         <Routes>
+          <Route path="/confirm/:token" element={<ConfirmEmail />} />
           {/* Auth Routes */}
           <Route
             path="/user/login"
@@ -68,6 +72,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/profile/:id"
+            element={
+              <PrivateRoute>
+                <ViewProfile />
               </PrivateRoute>
             }
           />
