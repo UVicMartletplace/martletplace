@@ -6,10 +6,12 @@ import { verifyMFA } from "./verifyMFA";
 import { create_token } from "../../lib/src/auth";
 
 const login = async (req: Request, res: Response, db: IDatabase<object>) => {
-  const { email, password, totp_code } = req.body;
+  const { email, password, totpCode } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+  if (!email || !password || !totpCode) {
+    return res
+      .status(400)
+      .json({ error: "Email, password and TOTP code are required" });
   }
 
   try {
@@ -32,7 +34,8 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     // Verify MFA totp token
     // Only vdo this if user obj has a secret key
     if (user.totp_secret) {
-      const isValid = await verifyMFA(user, totp_code);
+      console.log("User has MFA enabled");
+      const isValid = await verifyMFA(user, totpCode);
       if (!isValid) {
         return res
           .status(401)
