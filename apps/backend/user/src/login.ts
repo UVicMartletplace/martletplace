@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import { User } from "./models/user";
 import bcrypt from "bcryptjs";
+import { create_token } from "../../lib/src/auth";
 
 const login = async (req: Request, res: Response, db: IDatabase<object>) => {
   const { email, password } = req.body;
@@ -16,22 +17,19 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       [email],
     );
 
-    let isPasswordValid = false;
-
-    if (process.env.NODE_ENV === "test") {
-      isPasswordValid = true;
-    } else {
-      const maybePassword = user?.password || "bananas";
-      isPasswordValid = await bcrypt.compare(password, maybePassword);
-    }
+    const maybePassword = user?.password || "";
+    const isPasswordValid = await bcrypt.compare(password, maybePassword);
 
     if (!isPasswordValid || !user) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // if (!user.verified) {
-    //   return res.status(401).json({ error: "User is not verified" });
-    // }
+    if (!user.verified) {
+      return res.status(401).json({ error: "User is not verified" });
+    }
+
+    let token = create_token({ userId: user.user_id });
+    res.cookie("authorization", token, { httpOnly: true, sameSite: "strict" });
 
     return res.status(200).json({
       userID: user.user_id,
