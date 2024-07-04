@@ -36,9 +36,13 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.get("/api/listing/:id", (req, res) => getListingById(req, res, db));
 app.get("/api/listings", (req, res) => getListingsByUser(req, res, db));
-app.post("/api/listing", (req, res) => createListing(req as AuthenticatedRequest, res, db));
+app.post("/api/listing", (req, res) =>
+  createListing(req as AuthenticatedRequest, res, db),
+);
 // @ts-expect-error cant coercse Req -> AuthReq
-app.patch("/api/listing/:id", (req, res) => updateListing(req as AuthenticatedRequest, res, db));
+app.patch("/api/listing/:id", (req, res) =>
+  updateListing(req as AuthenticatedRequest, res, db),
+);
 app.delete("/api/listing/:id", (req, res) =>
   // @ts-expect-error cant coercse Req -> AuthReq
   deleteListing(req as AuthenticatedRequest, res, db),
