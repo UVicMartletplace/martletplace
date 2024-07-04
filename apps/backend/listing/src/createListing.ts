@@ -1,18 +1,18 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IDatabase } from "pg-promise";
+import { AuthenticatedRequest } from "../../lib/src/auth";
 
 // POST /api/listing - Create a new listing
 const createListing = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
 ) => {
-  // TODO: AUTHENTICATION
-  const userID = 1;
+  const userID = req.user.userId;
   const { listing } = req.body;
 
   if (!listing) {
-    console.log("request body empty");
+    console.error("request body empty");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -27,7 +27,7 @@ const createListing = async (
     !location.latitude ||
     !location.longitude
   ) {
-    console.log("missing parameter in request");
+    console.error("missing parameter in request");
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
@@ -74,7 +74,7 @@ const createListing = async (
 
     return res.status(201).json({ listing: responseListing });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };

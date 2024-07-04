@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import SearchBar from "../components/searchBar";
 import _axios_instance from "../_axios_instance";
 
+interface ImageUrls {
+  url: string;
+}
+
 interface MyListing {
   listingID: string;
   title: string;
@@ -14,7 +18,7 @@ interface MyListing {
   status: string;
   dateCreated: string;
   dateModified: string;
-  imageUrl: string[];
+  images: ImageUrls[];
 }
 
 const MyListings = () => {
@@ -33,7 +37,7 @@ const MyListings = () => {
             description: listing.description,
             price: listing.price,
             dateCreated: listing.dateCreated,
-            imageUrl: listing.imageUrl.length > 0 ? listing.imageUrl[0] : "",
+            imageUrl: listing.images.length > 0 ? listing.images[0].url : "",
           };
         });
         setListingObjects(modifiedListings);
@@ -53,6 +57,7 @@ const MyListings = () => {
         justifyContent: "center",
         alignItems: "center",
         textAlign: "center",
+        maxWidth: "100%",
       }}
     >
       {isDesktop ? (
@@ -60,7 +65,7 @@ const MyListings = () => {
       ) : (
         <SearchBar />
       )}
-      <Box sx={{ paddingLeft: isDesktop ? "250px" : "0" }}>
+      <Box sx={{ paddingLeft: isDesktop ? "200px" : "-100px" }}>
         <Typography variant="h4" sx={{ marginTop: 2 }}>
           My Listings
         </Typography>
@@ -69,11 +74,17 @@ const MyListings = () => {
           direction="row"
           alignItems="center"
           justifyContent="center"
-          spacing={2}
-          sx={{ width: "100%", maxWidth: "1000px" }}
+          spacing={1}
+          sx={{
+            width: "100%",
+            maxWidth: "1100px",
+            margin: "0px",
+            paddingLeft: "90px",
+            gap: 4,
+          }}
         >
           {listingObjects.map((listing) => (
-            <Grid item xs={12} sm={6} md={4} key={listing.listingID}>
+            <Grid item key={listing.listingID}>
               <ListingCard
                 searchPerformed={false}
                 listing={listing}

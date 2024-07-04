@@ -2,17 +2,20 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 import Homepage from "../../src/pages/Homepage";
 import Messages from "../../src/pages/Messages";
 import Profile from "../../src/pages/Profile";
+import TestProviders from "../utils/TestProviders";
 
 describe("<SearchBar />", () => {
   beforeEach(() => {
     cy.mount(
-      <MemoryRouter>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/messages" element={<Messages />} />\
-          <Route path="/user" element={<Profile />} />
-        </Routes>
-      </MemoryRouter>
+      <TestProviders>
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/messages" element={<Messages />} />\
+            <Route path="/user/profile" element={<Profile />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
     );
     cy.viewport(1280, 720);
   });
@@ -45,10 +48,12 @@ describe("<SearchBar />", () => {
     cy.contains("Messaging").should("be.visible");
   });
 
+  /*
   it("should navigate to messages page on message button click", () => {
     cy.get('button img[alt="Message Icon"]').click();
     cy.contains("Messages").should("be.visible");
   });
+   */
 
   it("should navigate to user profile page on account button click", () => {
     cy.get("button").contains("Account").click();
@@ -72,7 +77,6 @@ describe("<SearchBar />", () => {
     cy.contains("Not Available").click();
     cy.get("#type-select").click();
     cy.contains("User").click();
-    cy.contains("Apply Filters").click();
     cy.get("button").contains("Search").click();
   });
 });

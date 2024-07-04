@@ -8,6 +8,8 @@ import {
   MenuItem,
   SelectChangeEvent,
   InputLabel,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
 import ListingCard, { ListingObject } from "../components/listingCard.tsx";
@@ -16,6 +18,7 @@ import * as React from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import SearchBar from "../components/searchBar.tsx";
+import Spinner from "../components/Spinner.tsx";
 
 interface SearchObject {
   query: string;
@@ -40,6 +43,7 @@ const Homepage = () => {
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [sortBy, setSortBy] = React.useState<string>("RELEVANCE");
   const [totalItems, setTotalItems] = useState(0);
+  const [searchCompleted, setSearchCompleted] = useState(false);
   const [searchObject, setSearchObject] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -50,7 +54,7 @@ const Homepage = () => {
     longitude: -123.3108,
     sort: "RELEVANCE",
     page: 1,
-    limit: 6,
+    limit: 8,
   });
   const initialRender = useRef(true);
   const location = useLocation();
@@ -78,18 +82,20 @@ const Homepage = () => {
   };
 
   const handleSearch = (searchObject: SearchObject) => {
+    setSearchCompleted(false);
     setSearchObject(searchObject);
     _axios_instance
-      .get("/search", { params: { searchObject } })
+      .get("/search", { params: { ...searchObject } })
       .then((response) => {
-        setListingObjects(response.data.listings);
-        setTotalPages(Math.ceil(response.data.totalListings / 6));
-        setTotalItems(response.data.totalListings);
+        setListingObjects(response.data.items);
+        setTotalPages(Math.ceil(response.data.totalItems / 8));
+        setTotalItems(response.data.totalItems);
       })
       .catch((error) => {
         console.error("Error fetching listings:", error);
       });
     setSearchPerformed(true);
+    setSearchCompleted(true);
   };
 
   useEffect(() => {
@@ -99,7 +105,7 @@ const Homepage = () => {
       if (initialRender.current) {
         initialRender.current = false;
         _axios_instance
-          .get("/recomendations", { params: { page: 1, limit: 24 } })
+          .get("/recommendations", { params: { page: 1, limit: 24 } })
           .then((response) => {
             setListingObjects(response.data);
           })
@@ -111,7 +117,8 @@ const Homepage = () => {
     } else {
       let match;
       const regex = /([^&=]+)=([^&]*)/g;
-      while ((match = regex.exec(location.pathname)) !== null) {
+      const searchString = location.search.slice(1);
+      while ((match = regex.exec(searchString)) !== null) {
         const key = decodeURIComponent(match[1]); // Decode key
         const value = decodeURIComponent(match[2]); // Decode value
 
@@ -122,9 +129,11 @@ const Homepage = () => {
             break;
           case "minPrice":
             searchObject.minPrice = isNaN(+value) ? null : +value;
+            if (value === "") searchObject.minPrice = null;
             break;
           case "maxPrice":
             searchObject.maxPrice = isNaN(+value) ? null : +value;
+            if (value === "") searchObject.maxPrice = null;
             break;
           case "status":
             searchObject.status = value;
@@ -154,7 +163,10 @@ const Homepage = () => {
       setSearchObject(searchObject);
       handleSearch(searchObject);
     }
-  }, [location.pathname, searchObject]);
+  }, [location, searchObject]);
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
 
   return (
     <>
@@ -210,21 +222,35 @@ const Homepage = () => {
             </Typography>
           </>
         )}
+        {!searchCompleted && listingObjects.length === 0 && (
+          <Spinner text="Loading listings..." />
+        )}
+        {searchCompleted && listingObjects.length === 0 && (
+          <Typography variant="h6" component="h3" gutterBottom>
+            No Results Found
+          </Typography>
+        )}
         <Grid
           container
           direction="row"
-          alignItems="center"
-          justifyContent="center"
-          spacing={0}
+          spacing={4}
           key="grid-listings"
+          justifyContent="center"
+          alignContent="flex-end"
+          sx={{
+            gap: 8,
+            paddingTop: "40px",
+            paddingLeft: isDesktop ? "0px" : "20px",
+          }}
         >
-          {listingObjects.map((listing) => (
-            <ListingCard
-              key={listing.listingID}
-              searchPerformed={searchPerformed}
-              listing={listing}
-            />
-          ))}
+          {Array.isArray(listingObjects) &&
+            listingObjects.map((listing: ListingObject) => (
+              <ListingCard
+                key={listing.listingID}
+                searchPerformed={searchPerformed}
+                listing={listing}
+              />
+            ))}
         </Grid>
         <Box
           sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}

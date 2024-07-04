@@ -12,7 +12,8 @@ import AccountSidebar from "../components/AccountSidebar";
 import { useStyles } from "../styles/pageStyles";
 import { ChangeEvent, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance";
-import { useParams } from "react-router-dom";
+import useUser from "../hooks/useUser";
+import { User } from "../types";
 import SearchBar from "../components/searchBar";
 
 interface ImageURLObject {
@@ -20,12 +21,6 @@ interface ImageURLObject {
 }
 
 const Profile = () => {
-  const classes = useStyles();
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
-  const { id } = useParams();
-
-  const [imageURL, setImageURL] = useState<string>("");
   const [profile, setProfile] = useState({
     name: "",
     username: "",
@@ -35,26 +30,34 @@ const Profile = () => {
   });
   const [originalProfile, setOriginalProfile] = useState(profile);
   const [editMode, setEditMode] = useState(false);
+  const [imageURL, setImageURL] = useState<string>("");
   const [isImageUploaded, setIsImageUploaded] = useState(false);
-
   const [usernameError, setUsernameError] = useState("");
+
+  const { user, setUser } = useUser();
+  const classes = useStyles();
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
 
   // Regex for username validation
   const usernameFormat = /^[a-zA-Z0-9]{1,20}$/;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await _axios_instance.get("/user/" + id);
-        setProfile(response.data);
-        setOriginalProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchData();
-  }, [id]);
+    if (user) {
+      const userObject = {
+        name: user.name,
+        username: user.username,
+        password: "",
+        bio: user.bio,
+        profilePictureUrl: user.profileUrl,
+      };
+      setProfile(userObject);
+      setOriginalProfile(userObject);
+      setImageURL(userObject.profilePictureUrl);
+    } else {
+      console.error("User data not found");
+    }
+  }, [user]);
 
   // Makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
@@ -94,6 +97,7 @@ const Profile = () => {
           setImageURL(base64String);
 
           if (!isImageValid(base64String)) {
+            setImageURL(originalProfile.profilePictureUrl);
             alert("Invalid image type. Please upload a valid image file.");
             return;
           }
@@ -145,7 +149,8 @@ const Profile = () => {
     if (successImages) {
       profile.profilePictureUrl = successImages.url;
       try {
-        await _axios_instance.patch("/user", profile);
+        const response = await _axios_instance.patch("/user", profile);
+        setUser(response.data.user as User);
         setOriginalProfile(profile);
       } catch (error) {
         alert(`Error: ${error}`);
@@ -163,24 +168,14 @@ const Profile = () => {
     setEditMode(false);
   };
 
-  // TODO:
-  // Uncomment once Scott's PR is merged: https://github.com/UVicMartletplace/martletplace/pull/183/files
-  // Disable all text fields if !isCurrentUser
-  // Hide Save, Cancel, and Upload Profile buttons if !isCurrentUser
-  // Change "My Profile" to "<Name>'s Profile" if !isCurrentUser
-  // Check if id is the current user's id:
-  // const { user } = useUser();
-  // const [isCurrentUser, setIsCurrentUser] = useState(false);
-  // if (id === user.id) {
-  //   setIsCurrentUser(true);
-  // }
-
   return (
     <>
       {isDesktop ? <AccountSidebar selectedItem="My Profile" /> : <SearchBar />}
       <Box
         sx={{
           display: "flex",
+          position: "relative",
+          zIndex: 1,
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",

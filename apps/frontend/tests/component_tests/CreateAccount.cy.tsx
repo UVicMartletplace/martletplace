@@ -1,18 +1,21 @@
 import { BrowserRouter } from "react-router-dom";
 import CreateAccount from "../../src/pages/CreateAccount";
+import TestProviders from "../utils/TestProviders";
 
 describe("<CreateAccount />", () => {
   const testEmail = "test@uvic.ca";
-  const testName = "Test User";
+  const testName = "Default User";
   const testUsername = "testuser";
   const testPassword = "Test1234@";
   const invalidEmail = "test@gmail.com";
 
   beforeEach(() => {
     cy.mount(
-      <BrowserRouter>
-        <CreateAccount />
-      </BrowserRouter>
+      <TestProviders>
+        <BrowserRouter>
+          <CreateAccount />
+        </BrowserRouter>
+      </TestProviders>
     );
   });
 
@@ -65,7 +68,7 @@ describe("<CreateAccount />", () => {
       .should("eq", 201);
 
     // Check if navigation occurred as expected
-    cy.location("pathname").should("eq", "/");
+    cy.location("pathname").should("eq", "/login");
   });
 
   it("does not navigate on unsuccessful account creation", () => {

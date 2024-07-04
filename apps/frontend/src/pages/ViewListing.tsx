@@ -4,7 +4,6 @@ import {
   CardContent,
   Container,
   Grid,
-  Link,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -15,20 +14,29 @@ import { useStyles } from "../styles/pageStyles.tsx";
 import { colors } from "../styles/colors.tsx";
 import SearchBar from "../components/searchBar.tsx";
 import Reviews, { Review } from "../components/Reviews.tsx";
+import useUser from "../hooks/useUser.ts";
+import Spinner from "../components/Spinner.tsx";
 
 interface ListingObject {
   title: string;
   description: string;
   price: number;
-  seller_profile: { name: string };
+  seller_profile: {
+    userID: string;
+    name: string;
+    username: string;
+  };
   dateCreated: string;
   distance: number;
   images: { url: string }[];
   reviews?: Review[];
+  status: string;
 }
 
 const ViewListing = () => {
   const classes = useStyles();
+
+  const user = useUser().user;
   const [listingReceived, setListingReceived] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -36,10 +44,11 @@ const ViewListing = () => {
     title: "Sorry This Listing Cannot Be Loaded",
     description: "Please Try again Later",
     price: 0,
-    seller_profile: { name: "John Smith" },
+    seller_profile: { name: "John Smith", userID: "", username: "" },
     dateCreated: "2024-05-23T15:30:00Z",
     distance: 0,
     images: [{ url: "https://picsum.photos/1200/400" }],
+    status: "AVAILABLE",
   });
 
   // Load the listing from the api given an ID
@@ -67,80 +76,93 @@ const ViewListing = () => {
     return dateTimeObject.toDateString();
   };
 
-  // TODO Make the routing with auth work properly
-  const handleNavToMessages = () => {
-    navigate("/messages");
+  const handleNavToMessagesAndEdit = () => {
+    console.log("User ID", user?.id);
+    console.log("Seller ID", listingObject.seller_profile.userID);
+    if (user?.id === listingObject.seller_profile.userID) {
+      navigate("/listing/edit/${id}");
+    } else {
+      //TODO Add a path for id
+      window.location.href = `mailto:${listingObject.seller_profile.username}@uvic.ca?subject=${listingObject.title.replace(/\s/g, "")}`;
+      navigate("/messages");
+    }
   };
 
   return (
     <>
       <SearchBar />
       <Container>
-        {!listingReceived ? <Typography>No Listing Received</Typography> : null}
-        <Card
-          sx={{
-            height: "100%",
-            width: "100%",
-            display: listingReceived ? "block" : "none",
-          }}
-        >
-          <CardContent>
-            <Grid container spacing={2}>
-              <Grid item sm={12} md={12} lg={6}>
-                <Typography variant={"h2"}>
-                  {listingObject?.title ?? "Title not received"}
-                </Typography>
-                <Typography variant={"body1"}>
-                  {listingObject.description}
-                </Typography>
-                <hr
-                  style={{
-                    border: "none",
-                    height: "1px",
-                    backgroundColor: colors.martletplaceGrey,
-                  }}
-                />
-                <Typography variant={"body1"}>
-                  Price:{" "}
-                  {listingObject.price !== 0
-                    ? priceFormatter.format(listingObject.price)
-                    : "Free"}
-                </Typography>
-                <Typography variant={"body1"}>
-                  Sold by: <Link>{listingObject.seller_profile.name}</Link>
-                </Typography>
-                <Typography variant={"body1"}>
-                  Distance:{" "}
-                  {listingObject.distance !== 0
-                    ? listingObject.distance + "km"
-                    : "Unknown"}
-                </Typography>
-                <Typography variant={"body1"}>
-                  Posted on: {convertDate(listingObject.dateCreated)}
-                </Typography>
-                <Button
-                  type="button"
-                  variant="contained"
-                  fullWidth
-                  sx={classes.button}
-                  onClick={handleNavToMessages}
-                  id={"message_button"}
-                >
-                  Message Seller
-                </Button>
+        {!listingReceived ? (
+          <Spinner text="While we get your listing..." />
+        ) : (
+          <Card
+            sx={{
+              height: "100%",
+              width: "100%",
+              display: listingReceived ? "block" : "none",
+              marginTop: "32px",
+            }}
+          >
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item sm={12} md={12} lg={6}>
+                  <Typography variant={"h5"}>
+                    {listingObject?.title ?? "Title not received"}
+                  </Typography>
+                  <Typography variant={"body1"}>
+                    {listingObject.description}
+                  </Typography>
+                  <hr
+                    style={{
+                      border: "none",
+                      height: "1px",
+                      backgroundColor: colors.martletplaceGrey,
+                    }}
+                  />
+                  <Typography variant={"body1"}>
+                    Price:{" "}
+                    {listingObject.price !== 0
+                      ? priceFormatter.format(listingObject.price)
+                      : "Free"}
+                  </Typography>
+                  <Typography variant={"body1"}>
+                    Sold by: {listingObject.seller_profile.name}
+                  </Typography>
+                  <Typography variant={"body1"}>
+                    Posted on: {convertDate(listingObject.dateCreated)}
+                  </Typography>
+                  {listingObject.status === "SOLD" ? (
+                    <Typography variant="h1" sx={{ color: "red" }}>
+                      SOLD
+                    </Typography>
+                  ) : null}
+                  <Button
+                    type="button"
+                    variant="contained"
+                    fullWidth
+                    sx={classes.button}
+                    onClick={handleNavToMessagesAndEdit}
+                    id={"message_button"}
+                  >
+                    {user?.id === listingObject.seller_profile.userID
+                      ? "Edit Listing"
+                      : "Message Seller"}
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}>
+                  {listingObject.images.length !== 0 ? (
+                    <Carousel
+                      imageURLs={listingObject.images.map((image) => image.url)}
+                    />
+                  ) : null}
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={6}>
-                <Carousel
-                  imageURLs={listingObject.images.map((image) => image.url)}
-                />
-              </Grid>
-            </Grid>
-            <Reviews reviews={listingObject.reviews ?? []} />
-          </CardContent>
-        </Card>
+              <Reviews reviews={listingObject.reviews ?? []} />
+            </CardContent>
+          </Card>
+        )}
       </Container>
     </>
   );
 };
-
 export default ViewListing;

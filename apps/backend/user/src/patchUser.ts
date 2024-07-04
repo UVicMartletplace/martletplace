@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import bcrypt from "bcryptjs";
+import { AuthenticatedRequest } from "../../lib/src/auth";
 
 const patchUser = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
 ) => {
   console.log(req.body);
 
   // This is like this so resops can replace the userid but the guard on id === 1 doesn't show an error, I'm not crazy
-  const id = 1 === 1 ? 3 : 1;
+  const id = req.user.userId;
 
   const { username, password, name, bio, profilePictureUrl } = req.body;
 
@@ -35,11 +36,12 @@ const patchUser = async (
   const hasMinLength = password.length >= 8;
 
   if (
-    !hasDigit ||
-    !hasLowercase ||
-    !hasUppercase ||
-    !hasSpecialChar ||
-    !hasMinLength
+    password !== "" &&
+    (!hasDigit ||
+      !hasLowercase ||
+      !hasUppercase ||
+      !hasSpecialChar ||
+      !hasMinLength)
   ) {
     return res
       .status(400)
@@ -78,7 +80,7 @@ const patchUser = async (
       patchedUser.name,
       patchedUser.bio,
       patchedUser.profile_pic_url,
-      hashedPassword,
+      patchedUser.password,
       id,
     ]);
 

@@ -1,6 +1,6 @@
 import os
 
-DEFAULT_INDEX = "listings"
+DEFAULT_INDEX = "martletplace"
 DISTANCE_TO_SEARCH_WITHIN = "5km"
 
 ES_ENDPOINT = os.getenv("ES_ENDPOINT")

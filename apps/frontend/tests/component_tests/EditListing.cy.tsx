@@ -1,5 +1,6 @@
 import EditListing from "../../src/pages/EditListing";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import TestProviders from "../utils/TestProviders";
 
 const listingObject = {
   listingID: "A23F29039B23",
@@ -44,24 +45,31 @@ const listingObject = {
 describe("<EditListing />", () => {
   beforeEach(() => {
     cy.mount(
-      <MemoryRouter initialEntries={[`/listing/edit/1`]}>
-        <Routes>
-          <Route path="/listing/edit/:id" element={<EditListing />} />
-        </Routes>
-      </MemoryRouter>,
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
+          <Routes>
+            <Route path="/listing/edit/:id" element={<EditListing />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>,
     );
     cy.viewport(1280, 720);
-    cy.intercept("GET", "/api/listing/1", {
-      statusCode: 200,
-      body: listingObject,
+    cy.intercept("GET", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: listingObject,
+      });
     }).as("getListing");
   });
 
   it("renders", () => {
     // see: https://on.cypress.io/mounting-react
+    cy.wait("@getListing");
 
-    cy.intercept("PATCH", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("patchListing");
 
     cy.contains("Edit Listing").should("be.visible");
@@ -79,12 +87,15 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
-        status: "AVAILABLE",
       },
+      status: "AVAILABLE",
     };
+    cy.wait("@getListing");
 
-    cy.intercept("PATCH", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("patchListing");
 
     cy.contains("Edit Listing").should("be.visible");
@@ -117,7 +128,7 @@ describe("<EditListing />", () => {
       .type("{selectAll}0")
       .should("have.value", "0");
 
-    cy.get("#submit-button").click();
+    cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;
@@ -128,8 +139,10 @@ describe("<EditListing />", () => {
   });
 
   it("Deletes listing correctly", () => {
-    cy.intercept("DELETE", "/api/listing/1", {
-      statusCode: 200,
+    cy.intercept("DELETE", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("deleteListing");
 
     cy.get("#delete-button").click();
@@ -149,17 +162,31 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
-        status: "SOLD",
       },
+      status: "SOLD",
     };
 
-    cy.intercept("PATCH", "/api/listing/1", {
-      statusCode: 200,
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
+          <Routes>
+            <Route path="/listing/edit/:id" element={<EditListing />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>,
+    );
+
+    cy.wait("@getListing");
+
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
     }).as("patchListing");
 
-    cy.get("#status-button").click();
+    cy.get("#status-button", { timeout: 10000 }).should("be.visible").click();
 
-    cy.get("#submit-button").click();
+    cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;

@@ -3,6 +3,7 @@ import { IDatabase } from "pg-promise";
 import { User } from "./models/user";
 import bcrypt from "bcryptjs";
 import { verifyMFA } from "./verifyMFA";
+import { create_token } from "../../lib/src/auth";
 
 const login = async (req: Request, res: Response, db: IDatabase<object>) => {
   const { email, password, totp_code } = req.body;
@@ -17,14 +18,8 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       [email],
     );
 
-    let isPasswordValid = false;
-
-    if (process.env.NODE_ENV === "test") {
-      isPasswordValid = true;
-    } else {
-      const maybePassword = user?.password || "bananas";
-      isPasswordValid = await bcrypt.compare(password, maybePassword);
-    }
+    const maybePassword = user?.password || "";
+    const isPasswordValid = await bcrypt.compare(password, maybePassword);
 
     if (!isPasswordValid || !user) {
       return res.status(401).json({ error: "Invalid email or password" });
@@ -44,6 +39,9 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
           .json({ error: "Invalid token, authentication failed" });
       }
     }
+
+    let token = create_token({ userId: user.user_id });
+    res.cookie("authorization", token, { httpOnly: true, sameSite: "strict" });
 
     return res.status(200).json({
       userID: user.user_id,

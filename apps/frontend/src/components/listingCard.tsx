@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
+import imageDefault from "../images/default-listing-image.png";
 
 export interface ListingObject {
   listingID: string;
@@ -31,12 +32,20 @@ const ListingCard = ({
   const [notInterested, setNotInterested] = useState(false);
 
   const handleListingClick = () => {
-    navigate(`/listing/${listing.listingID}`);
+    navigate(`/listing/view/${listing.listingID}`);
   };
 
   const handleCanEdit = (event: React.MouseEvent) => {
     event.stopPropagation();
     navigate(`/listing/edit/${listing.listingID}`);
+  };
+
+  const handleViewProfile = (
+    sellerID: string | undefined,
+    event: React.MouseEvent,
+  ) => {
+    event.stopPropagation();
+    navigate(`/user/profile/${sellerID}`);
   };
 
   const priceFormatter = new Intl.NumberFormat("en-CA", {
@@ -49,10 +58,11 @@ const ListingCard = ({
     return dateTimeObject.toDateString();
   };
 
-  const handleNotInterested = () => {
+  const handleNotInterested = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setNotInterested(true);
     _axios_instance
-      .post("/recommendations/stop", { id: listing.listingID })
+      .post("/recommendations/stop/" + listing.listingID)
       .catch((error) => {
         console.error("Error stopping recommendations:", error);
       });
@@ -63,22 +73,21 @@ const ListingCard = ({
       container
       direction="column"
       alignItems="stretch"
-      justifyContent="space-between"
-      spacing={1}
       sx={{
-        margin: "1.5%",
         cursor: "pointer",
         background: notInterested ? colors.martletplaceNotInterested : "none",
         pointerEvents: notInterested ? "none" : "auto",
         borderRadius: "8px",
         paddingBottom: "8px",
-        width: "100%",
-        maxWidth: "300px",
-        height: "100%", // Added to ensure all cards have the same height
+        paddingRight: "15px",
+        paddingLeft: "15px",
+        width: "360px",
         "@media (max-width: 600px)": {
           maxWidth: "none",
           width: "calc(100% - 20px)",
         },
+        position: "relative",
+        zIndex: 2,
       }}
       className="listing-card"
       onClick={handleListingClick}
@@ -95,12 +104,11 @@ const ListingCard = ({
         }}
       >
         <img
-          src={listing.imageUrl}
+          src={listing.imageUrl !== "" ? listing.imageUrl : imageDefault}
           alt={listing.title}
           style={{
             width: "100%",
-            height: "auto",
-            maxHeight: "200px",
+            height: "160px",
             objectFit: "cover",
             borderRadius: "8px",
           }}
@@ -123,9 +131,18 @@ const ListingCard = ({
               : "Free"}
           </Typography>
           {!canEdit && (
-            <Typography variant="body2" gutterBottom>
-              For Sale By: {listing.sellerName}
-            </Typography>
+            <Button
+              onClick={(event) => handleViewProfile(listing.sellerID, event)}
+              style={{
+                textTransform: "none",
+                justifyContent: "start",
+                padding: 0,
+              }}
+            >
+              <Typography variant="body2" gutterBottom>
+                For sale by: {listing.sellerName}
+              </Typography>
+            </Button>
           )}
           <Typography variant="body2" gutterBottom sx={{ color: "#616161" }}>
             Posted: {convertDate(listing.dateCreated)}
@@ -153,13 +170,17 @@ const ListingCard = ({
               <Button
                 variant="contained"
                 sx={{
-                  backgroundColor: colors.martletplaceWhite,
+                  backgroundColor: notInterested
+                    ? colors.martletplaceNotInterested
+                    : colors.martletplaceWhite,
                   color: "black",
                   outline: "1px solid #808080",
                   "&:hover": { backgroundColor: colors.martletplaceGrey },
                   textTransform: "none",
                   width: "100%",
                   margin: "5px 0",
+                  position: "relative",
+                  zIndex: 4,
                 }}
                 onClick={handleNotInterested}
               >
