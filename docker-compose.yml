@@ -153,6 +153,7 @@ services:
   pgsync:
     build: apps/data/pgsync
     container_name: martletplace_pgsync
+    restart: unless-stopped
     depends_on:
       datalayer:
         condition: service_started
