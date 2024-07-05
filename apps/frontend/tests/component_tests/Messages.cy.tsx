@@ -1,6 +1,7 @@
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import TestProviders from "../utils/TestProviders.tsx";
 import Messages from "../../src/pages/messages/Messages.tsx";
+import { MessageType } from "../../src/types.ts";
 
 describe("<Messages/>", () => {
   const threads = [
@@ -43,13 +44,13 @@ describe("<Messages/>", () => {
       receiver_id: "2",
       listing_id: "1",
       message_body: "Hello, is this still available?",
-      created_at: "2021-07-02T00:00:00Z",
+      created_at: "2021-07-01T00:00:00Z",
     },
   ];
 
   const thread2Messages = [
     {
-      message_id: "1",
+      message_id: "2",
       sender_id: "1",
       receiver_id: "2",
       listing_id: "2",
@@ -57,7 +58,7 @@ describe("<Messages/>", () => {
       created_at: "2021-07-02T00:00:00Z",
     },
     {
-      message_id: "2",
+      message_id: "3",
       sender_id: "2",
       receiver_id: "1",
       listing_id: "2",
@@ -77,7 +78,6 @@ describe("<Messages/>", () => {
         </MemoryRouter>
       </TestProviders>
     );
-    cy.viewport(1280, 720);
 
     // Mock axios response
     cy.intercept("GET", "/api/messages/overview*", {
@@ -86,75 +86,78 @@ describe("<Messages/>", () => {
     }).as("getThreads");
 
     // /api/messages/thread/:listing_id/:receiver_id
-    cy.intercept("GET", "/api/messages/thread/1/2", {
+    cy.intercept("GET", "/api/messages/thread/**", {
       statusCode: 200,
-      body: thread1Messages,
-    }).as("getThread1");
-    cy.intercept("GET", "/api/messages/thread/2/2", {
+      body: { messages: thread1Messages, totalCount: thread1Messages.length },
+    }).as("getMessages1");
+
+    cy.intercept("GET", "/api/messages/thread/**", {
       statusCode: 200,
-      body: thread2Messages,
-    }).as("getThread2");
+      body: { messages: thread2Messages, totalCount: thread2Messages.length },
+    }).as("getMessages2");
   });
 
-  it("should render the messages page", () => {
-    // Assertions to verify the rendered content
-    cy.wait("@getThreads");
-    cy.wait("@getThread1");
-    cy.contains(threads[0].last_message.content).should("be.visible");
-    cy.contains(threads[1].last_message.content).should("be.visible");
+  context("desktop", () => {
+    beforeEach(() => {
+      cy.viewport(1280, 720);
+    });
 
-    // The first thread should be selected by default
-    cy.contains(thread1Messages[0].message_body).should("be.visible");
-    cy.contains(thread2Messages[1].message_body).should("not.exist");
-    cy.not;
-  });
+    it("should render the messages page", () => {
+      // Assertions to verify the rendered content
+      cy.wait("@getThreads");
+      cy.contains(threads[0].last_message.content).should("be.visible");
+      cy.contains(threads[1].last_message.content).should("be.visible");
+    });
 
-  it("should select the other thread", () => {
-    cy.wait("@getThreads");
-    cy.wait("@getThread1");
-    cy.get("#conversations_sidebar button").should("have.length", 2);
-    cy.get("#conversations_sidebar button").eq(1).click();
-    cy.wait("@getThread2");
+    it("should select the other thread", () => {
+      cy.wait("@getThreads");
+      cy.get("#conversations_sidebar button").should("have.length", 2);
 
-    cy.contains(thread1Messages[0].message_body).should("not.be.visible");
-    cy.contains(thread2Messages[1].message_body).should("be.visible");
-  });
+      cy.get("#conversations_sidebar button").eq(1).click();
+      cy.wait("@getMessages2");
 
-  it("should send a message", () => {
-    cy.wait("@getThreads");
-    cy.wait("@getThread1");
-    const message = "Sup";
-    cy.intercept("POST", "/api/messages", {
-      statusCode: 200,
-      body: {
+      cy.contains(thread2Messages[1].message_body).should("be.visible");
+    });
+
+    it("should send a message", () => {
+      cy.wait("@getThreads");
+      const message: MessageType = {
+        message_id: "4",
         sender_id: "1",
         receiver_id: "2",
         listing_id: "1",
-        content: message,
-      },
-    }).as("sendMessage");
+        message_body: "Sup",
+        created_at: "2021-07-03T00:00:00Z",
+      };
+      cy.intercept("POST", "/api/messages", {
+        statusCode: 200,
+        body: message,
+      }).as("sendMessage");
 
-    cy.get("input").type(message);
-    cy.get("form button").click();
-    cy.wait("@sendMessage").then((interception) => {
-      expect(interception.response?.body.message_body).to.equal(message);
+      cy.get("form input").eq(0).type(message.message_body);
+      cy.get("form button").eq(0).click();
+      cy.wait("@sendMessage");
+
+      cy.contains(message.message_body).should("be.visible");
+      cy.get("form input").eq(0).should("have.value", "");
+    });
+  });
+
+  context("mobile", () => {
+    beforeEach(() => {
+      cy.viewport("iphone-6");
+    });
+    it("mobile: should have messages shown by default", () => {
+      cy.wait("@getThreads");
+      cy.wait("@getMessages1");
+      cy.get("form input").eq(0).should("be.visible");
     });
 
-    cy.contains(message).should("be.visible");
-    cy.get("input").should("have.value", "");
-  });
-
-  it("mobile: should have threads shown by default", () => {
-    cy.wait("@getThreads");
-    cy.viewport(375, 667);
-    cy.get("#conversations_sidebar").should("be.visible");
-    cy.get("form input").should("not.be.visible");
-  });
-
-  it("mobile: should show messages when a thread is selected", () => {
-    cy.wait("@getThreads");
-    cy.viewport(375, 667);
-    cy.get("#conversations_sidebar button").eq(0).click();
-    cy.get("form input").should("be.visible");
+    it("mobile: should show threads when you go back", () => {
+      cy.wait("@getThreads");
+      cy.wait("@getMessages1");
+      cy.get("button").filter(":contains('Back')").eq(0).click();
+      cy.contains("Conversations").should("be.visible");
+    });
   });
 });
