@@ -53,16 +53,11 @@ describe("Get all threads for user", () => {
     await getMessages(req, res, db);
     expect(res.json).toHaveBeenCalledTimes(1);
     expect(res.json).toHaveBeenCalledWith({
-      messages: [
-        {
-          message_body: content,
-          sender_id,
-          receiver_id,
-          listing_id,
-          created_at,
-        },
-      ],
-      totalCount: 1,
+      message_body: content,
+      sender_id,
+      receiver_id,
+      listing_id,
+      created_at,
     });
   });
 
