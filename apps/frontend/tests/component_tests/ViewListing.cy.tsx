@@ -210,6 +210,17 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/view/1`]}>
+          <Routes>
+            <Route path="/listing/view/:id" element={<ViewListing />} />
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+    );
+
     cy.wait("@getListing");
 
     cy.get("#review_text").type("This is a great product!");
@@ -218,6 +229,8 @@ describe("<ViewListing/>", () => {
 
     // Wait for the review to be added to the DOM
     cy.contains("This is a great product!").should("be.visible");
+
+    cy.wait(1000); // Waits for 1000 milliseconds (1 second)
 
     // Ensure the delete button is present and click it
     cy.get("#delete_review").should("not.exist");
