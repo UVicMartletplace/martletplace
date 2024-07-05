@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import DeleteIcon from "@mui/icons-material/Delete"; // Import the delete icon
 import { useStyles } from "../styles/pageStyles";
 import _axios_instance from "../_axios_instance";
 import { colors } from "../styles/colors";
@@ -70,7 +71,7 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
       await _axios_instance.post("/review", newReviewObject);
       const fullReviewObject: Review = {
         ...newReviewObject,
-        reviewerName: user?.name || "Anonymous",
+        reviewerName: user?.username || "Anonymous",
         userID: user?.id || "CurrentUser",
         dateCreated: new Date().toISOString(),
         dateModified: new Date().toISOString(),
@@ -82,6 +83,20 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
     } catch (error) {
       console.error("Error posting review:", error);
       alert("Error posting review, please try again later");
+    }
+  };
+
+  const handleDeleteReview = async (listing_review_id: string) => {
+    try {
+      await _axios_instance.delete(`/review/${listing_review_id}`);
+      setReviewList(
+        reviewList.filter(
+          (review) => review.listing_review_id !== listing_review_id
+        )
+      );
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      alert("Error deleting review, please try again later");
     }
   };
 
@@ -142,7 +157,7 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
             lg={3}
             key={review.listing_review_id}
           >
-            <Card sx={{ height: "100%" }}>
+            <Card sx={{ height: "100%", position: "relative" }}>
               <CardContent
                 sx={{
                   display: "flex",
@@ -171,6 +186,15 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
                 <Typography variant="body1" sx={{ flexGrow: 1 }}>
                   {review.comment}
                 </Typography>
+                {user?.id === review.userID && (
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDeleteReview(review.listing_review_id)}
+                    sx={{ position: "absolute", top: 8, right: 8 }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
               </CardContent>
             </Card>
           </Grid>
