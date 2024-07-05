@@ -47,12 +47,6 @@ const AccountSidebar = ({ selectedItem }: { selectedItem: string }) => {
               selected={selectedItem === "My Listings"}
             />
             <Divider />
-            <AccountSidebarItem
-              path="/user/reviews"
-              itemName="My Reviews"
-              selected={selectedItem === "My Reviews"}
-            />
-            <Divider />
             {/* Create listing Button */}
             <ListItem
               onClick={() => navigate("/listing/new")}
