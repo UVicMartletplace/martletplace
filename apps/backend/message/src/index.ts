@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { authenticate_request } from "../../lib/src/auth";
+import { authenticate_request, AuthenticatedRequest } from "../../lib/src/auth";
 import pgPromise from "pg-promise";
 import { getMessageThreads } from "./getMessageThreads";
 import { getMessages, useValidateGetMessages } from "./getMessages";
@@ -29,16 +29,20 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.post("/api/messages", useValidateCreateMessage, (req, res) =>
-  createMessage(req, res, db),
+app.post(
+  "/api/messages",
+  (req, res, next) =>
+    useValidateCreateMessage(req as unknown as AuthenticatedRequest, res, next),
+  (req, res) => createMessage(req as unknown as AuthenticatedRequest, res, db),
 );
 app.get(
   "/api/messages/thread/:listing_id/:receiver_id",
-  useValidateGetMessages,
-  (req, res) => getMessages(req, res, db),
+  (req, res, next) =>
+    useValidateGetMessages(req as unknown as AuthenticatedRequest, res, next),
+  (req, res) => getMessages(req as unknown as AuthenticatedRequest, res, db),
 );
 app.get("/api/messages/overview", (req, res) =>
-  getMessageThreads(req, res, db),
+  getMessageThreads(req as unknown as AuthenticatedRequest, res, db),
 );
 
 app.listen(PORT, () => {

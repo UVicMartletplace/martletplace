@@ -1,14 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IDatabase } from "pg-promise";
+import { AuthenticatedRequest } from "../../lib/src/auth";
 
 export const getMessageThreads = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
 ) => {
   try {
-    // const { user_id } = req.body;
-    const user_id = "5";
+    const user_id = req.user.userId;
 
     const threads = await db.query(
       `WITH thread_ids AS (
