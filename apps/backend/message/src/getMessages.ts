@@ -34,7 +34,7 @@ export const getMessages = async (
     const count = totalCount[0].count;
 
     const messages = await db.query(
-      `SELECT * FROM messages 
+      `SELECT message_id, sender_id, receiver_id, listing_id, message_body, created_at FROM messages 
       WHERE listing_id = $1 AND ((receiver_id = $2 AND sender_id = $3) OR (receiver_id = $3 AND sender_id = $2))
       ORDER BY created_at DESC, message_id DESC
       LIMIT $4 OFFSET $5`,
