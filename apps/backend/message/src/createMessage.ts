@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { IDatabase } from "pg-promise";
+import { AuthenticatedRequest } from "../../lib/src/auth";
 
 export const useValidateCreateMessage = (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  // const { user_id: sender_id, content, listing_id, receiver_id } = req.body;
-  const sender_id = "5";
+  const sender_id = req.user.userId;
   const { receiver_id, listing_id, content } = req.body;
 
   if (!sender_id || !receiver_id || !listing_id || !content) {
@@ -24,13 +24,12 @@ export const useValidateCreateMessage = (
 };
 
 export const createMessage = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
 ) => {
   try {
-    // const { user_id: sender_id, content, listing_id, receiver_id } = req.body;
-    const sender_id = "5";
+    const sender_id = req.user.userId;
     const { receiver_id, listing_id, content } = req.body;
 
     const result = await db.query(
