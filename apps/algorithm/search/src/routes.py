@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, Request
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
@@ -38,7 +38,6 @@ async def search(
     status: Status = "AVAILABLE",
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
-    authorization: str = Header(None),
 ):
     validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
 

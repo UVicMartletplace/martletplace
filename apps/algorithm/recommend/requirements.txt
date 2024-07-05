@@ -7,6 +7,7 @@ numpy
 sqlmodel
 sqlalchemy
 asyncpg
+pyjwt[crypto]
 
 ## Dev Dependencies
 ruff

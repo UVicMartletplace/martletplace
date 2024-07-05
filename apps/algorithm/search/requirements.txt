@@ -3,6 +3,7 @@ pydantic
 elasticsearch
 uvicorn[standard]
 asyncpg
+pyjwt[crypto]
 
 ## Dev Dependencies
 ruff
