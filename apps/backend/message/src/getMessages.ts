@@ -25,13 +25,11 @@ export const getMessages = async (
     const { num_items, offset } = req.query;
     const user_id = req.user.userId;
 
-    const totalCount = await db.query(
+    const totalCount = await db.oneOrNone(
       `SELECT COUNT(*) FROM messages 
       WHERE listing_id = $1 AND (receiver_id = $2 AND sender_id = $3) OR (receiver_id = $3 AND sender_id = $2)`,
       [listing_id, receiver_id, user_id],
     );
-
-    const count = totalCount[0].count;
 
     const messages = await db.query(
       `SELECT message_id, sender_id, receiver_id, listing_id, message_body, created_at FROM messages 
@@ -41,7 +39,7 @@ export const getMessages = async (
       [listing_id, receiver_id, user_id, num_items, offset],
     );
 
-    res.json({ messages, totalCount: count });
+    res.json({ messages, totalCount });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while getting messages" });
