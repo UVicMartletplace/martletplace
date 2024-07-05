@@ -6,7 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node", "cypress", "express"]
+    "types": ["node", "express", "vitest"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
