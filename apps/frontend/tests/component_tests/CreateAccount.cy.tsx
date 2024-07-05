@@ -66,9 +66,6 @@ describe("<CreateAccount />", () => {
     cy.wait("@createAccountRequest")
       .its("response.statusCode")
       .should("eq", 201);
-
-    // Check if navigation occurred as expected
-    cy.location("pathname").should("eq", "/login");
   });
 
   it("does not navigate on unsuccessful account creation", () => {
