@@ -93,8 +93,8 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
       await _axios_instance.delete(`/review/${listing_review_id}`);
       setReviewList(
         reviewList.filter(
-          (review) => review.listing_review_id !== listing_review_id
-        )
+          (review) => review.listing_review_id !== listing_review_id,
+        ),
       );
     } catch (error) {
       console.error("Error deleting review:", error);
