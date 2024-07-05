@@ -32,11 +32,11 @@ export const createMessage = async (
     const sender_id = req.user.userId;
     const { receiver_id, listing_id, content } = req.body;
 
-    const result = await db.query(
+    const result = await db.oneOrNone(
       "INSERT INTO messages (sender_id, receiver_id, listing_id, message_body) VALUES ($1, $2, $3, $4) RETURNING *",
       [sender_id, receiver_id, listing_id, content],
     );
-    res.json(result[0]);
+    res.json(result);
   } catch (error) {
     console.error(error);
     res

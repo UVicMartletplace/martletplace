@@ -48,5 +48,3 @@ app.get("/api/messages/overview", (req, res) =>
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
-
-export { app, db };
