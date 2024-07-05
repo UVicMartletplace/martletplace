@@ -191,6 +191,7 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
                 {user?.id === review.userID && (
                   <IconButton
                     aria-label="delete"
+                    id="delete_review"
                     onClick={() => handleDeleteReview(review.listing_review_id)}
                     sx={{ position: "absolute", top: 8, right: 8 }}
                   >
