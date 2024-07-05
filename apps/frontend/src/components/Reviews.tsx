@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import DeleteIcon from "@mui/icons-material/Delete"; // Import the delete icon
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useStyles } from "../styles/pageStyles";
 import _axios_instance from "../_axios_instance";
 import { colors } from "../styles/colors";
@@ -68,9 +68,11 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
     };
 
     try {
-      await _axios_instance.post("/review", newReviewObject);
+      const response = await _axios_instance.post("/review", newReviewObject);
+      const reviewId = response.data.review_id;
       const fullReviewObject: Review = {
         ...newReviewObject,
+        listing_review_id: reviewId,
         reviewerName: user?.username || "Anonymous",
         userID: user?.id || "CurrentUser",
         dateCreated: new Date().toISOString(),
