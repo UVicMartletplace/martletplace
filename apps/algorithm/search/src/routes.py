@@ -13,18 +13,6 @@ search_router = APIRouter()
 
 es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
 
-if not es.indices.exists(index=DEFAULT_INDEX):
-    es.indices.create(
-        index=DEFAULT_INDEX,
-        body={
-            "mappings": {
-                "properties": {
-                    "location": {"type": "geo_point"},
-                }
-            }
-        },
-    )
-
 
 @search_router.get("/api/search")
 async def search(
