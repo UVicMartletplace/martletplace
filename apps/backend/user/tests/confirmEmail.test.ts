@@ -1,13 +1,19 @@
-import { describe, it, expect, vi, Mock } from 'vitest';
+import { describe, it, expect, vi, Mock, beforeAll } from 'vitest';
 import { confirmEmail } from '../src/confirmEmail';
 import { Response } from 'express';
 import { IDatabase } from 'pg-promise';
 import { verify } from 'jsonwebtoken';
 import { AuthenticatedRequest } from '../../lib/src/auth';
 
-vi.mock('jsonwebtoken');
+vi.mock('jsonwebtoken', () => ({
+  verify: vi.fn(),
+}));
 
 describe('Confirm Email Endpoint', () => {
+  beforeAll(() => {
+    process.env.JWT_PUBLIC_KEY = 'mockPublicKey';
+  });
+
   it('should verify the email successfully', async () => {
     const req = {
       body: {
@@ -24,7 +30,7 @@ describe('Confirm Email Endpoint', () => {
       none: vi.fn().mockResolvedValueOnce(undefined),
     } as unknown as IDatabase<object>;
 
-    (verify as Mock).mockReturnValueOnce({ userId: 2 });
+    (verify as Mock).mockReturnValueOnce({ userId: { user_id: 5 } });
 
     await confirmEmail(req, res, db);
 
@@ -118,7 +124,7 @@ describe('Confirm Email Endpoint', () => {
       none: vi.fn().mockRejectedValueOnce(new Error('Database error')),
     } as unknown as IDatabase<object>;
 
-    (verify as Mock).mockReturnValueOnce({ userId: 2 });
+    (verify as Mock).mockReturnValueOnce({ userId: { user_id: 2 } });
 
     await confirmEmail(req, res, db);
 

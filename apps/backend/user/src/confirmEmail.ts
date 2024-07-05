@@ -19,16 +19,20 @@ const confirmEmail = async (
       throw new Error("JWT_PUBLIC_KEY is not set");
     })();
 
-  let decoded: JwtPayload & { userId: number };
+  let decoded: JwtPayload & { user_id: number };
 
   try {
-    decoded = verify(code, JWT_PUBLIC_KEY, { algorithms: ["RS256"] }) as JwtPayload & { userId: number };
+    decoded = verify(code, JWT_PUBLIC_KEY, {
+      algorithms: ["RS256"],
+    }) as JwtPayload & { user_id: number };
   } catch (error) {
     console.error(error);
     return res.status(401).json({ error: "Invalid code" });
   }
 
-  const userId = decoded.userId;
+  // The userId is currently stored incorrectly in the jwt as structured: userId = { user_id: number }
+  // This should be updated at some point
+  const userId = decoded?.userId?.user_id;
 
   if (!userId) {
     return res.status(400).json({ error: "Invalid user ID in code" });

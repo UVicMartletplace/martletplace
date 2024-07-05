@@ -14,9 +14,7 @@ const sendConfirmationEmail = async (
     return res.status(400).json({ error: "Email is required" });
   }
 
-  const query = `
-    SELECT user_id FROM users WHERE email = $1
-  `;
+  const query = "SELECT user_id FROM users WHERE email = $1";
 
   let userId;
 
@@ -38,7 +36,7 @@ const sendConfirmationEmail = async (
   `;
 
   try {
-    await axios.post("/api/email", {
+    await axios.post(`${process.env.EMAIL_ENDPOINT}`, {
       to: email,
       subject,
       body,

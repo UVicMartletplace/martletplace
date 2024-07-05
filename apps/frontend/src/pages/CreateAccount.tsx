@@ -44,7 +44,7 @@ const CreateAccount = () => {
 
     if (!usernameFormat.test(username)) {
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters or numbers."
+        "Username must be between 1 and 20 characters and only contain letters or numbers.",
       );
       return;
     } else {

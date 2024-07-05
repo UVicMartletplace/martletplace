@@ -22,7 +22,14 @@ function App() {
       <Router>
         {/* Not wrapped intentionally */}
         <Routes>
-          <Route path="/confirm/:token" element={<ConfirmEmail />} />
+          <Route
+            path="/confirm/:token"
+            element={
+              <AuthRoute>
+                <ConfirmEmail />
+              </AuthRoute>
+            }
+          />
           {/* Auth Routes */}
           <Route
             path="/user/login"
