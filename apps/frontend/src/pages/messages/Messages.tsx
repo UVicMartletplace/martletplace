@@ -30,10 +30,10 @@ const fetchMessages = async (
   forThread: ThreadType | null,
   numItems?: number,
   offset?: number,
-): Promise<{ messages: MessageType[]; totalCount: number }> => {
+): Promise<MessageType[]> => {
   if (!forThread) {
     // No thread selected (implemented this way for the fetchMore callback)
-    return { messages: [], totalCount: 0 };
+    return [];
   }
 
   try {
@@ -42,15 +42,10 @@ const fetchMessages = async (
       { params: { num_items: numItems, offset: offset } },
     );
 
-    const { messages, totalCount } = messagesRes.data as {
-      messages: MessageType[];
-      totalCount: number;
-    };
-
-    return { messages, totalCount };
+    return messagesRes.data as MessageType[];
   } catch (err) {
     console.error("get messages error", err);
-    return { messages: [], totalCount: 0 };
+    return [];
   }
 };
 
@@ -82,7 +77,7 @@ const Messages = () => {
   } = usePaginatedArrayReducer<MessageType>("message_id", [], (a, b) =>
     a.created_at < b.created_at || a.message_id < b.message_id ? 1 : -1,
   );
-  const [totalMessages, setTotalMessages] = useState<number>(0);
+  const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true);
 
   // Workaround for not having a fixed-height header (unfortunately, this is
   // necessary for the infinite scroll)
@@ -101,13 +96,13 @@ const Messages = () => {
 
   const fetchMoreMessages = useCallback(
     async (thread: ThreadType | null, currentNumMessages: number) => {
-      const { messages, totalCount } = await fetchMessages(
+      const newMessages = await fetchMessages(
         thread,
         undefined,
         currentNumMessages,
       );
-      addMessages(messages);
-      setTotalMessages(totalCount);
+      addMessages(newMessages);
+      setHasMoreMessages(newMessages.length > 0);
     },
     [addMessages],
   );
@@ -145,7 +140,6 @@ const Messages = () => {
     const message = await postMessage(currentThread, text);
     if (!message) return;
     addMessages([message] as MessageType[]);
-    setTotalMessages((old) => old + 1);
 
     setCurrentThread((currentThread: ThreadType | null) => {
       if (!currentThread) return null;
@@ -244,7 +238,7 @@ const Messages = () => {
                     load={() =>
                       fetchMoreMessages(currentThread, messagesState.length)
                     }
-                    hasMore={totalMessages > messagesState.length}
+                    hasMore={hasMoreMessages}
                     loader={
                       loading && (
                         <CircularProgress
