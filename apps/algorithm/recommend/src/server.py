@@ -1,7 +1,7 @@
 import ast
 import re
 from typing import List
-from fastapi import FastAPI, HTTPException, Depends, Header, Request
+from fastapi import FastAPI, HTTPException, Depends, Request
 import pandas as pd
 from sqlalchemy import insert
 from sqlmodel import select
@@ -20,13 +20,15 @@ recommender = Recommender()
 
 @app.middleware("http")
 async def authenticate_request(request: Request, call_next):
-    auth_token = request.cookies.get('authorization')
+    auth_token = request.cookies.get("authorization")
 
     if not auth_token:
         raise HTTPException(status_code=401, detail="Authorization header missing")
 
     try:
-        decoded = jwt.decode(auth_token, os.getenv("JWT_PUBLIC_KEY"), algorithms=["RS256"])
+        decoded = jwt.decode(
+            auth_token, os.getenv("JWT_PUBLIC_KEY"), algorithms=["RS256"]
+        )
         request.state.user = decoded["userId"]
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
@@ -36,6 +38,7 @@ async def authenticate_request(request: Request, call_next):
 
     response = await call_next(request)
     return response
+
 
 @app.get("/api/recommendations", response_model=List[ListingSummary])
 async def get_recommendations(
@@ -48,9 +51,7 @@ async def get_recommendations(
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     user = users.first()
     if user is None:
-        raise HTTPException(
-            status_code=404, detail="User not found: " + str(authorization)
-        )
+        raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
@@ -132,9 +133,7 @@ async def stop_suggesting_item(
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     user = users.first()
     if user is None:
-        raise HTTPException(
-            status_code=404, detail="User not found: " + str(authorization)
-        )
+        raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
     await session.exec(
         insert(

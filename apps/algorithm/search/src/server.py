@@ -6,15 +6,18 @@ from .routes import search_router
 
 app = FastAPI()
 
+
 @app.middleware("http")
 async def authenticate_request(request: Request, call_next):
-    auth_token = request.cookies.get('authorization')
+    auth_token = request.cookies.get("authorization")
 
     if not auth_token:
         raise HTTPException(status_code=401, detail="Authorization header missing")
 
     try:
-        decoded = jwt.decode(auth_token, os.getenv("JWT_PUBLIC_KEY"), algorithms=["RS256"])
+        decoded = jwt.decode(
+            auth_token, os.getenv("JWT_PUBLIC_KEY"), algorithms=["RS256"]
+        )
         request.state.user = decoded["userId"]
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
@@ -24,5 +27,6 @@ async def authenticate_request(request: Request, call_next):
 
     response = await call_next(request)
     return response
+
 
 app.include_router(search_router)

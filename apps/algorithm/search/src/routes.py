@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException, Header, Request
+from fastapi import APIRouter, HTTPException
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
