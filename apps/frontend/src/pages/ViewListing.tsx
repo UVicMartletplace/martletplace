@@ -39,7 +39,7 @@ const ViewListing = () => {
   const user = useUser().user;
   const [listingReceived, setListingReceived] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [listingObject, setListingObject] = useState<ListingObject>({
     title: "Sorry This Listing Cannot Be Loaded",
     description: "Please Try again Later",
@@ -87,6 +87,10 @@ const ViewListing = () => {
       navigate("/messages");
     }
   };
+
+  if (!id) {
+    return <Typography variant="h5">Invalid Listing ID</Typography>;
+  }
 
   return (
     <>
@@ -157,7 +161,7 @@ const ViewListing = () => {
                   ) : null}
                 </Grid>
               </Grid>
-              <Reviews reviews={listingObject.reviews ?? []} />
+              <Reviews listingID={id} reviews={listingObject.reviews ?? []} />
             </CardContent>
           </Card>
         )}

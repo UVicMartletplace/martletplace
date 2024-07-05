@@ -15,6 +15,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useStyles } from "../styles/pageStyles";
 import _axios_instance from "../_axios_instance";
 import { colors } from "../styles/colors";
+import useUser from "../hooks/useUser";
 
 export interface Review {
   listing_review_id: string;
@@ -27,11 +28,25 @@ export interface Review {
   dateModified: string;
 }
 
-const Reviews = ({ reviews }: { reviews: Review[] }) => {
+interface ReviewsProps {
+  listingID: string;
+  reviews: Review[];
+}
+
+interface NewReview {
+  listing_review_id: string;
+  stars: number;
+  comment: string;
+  listingID: string;
+}
+
+const Reviews = ({ reviews, listingID }: ReviewsProps) => {
   const classes = useStyles();
+  const { user } = useUser();
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState<number | null>(null);
   const [reviewError, setReviewError] = useState("");
+  const [reviewList, setReviewList] = useState(reviews);
   const starRatings = [1, 2, 3, 4, 5];
 
   const handleRatingChange = (newRating: number) => {
@@ -44,21 +59,30 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
       return;
     }
 
-    const newReviewObject = {
-      listing_rating_id: rating,
+    const newReviewObject: NewReview = {
+      listing_review_id: new Date().getTime().toString(), // Temporary ID for client-side only
       stars: rating,
       comment: reviewText,
-      listingId: reviews[0].listingID,
+      listingID: listingID,
     };
 
     try {
       await _axios_instance.post("/review", newReviewObject);
+      const fullReviewObject: Review = {
+        ...newReviewObject,
+        reviewerName: user?.name || "Anonymous",
+        userID: user?.id || "CurrentUser",
+        dateCreated: new Date().toISOString(),
+        dateModified: new Date().toISOString(),
+      };
+      setReviewList([...reviewList, fullReviewObject]);
+      setReviewText("");
+      setRating(null);
+      setReviewError("");
     } catch (error) {
       console.error("Error posting review:", error);
       alert("Error posting review, please try again later");
-      return;
     }
-    setReviewError("");
   };
 
   return (
@@ -109,7 +133,7 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
         </Grid>
       </Grid>
       <Grid container spacing={2} sx={{ marginTop: 2 }}>
-        {reviews.map((review) => (
+        {reviewList.map((review) => (
           <Grid
             item
             xs={12}
