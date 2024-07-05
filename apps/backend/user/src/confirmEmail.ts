@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
+import { verify, JwtPayload } from "jsonwebtoken";
 
 const confirmEmail = async (
   req: Request,
@@ -7,8 +8,31 @@ const confirmEmail = async (
   db: IDatabase<object>,
 ) => {
   const code = req.body.code;
-  console.log(code); // here so code is not an unused variable
-  const userId = 2; // get from code (jwt token)
+
+  if (!code) {
+    return res.status(400).json({ error: "Code is required" });
+  }
+
+  const JWT_PUBLIC_KEY =
+    process.env.JWT_PUBLIC_KEY ||
+    (() => {
+      throw new Error("JWT_PUBLIC_KEY is not set");
+    })();
+
+  let decoded: JwtPayload & { userId: number };
+
+  try {
+    decoded = verify(code, JWT_PUBLIC_KEY, { algorithms: ["RS256"] }) as JwtPayload & { userId: number };
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ error: "Invalid code" });
+  }
+
+  const userId = decoded.userId;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Invalid user ID in code" });
+  }
 
   const confirmEmailQuery = `
     UPDATE users

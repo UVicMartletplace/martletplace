@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
+import { create_token } from "../../lib/src/auth";
 
 const sendConfirmationEmail = async (
   req: Request,
@@ -30,14 +31,14 @@ const sendConfirmationEmail = async (
   }
 
   const subject = "MartletPlace - Please confirm your email";
-  const token = "jwttoken";
+  const token = create_token({ userId: userId });
   const body = `
     <p>Please click the link below to confirm your email</p>
     <a href="http://localhost/confirm/${token}"> Confirm Email </a>   
   `;
 
   try {
-    await axios.post("http://localhost/api/email", {
+    await axios.post("/api/email", {
       to: email,
       subject,
       body,
@@ -45,6 +46,7 @@ const sendConfirmationEmail = async (
 
     return res.status(200).json({ message: "Verification email sent" });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       error: "Verification email could not be sent, please try again",
     });

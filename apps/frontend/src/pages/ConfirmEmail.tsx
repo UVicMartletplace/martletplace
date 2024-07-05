@@ -22,7 +22,7 @@ const ConfirmEmail = () => {
 
   return (
     <div>
-      <p>waiting for email confirmation...</p>
+      <p>Your email has been verified</p>
     </div>
   );
 };
