@@ -17,7 +17,7 @@ export const ConversationsSidebar = ({
   const s = useStyles();
 
   return (
-    <Box sx={s.messagesConvSidebar}>
+    <Box id="conversations_sidebar" sx={s.messagesConvSidebar}>
       <Stack direction="row">
         <p>Conversations</p>
       </Stack>
