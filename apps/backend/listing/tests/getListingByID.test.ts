@@ -8,6 +8,7 @@ describe('Get Listing by ID Endpoint', () => {
   it('should retrieve a listing successfully and calculate zero distance for same coordinates', async () => {
     const req = {
       params: { id: '1' },
+      user: { userId: 1 }
     } as unknown as AuthenticatedRequest;
 
     const res = {
