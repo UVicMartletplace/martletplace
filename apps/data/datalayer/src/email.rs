@@ -3,6 +3,7 @@ use std::env;
 use axum::{http::StatusCode, routing::post, Json, Router};
 use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use serde::{Deserialize, Serialize};
+use tower_http::catch_panic::CatchPanicLayer;
 
 #[derive(Deserialize, Debug, Serialize)]
 struct Email {
@@ -16,13 +17,15 @@ pub fn email_endpoint() -> String {
 }
 
 pub fn email_router() -> Router {
-    Router::new().route("/api/email", post(email_handler))
+    Router::new()
+        .route("/api/email", post(email_handler))
+        .layer(CatchPanicLayer::new())
 }
 
 async fn email_handler(Json(email): Json<Email>) -> StatusCode {
     println!("Sending Email: {:?}", email);
 
-    if env::var("SEND_EMAILS").unwrap_or(String::new()) == "TRUE" {
+    if env::var("SEND_EMAILS").unwrap_or_default() == "TRUE" {
         send_email(email).await;
     }
 
