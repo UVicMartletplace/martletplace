@@ -53,27 +53,26 @@ describe('Create Review Endpoint', () => {
     });
   });
 
-  it('should return an error if parameters are missing', async () => {
+  it('should return an error if star rating is missing', async () => {
     const req = {
       user: { userId: 1 },
       body: {
-        stars: 5,
-        comment: '',
+        comment: 'test comment',
         listingID: 1,
       },
     } as unknown as AuthenticatedRequest;
-
+  
     const res = {
       status: vi.fn().mockReturnThis(),
       json: vi.fn(),
     } as unknown as Response;
-
+  
     const db = {
       one: vi.fn(),
     } as unknown as IDatabase<object>;
-
+  
     await createReview(req, res, db);
-
+  
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ error: 'missing parameter in request' });
   });
