@@ -58,8 +58,8 @@ const EditListing = () => {
       description: "",
       price: 0,
       location: {
-        latitude: 48.463302,
-        longitude: -123.3108,
+        lat: 48.463302,
+        lon: -123.3108,
       },
       images: [],
     },
