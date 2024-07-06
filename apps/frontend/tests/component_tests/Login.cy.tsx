@@ -17,20 +17,21 @@ describe("<Login />", () => {
     cy.get("form").should("be.visible");
 
     // Check if the form contains the necessary input fields
-    cy.get('input[type="text"]').should("be.visible");
-    cy.get('input[type="password"]').should("be.visible");
+    cy.get('#email-input').should("be.visible");
+    cy.get('#password-input').should("be.visible");
     cy.get('button[type="submit"]').should("be.visible");
   });
 
   const testEmail = "testEmail@uvic.ca";
   const testPassword = "testPassword";
+  const testTOTP = "145058";
 
   it("allows typing into the input fields", () => {
     // Type into the input fields
-    cy.get('input[type="text"]')
+    cy.get('#email-input')
       .type(testEmail)
       .should("have.value", testEmail);
-    cy.get('input[type="password"]')
+    cy.get('#password-input')
       .type(testPassword)
       .should("have.value", testPassword);
   });
@@ -45,8 +46,9 @@ describe("<Login />", () => {
     }).as("loginRequest");
 
     // Type into the input fields
-    cy.get('input[type="text"]').type(testEmail);
-    cy.get('input[type="password"]').type(testPassword);
+    cy.get('#email-input').type(testEmail);
+    cy.get('#password-input').type(testPassword);
+    cy.get('#totp-input').type(testTOTP);
 
     // Ensure the button is not disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
@@ -68,8 +70,9 @@ describe("<Login />", () => {
     }).as("loginFailRequest");
 
     // Type into the input fields
-    cy.get('input[type="text"]').type("wronguser");
-    cy.get('input[type="password"]').type("wrongpassword");
+    cy.get('#email-input').type("wronguser");
+    cy.get('#password-input').type("wrongpassword");
+    cy.get('#totp-input').type("000000");
 
     // Ensure the button is not disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
@@ -101,7 +104,7 @@ describe("<Login />", () => {
 
   it("prevents submission when username is missing", () => {
     // Type into the input fields
-    cy.get('input[type="password"]').type(testPassword);
+    cy.get('#password-input').type(testPassword);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -109,7 +112,7 @@ describe("<Login />", () => {
 
   it("prevents submission when password is missing", () => {
     // Type into the input fields
-    cy.get('input[type="text"]').type(testEmail);
+    cy.get('#email-input').type(testEmail);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");

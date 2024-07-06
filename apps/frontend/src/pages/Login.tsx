@@ -15,6 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const isFormIncomplete = !email || !password;
   const { setUser } = useUser();
+  const [totp, setTotp] = useState("");
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,7 @@ const Login = () => {
       const response = await axios.post("/api/user/login", {
         email,
         password,
+        totp,
       });
 
       setUser(response.data as User);
@@ -30,6 +32,17 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       setError("Login unsuccessful. Invalid username and password combination");
+    }
+  };
+
+  const updateTotp = (totp: string) => {
+    console.log(Math.abs(+totp).toString());
+    if (
+      totp.length >= -1 &&
+      totp.length <= 6 &&
+      (Math.abs(+totp) !== 0 ? Math.abs(+totp).toString() === totp : true)
+    ) {
+      setTotp(totp);
     }
   };
 
@@ -50,6 +63,7 @@ const Login = () => {
         <TextField
           label="Email"
           variant="outlined"
+          id="email-input"
           required
           fullWidth
           margin="normal"
@@ -59,12 +73,26 @@ const Login = () => {
         <TextField
           label="Password"
           variant="outlined"
+          id="password-input"
           required
           type="password"
           fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+        <TextField
+          label="One Time Code"
+          variant="outlined"
+          id="totp-input"
+          required
+          fullWidth
+          margin="normal"
+          InputProps={{
+            inputMode: "numeric",
+          }}
+          value={totp}
+          onChange={(e) => updateTotp(e.target.value)}
         />
         {error && <Typography color="error">{error}</Typography>}
         <Button
