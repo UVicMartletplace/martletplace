@@ -167,6 +167,8 @@ describe("<ViewListing/>", () => {
 
     cy.wait("@getListing");
 
+    cy.wait(1000);
+
     cy.get("#review_text").type("This is a great product!");
     cy.get("#stars").click();
     cy.get("button").contains("Post").click();
