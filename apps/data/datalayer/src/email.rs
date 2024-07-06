@@ -1,12 +1,18 @@
+use std::env;
+
 use axum::{http::StatusCode, routing::post, Json, Router};
+use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use serde::{Deserialize, Serialize};
 
-#[allow(dead_code)]
 #[derive(Deserialize, Debug, Serialize)]
 struct Email {
     to: String,
     subject: String,
     body: String,
+}
+
+pub fn email_endpoint() -> String {
+    env::var("EMAIL_ENDPOINT").expect("EMAIL_ENDPOINT env var not set")
 }
 
 pub fn email_router() -> Router {
@@ -15,7 +21,35 @@ pub fn email_router() -> Router {
 
 async fn email_handler(Json(email): Json<Email>) -> StatusCode {
     println!("Sending Email: {:?}", email);
+
+    if env::var("SEND_EMAILS").unwrap_or(String::new()) == "TRUE" {
+        send_email(email).await;
+    }
+
     StatusCode::OK
+}
+
+async fn send_email(email_contents: Email) {
+    let email: Message = Message::builder()
+        .from(
+            "Martletplace <noreply@martletplace.ca>"
+                .parse()
+                .expect("Failed to parse sender email"),
+        )
+        .to(email_contents
+            .to
+            .parse()
+            .expect("Failed to parse recipient email"))
+        .subject(email_contents.subject)
+        .body(email_contents.body)
+        .expect("Failed to create email");
+
+    let mailer: AsyncSmtpTransport<Tokio1Executor> =
+        AsyncSmtpTransport::<Tokio1Executor>::from_url(&email_endpoint())
+            .expect("Failed to open SMTP connection")
+            .build();
+
+    mailer.send(email).await.expect("Failed to send email");
 }
 
 #[cfg(test)]
