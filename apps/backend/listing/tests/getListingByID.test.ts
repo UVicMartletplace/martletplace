@@ -93,7 +93,8 @@ describe('Get Listing by ID Endpoint', () => {
   it('should fail to retrieve a non-existent listing', async () => {
     const req = {
       params: { id: '9999' },
-    } as unknown as Request;
+      user: { userId: 1 }
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
