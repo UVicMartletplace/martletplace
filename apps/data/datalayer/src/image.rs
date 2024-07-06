@@ -60,5 +60,5 @@ async fn get_image_handler(Path(id): Path<String>) -> impl IntoResponse {
         return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
     }
 
-    (StatusCode::OK, buffer).into_response()
+    (StatusCode::OK, Bytes::from(buffer)).into_response()
 }
