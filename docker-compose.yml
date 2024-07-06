@@ -193,6 +193,15 @@ services:
     networks: [ datalayer-elasticsearch, pgsync-elasticsearch, search-elasticsearch ]
     mem_limit: 1GB
 
+  mailserver:
+    build: apps/data/mailserver
+    container_name: martletplace_mailserver
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    environment: []
+    networks: [ datalayer-mailserver ]
+
   pgsync:
     build: apps/data/pgsync
     container_name: martletplace_pgsync
@@ -252,6 +261,7 @@ networks:
   datalayer-elasticsearch:
   datalayer-cache:
   datalayer-blob:
+  datalayer-mailserver:
   pgsync-datalayer:
   pgsync-elasticsearch:
   pgsync-cache:
