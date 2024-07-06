@@ -36,7 +36,6 @@ const Login = () => {
   };
 
   const updateTotp = (totp: string) => {
-    console.log(Math.abs(+totp).toString());
     if (
       totp.length >= -1 &&
       totp.length <= 6 &&
