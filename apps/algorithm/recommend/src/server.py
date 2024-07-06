@@ -3,7 +3,7 @@ import re
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends, Request
 import pandas as pd
-from sqlalchemy import insert, join
+from sqlalchemy import insert
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import jwt
@@ -103,14 +103,17 @@ async def get_recommendations(
                 sellerID=str(row[0].seller_id),
                 sellerName=str(row[1]),
                 buyerID=row[0].buyer_id,
-                title= str(row[0].title),
-                price= (row[0].price),
-                location = {"latitude": float(row[0].location['latitude']), "longitude": float(row[0].location['longitude'])},
-                status= row[0].status.value,
-                description= row[0].description,
+                title=str(row[0].title),
+                price=(row[0].price),
+                location={
+                    "latitude": float(row[0].location["latitude"]),
+                    "longitude": float(row[0].location["longitude"]),
+                },
+                status=row[0].status.value,
+                description=row[0].description,
                 imageUrl=str(img_urls[0]),
                 dateCreated=row[0].created_at,
-                modified_at=row[0].modified_at, 
+                modified_at=row[0].modified_at,
             )
             listings_formatted.append(listing_summary)
         print(listings_formatted)
