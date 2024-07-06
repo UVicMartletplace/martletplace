@@ -39,6 +39,7 @@ services:
       - proxy-message
       - proxy-search
       - proxy-recommend
+      - proxy-datalayer
 
   user:
     build:
@@ -161,6 +162,7 @@ services:
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
     networks:
+      - proxy-datalayer
       - datalayer-database
       - datalayer-elasticsearch
       - datalayer-cache
@@ -253,6 +255,7 @@ networks:
   proxy-message:
   proxy-search:
   proxy-recommend:
+  proxy-datalayer:
   user-datalayer:
   listing-datalayer:
   review-datalayer:
