@@ -351,7 +351,9 @@ def test_search_with_negative_max_price_fail(auth_headers, mock_insert_user_sear
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_min_price_higher_than_max_price_fail(auth_headers, mock_insert_user_search):
+def test_search_min_price_higher_than_max_price_fail(
+    auth_headers, mock_insert_user_search
+):
     response = client.get(
         "/api/search",
         headers=auth_headers,
@@ -1220,11 +1222,11 @@ def test_search_with_invalid_sorting_criteria(auth_headers, mock_insert_user_sea
                 "type": "enum",
                 "loc": ["query", "sort"],
                 "msg": "Input should be 'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', "
-                       "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
+                "'LISTED_TIME_DESC', 'DISTANCE_ASC' or 'DISTANCE_DESC'",
                 "input": "INVALID_SORT",
                 "ctx": {
                     "expected": "'RELEVANCE', 'PRICE_ASC', 'PRICE_DESC', 'LISTED_TIME_ASC', 'LISTED_TIME_DESC', "
-                                "'DISTANCE_ASC' or 'DISTANCE_DESC'"
+                    "'DISTANCE_ASC' or 'DISTANCE_DESC'"
                 },
             }
         ]
@@ -1325,7 +1327,9 @@ def test_search_with_pagination(auth_headers, mock_insert_user_search):
     mock_insert_user_search.assert_any_await(5, "Item")
 
 
-def test_search_with_missing_pagination_parameters(auth_headers, mock_insert_user_search):
+def test_search_with_missing_pagination_parameters(
+    auth_headers, mock_insert_user_search
+):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1437,7 +1441,9 @@ def test_search_with_zero_limit(auth_headers, mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_total_items_count_with_multiple_listings(auth_headers, mock_insert_user_search):
+def test_total_items_count_with_multiple_listings(
+    auth_headers, mock_insert_user_search
+):
     listings = [
         {
             "listingId": f"listing{i}",
