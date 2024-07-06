@@ -29,7 +29,7 @@ const sendConfirmationEmail = async (
   }
 
   const subject = "MartletPlace - Please confirm your email";
-  const token = create_token({ userId: userId}, "/api/user/confirm-email");
+  const token = create_token({ userId: userId }, "/api/user/confirm-email");
   const body = `
     <p>Please click the link below to confirm your email</p>
     <a href="http://localhost/confirm/${token}"> Confirm Email </a>   

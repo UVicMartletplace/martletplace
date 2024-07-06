@@ -37,7 +37,7 @@ describe('Send Confirmation Email Endpoint', () => {
     await sendConfirmationEmail(req, res, db);
 
     expect(db.oneOrNone).toHaveBeenCalledWith('SELECT user_id FROM users WHERE email = $1', ['user5@uvic.ca']);
-    expect(create_token).toHaveBeenCalledWith({ userId: { user_id: 5 } });
+    expect(create_token).toHaveBeenCalledWith({ userId: { user_id: 5 } }, "/api/user/confirm-email");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ message: 'Verification email sent' });
   });
