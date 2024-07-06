@@ -1,6 +1,6 @@
 use axum::{
     body::Bytes,
-    extract::Path,
+    extract::{DefaultBodyLimit, Path},
     http::StatusCode,
     response::IntoResponse,
     routing::{get, post},
@@ -21,10 +21,12 @@ struct CreateImageResponse {
 pub fn image_router() -> Router {
     Router::new()
         .route("/api/images", post(upload_image_handler))
+        .layer(DefaultBodyLimit::disable())
         .route("/api/images/:id", get(get_image_handler))
 }
 
 async fn upload_image_handler(body: Bytes) -> impl IntoResponse {
+    println!("RECIEVED FILE");
     let uuid = Uuid::new_v4();
     let dir_path = std::path::Path::new("images");
     let file_path = dir_path.join(format!("{}", uuid));
@@ -37,6 +39,7 @@ async fn upload_image_handler(body: Bytes) -> impl IntoResponse {
     let resp = CreateImageResponse {
         url: format!("/api/images/{}", uuid),
     };
+    println!("WROTE TO FILE: {:?}, {}", uuid, body.len());
     (StatusCode::CREATED, Json(resp))
 }
 
@@ -52,5 +55,5 @@ async fn get_image_handler(Path(id): Path<String>) -> impl IntoResponse {
         return (StatusCode::INTERNAL_SERVER_ERROR).into_response();
     }
 
-    (StatusCode::OK, Bytes::from(buffer)).into_response()
+    (StatusCode::OK, buffer).into_response()
 }
