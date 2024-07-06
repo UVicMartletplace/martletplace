@@ -34,9 +34,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong");
 });
 
-app.get("/api/listing/:id", (req, res) => 
+app.get("/api/listing/:id", (req, res) =>
   // @ts-expect-error cant coercse Req -> AuthReq
-  getListingById(req as AuthenticatedRequest, res, db)
+  getListingById(req as AuthenticatedRequest, res, db),
 );
 app.get("/api/listings", (req, res) => getListingsByUser(req, res, db));
 app.post("/api/listing", (req, res) =>

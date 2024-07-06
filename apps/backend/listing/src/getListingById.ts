@@ -18,7 +18,7 @@ const getListingById = async (
 
   const userID = req.user.userId;
 
-  if(userID == null){
+  if (userID == null) {
     console.error("missing authorization parameter in request");
     return res.status(400).json({ error: "Authorization is required" });
   }
