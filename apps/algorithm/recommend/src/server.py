@@ -1,11 +1,13 @@
 import ast
 import re
 from typing import List
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Request
 import pandas as pd
 from sqlalchemy import insert
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
+import jwt
+import os
 
 from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches
 from src.api_models import ListingSummary
@@ -16,20 +18,43 @@ app = FastAPI()
 recommender = Recommender()
 
 
+@app.middleware("http")
+async def authenticate_request(request: Request, call_next):
+    auth_token = request.cookies.get("authorization")
+
+    if not auth_token:
+        raise HTTPException(status_code=401, detail="Authorization header missing")
+
+    if not os.getenv("PYTEST_CURRENT_TEST"):
+        try:
+            decoded = jwt.decode(
+                auth_token, os.getenv("JWT_PUBLIC_KEY"), algorithms=["RS256"]
+            )
+            request.state.user = decoded["userId"]
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token has expired")
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=401, detail="Invalid token")
+    else:
+        request.state.user = int(auth_token)
+
+    response = await call_next(request)
+    return response
+
+
 @app.get("/api/recommendations", response_model=List[ListingSummary])
 async def get_recommendations(
-    authorization: str = "5",
+    req: Request,
     page: int = 1,
     limit: int = 20,
     session: AsyncSession = Depends(get_session),
 ):
-    user_id = int(authorization) if authorization.isdigit() else None
+    user_id = req.state.user
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     user = users.first()
     if user is None:
-        raise HTTPException(
-            status_code=404, detail="User not found: " + str(authorization)
-        )
+        raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
@@ -103,17 +128,15 @@ async def get_recommendations(
 
 @app.post("/api/recommendations/stop/{id}")
 async def stop_suggesting_item(
+    req: Request,
     id: str,
-    authorization: str = Header(None),
     session: AsyncSession = Depends(get_session),
 ):
-    user_id = int(authorization) if authorization.isdigit() else None
+    user_id = req.state.user
     users = await session.exec(select(Users).where(Users.user_id == user_id))
     user = users.first()
     if user is None:
-        raise HTTPException(
-            status_code=404, detail="User not found: " + str(authorization)
-        )
+        raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
     await session.exec(
         insert(
