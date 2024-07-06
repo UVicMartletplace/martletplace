@@ -40,8 +40,8 @@ describe("<CreateListing />", () => {
       description: "No wear and tear, drop-off available.",
       price: 50,
       location: {
-        latitude: 34.23551,
-        longitude: -104.54451,
+        lat: 34.23551,
+        lon: -104.54451,
       },
       status: "AVAILABLE",
       dateCreated: "2024-05-23T15:30:00Z",
@@ -101,7 +101,7 @@ describe("<CreateListing />", () => {
         title: "Used Calculus Textbook",
         description: "No wear and tear, drop-off available.",
         price: 50,
-        location: { latitude: 48.463302, longitude: -123.3108 },
+        location: { lat: 48.463302, lon: -123.3108 },
         images: [
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
@@ -153,7 +153,7 @@ describe("<CreateListing />", () => {
           title: "Used Calculus Textbook",
           description: "No wear and tear, drop-off available.",
           price: 50,
-          location: { latitude: 48.463302, longitude: -123.3108 },
+          location: { lat: 48.463302, lon: -123.3108 },
           images: [
             { url: "https://picsum.photos/200/300" },
             { url: "https://picsum.photos/200/300" },
@@ -169,7 +169,7 @@ describe("<CreateListing />", () => {
       listing: {
         title: "Used Calculus Textbook",
         price: 50,
-        location: { latitude: 48.463302, longitude: -123.3108 },
+        location: { lat: 48.463302, lon: -123.3108 },
         description: "No wear and tear, drop-off available.",
         images: [
           { url: "https://picsum.photos/200/300" },
