@@ -3,13 +3,13 @@ import re
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends, Request
 import pandas as pd
-from sqlalchemy import insert
+from sqlalchemy import insert, join
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import jwt
 import os
 
-from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches
+from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches, Listings
 from src.api_models import ListingSummary
 from src.db import get_session
 from src.recommender import Recommender
@@ -70,11 +70,6 @@ async def get_recommendations(
     recommended_listings = recommender.recommend(
         items_clicked, terms_searched, page, limit
     )
-    if recommended_listings.size == 0:
-        return []
-    # replace rows with NaN values with 0s
-    recommended_listings = recommended_listings.fillna(0)
-
     columns = [
         "listing_id",
         "seller_id",
@@ -89,6 +84,39 @@ async def get_recommendations(
         "modified_at",
         "combined_features",
     ]
+    if recommended_listings.size == 0:
+        query = (
+            select(Listings, Users.name.label("seller_name"))
+            .join(Users, Listings.seller_id == Users.user_id)
+            .limit(limit)
+        )
+        result = await session.exec(query)
+        recommended_listings = result.fetchall()
+        listings_formatted = []
+        for row in recommended_listings:
+            try:
+                img_urls = row[0].image_urls
+            except (ValueError, SyntaxError):
+                img_urls = []
+            listing_summary = ListingSummary(
+                listingID=str(row[0].listing_id),
+                sellerID=str(row[0].seller_id),
+                sellerName=str(row[1]),
+                buyerID=row[0].buyer_id,
+                title= str(row[0].title),
+                price= (row[0].price),
+                location = {"latitude": float(row[0].location['latitude']), "longitude": float(row[0].location['longitude'])},
+                status= row[0].status.value,
+                description= row[0].description,
+                imageUrl=str(img_urls[0]),
+                dateCreated=row[0].created_at,
+                modified_at=row[0].modified_at, 
+            )
+            listings_formatted.append(listing_summary)
+        print(listings_formatted)
+        return listings_formatted
+    # replace rows with NaN values with 0s
+    recommended_listings = recommended_listings.fillna(0)
 
     recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
@@ -108,8 +136,8 @@ async def get_recommendations(
         else:
             loc = {"latitude": 0, "longitude": 0}
         listing_summary = ListingSummary(
-            listingID=row["listing_id"],
-            sellerID=row["seller_id"],
+            listingID=str(row["listing_id"]),
+            sellerID=str(row["seller_id"]),
             # Will query for actual seller name later.
             sellerName="Seller",
             buyerID=row["buyer_id"],
