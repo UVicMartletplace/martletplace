@@ -44,7 +44,7 @@ describe("Get all threads for user", () => {
   it("should retrieve all messages in a thread", async () => {
     const req = {
       params: { receiver_id, listing_id },
-      query: { num_items: "10", offset: "0" },
+      body: { num_items: "10", offset: "0" },
       user: { userId: 1 },
     } as unknown as AuthenticatedRequest;
     useValidateGetMessages(req, res, next);
