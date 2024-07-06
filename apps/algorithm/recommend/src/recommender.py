@@ -16,7 +16,7 @@ class Recommender:
             f.write(response.content)
 
     def load_model(self, retries=3):
-        if(retries < 0):
+        if retries < 0:
             exit(1)
         try:
             self.data = pd.read_csv("/app/src/training/processed_data.csv")
@@ -40,10 +40,10 @@ class Recommender:
                 item_vectors_url, "/app/src/training/normalized_item_vectors.npy"
             )
 
-            self.load_model(retries-1)
+            self.load_model(retries - 1)
             return
         except Exception as _:
-            self.load_model(retries-1)
+            self.load_model(retries - 1)
 
     def recommend(self, items_clicked, terms_searched, page, limit):
         """
