@@ -77,9 +77,8 @@ const ViewListing = () => {
   };
 
   const handleNavToMessagesAndEdit = () => {
-    console.log("User ID", user?.id);
     console.log("Seller ID", listingObject.seller_profile.userID);
-    if (user?.id === listingObject.seller_profile.userID) {
+    if (user?.userID === listingObject.seller_profile.userID) {
       navigate("/listing/edit/${id}");
     } else {
       //TODO Add a path for id
@@ -148,7 +147,7 @@ const ViewListing = () => {
                     onClick={handleNavToMessagesAndEdit}
                     id={"message_button"}
                   >
-                    {user?.id === listingObject.seller_profile.userID
+                    {user?.userID === listingObject.seller_profile.userID
                       ? "Edit Listing"
                       : "Message Seller"}
                   </Button>
