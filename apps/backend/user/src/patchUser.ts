@@ -8,9 +8,6 @@ const patchUser = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  console.log(req.body);
-
-  // This is like this so resops can replace the userid but the guard on id === 1 doesn't show an error, I'm not crazy
   const id = req.user.userId;
 
   const { username, password, name, bio, profilePictureUrl } = req.body;

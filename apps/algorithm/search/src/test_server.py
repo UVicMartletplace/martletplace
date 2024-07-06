@@ -35,10 +35,15 @@ def mock_insert_user_search():
         yield mock
 
 
-def test_search_no_listings(mock_insert_user_search):
+@pytest.fixture(scope="function")
+def auth_headers():
+    return {"Cookie": "authorization=5"}
+
+
+def test_search_no_listings(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "test",
             "latitude": 45.4315,
@@ -50,7 +55,7 @@ def test_search_no_listings(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "test")
 
 
-def test_search_for_existing_listing(mock_insert_user_search):
+def test_search_for_existing_listing(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -70,7 +75,7 @@ def test_search_for_existing_listing(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -96,7 +101,7 @@ def test_search_for_existing_listing(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_for_multiple_listings(mock_insert_user_search):
+def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -132,7 +137,7 @@ def test_search_for_multiple_listings(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -168,10 +173,10 @@ def test_search_for_multiple_listings(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_empty_query(mock_insert_user_search):
+def test_search_empty_query(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "",
             "latitude": 45.4315,
@@ -183,10 +188,10 @@ def test_search_empty_query(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "")
 
 
-def test_search_with_special_characters_in_query(mock_insert_user_search):
+def test_search_with_special_characters_in_query(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop!@#$%^&*()_+",
             "latitude": 45.4315,
@@ -198,7 +203,7 @@ def test_search_with_special_characters_in_query(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop!@#$%^&*()_+")
 
 
-def test_search_with_price_range(mock_insert_user_search):
+def test_search_with_price_range(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -218,7 +223,7 @@ def test_search_with_price_range(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -246,7 +251,7 @@ def test_search_with_price_range(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_too_low_price_range_fail(mock_insert_user_search):
+def test_search_with_too_low_price_range_fail(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -266,7 +271,7 @@ def test_search_with_too_low_price_range_fail(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -280,7 +285,7 @@ def test_search_with_too_low_price_range_fail(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_too_high_price_range_fail(mock_insert_user_search):
+def test_search_with_too_high_price_range_fail(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -300,7 +305,7 @@ def test_search_with_too_high_price_range_fail(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -314,10 +319,10 @@ def test_search_with_too_high_price_range_fail(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_negative_min_price_fail(mock_insert_user_search):
+def test_search_with_negative_min_price_fail(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -330,10 +335,10 @@ def test_search_with_negative_min_price_fail(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_negative_max_price_fail(mock_insert_user_search):
+def test_search_with_negative_max_price_fail(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -346,10 +351,12 @@ def test_search_with_negative_max_price_fail(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_min_price_higher_than_max_price_fail(mock_insert_user_search):
+def test_search_min_price_higher_than_max_price_fail(
+    auth_headers, mock_insert_user_search
+):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -363,7 +370,7 @@ def test_search_min_price_higher_than_max_price_fail(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_status(mock_insert_user_search):
+def test_search_with_status(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -399,7 +406,7 @@ def test_search_with_status(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -426,7 +433,7 @@ def test_search_with_status(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_status_sold(mock_insert_user_search):
+def test_search_with_status_sold(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -462,7 +469,7 @@ def test_search_with_status_sold(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -489,10 +496,10 @@ def test_search_with_status_sold(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_status(mock_insert_user_search):
+def test_search_with_invalid_status(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -515,7 +522,7 @@ def test_search_with_invalid_status(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_user_search(mock_insert_user_search):
+def test_search_with_user_search(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -551,7 +558,7 @@ def test_search_with_user_search(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "billybobjoe",
             "latitude": 45.4315,
@@ -578,7 +585,7 @@ def test_search_with_user_search(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "billybobjoe")
 
 
-def test_search_with_user_search_negative(mock_insert_user_search):
+def test_search_with_user_search_negative(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -614,7 +621,7 @@ def test_search_with_user_search_negative(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -627,10 +634,10 @@ def test_search_with_user_search_negative(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_search_type(mock_insert_user_search):
+def test_search_with_invalid_search_type(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -653,7 +660,7 @@ def test_search_with_invalid_search_type(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-# def test_only_return_results_within_5km_of_location(mock_insert_user_search):
+# def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_user_search):
 #     es.index(
 #         index=TEST_INDEX,
 #         id="abc123",
@@ -689,7 +696,7 @@ def test_search_with_invalid_search_type(mock_insert_user_search):
 #     es.indices.refresh(index=TEST_INDEX)
 #     response = client.get(
 #         "/api/search",
-#         headers={"Authorization": "Bearer testtoken"},
+#         headers=auth_headers,
 #         params={
 #             "query": "laptop",
 #             "latitude": 45.4315,
@@ -715,10 +722,10 @@ def test_search_with_invalid_search_type(mock_insert_user_search):
 #     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_missing_latitude(mock_insert_user_search):
+def test_search_with_missing_latitude(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "longitude": -75.6972,
@@ -738,10 +745,10 @@ def test_search_with_missing_latitude(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_missing_longitude(mock_insert_user_search):
+def test_search_with_missing_longitude(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -761,10 +768,10 @@ def test_search_with_missing_longitude(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_out_of_bounds_latitude(mock_insert_user_search):
+def test_search_with_out_of_bounds_latitude(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 95.4315,
@@ -776,10 +783,10 @@ def test_search_with_out_of_bounds_latitude(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_out_of_bounds_longitude(mock_insert_user_search):
+def test_search_with_out_of_bounds_longitude(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -791,7 +798,7 @@ def test_search_with_out_of_bounds_longitude(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_sorting_by_relevance(mock_insert_user_search):
+def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -843,7 +850,7 @@ def test_search_with_sorting_by_relevance(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -863,7 +870,7 @@ def test_search_with_sorting_by_relevance(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_price_asc(mock_insert_user_search):
+def test_search_with_sorting_by_price_asc(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -899,7 +906,7 @@ def test_search_with_sorting_by_price_asc(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "for",
             "latitude": 45.4315,
@@ -918,7 +925,7 @@ def test_search_with_sorting_by_price_asc(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "for")
 
 
-def test_search_with_sorting_by_price_desc(mock_insert_user_search):
+def test_search_with_sorting_by_price_desc(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -954,7 +961,7 @@ def test_search_with_sorting_by_price_desc(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "for",
             "latitude": 45.4315,
@@ -973,7 +980,7 @@ def test_search_with_sorting_by_price_desc(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "for")
 
 
-def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
+def test_search_with_sorting_by_listed_time_asc(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1009,7 +1016,7 @@ def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -1029,7 +1036,7 @@ def test_search_with_sorting_by_listed_time_asc(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
+def test_search_with_sorting_by_listed_time_desc(auth_headers, mock_insert_user_search):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -1065,7 +1072,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
     es.indices.refresh(index=TEST_INDEX)
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -1085,7 +1092,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-# def test_search_with_sorting_by_distance_asc(mock_insert_user_search):
+# def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_search):
 #     es.index(
 #         index=TEST_INDEX,
 #         id="abc123",
@@ -1121,7 +1128,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
 #     es.indices.refresh(index=TEST_INDEX)
 #     response = client.get(
 #         "/api/search",
-#         headers={"Authorization": "Bearer testtoken"},
+#         headers=auth_headers,
 #         params={
 #             "query": "laptop",
 #             "latitude": 45.4315,
@@ -1141,7 +1148,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
 #     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 #
 #
-# def test_search_with_sorting_by_distance_desc(mock_insert_user_search):
+# def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_search):
 #     es.index(
 #         index=TEST_INDEX,
 #         id="abc123",
@@ -1177,7 +1184,7 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
 #     es.indices.refresh(index=TEST_INDEX)
 #     response = client.get(
 #         "/api/search",
-#         headers={"Authorization": "Bearer testtoken"},
+#         headers=auth_headers,
 #         params={
 #             "query": "laptop",
 #             "latitude": 45.4315,
@@ -1197,10 +1204,10 @@ def test_search_with_sorting_by_listed_time_desc(mock_insert_user_search):
 #     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-def test_search_with_invalid_sorting_criteria(mock_insert_user_search):
+def test_search_with_invalid_sorting_criteria(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "laptop",
             "latitude": 45.4315,
@@ -1227,7 +1234,7 @@ def test_search_with_invalid_sorting_criteria(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_pagination(mock_insert_user_search):
+def test_search_with_pagination(auth_headers, mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1251,7 +1258,7 @@ def test_search_with_pagination(mock_insert_user_search):
 
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1273,7 +1280,7 @@ def test_search_with_pagination(mock_insert_user_search):
 
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1295,7 +1302,7 @@ def test_search_with_pagination(mock_insert_user_search):
 
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1320,7 +1327,9 @@ def test_search_with_pagination(mock_insert_user_search):
     mock_insert_user_search.assert_any_await(5, "Item")
 
 
-def test_search_with_missing_pagination_parameters(mock_insert_user_search):
+def test_search_with_missing_pagination_parameters(
+    auth_headers, mock_insert_user_search
+):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1344,7 +1353,7 @@ def test_search_with_missing_pagination_parameters(mock_insert_user_search):
 
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1364,10 +1373,10 @@ def test_search_with_missing_pagination_parameters(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "Item")
 
 
-def test_search_with_negative_page_number(mock_insert_user_search):
+def test_search_with_negative_page_number(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1381,10 +1390,10 @@ def test_search_with_negative_page_number(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_zero_page_number(mock_insert_user_search):
+def test_search_with_zero_page_number(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1398,10 +1407,10 @@ def test_search_with_zero_page_number(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_negative_limit(mock_insert_user_search):
+def test_search_with_negative_limit(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1415,10 +1424,10 @@ def test_search_with_negative_limit(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_search_with_zero_limit(mock_insert_user_search):
+def test_search_with_zero_limit(auth_headers, mock_insert_user_search):
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1432,7 +1441,9 @@ def test_search_with_zero_limit(mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_total_items_count_with_multiple_listings(mock_insert_user_search):
+def test_total_items_count_with_multiple_listings(
+    auth_headers, mock_insert_user_search
+):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1456,7 +1467,7 @@ def test_total_items_count_with_multiple_listings(mock_insert_user_search):
 
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,
@@ -1476,7 +1487,7 @@ def test_total_items_count_with_multiple_listings(mock_insert_user_search):
     mock_insert_user_search.assert_awaited_once_with(5, "Item")
 
 
-def test_total_items_count_with_filter(mock_insert_user_search):
+def test_total_items_count_with_filter(auth_headers, mock_insert_user_search):
     listings = [
         {
             "listingId": f"listing{i}",
@@ -1500,7 +1511,7 @@ def test_total_items_count_with_filter(mock_insert_user_search):
 
     response = client.get(
         "/api/search",
-        headers={"Authorization": "Bearer testtoken"},
+        headers=auth_headers,
         params={
             "query": "Item",
             "latitude": 45.4315,

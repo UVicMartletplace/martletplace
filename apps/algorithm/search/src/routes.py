@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
@@ -12,18 +12,6 @@ from .validation import validate_search_params
 search_router = APIRouter()
 
 es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
-
-if not es.indices.exists(index=DEFAULT_INDEX):
-    es.indices.create(
-        index=DEFAULT_INDEX,
-        body={
-            "mappings": {
-                "properties": {
-                    "location": {"type": "geo_point"},
-                }
-            }
-        },
-    )
 
 
 @search_router.get("/api/search")
@@ -38,7 +26,6 @@ async def search(
     status: Status = "AVAILABLE",
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
-    authorization: str = Header(None),
 ):
     validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
 

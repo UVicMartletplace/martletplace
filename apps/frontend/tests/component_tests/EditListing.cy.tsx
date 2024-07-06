@@ -44,6 +44,12 @@ const listingObject = {
 
 describe("<EditListing />", () => {
   beforeEach(() => {
+    cy.intercept("GET", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: listingObject,
+      });
+    }).as("getListing");
     cy.mount(
       <TestProviders>
         <MemoryRouter initialEntries={[`/listing/edit/1`]}>
@@ -54,24 +60,10 @@ describe("<EditListing />", () => {
       </TestProviders>,
     );
     cy.viewport(1280, 720);
-    cy.intercept("GET", "/api/listing/1", (req) => {
-      req.reply({
-        statusCode: 200,
-        body: listingObject,
-      });
-    }).as("getListing");
+    cy.wait("@getListing");
   });
 
-  it("renders", () => {
-    // see: https://on.cypress.io/mounting-react
-    cy.wait("@getListing");
-
-    cy.intercept("PATCH", "/api/listing/1", (req) => {
-      req.reply({
-        statusCode: 200,
-      });
-    }).as("patchListing");
-
+ it("renders", () => {
     cy.contains("Edit Listing").should("be.visible");
   });
 
@@ -90,7 +82,6 @@ describe("<EditListing />", () => {
       },
       status: "AVAILABLE",
     };
-    cy.wait("@getListing");
 
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
@@ -98,17 +89,8 @@ describe("<EditListing />", () => {
       });
     }).as("patchListing");
 
-    cy.contains("Edit Listing").should("be.visible");
-
-    cy.get("#field-description").should(
-      "have.value",
-      listingObject.description,
-    );
-
-    cy.get("#field-description").type("HELLO");
-
     cy.get("#field-description")
-      .should("be.visible")
+      .should("have.value", listingObject.description)
       .clear()
       .type("I do not like this textbook")
       .should("have.value", "I do not like this textbook");
@@ -116,26 +98,47 @@ describe("<EditListing />", () => {
     cy.get("#field-title")
       .should("be.visible")
       .clear()
-      .type("{selectall}{backspace}")
       .type("This is a bad textbook like the one used with SENG 474")
-      .should(
-        "have.value",
-        "This is a bad textbook like the one used with SENG 474",
-      );
+      .should("have.value", "This is a bad textbook like the one used with SENG 474");
 
     cy.get("#field-price")
       .should("be.visible")
       .type("{selectAll}0")
       .should("have.value", "0");
 
-    cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
+    cy.get("#submit-button").should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;
-      cy.log("Request Body", requestBody);
-      cy.log("Expected Body", patchObject);
       expect(requestBody).to.deep.equal(patchObject);
     });
+  });
+
+  it("Edits the listing incorrectly", () => {
+    cy.intercept("PATCH", "/api/listing/1", (req) => {
+      req.reply({
+        statusCode: 400,
+      });
+    }).as("patchListing");
+
+    cy.get("#field-description")
+      .should("have.value", listingObject.description)
+      .clear()
+      .type("I do not like this textbook")
+      .should("have.value", "I do not like this textbook");
+
+    cy.get("#field-title")
+      .should("be.visible")
+      .clear()
+      .type("This is a bad textbook like the one used with SENG 474")
+      .should("have.value", "This is a bad textbook like the one used with SENG 474");
+
+    cy.get("#field-price")
+      .should("be.visible")
+      .type("{selectAll}0")
+      .should("have.value", "0");
+
+    cy.get("#submit-button").should("be.visible").click();
   });
 
   it("Deletes listing correctly", () => {
@@ -166,32 +169,17 @@ describe("<EditListing />", () => {
       status: "SOLD",
     };
 
-    cy.mount(
-      <TestProviders>
-        <MemoryRouter initialEntries={[`/listing/edit/1`]}>
-          <Routes>
-            <Route path="/listing/edit/:id" element={<EditListing />} />
-          </Routes>
-        </MemoryRouter>
-      </TestProviders>,
-    );
-
-    cy.wait("@getListing");
-
     cy.intercept("PATCH", "/api/listing/1", (req) => {
       req.reply({
         statusCode: 200,
       });
     }).as("patchListing");
 
-    cy.get("#status-button", { timeout: 10000 }).should("be.visible").click();
-
-    cy.get("#submit-button", { timeout: 10000 }).should("be.visible").click();
+    cy.get("#status-button").should("be.visible").click();
+    cy.get("#submit-button").should("be.visible").click();
 
     cy.wait("@patchListing").then((interception) => {
       const requestBody = interception.request.body;
-      cy.log("Request Body", requestBody);
-      cy.log("Expected Body", patchObject);
       expect(requestBody).to.deep.equal(patchObject);
     });
   });

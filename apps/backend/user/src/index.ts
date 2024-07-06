@@ -7,7 +7,7 @@ import { patchUser } from "./patchUser";
 import { deleteUser } from "./deleteUser";
 import { login } from "./login";
 import { logout } from "./logout";
-import { sendConfirmationEmail } from "./sendComfirmationEmail";
+import { sendConfirmationEmail } from "./sendConfirmationEmail";
 import { confirmEmail } from "./confirmEmail";
 import { AuthenticatedRequest, authenticate_request } from "../../lib/src/auth";
 import cookieParser from "cookie-parser";
