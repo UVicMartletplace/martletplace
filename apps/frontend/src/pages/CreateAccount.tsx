@@ -65,12 +65,20 @@ const CreateAccount = () => {
     }
 
     try {
-      await axios.post("/api/user", {
+      const response = await axios.post("/api/user", {
         name,
         username,
         email,
         password,
       });
+
+      if (response.status === 201) {
+        await axios.post("/api/user/send-confirmation-email", {
+          email,
+        });
+      }
+
+      alert("Please check your email to verify your account.");
 
       navigate("/login");
     } catch (error) {
