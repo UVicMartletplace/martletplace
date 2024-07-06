@@ -74,7 +74,7 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
         ...newReviewObject,
         listing_review_id: reviewId,
         reviewerName: user?.username || "Anonymous",
-        userID: user?.id || "CurrentUser",
+        userID: user?.userID || "CurrentUser",
         dateCreated: new Date().toISOString(),
         dateModified: new Date().toISOString(),
       };
@@ -188,7 +188,7 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
                 <Typography variant="body1" sx={{ flexGrow: 1 }}>
                   {review.comment}
                 </Typography>
-                {user?.id === review.userID && (
+                {user?.userID === review.userID && (
                   <IconButton
                     aria-label="delete"
                     id="delete_review"
