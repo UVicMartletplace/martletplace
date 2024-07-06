@@ -34,7 +34,7 @@ function usePaginatedArrayReducer<ValueType extends Record<string, unknown>>(
               (existingItem) => existingItem[keyField] === item[keyField],
             );
           });
-          const items = state.concat(newItems);
+          const items = [...state, ...newItems];
           if (sortFn) {
             return items.sort(sortFn);
           } else {
@@ -42,10 +42,12 @@ function usePaginatedArrayReducer<ValueType extends Record<string, unknown>>(
           }
         }
         case "remove": {
-          return state.filter(
-            // @ts-expect-error because 'any' is disallowed
-            (item) => !action.payload.includes(item[keyField]),
-          );
+          return [
+            ...state.filter(
+              // @ts-expect-error because 'any' is disallowed
+              (item) => !action.payload.includes(item[keyField]),
+            ),
+          ];
         }
         case "clear": {
           return [];
