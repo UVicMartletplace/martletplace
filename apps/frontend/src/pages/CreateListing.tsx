@@ -22,8 +22,8 @@ interface ImageURLObject {
   url: string;
 }
 interface LocationObject {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lon: number;
 }
 
 interface ListingObject {
@@ -44,8 +44,8 @@ const CreateListing = () => {
     [],
   );
   const [location, setLocation] = useState<LocationObject>({
-    latitude: 48.463302,
-    longitude: -123.3108,
+    lat: 48.463302,
+    lon: -123.3108,
   });
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>(
@@ -62,8 +62,8 @@ const CreateListing = () => {
       description: "",
       price: 0,
       location: {
-        latitude: 48.463302,
-        longitude: -123.3108,
+        lat: 48.463302,
+        lon: -123.3108,
       },
       images: [],
     },
@@ -174,13 +174,13 @@ const CreateListing = () => {
   // Gets the user location, and adds it to the listing object
   const updateListingLocation = () => {
     try {
-      const currentLocation: LocationObject = { latitude: 0, longitude: 0 };
+      const currentLocation: LocationObject = { lat: 0, lon: 0 };
       navigator.geolocation.getCurrentPosition((position) => {
-        const currentLatitude = position.coords.latitude;
-        const currentLongitude = position.coords.longitude;
+        const currentLatitude = position.coords.lat;
+        const currentLongitude = position.coords.lon;
         if (currentLatitude !== 0 && currentLongitude !== 0) {
-          currentLocation.latitude = currentLatitude;
-          currentLocation.longitude = currentLongitude;
+          currentLocation.lat = currentLatitude;
+          currentLocation.lon = currentLongitude;
           setLocation(currentLocation);
           updateNewListingPayload("location", currentLocation);
         }
@@ -327,8 +327,8 @@ const CreateListing = () => {
                         Update Location
                       </Button>
                       <Typography>
-                        Current Location: {location.latitude} latitude and{" "}
-                        {location.longitude} longitude
+                        Current Location: {location.lat} latitude and{" "}
+                        {location.lon} longitude
                       </Typography>
                     </FormControl>
                     <Box sx={{ display: "flex" }}>
