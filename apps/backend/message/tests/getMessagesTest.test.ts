@@ -52,13 +52,15 @@ describe("Get all threads for user", () => {
 
     await getMessages(req, res, db);
     expect(res.json).toHaveBeenCalledTimes(1);
-    expect(res.json).toHaveBeenCalledWith({
-      message_body: content,
-      sender_id,
-      receiver_id,
-      listing_id,
-      created_at,
-    });
+    expect(res.json).toHaveBeenCalledWith([
+      {
+        message_body: content,
+        sender_id,
+        receiver_id,
+        listing_id,
+        created_at,
+      },
+    ]);
   });
 
   it("should fail with invalid params", () => {
