@@ -24,8 +24,8 @@ interface ImageURLObject {
   url: string;
 }
 interface LocationObject {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lon: number;
 }
 
 interface ListingObject {

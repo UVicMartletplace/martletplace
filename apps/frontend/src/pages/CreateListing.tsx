@@ -176,8 +176,8 @@ const CreateListing = () => {
     try {
       const currentLocation: LocationObject = { lat: 0, lon: 0 };
       navigator.geolocation.getCurrentPosition((position) => {
-        const currentLatitude = position.coords.lat;
-        const currentLongitude = position.coords.lon;
+        const currentLatitude = position.coords.latitude;
+        const currentLongitude = position.coords.longitude;
         if (currentLatitude !== 0 && currentLongitude !== 0) {
           currentLocation.lat = currentLatitude;
           currentLocation.lon = currentLongitude;
