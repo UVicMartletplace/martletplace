@@ -6,6 +6,7 @@ import pgPromise from "pg-promise";
 import { getMessageThreads } from "./getMessageThreads";
 import { getMessages, useValidateGetMessages } from "./getMessages";
 import { createMessage, useValidateCreateMessage } from "./createMessage";
+import { usePagination } from "../../lib/src/pagination";
 
 const PORT = 8214;
 
@@ -37,6 +38,7 @@ app.post(
 );
 app.get(
   "/api/messages/thread/:listing_id/:receiver_id",
+  usePagination,
   (req, res, next) =>
     useValidateGetMessages(req as unknown as AuthenticatedRequest, res, next),
   (req, res) => getMessages(req as unknown as AuthenticatedRequest, res, db),

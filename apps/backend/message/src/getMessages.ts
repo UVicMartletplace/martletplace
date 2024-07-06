@@ -22,7 +22,7 @@ export const getMessages = async (
 ) => {
   try {
     const { listing_id, receiver_id } = req.params;
-    const { num_items, offset } = req.query;
+    const { num_items, offset } = req.body;
     const user_id = req.user.userId;
 
     const messages = await db.query(
