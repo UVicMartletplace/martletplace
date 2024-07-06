@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
@@ -16,6 +16,7 @@ es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
 
 @search_router.get("/api/search")
 async def search(
+    request: Request,
     query: str,
     latitude: float,
     longitude: float,
@@ -118,7 +119,7 @@ async def search(
     ]
 
     try:
-        user_id = 5  # Placeholder user ID, replace with actual user ID if available
+        user_id = request.state.user
         await insert_user_search(user_id, query)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
