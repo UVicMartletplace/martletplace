@@ -234,7 +234,7 @@ describe("<ViewListing/>", () => {
 
     cy.wait(1000); // Waits for 1000 milliseconds (1 second)
 
-    // Ensure the delete button is present and click it
+    // Ensure the delete button is not present
     cy.get("#delete_review").should("not.exist");
   });
 });
