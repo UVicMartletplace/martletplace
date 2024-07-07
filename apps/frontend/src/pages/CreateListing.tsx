@@ -74,7 +74,6 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    console.log("Listing Image Binaries", imageBlobs);
     if (!priceError && !titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
@@ -212,8 +211,6 @@ const CreateListing = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log("Success: ", imageBlob)
-        console.log("Response: ", response.data.url)
         // Return the URL of the uploaded image on success
         return { url: response.data.url };
       } catch (error) {

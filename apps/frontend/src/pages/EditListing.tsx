@@ -103,7 +103,6 @@ const EditListing = () => {
   const asyncListingImageWrapper = async (): Promise<boolean> => {
     try {
       const imagesObjectArray = await asyncUploadImages();
-      console.log("imagesObjectArray", imagesObjectArray)
       if (imagesObjectArray) {
         // Why this works and the regular version where you edit only the images list doesn't I have absolutely no idea
         const copyOfListingObject = {...newListingObject}
@@ -191,7 +190,6 @@ const EditListing = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log("Image:", response.data.url)
         return { url: response.data.url };
       } catch (error) {
         return null;
@@ -216,7 +214,6 @@ const EditListing = () => {
       ...prevState,
       status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
-    console.log("LISTING OBJECT", newListingObject);
   };
 
   const handleDelete = () => {
