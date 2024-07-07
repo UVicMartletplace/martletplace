@@ -61,7 +61,7 @@ const getListingById = async (
       VALUES ($1, $2)
     `;
 
-    await db.none(insertClickQuery, [userID, id]);
+    await db.oneOrNone(insertClickQuery, [userID, id]);
 
     const reviewsQuery = `
       SELECT 
