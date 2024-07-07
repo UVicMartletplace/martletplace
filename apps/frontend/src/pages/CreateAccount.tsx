@@ -105,6 +105,14 @@ const CreateAccount = () => {
         email,
         password,
       });
+
+      if (response.status === 201) {
+        await axios.post("/api/user/send-confirmation-email", {
+          email,
+        });
+      }
+
+      alert("Please check your email to verify your account.");
       handleOpen(response.data.totp_secret);
     } catch (error) {
       alert("Failed to create account. Please try again.");

@@ -4,7 +4,7 @@ import { Route, Routes, MemoryRouter } from "react-router-dom";
 
 describe("<ConfirmEmail />", () => {
   beforeEach(() => {
-    cy.intercept("POST", "/user/confirm-email*", {
+    cy.intercept("POST", "api/user/confirm-email*", {
       statusCode: 200,
       body: {},
     }).as("confirmEmail");
