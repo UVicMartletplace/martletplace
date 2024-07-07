@@ -104,8 +104,8 @@ async def search(
     total_items = response["hits"]["total"]["value"]
     results = [
         {
-            "listingID": hit["_source"]["listingId"],
-            "sellerID": hit["_source"]["sellerId"],
+            "listingID": str(hit["_source"]["listingId"]),
+            "sellerID": str(hit["_source"]["sellerId"]),
             "sellerName": hit["_source"]["users"]["name"],
             "title": hit["_source"]["title"],
             "description": hit["_source"]["description"],
