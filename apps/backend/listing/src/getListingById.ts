@@ -4,7 +4,6 @@ import { AuthenticatedRequest } from "../../lib/src/auth";
 
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (
-  // TODO: AUTHENTICATION
   req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
