@@ -69,15 +69,17 @@ const Reviews = ({ reviews, listingID }: ReviewsProps) => {
 
     try {
       const response = await _axios_instance.post("/review", newReviewObject);
+      const reviewData = response.data;
       const reviewId = response.data.review_id;
       const fullReviewObject: Review = {
         ...newReviewObject,
         listing_review_id: reviewId,
         reviewerName: user?.username || "Anonymous",
         userID: user?.userID || "CurrentUser",
-        dateCreated: new Date().toISOString(),
-        dateModified: new Date().toISOString(),
+        dateCreated: reviewData.dateCreated,
+        dateModified: reviewData.dateModified,
       };
+
       setReviewList([...reviewList, fullReviewObject]);
       setReviewText("");
       setRating(null);
