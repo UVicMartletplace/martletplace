@@ -12,9 +12,11 @@ import {
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useStyles } from "../styles/pageStyles";
 import _axios_instance from "../_axios_instance";
 import { colors } from "../styles/colors";
+import useUser from "../hooks/useUser";
 
 export interface Review {
   listing_review_id: string;
@@ -27,11 +29,25 @@ export interface Review {
   dateModified: string;
 }
 
-const Reviews = ({ reviews }: { reviews: Review[] }) => {
+interface ReviewsProps {
+  listingID: string;
+  reviews: Review[];
+}
+
+interface NewReview {
+  listing_review_id: string;
+  stars: number;
+  comment: string;
+  listingID: string;
+}
+
+const Reviews = ({ reviews, listingID }: ReviewsProps) => {
   const classes = useStyles();
+  const { user } = useUser();
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState<number | null>(null);
   const [reviewError, setReviewError] = useState("");
+  const [reviewList, setReviewList] = useState(reviews);
   const starRatings = [1, 2, 3, 4, 5];
 
   const handleRatingChange = (newRating: number) => {
@@ -44,21 +60,48 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
       return;
     }
 
-    const newReviewObject = {
-      listing_rating_id: rating,
+    const newReviewObject: NewReview = {
+      listing_review_id: new Date().getTime().toString(), // Temporary ID for client-side only
       stars: rating,
       comment: reviewText,
-      listingId: reviews[0].listingID,
+      listingID: listingID,
     };
 
     try {
-      await _axios_instance.post("/review", newReviewObject);
+      const response = await _axios_instance.post("/review", newReviewObject);
+      const reviewData = response.data;
+      const reviewId = response.data.review_id;
+      const fullReviewObject: Review = {
+        ...newReviewObject,
+        listing_review_id: reviewId,
+        reviewerName: user?.username || "Anonymous",
+        userID: user?.userID || "CurrentUser",
+        dateCreated: reviewData.dateCreated,
+        dateModified: reviewData.dateModified,
+      };
+
+      setReviewList([...reviewList, fullReviewObject]);
+      setReviewText("");
+      setRating(null);
+      setReviewError("");
     } catch (error) {
       console.error("Error posting review:", error);
       alert("Error posting review, please try again later");
-      return;
     }
-    setReviewError("");
+  };
+
+  const handleDeleteReview = async (listing_review_id: string) => {
+    try {
+      await _axios_instance.delete(`/review/${listing_review_id}`);
+      setReviewList(
+        reviewList.filter(
+          (review) => review.listing_review_id !== listing_review_id,
+        ),
+      );
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      alert("Error deleting review, please try again later");
+    }
   };
 
   return (
@@ -109,7 +152,7 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
         </Grid>
       </Grid>
       <Grid container spacing={2} sx={{ marginTop: 2 }}>
-        {reviews.map((review) => (
+        {reviewList.map((review) => (
           <Grid
             item
             xs={12}
@@ -118,7 +161,7 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
             lg={3}
             key={review.listing_review_id}
           >
-            <Card sx={{ height: "100%" }}>
+            <Card sx={{ height: "100%", position: "relative" }}>
               <CardContent
                 sx={{
                   display: "flex",
@@ -147,6 +190,16 @@ const Reviews = ({ reviews }: { reviews: Review[] }) => {
                 <Typography variant="body1" sx={{ flexGrow: 1 }}>
                   {review.comment}
                 </Typography>
+                {user?.userID === review.userID && (
+                  <IconButton
+                    aria-label="delete"
+                    id="delete_review"
+                    onClick={() => handleDeleteReview(review.listing_review_id)}
+                    sx={{ position: "absolute", top: 8, right: 8 }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
               </CardContent>
             </Card>
           </Grid>

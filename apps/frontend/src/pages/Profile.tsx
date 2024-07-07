@@ -157,6 +157,7 @@ const Profile = () => {
       }
     } else {
       alert("Error uploading picture. Please try again.");
+      setImageURL(originalProfile.profilePictureUrl);
     }
 
     setEditMode(false);

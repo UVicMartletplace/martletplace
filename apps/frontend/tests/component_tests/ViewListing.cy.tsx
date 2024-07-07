@@ -167,6 +167,8 @@ describe("<ViewListing/>", () => {
 
     cy.wait("@getListing");
 
+    cy.wait(1000);
+
     cy.get("#review_text").type("This is a great product!");
     cy.get("#stars").click();
     cy.get("button").contains("Post").click();
@@ -201,5 +203,38 @@ describe("<ViewListing/>", () => {
 
     cy.get("button").contains("Post").click();
     cy.contains("Please provide a star rating").should("be.visible");
+  });
+
+  it("should not allow you to delete another person's review", () => {
+    // Mock axios response
+    cy.intercept("GET", "/api/listing/1", {
+      statusCode: 200,
+      body: listingObject,
+    }).as("getListing");
+
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/view/1`]}>
+          <Routes>
+            <Route path="/listing/view/:id" element={<ViewListing />} />
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+    );
+
+    cy.wait("@getListing");
+
+    cy.get("#review_text").type("This is a great product!");
+    cy.get("#stars").click();
+    cy.get("button").contains("Post").click();
+
+    // Wait for the review to be added to the DOM
+    cy.contains("This is a great product!").should("be.visible");
+
+    cy.wait(1000); // Waits for 1000 milliseconds (1 second)
+
+    // Ensure the delete button is not present
+    cy.get("#delete_review").should("not.exist");
   });
 });
