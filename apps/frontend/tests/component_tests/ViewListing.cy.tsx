@@ -34,6 +34,19 @@ describe("<ViewListing/>", () => {
     ],
   };
 
+  const pageJSX = (
+    <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/view/1`]}>
+          <Routes>
+            <Route path="/listing/view/:id" element={<ViewListing />} />
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+  );
+
+
+
   const newReviewObject = {
     listing_review_id: "2",
     stars: 5,
@@ -43,16 +56,6 @@ describe("<ViewListing/>", () => {
   };
 
   beforeEach(() => {
-    cy.mount(
-      <TestProviders>
-        <MemoryRouter initialEntries={[`/listing/view/1`]}>
-          <Routes>
-            <Route path="/listing/view/:id" element={<ViewListing />} />
-            <Route path="/messages" element={<Messages />} />
-          </Routes>
-        </MemoryRouter>
-      </TestProviders>
-    );
     cy.viewport(1280, 720);
   });
 
@@ -61,6 +64,9 @@ describe("<ViewListing/>", () => {
       statusCode: 200,
       body: listingObject,
     }).as("getListing");
+
+    cy.mount(pageJSX);
+    cy.wait("@getListing");
 
     cy.contains(
       "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
@@ -81,6 +87,9 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
+    cy.mount(pageJSX);
+    cy.wait("@getListing");
+
     cy.get("#carousel_img_box > img").should("have.length", 5);
     for (let x = 1; x < 5; x++) {
       cy.get("#carousel_index").should("have.text", x.toString());
@@ -97,19 +106,8 @@ describe("<ViewListing/>", () => {
     }
   });
 
-  /*
-  it("should navigate to messages", () => {
-    cy.intercept("GET", "/api/listing/1", {
-      statusCode: 200,
-      body: listingObject,
-    }).as("getListing");
-
-    cy.get("#message_button").click();
-    cy.contains("Messages").should("be.visible");
-  });
-  */
-
   it("should fail gracefully if the listing cannot be retrieved", () => {
+    cy.mount(pageJSX);
     cy.contains("Hang with us").should("be.visible");
   });
 
@@ -119,6 +117,7 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
+    cy.mount(pageJSX);
     cy.wait("@getListing");
 
     cy.contains("John Doe").should("be.visible");
@@ -133,12 +132,13 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
+    cy.mount(pageJSX);
+    cy.wait("@getListing");
+
     cy.intercept("POST", "/api/review", {
       statusCode: 200,
       body: newReviewObject,
     }).as("postReview");
-
-    cy.wait("@getListing");
 
     cy.get("#review_text").type("This is a great product!");
     cy.get("#stars").click();
@@ -165,6 +165,7 @@ describe("<ViewListing/>", () => {
       body: { newReviewObject },
     }).as("postReview");
 
+    cy.mount(pageJSX);
     cy.wait("@getListing");
 
     cy.wait(1000);
@@ -186,17 +187,7 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
-    cy.mount(
-      <TestProviders>
-        <MemoryRouter initialEntries={[`/listing/view/1`]}>
-          <Routes>
-            <Route path="/listing/view/:id" element={<ViewListing />} />
-            <Route path="/messages" element={<Messages />} />
-          </Routes>
-        </MemoryRouter>
-      </TestProviders>
-    );
-
+    cy.mount(pageJSX);
     cy.wait("@getListing");
 
     cy.get("#review_text").type("This is a great product!");
