@@ -116,7 +116,6 @@ async def get_recommendations(
                 modified_at=row[0].modified_at,
             )
             listings_formatted.append(listing_summary)
-        print(listings_formatted)
         return listings_formatted
     # replace rows with NaN values with 0s
     recommended_listings = recommended_listings.fillna(0)
