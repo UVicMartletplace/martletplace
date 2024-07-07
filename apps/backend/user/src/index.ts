@@ -5,6 +5,8 @@ import { createUser } from "./createUser";
 import { getUser } from "./getUser";
 import { patchUser } from "./patchUser";
 import { deleteUser } from "./deleteUser";
+import { getUserSearchHistory } from "./getUserSearchHistory";
+import { deleteUserSearch } from "./deleteUserSearch";
 import { login } from "./login";
 import { logout } from "./logout";
 import { sendConfirmationEmail } from "./sendConfirmationEmail";
@@ -66,6 +68,16 @@ app.patch("/api/user", (req: Request, res: Response) =>
 // Delete user
 app.delete("/api/user", (req: Request, res: Response) =>
   deleteUser(req as unknown as AuthenticatedRequest, res, db),
+);
+
+// Get user search history
+app.get("/api/user/search-history/:id", (req: Request, res: Response) =>
+  getUserSearchHistory(req, res, db),
+);
+
+// Delete user
+app.delete("/api/user/search-history/:id", (req: Request, res: Response) =>
+  deleteUserSearch(req as unknown as AuthenticatedRequest, res, db),
 );
 
 // Send Confirmation Email
