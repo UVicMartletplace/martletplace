@@ -124,9 +124,9 @@ const CreateListing = () => {
     try {
       const imagesObjectArray = await asyncUploadImages();
       if (imagesObjectArray) {
-        const tempListingObject = newListingObject;
-        tempListingObject.listing.images = imagesObjectArray;
-        setNewListingObject(tempListingObject);
+        const copyOfListingObject = {...newListingObject}
+        copyOfListingObject.listing.images = imagesObjectArray;
+        setNewListingObject(copyOfListingObject);
         return true;
       } else {
         return false;
