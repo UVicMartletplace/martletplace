@@ -11,13 +11,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {ChangeEvent, FormEventHandler, useEffect, useState} from "react";
+import { ChangeEvent, FormEventHandler, useEffect, useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
-import {colors} from "../styles/colors.tsx";
+import { colors } from "../styles/colors.tsx";
 import MultiFileUpload from "../components/MultiFileUpload.tsx";
 import Carousel from "../components/Carousel.tsx";
-import {useNavigate, useParams} from "react-router-dom";
-import {AxiosError} from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { AxiosError } from "axios";
 import Spinner from "../components/Spinner.tsx";
 
 interface ImageURLObject {
@@ -105,9 +105,11 @@ const EditListing = () => {
       const imagesObjectArray = await asyncUploadImages();
       if (imagesObjectArray) {
         // Why this works and the regular version where you edit only the images list doesn't I have absolutely no idea
-        const copyOfListingObject = {...newListingObject}
-        copyOfListingObject.listing.images = imagesObjectArray;
-        setNewListingObject(copyOfListingObject);
+        const copyOfListingObject = { ...newListingObject };
+        if (imagesObjectArray.length > 0) {
+          copyOfListingObject.listing.images = imagesObjectArray;
+          setNewListingObject(copyOfListingObject);
+        }
         return true;
       }
       return false;

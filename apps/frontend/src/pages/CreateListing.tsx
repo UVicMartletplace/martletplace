@@ -40,9 +40,7 @@ interface NewListingObject {
 
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
-  const [imageBlobs, setImageBlobs] = useState<Blob[]>(
-    [],
-  );
+  const [imageBlobs, setImageBlobs] = useState<Blob[]>([]);
   const [location, setLocation] = useState<LocationObject>({
     latitude: 48.463302,
     longitude: -123.3108,
@@ -123,7 +121,7 @@ const CreateListing = () => {
     try {
       const imagesObjectArray = await asyncUploadImages();
       if (imagesObjectArray) {
-        const copyOfListingObject = {...newListingObject}
+        const copyOfListingObject = { ...newListingObject };
         copyOfListingObject.listing.images = imagesObjectArray;
         setNewListingObject(copyOfListingObject);
         return true;

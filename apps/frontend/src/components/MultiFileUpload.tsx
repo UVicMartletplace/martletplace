@@ -35,10 +35,7 @@ const MultiFileUpload = (props: Props) => {
             ...(prevItems || []),
             imageDataURL,
           ]);
-          props.setImageFiles((prevItems) => [
-            ...(prevItems || []),
-            file
-          ]);
+          props.setImageFiles((prevItems) => [...(prevItems || []), file]);
 
           setImages(
             <img src={imageDataURL} width="100%" alt={"Listing Image " + i} />,

@@ -99,7 +99,7 @@ const Profile = () => {
             alert("Invalid image type. Please upload a valid image file.");
             return;
           }
-          setImageBlob(file)
+          setImageBlob(file);
           setImageURL(URL.createObjectURL(file));
           setEditMode(true);
         };
