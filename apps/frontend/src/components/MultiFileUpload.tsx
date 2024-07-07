@@ -6,8 +6,8 @@ interface Props {
   setPassedImages: React.Dispatch<SetStateAction<string[]>>;
   multipleUpload?: boolean;
   htmlForButton: React.ReactNode;
-  imageBinary: string[];
-  setImageBinaries: React.Dispatch<SetStateAction<string[]>>;
+  imageFiles: Blob[];
+  setImageFiles: React.Dispatch<SetStateAction<Blob[]>>;
 }
 
 // Note the single upload has not been properly tested
@@ -22,11 +22,12 @@ const MultiFileUpload = (props: Props) => {
   const getFileNames = (fileList: FileList | null) => {
     // Clears the passed images value, so that only the currently uploaded images are added
     props.setPassedImages([]);
-    props.setImageBinaries([]);
+    props.setImageFiles([]);
     if (fileList) {
       // Iterates through the FileList and gets all the base64 strings from the uploads
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i] as File;
+
         const reader = new FileReader();
         reader.onload = () => {
           const imageDataURL = reader.result as string;
@@ -34,10 +35,9 @@ const MultiFileUpload = (props: Props) => {
             ...(prevItems || []),
             imageDataURL,
           ]);
-          const data = imageDataURL.split(",")[1];
-          props.setImageBinaries((prevItems) => [
+          props.setImageFiles((prevItems) => [
             ...(prevItems || []),
-            atob(data),
+            file
           ]);
 
           setImages(

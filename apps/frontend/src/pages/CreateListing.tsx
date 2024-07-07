@@ -40,7 +40,7 @@ interface NewListingObject {
 
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
-  const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
+  const [imageBlobs, setImageBlobs] = useState<Blob[]>(
     [],
   );
   const [location, setLocation] = useState<LocationObject>({
@@ -74,7 +74,7 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    console.log("Listing Image Binaries", listingImageBinaries);
+    console.log("Listing Image Binaries", imageBlobs);
     if (!priceError && !titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
@@ -204,14 +204,16 @@ const CreateListing = () => {
   const asyncUploadImages = async (): Promise<ImageURLObject[] | false> => {
     const retrievedImages: ImageURLObject[] = [];
     // Create an array of promises for image uploads
-    const uploadPromises = listingImageBinaries.map(async (imageBinary) => {
+    const uploadPromises = imageBlobs.map(async (imageBlob) => {
       try {
         // Attempt to upload the image
-        const response = await _axios_instance.post("/images", imageBinary, {
+        const response = await _axios_instance.post("/images", imageBlob, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
+        console.log("Success: ", imageBlob)
+        console.log("Response: ", response.data.url)
         // Return the URL of the uploaded image on success
         return { url: response.data.url };
       } catch (error) {
@@ -356,8 +358,8 @@ const CreateListing = () => {
                         setPassedImages={setListingImages}
                         multipleUpload={true}
                         htmlForButton={buttonHTML}
-                        imageBinary={listingImageBinaries}
-                        setImageBinaries={setListingImageBinaries}
+                        imageFiles={imageBlobs}
+                        setImageFiles={setImageBlobs}
                       />
                     </Box>
                   </form>
