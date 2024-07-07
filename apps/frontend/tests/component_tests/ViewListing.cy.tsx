@@ -97,18 +97,6 @@ describe("<ViewListing/>", () => {
     }
   });
 
-  /*
-  it("should navigate to messages", () => {
-    cy.intercept("GET", "/api/listing/1", {
-      statusCode: 200,
-      body: listingObject,
-    }).as("getListing");
-
-    cy.get("#message_button").click();
-    cy.contains("Messages").should("be.visible");
-  });
-  */
-
   it("should fail gracefully if the listing cannot be retrieved", () => {
     cy.contains("Hang with us").should("be.visible");
   });
@@ -133,12 +121,23 @@ describe("<ViewListing/>", () => {
       body: listingObject,
     }).as("getListing");
 
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/listing/view/1`]}>
+          <Routes>
+            <Route path="/listing/view/:id" element={<ViewListing />} />
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+    );
+
+    cy.wait("@getListing");
+
     cy.intercept("POST", "/api/review", {
       statusCode: 200,
       body: newReviewObject,
     }).as("postReview");
-
-    cy.wait("@getListing");
 
     cy.get("#review_text").type("This is a great product!");
     cy.get("#stars").click();
