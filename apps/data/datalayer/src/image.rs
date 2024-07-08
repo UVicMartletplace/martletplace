@@ -28,7 +28,6 @@ pub fn image_router() -> Router {
 }
 
 async fn upload_image_handler(body: Bytes) -> impl IntoResponse {
-    println!("RECIEVED FILE");
     let uuid = Uuid::new_v4();
     let dir_path = std::path::Path::new("images");
     let file_path = dir_path.join(format!("{}", uuid));
@@ -42,7 +41,6 @@ async fn upload_image_handler(body: Bytes) -> impl IntoResponse {
     let resp = CreateImageResponse {
         url: format!("/api/images/{}", uuid),
     };
-    println!("WROTE TO FILE: {:?}, {}", uuid, body.len());
     (StatusCode::CREATED, Json(resp))
 }
 
