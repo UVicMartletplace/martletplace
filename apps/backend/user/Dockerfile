@@ -12,6 +12,5 @@ RUN npm install
 
 COPY tsconfig.json ./
 COPY src ./
-COPY tests ./tests
 
 CMD npm start
