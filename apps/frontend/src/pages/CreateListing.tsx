@@ -40,9 +40,7 @@ interface NewListingObject {
 
 const CreateListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
-  const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
-    [],
-  );
+  const [imageBlobs, setImageBlobs] = useState<Blob[]>([]);
   const [location, setLocation] = useState<LocationObject>({
     latitude: 48.463302,
     longitude: -123.3108,
@@ -74,7 +72,6 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    console.log("Listing Image Binaries", listingImageBinaries);
     if (!priceError && !titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
@@ -124,9 +121,9 @@ const CreateListing = () => {
     try {
       const imagesObjectArray = await asyncUploadImages();
       if (imagesObjectArray) {
-        const tempListingObject = newListingObject;
-        tempListingObject.listing.images = imagesObjectArray;
-        setNewListingObject(tempListingObject);
+        const copyOfListingObject = { ...newListingObject };
+        copyOfListingObject.listing.images = imagesObjectArray;
+        setNewListingObject(copyOfListingObject);
         return true;
       } else {
         return false;
@@ -204,10 +201,10 @@ const CreateListing = () => {
   const asyncUploadImages = async (): Promise<ImageURLObject[] | false> => {
     const retrievedImages: ImageURLObject[] = [];
     // Create an array of promises for image uploads
-    const uploadPromises = listingImageBinaries.map(async (imageBinary) => {
+    const uploadPromises = imageBlobs.map(async (imageBlob) => {
       try {
         // Attempt to upload the image
-        const response = await _axios_instance.post("/images", imageBinary, {
+        const response = await _axios_instance.post("/images", imageBlob, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -356,8 +353,8 @@ const CreateListing = () => {
                         setPassedImages={setListingImages}
                         multipleUpload={true}
                         htmlForButton={buttonHTML}
-                        imageBinary={listingImageBinaries}
-                        setImageBinaries={setListingImageBinaries}
+                        imageFiles={imageBlobs}
+                        setImageFiles={setImageBlobs}
                       />
                     </Box>
                   </form>

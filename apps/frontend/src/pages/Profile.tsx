@@ -31,6 +31,7 @@ const Profile = () => {
   const [originalProfile, setOriginalProfile] = useState(profile);
   const [editMode, setEditMode] = useState(false);
   const [imageURL, setImageURL] = useState<string>("");
+  const [imageBlob, setImageBlob] = useState<Blob>();
   const [isImageUploaded, setIsImageUploaded] = useState(false);
   const [usernameError, setUsernameError] = useState("");
 
@@ -69,11 +70,9 @@ const Profile = () => {
   };
 
   // Uploads a single image to the S3 server
-  const asyncUploadSingleImage = async (
-    imageBinary: string,
-  ): Promise<ImageURLObject | null> => {
+  const asyncUploadSingleImage = async (): Promise<ImageURLObject | null> => {
     try {
-      const response = await _axios_instance.post("/images", imageBinary, {
+      const response = await _axios_instance.post("/images", imageBlob, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -88,7 +87,6 @@ const Profile = () => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target?.files && event.target?.files.length > 0) {
       const file = event.target?.files[0];
-
       if (file) {
         const reader = new FileReader();
 
@@ -101,7 +99,7 @@ const Profile = () => {
             alert("Invalid image type. Please upload a valid image file.");
             return;
           }
-
+          setImageBlob(file);
           setImageURL(URL.createObjectURL(file));
           setEditMode(true);
         };
@@ -138,8 +136,7 @@ const Profile = () => {
     let successImages: null | ImageURLObject = null;
     if (isImageUploaded) {
       try {
-        const listingImageBinary = imageURL.split(",")[1];
-        successImages = await asyncUploadSingleImage(listingImageBinary);
+        successImages = await asyncUploadSingleImage();
       } catch (error) {
         console.error("Error processing image:", error);
       }
