@@ -29,6 +29,10 @@ http:
       rule: "PathPrefix(`/api/recommendations`)"
       service: recommendations
       priority: 200
+    to-image:
+      rule: "PathPrefix(`/api/images`)"
+      service: image
+      priority: 200
 
   services:
     frontend:
@@ -59,3 +63,7 @@ http:
       loadBalancer:
         servers:
           - url: http://recommend:8222/
+    image:
+      loadBalancer:
+        servers:
+          - url: http://datalayer:8303/
