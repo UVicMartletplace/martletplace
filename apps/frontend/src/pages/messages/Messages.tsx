@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import SearchBar from "../../components/searchBar";
 import { useStyles, vars } from "../../styles/pageStyles";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { InfiniteScroll } from "../../components/InfiniteScroll";
 import { MessageSendBox } from "./MessageSendBox";
 import { MessageType, ThreadType } from "../../types";
@@ -69,7 +69,6 @@ const postMessage = async (
 const Messages = () => {
   const s = useStyles();
   const [loading, setLoading] = useState<boolean>(false);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [threads, setThreads] = useState<ThreadType[]>([]);
   const {
     state: messagesState,
@@ -95,18 +94,17 @@ const Messages = () => {
 
   const shouldShowMessages = !isMobileSize || (isMobileSize && currentThread);
 
-  const fetchMoreMessages = async (
-    thread: ThreadType | null,
-    currentNumMessages: number,
-  ) => {
-    const newMessages = await fetchMessages(thread, 20, currentNumMessages);
-    addMessages(newMessages);
-    setHasMoreMessages(newMessages.length > 0);
-  };
+  const fetchMoreMessages = useCallback(
+    async (thread: ThreadType | null, currentNumMessages: number) => {
+      const newMessages = await fetchMessages(thread, 20, currentNumMessages);
+      addMessages(newMessages);
+      setHasMoreMessages(newMessages.length > 0);
+    },
+    [setHasMoreMessages, addMessages],
+  );
 
   // fetch all conversations + messages for the first conversation
   useEffect(() => {
-    if (loaded) return;
     // IIFE because useEffect can't take an async callback
     (async () => {
       setLoading(true);
@@ -116,7 +114,6 @@ const Messages = () => {
       setThreads(threads);
       if (threads.length == 0) {
         setLoading(false);
-        setLoaded(true);
         return;
       }
 
@@ -127,9 +124,8 @@ const Messages = () => {
       // Fetch messages for the first thread
       await fetchMoreMessages(currentThread, 0);
       setLoading(false);
-      setLoaded(true);
     })();
-  }, [fetchMoreMessages, loaded]);
+  }, [fetchMoreMessages]);
 
   const onMessageSend = async (text: string) => {
     if (!currentThread) {
@@ -235,9 +231,9 @@ const Messages = () => {
               >
                 <Box sx={s.messagesMessagesBox} id="scrollable">
                   <InfiniteScroll
-                    load={() =>
-                      fetchMoreMessages(currentThread, messagesState.length)
-                    }
+                    load={() => {
+                      fetchMoreMessages(currentThread, messagesState.length);
+                    }}
                     hasMore={hasMoreMessages}
                     loader={
                       loading && (
