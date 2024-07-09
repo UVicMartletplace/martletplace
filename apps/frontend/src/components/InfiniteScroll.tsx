@@ -34,7 +34,9 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   );
 
   useEffect(() => {
-    if (observerRef.current) return;
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
 
     const scrollContainer = scrollContainerId
       ? document.getElementById(scrollContainerId)
