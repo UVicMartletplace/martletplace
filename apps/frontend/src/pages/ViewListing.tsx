@@ -81,8 +81,18 @@ const ViewListing = () => {
     if (user?.userID === listingObject.seller_profile.userID) {
       navigate("/listing/edit/${id}");
     } else {
-      //TODO Add a path for id
-      window.location.href = `mailto:${listingObject.seller_profile.username}@uvic.ca?subject=${listingObject.title.replace(/\s/g, "")}`;
+      _axios_instance
+        .post("/messages", {
+          receiver_id: listingObject.seller_profile.userID,
+          listing_id: id,
+          content: "Hi I'm messaging about " + listingObject.title,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
       navigate("/messages");
     }
   };
