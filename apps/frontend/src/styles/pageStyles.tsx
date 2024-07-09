@@ -186,13 +186,21 @@ export const useStyles = () => ({
 
   // Messages page styles
   messagesConvSidebar: {
-    overflowY: "scroll",
+    overflowY: "auto",
     width: "20rem",
     height: "100%",
-    borderRight: "2px solid",
-    borderColor: colors.martletplaceGrey,
     "@media (max-width: 740px)": {
       width: "100%",
+  maxHeight: "300px",
+    "&::-webkit-scrollbar": {
+       width: "4px",
+     },
+     "&::-webkit-scrollbar-thumb": {
+       backgroundColor: colors.martletplaceGrey,
+       borderRadius: "2px",
+     },
+     "&::-webkit-scrollbar-track": {
+      backgroundColor: "white",
     },
   },
   messagesMessagesBox: {
@@ -200,26 +208,35 @@ export const useStyles = () => ({
     overflowY: "scroll",
 
     display: "flex",
+    borderBottom: "1px",
+    borderColor: colors.martletplaceGrey,
     flexDirection: "column-reverse" as const,
     alignItems: "center",
     gap: "1rem",
-
+    "&::-webkit-scrollbar": {
+      width: "4px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: colors.martletplaceGrey,
+      borderRadius: "2px",
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "white",
+    },
     "& :first-of-type": {
       marginBottom: "0.25rem",
     },
   },
   messagesSendBox: {
     height: vars.messagesSendBoxHeight,
-    borderTop: "2px solid",
-    borderColor: colors.martletplaceGrey,
     color: colors.martletplaceGrey,
   },
   messagesSendButton: {},
   messageFromUser: {
     alignSelf: "flex-end",
     backgroundColor: colors.martletplaceGrey,
-    color: colors.martletplaceWhite,
-    padding: "0.5rem",
+      backgroundColor: colors.martletplaceSkyBlue,
+    padding: "10px",
     maxWidth: "80vw",
     borderRadius: "10px",
     textAlign: "right",
@@ -228,9 +245,9 @@ export const useStyles = () => ({
   },
   messageFromOther: {
     alignSelf: "flex-start",
-    backgroundColor: colors.martletplaceSkyBlue,
+    backgroundColor: colors.martletplaceGrey,
     color: colors.martletplaceWhite,
-    padding: "0.5rem",
+    padding: "10px",
     maxWidth: "80vw",
     borderRadius: "10px",
     textAlign: "left",
@@ -242,10 +259,9 @@ export const useStyles = () => ({
     flexDirection: "row" as const,
     alignItems: "center",
     justifyContent: "space-between",
-    gap: "1rem",
-    padding: "0.5rem",
-    borderBottom: "1px solid",
-    borderColor: colors.martletplaceGrey,
+    padding: "10px",
+    border: "none",
+    backgroundColor: "#fcfcfc",
   },
   messagesConvImg: {
     width: "40px",

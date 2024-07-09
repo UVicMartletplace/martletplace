@@ -182,80 +182,82 @@ const Messages = () => {
   };
 
   return (
-    <Box sx={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+<Box>
       <Box ref={headerRef}>
         <SearchBar />
       </Box>
-      {loading ? (
-        <CircularProgress />
-      ) : threads.length === 0 ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <p>
-            No threads yet! Find a listing you like and begin a conversation
-            from there.
-          </p>
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            position: "relative",
-            height: `calc(100vh - ${headerHeight}px)`,
-          }}
-        >
-          {isMobileSize && currentThread !== null && (
-            <Button sx={s.messagesHideThreadButton} onClick={hideThread}>
-              Back
-            </Button>
-          )}
-          <Stack direction="row">
-            {(!isMobileSize || currentThread === null) && (
-              <ConversationsSidebar
-                threads={threads}
-                selectThread={selectThread}
-                selectedThread={currentThread}
-              />
+      <Container>
+        {loading ? (
+          <CircularProgress />
+        ) : threads.length === 0 ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <p>
+              No threads yet! Find a listing you like and begin a conversation
+              from there.
+            </p>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              position: "relative",
+              height: `calc(100vh - ${headerHeight}px)`,
+            }}
+          >
+            {isMobileSize && currentThread !== null && (
+              <Button sx={s.messagesHideThreadButton} onClick={hideThread}>
+                Back
+              </Button>
             )}
-            {shouldShowMessages && (
-              <Box
-                sx={{
-                  // Contains both the messages and the send box
-                  width: "100%",
-                  height: `calc(100vh - ${vars.messagesSendBoxHeight} - ${headerHeight}px)`,
-                }}
-              >
-                <Box sx={s.messagesMessagesBox} id="scrollable">
-                  <InfiniteScroll
-                    load={() => {
-                      fetchMoreMessages(currentThread, messagesState.length);
-                    }}
-                    hasMore={hasMoreMessages}
-                    loader={
-                      loading && (
-                        <CircularProgress
-                          size={"2rem"}
-                          sx={{ marginHorizontal: "auto" }}
-                        />
-                      )
-                    }
-                    scrollContainerId={"scrollable"}
-                  >
-                    {messagesState.map((item) => (
-                      <Message message={item} key={item.message_id} />
-                    ))}
-                  </InfiniteScroll>
+            <Stack direction="row">
+              {(!isMobileSize || currentThread === null) && (
+                <ConversationsSidebar
+                  threads={threads}
+                  selectThread={selectThread}
+                  selectedThread={currentThread}
+                />
+              )}
+              {shouldShowMessages && (
+                <Box
+                  sx={{
+                    // Contains both the messages and the send box
+                    width: "100%",
+                    height: `calc(100vh - ${vars.messagesSendBoxHeight} - ${headerHeight}px)`,
+                  }}
+                >
+                  <Box sx={s.messagesMessagesBox} id="scrollable">
+                    <InfiniteScroll
+                      load={() =>
+                        fetchMoreMessages(currentThread, messagesState.length)
+                      }
+                      hasMore={hasMoreMessages}
+                      loader={
+                        loading && (
+                          <CircularProgress
+                            size={"2rem"}
+                            sx={{ marginHorizontal: "auto" }}
+                          />
+                        )
+                      }
+                      scrollContainerId={"scrollable"}
+                    >
+                      {messagesState.map((item) => (
+                        <Message message={item} key={item.message_id} />
+                      ))}
+                    </InfiniteScroll>
+                  </Box>
+                  <MessageSendBox onMessageSend={onMessageSend} />
                 </Box>
-                <MessageSendBox onMessageSend={onMessageSend} />
-              </Box>
-            )}
-          </Stack>
-        </Box>
-      )}
+              )}
+            </Stack>
+          </Box>
+        )}
+      </Container>
     </Box>
   );
 };

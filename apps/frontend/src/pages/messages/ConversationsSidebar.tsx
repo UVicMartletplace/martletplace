@@ -17,9 +17,9 @@ export const ConversationsSidebar = ({
   const s = useStyles();
 
   return (
-    <Box id="conversations_sidebar" sx={s.messagesConvSidebar}>
+<Box id="conversations_sidebar" sx={s.messagesConvSidebar}>
       <Stack direction="row">
-        <p>Conversations</p>
+        <Typography variant="h5">Conversations</Typography>
       </Stack>
       <Stack direction="column">
         {threads.map((thread) => {
@@ -27,7 +27,7 @@ export const ConversationsSidebar = ({
             selectedThread !== null &&
             selectedThread.listing_id === thread.listing_id &&
             selectedThread.other_participant.user_id ===
-              thread.other_participant.user_id;
+            thread.other_participant.user_id;
           return (
             <button
               key={
@@ -44,7 +44,9 @@ export const ConversationsSidebar = ({
               onClick={() => selectThread(thread)}
             >
               <div style={s.messagesConvPreviewText}>
-                {thread.last_message.content}
+                <Typography variant="body1">
+                  {thread.last_message.content}
+                </Typography>
               </div>
               <Box
                 component="img"

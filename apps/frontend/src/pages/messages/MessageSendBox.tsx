@@ -25,23 +25,38 @@ export const MessageSendBox = ({ onMessageSend }: MessageSendBoxProps) => {
   };
 
   return (
-    <Box sx={s.messagesSendBox}>
+<Box sx={s.messagesSendBox}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
-        <Stack direction="row">
-          <Input onChange={onType} value={text} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Input
+            onChange={onType}
+            placeholder="Type Here"
+            value={text}
+            sx={{
+              flex: "4",
+              borderColor: "black",
+              border: "10px",
+              borderRadius: "10px",
+            }}
+          />
           <Button
             type="submit"
-            size="small"
             onClick={onClickSend}
-            sx={s.button}
+            sx={{ ...s.button, flex: "1", color:"white", marginLeft: "10px" }}
           >
             Send
           </Button>
-        </Stack>
+        </Box>
       </form>
     </Box>
   );
