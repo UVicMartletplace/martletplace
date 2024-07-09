@@ -19,6 +19,7 @@ reqwest = { version = "0.12.4", default-features = false, features = [
     "rustls-tls",
     "charset",
     "http2",
+    "stream",
 ] }
 tokio = { version = "1.38.0", features = ["full"] }
 tower = "0.4.13"

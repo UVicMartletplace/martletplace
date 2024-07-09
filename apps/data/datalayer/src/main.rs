@@ -1,6 +1,6 @@
 use std::future::IntoFuture;
 
-use elastic::elastic_router;
+use elastic::{elastic_endpoint, elastic_router};
 use email::{email_endpoint, email_router};
 use image::image_router;
 
@@ -10,7 +10,8 @@ mod image;
 
 #[tokio::main]
 async fn main() {
-    // Check that the env var is set
+    // Check that the env vars are set
+    elastic_endpoint();
     email_endpoint();
 
     let elastic_listener = tokio::net::TcpListener::bind("0.0.0.0:8301").await.unwrap();
