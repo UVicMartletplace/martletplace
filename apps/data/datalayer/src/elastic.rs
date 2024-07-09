@@ -24,7 +24,6 @@ async fn proxy_request(
 ) -> axum::response::Response {
     let (parts, server_body) = server_request.into_parts();
 
-    println!("URL: {}", parts.uri.to_string());
     let mut proxy_url = Url::parse(&proxy_host).expect("Couldn't parse request URL");
     proxy_url = proxy_url
         .join(&parts.uri.to_string())
@@ -51,11 +50,9 @@ async fn proxy_request(
 
     // Not proxying response headers because it's surprisingly painfull
     // and they probably don't need them. Good spot to check for bugs though
-    let server_response = axum::response::Response::builder()
+    axum::response::Response::builder()
         .status(proxied_response.status())
         .version(proxied_response.version())
         .body(Body::from_stream(proxied_response.bytes_stream()))
-        .expect("Couldn't create server response");
-
-    return server_response;
+        .expect("Couldn't create server response")
 }
