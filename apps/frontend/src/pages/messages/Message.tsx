@@ -10,14 +10,14 @@ export const Message = ({ message }: MessageProps) => {
   const s = useStyles();
   const user = useUser();
   return (
-    <Box
+<Box
       sx={
         message.sender_id == user.user?.userID
           ? s.messageFromUser
           : s.messageFromOther
       }
     >
-      {message.message_body}
+      <Typography variant="body2">{message.message_body}</Typography>
     </Box>
   );
 };
