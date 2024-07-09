@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Container,
   Stack,
   useMediaQuery,
 } from "@mui/material";
@@ -182,7 +183,7 @@ const Messages = () => {
   };
 
   return (
-<Box>
+    <Box>
       <Box ref={headerRef}>
         <SearchBar />
       </Box>

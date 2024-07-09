@@ -1,4 +1,4 @@
-import { Box, Button, Input, Stack } from "@mui/material";
+import { Box, Button, Input } from "@mui/material";
 import { useStyles } from "../../styles/pageStyles";
 import { useState } from "react";
 
@@ -25,7 +25,7 @@ export const MessageSendBox = ({ onMessageSend }: MessageSendBoxProps) => {
   };
 
   return (
-<Box sx={s.messagesSendBox}>
+    <Box sx={s.messagesSendBox}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -52,7 +52,7 @@ export const MessageSendBox = ({ onMessageSend }: MessageSendBoxProps) => {
           <Button
             type="submit"
             onClick={onClickSend}
-            sx={{ ...s.button, flex: "1", color:"white", marginLeft: "10px" }}
+            sx={{ ...s.button, flex: "1", color: "white", marginLeft: "10px" }}
           >
             Send
           </Button>

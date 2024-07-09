@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useStyles } from "../../styles/pageStyles";
 import { MessageType } from "../../types";
 import useUser from "../../hooks/useUser";
@@ -10,7 +10,7 @@ export const Message = ({ message }: MessageProps) => {
   const s = useStyles();
   const user = useUser();
   return (
-<Box
+    <Box
       sx={
         message.sender_id == user.user?.userID
           ? s.messageFromUser

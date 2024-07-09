@@ -191,16 +191,17 @@ export const useStyles = () => ({
     height: "100%",
     "@media (max-width: 740px)": {
       width: "100%",
-  maxHeight: "300px",
-    "&::-webkit-scrollbar": {
-       width: "4px",
-     },
-     "&::-webkit-scrollbar-thumb": {
-       backgroundColor: colors.martletplaceGrey,
-       borderRadius: "2px",
-     },
-     "&::-webkit-scrollbar-track": {
-      backgroundColor: "white",
+      maxHeight: "300px",
+      "&::-webkit-scrollbar": {
+        width: "4px",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        backgroundColor: colors.martletplaceGrey,
+        borderRadius: "2px",
+      },
+      "&::-webkit-scrollbar-track": {
+        backgroundColor: "white",
+      },
     },
   },
   messagesMessagesBox: {
@@ -234,8 +235,7 @@ export const useStyles = () => ({
   messagesSendButton: {},
   messageFromUser: {
     alignSelf: "flex-end",
-    backgroundColor: colors.martletplaceGrey,
-      backgroundColor: colors.martletplaceSkyBlue,
+    backgroundColor: colors.martletplaceSkyBlue,
     padding: "10px",
     maxWidth: "80vw",
     borderRadius: "10px",

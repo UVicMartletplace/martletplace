@@ -1,8 +1,7 @@
 import { ThreadType } from "../../types";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useStyles } from "../../styles/pageStyles";
-
-const user_id = "5"; // TODO: current user id
+import useUser from "../../hooks/useUser";
 
 type ConversationsSidebarProps = {
   threads: ThreadType[];
@@ -15,9 +14,11 @@ export const ConversationsSidebar = ({
   selectedThread,
 }: ConversationsSidebarProps) => {
   const s = useStyles();
+  const user = useUser();
+  const userId = user.user?.userID;
 
   return (
-<Box id="conversations_sidebar" sx={s.messagesConvSidebar}>
+    <Box id="conversations_sidebar" sx={s.messagesConvSidebar}>
       <Stack direction="row">
         <Typography variant="h5">Conversations</Typography>
       </Stack>
@@ -27,14 +28,14 @@ export const ConversationsSidebar = ({
             selectedThread !== null &&
             selectedThread.listing_id === thread.listing_id &&
             selectedThread.other_participant.user_id ===
-            thread.other_participant.user_id;
+              thread.other_participant.user_id;
           return (
             <button
               key={
                 "" +
                 thread.listing_id +
                 thread.other_participant.user_id +
-                user_id
+                userId
               }
               // TODO: add a 'selected' class, this is just to show how to apply the style conditionally
               style={{
