@@ -156,7 +156,6 @@ describe("<Messages/>", () => {
 
     it("mobile: should show threads when you go back", () => {
       cy.wait("@getThreads");
-      cy.wait("@getMessages1");
       cy.wait(100);
       cy.get("button").filter(":contains('Back')").eq(0).click();
       cy.contains("Conversations").should("be.visible");
