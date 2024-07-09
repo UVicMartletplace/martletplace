@@ -15,4 +15,6 @@ COPY src ./
 
 HEALTHCHECK CMD curl -f http://localhost:8212/.well-known/health
 
+HEALTHCHECK CMD curl http://localhost:8212/.well-known/health
+
 CMD npm start
