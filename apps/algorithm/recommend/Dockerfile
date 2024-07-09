@@ -19,4 +19,6 @@ ENV COSINE_SIMILARITY_URL=https://github.com/UVicMartletplace/martletplace/relea
 ENV NORMALIZED_ITEM_VECTORS_URL=https://github.com/UVicMartletplace/martletplace/releases/download/recommender-$RECOMMENDER_VERSION/normalized_item_vectors.npy
 ENV PROCESSED_DATA_URL=https://github.com/UVicMartletplace/martletplace/releases/download/recommender-$RECOMMENDER_VERSION/processed_data.csv
 
+HEALTHCHECK CMD curl -f http://localhost:8222/.well-known/health
+
 CMD uvicorn src.server:app --host 0.0.0.0 --port 8222 --reload

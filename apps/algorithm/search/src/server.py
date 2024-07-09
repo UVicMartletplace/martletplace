@@ -9,6 +9,11 @@ app = FastAPI()
 
 @app.middleware("http")
 async def authenticate_request(request: Request, call_next):
+    # Allow the healthcheck to pass auth
+    if request.url == "http://localhost:8221/.well-known/health":
+        response = await call_next(request)
+        return response
+
     auth_token = request.cookies.get("authorization")
 
     if not auth_token:
