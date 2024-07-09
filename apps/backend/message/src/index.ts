@@ -36,6 +36,7 @@ app.post(
     useValidateCreateMessage(req as unknown as AuthenticatedRequest, res, next),
   (req, res) => createMessage(req as unknown as AuthenticatedRequest, res, db),
 );
+
 app.get(
   "/api/messages/thread/:listing_id/:receiver_id",
   usePagination,
@@ -43,9 +44,15 @@ app.get(
     useValidateGetMessages(req as unknown as AuthenticatedRequest, res, next),
   (req, res) => getMessages(req as unknown as AuthenticatedRequest, res, db),
 );
+
 app.get("/api/messages/overview", (req, res) =>
   getMessageThreads(req as unknown as AuthenticatedRequest, res, db),
 );
+
+// Healthcheck
+app.get("/.well-known/health", (_: Request, res: Response) => {
+  return res.sendStatus(200);
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);

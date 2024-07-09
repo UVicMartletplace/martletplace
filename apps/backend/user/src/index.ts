@@ -78,6 +78,11 @@ app.post("/api/user/confirm-email", (req: Request, res: Response) =>
   confirmEmail(req, res, db),
 );
 
+// Healthcheck
+app.get("/.well-known/health", (_: Request, res: Response) => {
+  return res.sendStatus(200);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
 });
