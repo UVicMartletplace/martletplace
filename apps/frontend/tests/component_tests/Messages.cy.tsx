@@ -88,12 +88,12 @@ describe("<Messages/>", () => {
     // /api/messages/thread/:listing_id/:receiver_id
     cy.intercept("GET", "/api/messages/thread/**", {
       statusCode: 200,
-      body: { messages: thread1Messages, totalCount: thread1Messages.length },
+      body: thread1Messages,
     }).as("getMessages1");
 
     cy.intercept("GET", "/api/messages/thread/**", {
       statusCode: 200,
-      body: { messages: thread2Messages, totalCount: thread2Messages.length },
+      body: thread2Messages,
     }).as("getMessages2");
   });
 
@@ -150,12 +150,14 @@ describe("<Messages/>", () => {
     it("mobile: should have messages shown by default", () => {
       cy.wait("@getThreads");
       cy.wait("@getMessages1");
+      cy.wait(100);
       cy.get("form input").eq(0).should("be.visible");
     });
 
     it("mobile: should show threads when you go back", () => {
       cy.wait("@getThreads");
       cy.wait("@getMessages1");
+      cy.wait(100);
       cy.get("button").filter(":contains('Back')").eq(0).click();
       cy.contains("Conversations").should("be.visible");
     });
