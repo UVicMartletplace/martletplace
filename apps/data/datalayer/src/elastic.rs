@@ -1,6 +1,6 @@
 use std::env;
 
-use axum::{body::Body, extract, routing::post, Router};
+use axum::{body::Body, extract, Router};
 use reqwest::{Client, RequestBuilder, Url};
 use tower_http::catch_panic::CatchPanicLayer;
 
@@ -10,20 +10,31 @@ pub fn elastic_endpoint() -> String {
 
 pub fn elastic_router() -> Router {
     Router::new()
-        .route("/", post(elastic_proxy))
+        .fallback(elastic_proxy)
         .layer(CatchPanicLayer::new())
 }
 
-async fn elastic_proxy(server_request: extract::Request) -> axum::response::Response {
+pub async fn elastic_proxy(server_request: extract::Request) -> axum::response::Response {
+    proxy_request(server_request, elastic_endpoint()).await
+}
+
+async fn proxy_request(
+    server_request: extract::Request,
+    proxy_host: String,
+) -> axum::response::Response {
     let (parts, server_body) = server_request.into_parts();
 
-    let mut proxy_url = Url::parse(&parts.uri.to_string()).expect("Couldn't parse request URL");
-    proxy_url
-        .set_host(Some(&elastic_endpoint()))
-        .expect("Couldn't set the request host");
+    println!("URL: {}", parts.uri.to_string());
+    let mut proxy_url = Url::parse(&proxy_host).expect("Couldn't parse request URL");
+    proxy_url = proxy_url
+        .join(&parts.uri.to_string())
+        .expect("Couldn't join request path");
 
     let proxied_request = reqwest::Request::new(parts.method, proxy_url);
-    let client = Client::new();
+    let client = Client::builder()
+        .danger_accept_invalid_certs(true)
+        .build()
+        .expect("Couldn't build client");
 
     let request_builder = RequestBuilder::from_parts(client, proxied_request)
         .headers(parts.headers)
@@ -38,6 +49,8 @@ async fn elastic_proxy(server_request: extract::Request) -> axum::response::Resp
         .await
         .expect("Failed to send proxied request");
 
+    // Not proxying response headers because it's surprisingly painfull
+    // and they probably don't need them. Good spot to check for bugs though
     let server_response = axum::response::Response::builder()
         .status(proxied_response.status())
         .version(proxied_response.version())
