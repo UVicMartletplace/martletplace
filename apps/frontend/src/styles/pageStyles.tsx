@@ -204,7 +204,7 @@ export const useStyles = () => ({
     alignItems: "center",
     gap: "1rem",
 
-    "& :first-child": {
+    "& :first-of-type": {
       marginBottom: "0.25rem",
     },
   },
