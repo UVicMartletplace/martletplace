@@ -12,7 +12,7 @@ export const Message = ({ message }: MessageProps) => {
   return (
     <Box
       sx={
-        message.sender_id == user.user?.id
+        message.sender_id == user.user?.userID
           ? s.messageFromUser
           : s.messageFromOther
       }
