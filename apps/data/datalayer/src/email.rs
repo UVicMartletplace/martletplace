@@ -1,7 +1,7 @@
 use std::env;
 
 use axum::{http::StatusCode, routing::post, Json, Router};
-use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
+use lettre::{message::SinglePart, AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use serde::{Deserialize, Serialize};
 use tower_http::catch_panic::CatchPanicLayer;
 
@@ -44,7 +44,7 @@ async fn send_email(email_contents: Email) {
             .parse()
             .expect("Failed to parse recipient email"))
         .subject(email_contents.subject)
-        .body(email_contents.body)
+        .singlepart(SinglePart::html(email_contents.body))
         .expect("Failed to create email");
 
     let mailer: AsyncSmtpTransport<Tokio1Executor> =
