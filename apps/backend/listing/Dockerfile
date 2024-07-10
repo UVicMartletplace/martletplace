@@ -13,4 +13,6 @@ RUN npm install
 COPY tsconfig.json ./
 COPY src ./
 
+HEALTHCHECK CMD curl -f http://localhost:8212/.well-known/health
+
 CMD npm start

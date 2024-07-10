@@ -10,7 +10,7 @@
 git clone https://github.com/UVicMartletplace/martletplace && cd martletplace
 
 # Run the docker compose stack with hot reloading
-docker compose up --build -d
+docker compose up --build --wait
 
 # View all container logs
 docker compose logs -f
