@@ -2,10 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { getListingsByUser } from '../src/getListingsByUser';
 import { Request, Response } from 'express';
 import { IDatabase } from 'pg-promise';
+import { AuthenticatedRequest } from '../../lib/src/auth';
 
 describe('Get Listings by User Endpoint', () => {
   it('should retrieve all listings for the authenticated user successfully', async () => {
-    const req = {} as unknown as Request;
+    const req = {
+      user: { userId: 1 }
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
@@ -53,7 +56,7 @@ describe('Get Listings by User Endpoint', () => {
   });
 
   it('should return 404 if no listings are found for the user', async () => {
-    const req = {} as unknown as Request;
+    const req = {} as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
