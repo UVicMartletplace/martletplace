@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
@@ -125,3 +125,8 @@ async def search(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"items": results, "totalItems": total_items}
+
+
+@search_router.get("/.well-known/health")
+async def health():
+    return Response(status_code=200)

@@ -1,7 +1,7 @@
 import ast
 import re
 from typing import List
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, Response
 import pandas as pd
 from sqlalchemy import insert
 from sqlmodel import select
@@ -20,6 +20,11 @@ recommender = Recommender()
 
 @app.middleware("http")
 async def authenticate_request(request: Request, call_next):
+    # Allow the healthcheck to pass auth
+    if request.url.path == "/.well-known/health":
+        response = await call_next(request)
+        return response
+
     auth_token = request.cookies.get("authorization")
 
     if not auth_token:
@@ -176,6 +181,11 @@ async def stop_suggesting_item(
     )
 
     return {"message": "Preference updated successfully."}
+
+
+@app.get("/.well-known/health")
+async def health():
+    return Response(status_code=200)
 
 
 # @app.put("/api/user-preferences/item-click")
