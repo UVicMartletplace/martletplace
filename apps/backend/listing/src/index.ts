@@ -38,7 +38,9 @@ app.get("/api/listing/:id", (req, res) =>
   // @ts-expect-error cant coercse Req -> AuthReq
   getListingById(req as AuthenticatedRequest, res, db),
 );
-app.get("/api/listings", (req, res) => getListingsByUser(req, res, db));
+app.get("/api/listings", (req, res) => 
+  getListingsByUser(req as AuthenticatedRequest, res, db),
+);
 app.post("/api/listing", (req, res) =>
   createListing(req as AuthenticatedRequest, res, db),
 );
