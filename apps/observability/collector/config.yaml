@@ -7,7 +7,7 @@ receivers:
 processors:
   batch:
   tail_sampling:
-    decision_wait: 10s
+    decision_wait: 5s
     policies: [{
       name: dont-sample-healthcheck,
       type: and,
@@ -36,8 +36,14 @@ processors:
 
 
 exporters:
-  otlphttp:
-    endpoint: http://jaeger:4318
+  otlp/jaeger:
+    endpoint: http://jaeger:4317
+    tls:
+      insecure: true
+  otlp/honeycomb:
+    endpoint: http://api.honeycomb.io:443
+    headers:
+      "x-honeycomb-team": ""
   debug:
     verbosity: basic #detailed
 
@@ -52,13 +58,13 @@ service:
     traces:
       receivers: [otlp]
       processors: [tail_sampling,batch]
-      exporters: [otlphttp,debug]
+      exporters: [debug,otlp/jaeger]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp,debug]
+      exporters: [debug,otlp/jaeger]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp,debug]
+      exporters: [debug,otlp/jaeger]
 
