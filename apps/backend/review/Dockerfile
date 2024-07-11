@@ -1,16 +1,16 @@
 FROM node:20
 
 WORKDIR /app/lib
-COPY --from=lib ./ ./
+COPY --from=lib package*.json ./
+COPY --from=lib tsconfig.json ./
 RUN npm install
 
 WORKDIR /app/service
-
 COPY package*.json ./
-
+COPY tsconfig.json ./
 RUN npm install
 
-COPY tsconfig.json ./
+COPY --from=lib src /app/lib/src
 COPY src ./
 
 HEALTHCHECK CMD curl -f http://localhost:8213/.well-known/health
