@@ -1,14 +1,18 @@
 FROM node:20
 
-WORKDIR /app/service
-
-COPY package*.json ./
-
+WORKDIR /app/lib
+COPY --from=lib package*.json ./
+COPY --from=lib tsconfig.json ./
 RUN npm install
 
+WORKDIR /app/service
+COPY package*.json ./
 COPY tsconfig.json ./
-COPY --from=lib ./ ../lib/
+RUN npm install
+
+COPY --from=lib src /app/lib/src
 COPY src ./
-COPY tests ./tests
+
+HEALTHCHECK CMD curl -f http://localhost:8214/.well-known/health
 
 CMD npm start

@@ -4,10 +4,10 @@ from datetime import datetime, timezone
 
 
 class ListingSummary(BaseModel):
-    listingID: Optional[int] = Field(
+    listingID: Optional[str] = Field(
         default=None, description="The primary key for the listing."
     )
-    sellerID: int = Field(
+    sellerID: str = Field(
         ..., description="The ID of the seller, foreign key to users."
     )
     sellerName: str = Field(..., description="The name of the seller.")

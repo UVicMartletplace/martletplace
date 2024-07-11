@@ -61,7 +61,7 @@ def test_search_for_existing_listing(auth_headers, mock_insert_user_search):
         id="abc123",
         body={
             "listingId": "abc123",
-            "sellerId": 456,
+            "sellerId": "456",
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
@@ -87,7 +87,7 @@ def test_search_for_existing_listing(auth_headers, mock_insert_user_search):
         "items": [
             {
                 "listingID": "abc123",
-                "sellerID": 456,
+                "sellerID": "456",
                 "sellerName": "billybobjoe",
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
@@ -107,7 +107,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
         id="abc123",
         body={
             "listingId": "abc123",
-            "sellerId": 456,
+            "sellerId": "456",
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
@@ -123,7 +123,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
         id="def456",
         body={
             "listingId": "def456",
-            "sellerId": 789,
+            "sellerId": "789",
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
@@ -149,21 +149,21 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
         "items": [
             {
                 "listingID": "def456",
-                "sellerID": 789,
+                "sellerID": "789",
                 "sellerName": "janedoe",
                 "title": "Used Laptop",
                 "description": "Lightly used laptop for sale.",
-                "price": 200,
+                "price": 200.0,
                 "dateCreated": "2024-06-01T12:00:00Z",
                 "imageUrl": "https://example.com/image2.jpg",
             },
             {
                 "listingID": "abc123",
-                "sellerID": 456,
+                "sellerID": "456",
                 "sellerName": "billybobjoe",
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
-                "price": 450,
+                "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
             },
@@ -237,11 +237,11 @@ def test_search_with_price_range(auth_headers, mock_insert_user_search):
         "items": [
             {
                 "listingID": "abc123",
-                "sellerID": 456,
+                "sellerID": "456",
                 "sellerName": "billybobjoe",
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
-                "price": 450,
+                "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
             }
@@ -419,11 +419,11 @@ def test_search_with_status(auth_headers, mock_insert_user_search):
         "items": [
             {
                 "listingID": "abc123",
-                "sellerID": 456,
+                "sellerID": "456",
                 "sellerName": "billybobjoe",
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
-                "price": 450,
+                "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
             }
@@ -482,11 +482,11 @@ def test_search_with_status_sold(auth_headers, mock_insert_user_search):
         "items": [
             {
                 "listingID": "def456",
-                "sellerID": 789,
+                "sellerID": "789",
                 "sellerName": "janedoe",
                 "title": "Used Laptop",
                 "description": "Lightly used laptop for sale.",
-                "price": 200,
+                "price": 200.0,
                 "dateCreated": "2024-06-01T12:00:00Z",
                 "imageUrl": "https://example.com/image2.jpg",
             }
@@ -571,11 +571,11 @@ def test_search_with_user_search(auth_headers, mock_insert_user_search):
         "items": [
             {
                 "listingID": "abc123",
-                "sellerID": 456,
+                "sellerID": "456",
                 "sellerName": "billybobjoe",
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
-                "price": 450,
+                "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
             }

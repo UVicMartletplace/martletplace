@@ -5,6 +5,9 @@ uvicorn[standard]
 asyncpg
 pyjwt[crypto]
 
+## For healthcheck
+requests
+
 ## Dev Dependencies
 ruff
 pytest

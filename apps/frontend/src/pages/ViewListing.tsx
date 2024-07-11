@@ -39,7 +39,7 @@ const ViewListing = () => {
   const user = useUser().user;
   const [listingReceived, setListingReceived] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [listingObject, setListingObject] = useState<ListingObject>({
     title: "Sorry This Listing Cannot Be Loaded",
     description: "Please Try again Later",
@@ -77,16 +77,28 @@ const ViewListing = () => {
   };
 
   const handleNavToMessagesAndEdit = () => {
-    console.log("User ID", user?.id);
-    console.log("Seller ID", listingObject.seller_profile.userID);
-    if (user?.id === listingObject.seller_profile.userID) {
-      navigate("/listing/edit/${id}");
+    if (user?.userID === listingObject.seller_profile.userID) {
+      navigate(`/listing/edit/${id}`);
     } else {
-      //TODO Add a path for id
-      window.location.href = `mailto:${listingObject.seller_profile.username}@uvic.ca?subject=${listingObject.title.replace(/\s/g, "")}`;
+      _axios_instance
+        .post("/messages", {
+          receiver_id: listingObject.seller_profile.userID,
+          listing_id: id,
+          content: "Hi I'm messaging about " + listingObject.title,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
       navigate("/messages");
     }
   };
+
+  if (!id) {
+    return <Typography variant="h5">Invalid Listing ID</Typography>;
+  }
 
   return (
     <>
@@ -144,7 +156,7 @@ const ViewListing = () => {
                     onClick={handleNavToMessagesAndEdit}
                     id={"message_button"}
                   >
-                    {user?.id === listingObject.seller_profile.userID
+                    {user?.userID === listingObject.seller_profile.userID
                       ? "Edit Listing"
                       : "Message Seller"}
                   </Button>
@@ -157,7 +169,7 @@ const ViewListing = () => {
                   ) : null}
                 </Grid>
               </Grid>
-              <Reviews reviews={listingObject.reviews ?? []} />
+              <Reviews listingID={id} reviews={listingObject.reviews ?? []} />
             </CardContent>
           </Card>
         )}

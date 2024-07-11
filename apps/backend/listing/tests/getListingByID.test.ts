@@ -2,12 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { getListingById } from '../src/getListingById';
 import { Request, Response } from 'express';
 import { IDatabase } from 'pg-promise';
+import { AuthenticatedRequest } from '../../lib/src/auth';
 
 describe('Get Listing by ID Endpoint', () => {
   it('should retrieve a listing successfully and calculate zero distance for same coordinates', async () => {
     const req = {
       params: { id: '1' },
-    } as unknown as Request;
+      user: { userId: 1 }
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
@@ -91,7 +93,8 @@ describe('Get Listing by ID Endpoint', () => {
   it('should fail to retrieve a non-existent listing', async () => {
     const req = {
       params: { id: '9999' },
-    } as unknown as Request;
+      user: { userId: 1 }
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),

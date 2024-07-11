@@ -36,10 +36,7 @@ const SearchBar = () => {
   const { logout } = useUser();
 
   const handleMessageRoute = () => {
-    // TODO Fix
-    window.location.href = `mailto:example@example.com?subject=MessagingMock`;
-
-    //navigate("/messages");
+    navigate("/messages");
   };
 
   const handleAccountRoute = () => {

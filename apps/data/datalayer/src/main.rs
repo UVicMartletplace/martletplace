@@ -1,19 +1,22 @@
 use std::future::IntoFuture;
 
-use email::email_router;
-use example::example_router;
+use email::{email_endpoint, email_router};
+use image::image_router;
 
 mod email;
-mod example;
+mod image;
 
 #[tokio::main]
 async fn main() {
-    let example_listener = tokio::net::TcpListener::bind("0.0.0.0:8301").await.unwrap();
+    // Check that the env var is set
+    email_endpoint();
+
     let email_listener = tokio::net::TcpListener::bind("0.0.0.0:8302").await.unwrap();
+    let image_listener = tokio::net::TcpListener::bind("0.0.0.0:8303").await.unwrap();
 
     let (r1, r2) = tokio::join!(
-        axum::serve(example_listener, example_router()).into_future(),
-        axum::serve(email_listener, email_router()).into_future()
+        axum::serve(email_listener, email_router()).into_future(),
+        axum::serve(image_listener, image_router()).into_future()
     );
 
     r1.unwrap();

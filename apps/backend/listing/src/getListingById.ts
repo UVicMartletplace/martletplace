@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IDatabase } from "pg-promise";
+import { AuthenticatedRequest } from "../../lib/src/auth";
 
 // GET /api/listing/:id - Get a listing's details
 const getListingById = async (
-  // TODO: AUTHENTICATION
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
 ) => {
@@ -13,6 +13,13 @@ const getListingById = async (
   if (!id) {
     console.error("missing listing id parameter in request");
     return res.status(400).json({ error: "Listing ID is required" });
+  }
+
+  const userID = req.user.userId;
+
+  if (userID == null) {
+    console.error("missing authorization parameter in request");
+    return res.status(400).json({ error: "Authorization is required" });
   }
 
   try {
@@ -47,6 +54,13 @@ const getListingById = async (
     if (!listing) {
       return res.status(404).json({ error: "Listing not found" });
     }
+
+    const insertClickQuery = `
+      INSERT INTO user_clicks (user_id, listing_id)
+      VALUES ($1, $2)
+    `;
+
+    await db.oneOrNone(insertClickQuery, [userID, id]);
 
     const reviewsQuery = `
       SELECT 

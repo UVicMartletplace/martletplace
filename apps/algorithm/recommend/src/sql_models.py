@@ -6,9 +6,9 @@ from typing import Optional, List
 
 
 class StatusType(str, Enum):
-    available = "AVAILABLE"
-    sold = "SOLD"
-    removed = "REMOVED"
+    AVAILABLE = "AVAILABLE"
+    SOLD = "SOLD"
+    REMOVED = "REMOVED"
 
 
 class Users(SQLModel, table=True):

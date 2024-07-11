@@ -11,7 +11,7 @@ const createReview = async (
   const userID = req.user.userId;
   const { stars, comment, listingID } = req.body;
 
-  if (!stars || !comment || !listingID) {
+  if (!stars || !listingID) {
     console.error("missing parameter in request");
     return res.status(400).json({ error: "missing parameter in request" });
   }

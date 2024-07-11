@@ -2,6 +2,7 @@ version: '2.2'
 
 x-ENV-VARS: &shared_env_var
   DB_ENDPOINT: postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
+  OTEL_COLLECTOR_ENDPOINT: http://collector:4318/v1/traces
   JWT_PUBLIC_KEY: |
     -----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj82D71KNQmYa2ZEUx/pI
@@ -21,7 +22,6 @@ services:
     depends_on: []
     volumes: [ ./apps/frontend/src:/app/src ]
     environment: []
-    networks: [ proxy-frontend ]
 
   proxy:
     build: apps/proxy
@@ -31,14 +31,6 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
-    networks:
-      - proxy-frontend
-      - proxy-user
-      - proxy-listing
-      - proxy-review
-      - proxy-message
-      - proxy-search
-      - proxy-recommend
 
   user:
     build:
@@ -48,7 +40,7 @@ services:
     container_name: martletplace_user
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/user/src:/app/service/src ]
+    volumes: [ ./apps/backend/user/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
       EMAIL_ENDPOINT: http://datalayer:8302/api/email
@@ -81,7 +73,6 @@ services:
         X4mH5b/BwklMy1wPZm1JkacLhBiQ4bEQ8Jwwnt3BZQ0iPvPTmrtUXnOSfoJBrvmU
         LU2O3fiOTm08CGokFesMzWM=
         -----END PRIVATE KEY-----
-    networks: [ proxy-user, user-datalayer ]
 
   listing:
     build:
@@ -91,10 +82,9 @@ services:
     container_name: martletplace_listing
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/listing/src:/app/service/src ]
+    volumes: [ ./apps/backend/listing/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
-    networks: [ proxy-listing, listing-datalayer ]
 
   review:
     build:
@@ -104,23 +94,21 @@ services:
     container_name: martletplace_review
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/review/src:/app/service/src ]
+    volumes: [ ./apps/backend/review/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
-    networks: [ proxy-review, review-datalayer ]
 
   message:
-    build: 
+    build:
       context: apps/backend/message
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_message
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/message/src:/app/service/src ]
+    volumes: [ ./apps/backend/message/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
-    networks: [ proxy-message, message-datalayer ]
 
   search:
     build: apps/algorithm/search
@@ -133,7 +121,6 @@ services:
     environment:
       <<: *shared_env_var
       ES_ENDPOINT: https://elastic:serxdfcghjfc@elasticsearch:8311
-    networks: [ proxy-search, search-datalayer, search-elasticsearch ]
 
   recommend:
     build: apps/algorithm/recommend
@@ -145,7 +132,6 @@ services:
       <<: *shared_env_var
       # needs to be postgresql+asyncpg for sqlalchemy to be happy
       DB_ENDPOINT: postgresql+asyncpg://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    networks: [ proxy-recommend, recommend-datalayer ]
 
   datalayer:
     build: apps/data/datalayer
@@ -160,18 +146,8 @@ services:
       - POSTGRESQL_DATABASE=martletplace
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=8310
-    networks:
-      - datalayer-database
-      - datalayer-elasticsearch
-      - datalayer-cache
-      - datalayer-blob
-      - user-datalayer
-      - listing-datalayer
-      - review-datalayer
-      - message-datalayer
-      - search-datalayer
-      - recommend-datalayer
-      - pgsync-datalayer
+      - EMAIL_ENDPOINT=smtp://mailserver/martletplace.ca
+      - SEND_EMAILS=FALSE
 
   database:
     build: apps/data/database
@@ -183,7 +159,6 @@ services:
       - POSTGRES_USER=martletplace
       - POSTGRES_PASSWORD=johuigytfrdcv
       - POSTGRES_DB=martletplace
-    networks: [ datalayer-database ]
 
   elasticsearch:
     build: apps/data/elasticsearch
@@ -193,7 +168,6 @@ services:
     volumes: []
     environment:
       - ELASTIC_PASSWORD=serxdfcghjfc
-    networks: [ datalayer-elasticsearch, pgsync-elasticsearch, search-elasticsearch ]
     mem_limit: 1GB
 
   mailserver:
@@ -203,7 +177,6 @@ services:
     depends_on: []
     volumes: []
     environment: []
-    networks: [ datalayer-mailserver ]
 
   pgsync:
     build: apps/data/pgsync
@@ -230,10 +203,6 @@ services:
       - REDIS_HOST=cache
       - REDIS_PORT=8313
       - REDIS_DB=0
-    networks:
-      - pgsync-datalayer
-      - pgsync-elasticsearch
-      - pgsync-cache
 
   cache:
     build: apps/data/cache
@@ -243,28 +212,18 @@ services:
     volumes: []
     environment:
       - DFLY_port=8313
-    networks: [ pgsync-cache ]
 
-networks:
-  proxy-frontend:
-  proxy-user:
-  proxy-listing:
-  proxy-review:
-  proxy-message:
-  proxy-search:
-  proxy-recommend:
-  user-datalayer:
-  listing-datalayer:
-  review-datalayer:
-  message-datalayer:
-  search-datalayer:
-  search-elasticsearch:
-  recommend-datalayer:
-  datalayer-database:
-  datalayer-elasticsearch:
-  datalayer-cache:
-  datalayer-blob:
-  datalayer-mailserver:
-  pgsync-datalayer:
-  pgsync-elasticsearch:
-  pgsync-cache:
+  collector:
+    build: apps/observability/collector
+    container_name: martletplace_collector
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+
+  jaeger:
+    build: apps/observability/jaeger
+    container_name: martletplace_jaeger
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    command: "--query.base-path /admin/tracing --query.http-server.host-port 0.0.0.0:16686 --collector.otlp.enabled --collector.otlp.grpc.host-port 0.0.0.0:4317 --collector.otlp.http.host-port 0.0.0.0:4318"

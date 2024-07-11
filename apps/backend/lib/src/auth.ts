@@ -36,6 +36,7 @@ export function authenticate_request(
     "POST /api/user/login",
     "POST /api/user/send-confirmation-email",
     "POST /api/user/confirm-email",
+    "GET /.well-known/health",
   ];
   if (unauthenticatedRoutes.includes(path)) {
     next();

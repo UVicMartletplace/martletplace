@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT
 from .database import insert_user_search
@@ -104,8 +104,8 @@ async def search(
     total_items = response["hits"]["total"]["value"]
     results = [
         {
-            "listingID": hit["_source"]["listingId"],
-            "sellerID": hit["_source"]["sellerId"],
+            "listingID": str(hit["_source"]["listingId"]),
+            "sellerID": str(hit["_source"]["sellerId"]),
             "sellerName": hit["_source"]["users"]["name"],
             "title": hit["_source"]["title"],
             "description": hit["_source"]["description"],
@@ -125,3 +125,8 @@ async def search(
         raise HTTPException(status_code=500, detail=str(e))
 
     return {"items": results, "totalItems": total_items}
+
+
+@search_router.get("/.well-known/health")
+async def health():
+    return Response(status_code=200)

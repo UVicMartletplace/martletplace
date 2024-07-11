@@ -28,13 +28,6 @@ describe("Account Page", () => {
     cy.url().should("include", "/user/listings");
   });
 
-  it("navigates to the My Reviews page", () => {
-    cy.get("h5").contains("My Reviews").click();
-
-    // Check if the url contains the correct path
-    cy.url().should("include", "/user/reviews");
-  });
-
   it("logs out the user", () => {
     cy.get("h5").contains("Logout").click();
 

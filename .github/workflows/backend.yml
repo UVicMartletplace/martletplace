@@ -68,15 +68,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Docker Compose Up
-        run: docker compose up -d ${{ matrix.service == 'lib' && 'user' || matrix.service }} datalayer database
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install Dependencies
-        if: matrix.service == 'lib'
-        run: docker compose exec user npm install --prefix ../lib
+      - name: Install dependencies
+        run: npm ci
 
       - name: Test
-        run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
+        run: npm run test:ci
 
   sast:
     name: Static Application Security Testing

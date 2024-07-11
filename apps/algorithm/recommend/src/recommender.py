@@ -15,7 +15,9 @@ class Recommender:
         with open(destination, "wb") as f:
             f.write(response.content)
 
-    def load_model(self):
+    def load_model(self, retries=3):
+        if retries < 0:
+            exit(1)
         try:
             self.data = pd.read_csv("/app/src/training/processed_data.csv")
             self.cosine_similarity_matrix = np.load(
@@ -38,7 +40,10 @@ class Recommender:
                 item_vectors_url, "/app/src/training/normalized_item_vectors.npy"
             )
 
-            self.load_model()
+            self.load_model(retries - 1)
+            return
+        except Exception as _:
+            self.load_model(retries - 1)
 
     def recommend(self, items_clicked, terms_searched, page, limit):
         """
@@ -52,7 +57,6 @@ class Recommender:
         search_recommendations = self.get_recommendations_from_search_terms(
             terms_searched
         )
-
         if click_recommendations.size == 0 and search_recommendations.size == 0:
             return np.array([])
         elif click_recommendations.size == 0:
@@ -104,7 +108,7 @@ class Recommender:
         """
         if not items_clicked:
             return np.array([])
-        indices = self.data.index[self.data["listingID"].isin(items_clicked)].tolist()
+        indices = self.data.index[self.data["listing_id"].isin(items_clicked)].tolist()
         similarities = np.mean(self.cosine_similarity_matrix[indices], axis=0)
         recommendations = np.argsort(similarities)[::-1]
         # Remove items that have already been clicked
@@ -119,6 +123,8 @@ class Recommender:
         the recommender works, by calculating the "similarity" of the search
         terms to the items in the data, and then returning the most similar items.
         """
+        if not search_terms:
+            return np.array([])
         search_tfidf_tensor = Recommender.generate_tfidf_vector(search_terms, self.data)
         normalized_search_vectors = tf.nn.l2_normalize(search_tfidf_tensor, axis=1)
         aggregated_search_vector = tf.reduce_mean(
