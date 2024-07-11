@@ -68,17 +68,6 @@ describe("<Messages/>", () => {
   ];
 
   beforeEach(() => {
-    // Mount the component
-    cy.mount(
-      <TestProviders>
-        <MemoryRouter initialEntries={[`/messages`]}>
-          <Routes>
-            <Route path="/messages" element={<Messages />} />
-          </Routes>
-        </MemoryRouter>
-      </TestProviders>
-    );
-
     // Mock axios response
     cy.intercept("GET", "/api/messages/overview*", {
       statusCode: 200,
@@ -95,6 +84,16 @@ describe("<Messages/>", () => {
       statusCode: 200,
       body: thread2Messages,
     }).as("getMessages2");
+    // Mount the component
+    cy.mount(
+      <TestProviders>
+        <MemoryRouter initialEntries={[`/messages`]}>
+          <Routes>
+            <Route path="/messages" element={<Messages />} />
+          </Routes>
+        </MemoryRouter>
+      </TestProviders>
+    );
   });
 
   context("desktop", () => {
@@ -149,7 +148,7 @@ describe("<Messages/>", () => {
     });
     it("mobile: should have messages shown by default", () => {
       cy.wait("@getThreads");
-      cy.wait("@getMessages1");
+      cy.wait("@getMessages2");
       cy.wait(100);
       cy.get("form input").eq(0).should("be.visible");
     });
