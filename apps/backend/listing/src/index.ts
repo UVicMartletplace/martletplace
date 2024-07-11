@@ -1,3 +1,6 @@
+import { connectDB, setupTracing } from "../../lib/src/otel";
+setupTracing("listing");
+
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import pgPromise from "pg-promise";

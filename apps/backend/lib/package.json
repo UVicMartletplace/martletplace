@@ -24,7 +24,13 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.52.1",
+    "@opentelemetry/instrumentation-express": "^0.41.0",
+    "@opentelemetry/instrumentation-http": "^0.52.1",
+    "@opentelemetry/instrumentation-pg": "^0.43.0",
+    "@opentelemetry/sdk-trace-node": "^1.25.1",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "pg-promise": "^11.9.0"
   }
 }
