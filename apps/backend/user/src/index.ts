@@ -1,4 +1,4 @@
-import { setupTracing, connectDB } from "../../lib/src/otel";
+import { setupTracing } from "../../lib/src/otel";
 setupTracing("user");
 
 import express, { Request, Response, NextFunction } from "express";
