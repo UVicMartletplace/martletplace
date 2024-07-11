@@ -2,6 +2,7 @@ version: '2.2'
 
 x-ENV-VARS: &shared_env_var
   DB_ENDPOINT: postgres://martletplace:johuigytfrdcv@datalayer:8300/martletplace
+  OTEL_COLLECTOR_ENDPOINT: http://collector:4318/v1/traces
   JWT_PUBLIC_KEY: |
     -----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj82D71KNQmYa2ZEUx/pI
@@ -211,6 +212,13 @@ services:
     volumes: []
     environment:
       - DFLY_port=8313
+
+  collector:
+    build: apps/observability/collector
+    container_name: martletplace_collector
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
 
   jaeger:
     build: apps/observability/jaeger
