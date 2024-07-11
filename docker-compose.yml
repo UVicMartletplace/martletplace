@@ -40,7 +40,7 @@ services:
     container_name: martletplace_user
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/user/src:/app/service/src ]
+    volumes: [ ./apps/backend/user/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
       EMAIL_ENDPOINT: http://datalayer:8302/api/email
@@ -82,7 +82,7 @@ services:
     container_name: martletplace_listing
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/listing/src:/app/service/src ]
+    volumes: [ ./apps/backend/listing/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
 
@@ -94,19 +94,19 @@ services:
     container_name: martletplace_review
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/review/src:/app/service/src ]
+    volumes: [ ./apps/backend/review/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
 
   message:
-    build: 
+    build:
       context: apps/backend/message
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_message
     restart: unless-stopped
     depends_on: []
-    volumes: [ ./apps/backend/message/src:/app/service/src ]
+    volumes: [ ./apps/backend/message/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
     environment:
       <<: *shared_env_var
 
