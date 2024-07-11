@@ -55,20 +55,20 @@ export const setupTracing = (serviceName: string) => {
  */
 export function connectDB(connection_string: string) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function genericDbQuery(old_fn: any) {
+  function genericDbQuery(oldFn: any) {
     const serviceName = SERVICENAME;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return async function(...args: any[]) {
+    return async function (...args: any[]) {
       if (args.length > 0) {
         const t = trace.getTracer(serviceName);
         const s = t.startSpan("pg.query");
         s.setAttribute("db.statement", args[0].toString());
-        const out = await old_fn(...args);
+        const out = await oldFn(...args);
         s.end();
         return Promise.resolve(out);
       } else {
-        return old_fn(...args);
+        return oldFn(...args);
       }
     };
   }
