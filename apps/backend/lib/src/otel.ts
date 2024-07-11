@@ -22,10 +22,8 @@ if (!OTEL_COLLECTOR_ENDPOINT) {
   console.error("OTEL_COLLECTOR_ENDPOINT environment variable is not set");
   process.exit(1);
 }
-let SERVICENAME: string;
 
 export const setupTracing = (serviceName: string) => {
-  SERVICENAME = serviceName;
   const provider = new NodeTracerProvider({
     resource: new Resource({
       [SEMRESATTRS_SERVICE_NAME]: serviceName,
