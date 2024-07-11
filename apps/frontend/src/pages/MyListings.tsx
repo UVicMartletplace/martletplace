@@ -15,8 +15,6 @@ interface MyListing {
   description: string;
   price: number;
   location: string;
-  sellerID?: string;
-  sellerName?: string;
   status: string;
   dateCreated: string;
   dateModified: string;
@@ -37,7 +35,6 @@ const MyListings = () => {
             listingID: listing.listingID,
             title: listing.title,
             description: listing.description,
-            sellerID: listing.sellerID,
             price: listing.price,
             dateCreated: listing.dateCreated,
             imageUrl: listing.images.length > 0 ? listing.images[0].url : "",

@@ -77,9 +77,8 @@ const ViewListing = () => {
   };
 
   const handleNavToMessagesAndEdit = () => {
-    console.log("Seller ID", listingObject.seller_profile.userID);
     if (user?.userID === listingObject.seller_profile.userID) {
-      navigate("/listing/edit/${id}");
+      navigate(`/listing/edit/${id}`);
     } else {
       _axios_instance
         .post("/messages", {
