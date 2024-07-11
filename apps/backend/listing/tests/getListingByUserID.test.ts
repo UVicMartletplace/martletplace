@@ -22,7 +22,7 @@ describe('Get Listings by User Endpoint', () => {
           title: 'Sample Listing',
           description: 'This is a sample listing description',
           price: 100,
-          seller_id: 1,
+          sellerID: 1,
           location: '48.4284,-123.3656',
           status: 'AVAILABLE',
           dateCreated: new Date(),
