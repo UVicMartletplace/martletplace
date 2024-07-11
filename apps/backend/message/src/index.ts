@@ -1,11 +1,10 @@
-import { setupTracing } from "../../lib/src/otel";
+import { connectDB, setupTracing } from "../../lib/src/otel";
 setupTracing("message");
 
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { authenticate_request, AuthenticatedRequest } from "../../lib/src/auth";
-import pgPromise from "pg-promise";
 import { getMessageThreads } from "./getMessageThreads";
 import { getMessages, useValidateGetMessages } from "./getMessages";
 import { createMessage, useValidateCreateMessage } from "./createMessage";
@@ -19,13 +18,12 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(authenticate_request);
 
-const pgp = pgPromise();
 const DB_ENDPOINT = process.env.DB_ENDPOINT;
 if (!DB_ENDPOINT) {
   throw new Error("DB_ENDPOINT is not set");
 }
 
-const db = pgp(DB_ENDPOINT);
+const db = connectDB(DB_ENDPOINT);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
