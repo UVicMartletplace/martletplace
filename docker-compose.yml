@@ -211,3 +211,12 @@ services:
     volumes: []
     environment:
       - DFLY_port=8313
+
+  jaeger:
+    build: apps/observability/jaeger
+    container_name: martletplace_jaeger
+    restart: unless-stopped
+    depends_on: []
+    volumes: []
+    command: "--query.http-server.host-port 0.0.0.0:16686 --collector.otlp.enabled --collector.otlp.grpc.host-port 0.0.0.0:4317 --collector.otlp.http.host-port 0.0.0.0:4318"
+    ports: [16686:16686]
