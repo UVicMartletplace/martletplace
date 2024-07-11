@@ -1,3 +1,6 @@
+import { setupTracing } from "../../lib/src/otel";
+setupTracing("user");
+
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import pgPromise from "pg-promise";

@@ -1,3 +1,6 @@
+import { setupTracing } from "../../lib/src/otel";
+setupTracing("message");
+
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
