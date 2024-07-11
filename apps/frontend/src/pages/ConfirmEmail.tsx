@@ -10,7 +10,7 @@ const ConfirmEmail = () => {
   useEffect(() => {
     const confirmEmail = async () => {
       try {
-        await axios.post("/user/confirm-email", { code: token });
+        await axios.post("/api/user/confirm-email", { code: token });
       } catch (error) {
         console.error(error);
       }

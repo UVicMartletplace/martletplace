@@ -67,6 +67,7 @@ describe("<CreateAccount />", () => {
       .its("response.statusCode")
       .should("eq", 201);
 
+    cy.get("#continue-button").click()
     // Check if navigation occurred as expected
     cy.location("pathname").should("eq", "/login");
   });

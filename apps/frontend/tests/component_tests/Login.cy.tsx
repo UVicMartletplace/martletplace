@@ -17,8 +17,8 @@ describe("<Login />", () => {
     cy.get("form").should("be.visible");
 
     // Check if the form contains the necessary input fields
-    cy.get("#email").should("be.visible");
-    cy.get("#password").should("be.visible");
+    cy.get('#email-input').should("be.visible");
+    cy.get('#password-input').should("be.visible");
     cy.get('button[type="submit"]').should("be.visible");
   });
 
@@ -99,7 +99,7 @@ describe("<Login />", () => {
 
   it("prevents submission when username is missing", () => {
     // Type into the input fields
-    cy.get("#password").type(testPassword);
+    cy.get('#password-input').type(testPassword);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -107,7 +107,7 @@ describe("<Login />", () => {
 
   it("prevents submission when password is missing", () => {
     // Type into the input fields
-    cy.get("#email").type(testEmail);
+    cy.get('#email-input').type(testEmail);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");

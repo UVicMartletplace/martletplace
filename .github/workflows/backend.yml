@@ -55,28 +55,28 @@ jobs:
       - name: Format
         run: npm run format:ci
 
-  # test:
-  #   name: Test
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       service: [user, listing, review, message, lib]
-  #     fail-fast: false
-  #   defaults:
-  #     run:
-  #       working-directory: apps/backend/${{ matrix.service }}
-  #   steps:
-  #     - uses: actions/checkout@v4
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
+      fail-fast: false
+    defaults:
+      run:
+        working-directory: apps/backend/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: Docker Compose Up
-  #       run: docker compose up -d ${{ matrix.service == 'lib' && 'user' || matrix.service }} datalayer database
+      - name: Docker Compose Up
+        run: docker compose up -d ${{ matrix.service == 'lib' && 'user' || matrix.service }} datalayer database
 
-  #     - name: Install Dependencies
-  #       if: matrix.service == 'lib'
-  #       run: docker compose exec user npm install --prefix ../lib
+      - name: Install Dependencies
+        if: matrix.service == 'lib'
+        run: docker compose exec user npm install --prefix ../lib
 
-  #     - name: Test
-  #       run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
+      - name: Test
+        run: docker compose exec ${{ matrix.service == 'lib' && 'user' || matrix.service }} npm run ${{ matrix.service == 'lib' && '--prefix ../lib' || '' }} test:ci
 
   sast:
     name: Static Application Security Testing

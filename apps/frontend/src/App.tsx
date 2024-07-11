@@ -7,7 +7,6 @@ import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import ViewListing from "./pages/ViewListing";
 import Messages from "./pages/Messages";
-import MyReviews from "./pages/MyReviews";
 import MyListings from "./pages/MyListings";
 import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
@@ -22,7 +21,14 @@ function App() {
       <Router>
         {/* Not wrapped intentionally */}
         <Routes>
-          <Route path="/confirm/:token" element={<ConfirmEmail />} />
+          <Route
+            path="/confirm/:token"
+            element={
+              <AuthRoute>
+                <ConfirmEmail />
+              </AuthRoute>
+            }
+          />
           {/* Auth Routes */}
           <Route
             path="/user/login"
@@ -80,14 +86,6 @@ function App() {
             element={
               <PrivateRoute>
                 <ViewProfile />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/user/reviews"
-            element={
-              <PrivateRoute>
-                <MyReviews />
               </PrivateRoute>
             }
           />
