@@ -21,7 +21,6 @@ services:
     depends_on: []
     volumes: [ ./apps/frontend/src:/app/src ]
     environment: []
-    networks: [ proxy-frontend ]
 
   proxy:
     build: apps/proxy
@@ -31,15 +30,6 @@ services:
     volumes: [ ./apps/proxy:/app ]
     environment: []
     ports: [ 80:80, 443:443 ]
-    networks:
-      - proxy-frontend
-      - proxy-user
-      - proxy-listing
-      - proxy-review
-      - proxy-message
-      - proxy-search
-      - proxy-recommend
-      - proxy-datalayer
 
   user:
     build:
@@ -82,7 +72,6 @@ services:
         X4mH5b/BwklMy1wPZm1JkacLhBiQ4bEQ8Jwwnt3BZQ0iPvPTmrtUXnOSfoJBrvmU
         LU2O3fiOTm08CGokFesMzWM=
         -----END PRIVATE KEY-----
-    networks: [ proxy-user, user-datalayer ]
 
   listing:
     build:
@@ -95,7 +84,6 @@ services:
     volumes: [ ./apps/backend/listing/src:/app/service/src ]
     environment:
       <<: *shared_env_var
-    networks: [ proxy-listing, listing-datalayer ]
 
   review:
     build:
@@ -108,7 +96,6 @@ services:
     volumes: [ ./apps/backend/review/src:/app/service/src ]
     environment:
       <<: *shared_env_var
-    networks: [ proxy-review, review-datalayer ]
 
   message:
     build: 
@@ -121,7 +108,6 @@ services:
     volumes: [ ./apps/backend/message/src:/app/service/src ]
     environment:
       <<: *shared_env_var
-    networks: [ proxy-message, message-datalayer ]
 
   search:
     build: apps/algorithm/search
@@ -134,7 +120,6 @@ services:
     environment:
       <<: *shared_env_var
       ES_ENDPOINT: https://elastic:serxdfcghjfc@elasticsearch:8311
-    networks: [ proxy-search, search-datalayer, search-elasticsearch ]
 
   recommend:
     build: apps/algorithm/recommend
@@ -146,7 +131,6 @@ services:
       <<: *shared_env_var
       # needs to be postgresql+asyncpg for sqlalchemy to be happy
       DB_ENDPOINT: postgresql+asyncpg://martletplace:johuigytfrdcv@datalayer:8300/martletplace
-    networks: [ proxy-recommend, recommend-datalayer ]
 
   datalayer:
     build: apps/data/datalayer
@@ -163,20 +147,6 @@ services:
       - POSTGRESQL_PORT=8310
       - EMAIL_ENDPOINT=smtp://mailserver/martletplace.ca
       - SEND_EMAILS=FALSE
-    networks:
-      - proxy-datalayer
-      - datalayer-database
-      - datalayer-elasticsearch
-      - datalayer-cache
-      - datalayer-blob
-      - datalayer-mailserver
-      - user-datalayer
-      - listing-datalayer
-      - review-datalayer
-      - message-datalayer
-      - search-datalayer
-      - recommend-datalayer
-      - pgsync-datalayer
 
   database:
     build: apps/data/database
@@ -188,7 +158,6 @@ services:
       - POSTGRES_USER=martletplace
       - POSTGRES_PASSWORD=johuigytfrdcv
       - POSTGRES_DB=martletplace
-    networks: [ datalayer-database ]
 
   elasticsearch:
     build: apps/data/elasticsearch
@@ -198,7 +167,6 @@ services:
     volumes: []
     environment:
       - ELASTIC_PASSWORD=serxdfcghjfc
-    networks: [ datalayer-elasticsearch, pgsync-elasticsearch, search-elasticsearch ]
     mem_limit: 1GB
 
   mailserver:
@@ -208,7 +176,6 @@ services:
     depends_on: []
     volumes: []
     environment: []
-    networks: [ datalayer-mailserver ]
 
   pgsync:
     build: apps/data/pgsync
@@ -235,10 +202,6 @@ services:
       - REDIS_HOST=cache
       - REDIS_PORT=8313
       - REDIS_DB=0
-    networks:
-      - pgsync-datalayer
-      - pgsync-elasticsearch
-      - pgsync-cache
 
   cache:
     build: apps/data/cache
@@ -248,29 +211,3 @@ services:
     volumes: []
     environment:
       - DFLY_port=8313
-    networks: [ pgsync-cache ]
-
-networks:
-  proxy-frontend:
-  proxy-user:
-  proxy-listing:
-  proxy-review:
-  proxy-message:
-  proxy-search:
-  proxy-recommend:
-  proxy-datalayer:
-  user-datalayer:
-  listing-datalayer:
-  review-datalayer:
-  message-datalayer:
-  search-datalayer:
-  search-elasticsearch:
-  recommend-datalayer:
-  datalayer-database:
-  datalayer-elasticsearch:
-  datalayer-cache:
-  datalayer-blob:
-  datalayer-mailserver:
-  pgsync-datalayer:
-  pgsync-elasticsearch:
-  pgsync-cache:
