@@ -58,7 +58,9 @@ describe('Get Listings by User Endpoint', () => {
   });
 
   it('should return 404 if no listings are found for the user', async () => {
-    const req = {} as unknown as AuthenticatedRequest;
+    const req = {
+      user: { userId: 1 }
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
