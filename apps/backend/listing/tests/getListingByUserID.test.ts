@@ -22,6 +22,7 @@ describe('Get Listings by User Endpoint', () => {
           title: 'Sample Listing',
           description: 'This is a sample listing description',
           price: 100,
+          seller_id: 1,
           location: '48.4284,-123.3656',
           status: 'AVAILABLE',
           dateCreated: new Date(),
@@ -39,10 +40,11 @@ describe('Get Listings by User Endpoint', () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith([
       {
-        listingID: 1,
+        listingID: "1",
         title: 'Sample Listing',
         description: 'This is a sample listing description',
         price: 100,
+        sellerID: "1",
         location: '48.4284,-123.3656',
         status: 'AVAILABLE',
         dateCreated: expect.any(Date),
