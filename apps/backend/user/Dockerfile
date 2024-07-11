@@ -12,6 +12,7 @@ RUN npm install
 
 COPY --from=lib src /app/lib/src
 COPY src ./
+COPY tests ./tests
 
 HEALTHCHECK CMD curl -f http://localhost:8211/.well-known/health
 
