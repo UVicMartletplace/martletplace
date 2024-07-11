@@ -33,6 +33,19 @@ http:
       rule: "PathPrefix(`/api/images`)"
       service: image
       priority: 200
+    to-jaeger:
+      rule: "PathPrefix(`/jaeger`)"
+      service: jaeger
+      priority: 200
+      middlewares:
+        - strip-prefix
+
+  middlewares:
+    strip-prefix:
+      stripPrefix:
+        prefixes:
+          - "/jaeger"
+
 
   services:
     frontend:
@@ -67,3 +80,7 @@ http:
       loadBalancer:
         servers:
           - url: http://datalayer:8303/
+    jaeger:
+      loadBalancer:
+        servers:
+          - url: http://jaeger:16686/
