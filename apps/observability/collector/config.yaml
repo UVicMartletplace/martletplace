@@ -1,0 +1,64 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+  tail_sampling:
+    decision_wait: 10s
+    policies: [{
+      name: dont-sample-healthcheck,
+      type: and,
+      and:
+        {
+          and_sub_policy:
+            [
+              {
+                name: route-live-ready-policy,
+                type: string_attribute,
+                string_attribute:
+                  {
+                    key: http.route,
+                    values: ["/.well-known/health"],
+                    invert_match: true,
+                  },
+              },
+              {
+                name: probabilistic-policy,
+                type: probabilistic,
+                probabilistic: { sampling_percentage: 100 },
+              },
+            ],
+        },
+      }]
+
+
+exporters:
+  otlphttp:
+    endpoint: http://jaeger:4318
+  debug:
+    verbosity: basic #detailed
+
+extensions:
+  health_check:
+    path: "/.well-known/health"
+    endpoint: "0.0.0.0:13133"
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [tail_sampling,batch]
+      exporters: [otlphttp,debug]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp,debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp,debug]
+
