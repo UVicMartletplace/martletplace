@@ -16,7 +16,6 @@ const Login = () => {
   const navigate = useNavigate();
   const isFormIncomplete = !email || !password || !totpCode;
   const { setUser } = useUser();
-  const [totp, setTotp] = useState("");
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -44,15 +43,15 @@ const Login = () => {
     }
   };
 
-  const updateTotp = (totp: string) => {
-    if (
-      totp.length >= -1 &&
-      totp.length <= 6 &&
-      (Math.abs(+totp) !== 0 ? Math.abs(+totp).toString() === totp : true)
-    ) {
-      setTotp(totp);
-    }
-  };
+  // const updateTotp = (totp: string) => {
+  //   if (
+  //     totp.length >= -1 &&
+  //     totp.length <= 6 &&
+  //     (Math.abs(+totp) !== 0 ? Math.abs(+totp).toString() === totp : true)
+  //   ) {
+  //     setTotp(totp);
+  //   }
+  // };
 
   return (
     <Box sx={classes.loginAndCreateBox}>
@@ -77,7 +76,6 @@ const Login = () => {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          id="email"
         />
         <TextField
           label="Password"
@@ -89,7 +87,6 @@ const Login = () => {
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          id="password"
         />
         <TextField
           label="TOTP Code"
@@ -103,19 +100,6 @@ const Login = () => {
             setTotpCode(e.target.value);
           }}
           id="totpCode"
-        />
-        <TextField
-          label="One Time Code"
-          variant="outlined"
-          id="totp-input"
-          required
-          fullWidth
-          margin="normal"
-          InputProps={{
-            inputMode: "numeric",
-          }}
-          value={totp}
-          onChange={(e) => updateTotp(e.target.value)}
         />
         {error && <Typography color="error">{error}</Typography>}
         <Button

@@ -28,8 +28,8 @@ describe("<Login />", () => {
 
   it("allows typing into the input fields", () => {
     // Type into the input fields
-    cy.get("#email").type(testEmail).should("have.value", testEmail);
-    cy.get("#password").type(testPassword).should("have.value", testPassword);
+    cy.get("#email-input").type(testEmail).should("have.value", testEmail);
+    cy.get("#password-input").type(testPassword).should("have.value", testPassword);
     cy.get("#totpCode").type("123456").should("have.value", testTotpCode);
   });
 
@@ -43,8 +43,8 @@ describe("<Login />", () => {
     }).as("loginRequest");
 
     // Type into the input fields
-    cy.get("#email").type(testEmail);
-    cy.get("#password").type(testPassword);
+    cy.get("#email-input").type(testEmail);
+    cy.get("#password-input").type(testPassword);
     cy.get("#totpCode").type(testTotpCode);
 
     // Ensure the button is not disabled
@@ -67,8 +67,8 @@ describe("<Login />", () => {
     }).as("loginFailRequest");
 
     // Type into the input fields
-    cy.get("#email").type("wronguser");
-    cy.get("#password").type("wrongpassword");
+    cy.get("#email-input").type("wronguser");
+    cy.get("#password-input").type("wrongpassword");
     cy.get("#totpCode").type(testTotpCode);
 
     // Ensure the button is not disabled
@@ -119,8 +119,8 @@ describe("<Login />", () => {
 
   it("prevents submission when TOTP code is missing", () => {
     // Type into the input fields
-    cy.get("#email").type(testEmail);
-    cy.get("#password").type(testPassword);
+    cy.get("#email-input").type(testEmail);
+    cy.get("#password-input").type(testPassword);
 
     // Ensure the button is disabled
     cy.get('button[type="submit"]').should("be.disabled");
@@ -128,8 +128,8 @@ describe("<Login />", () => {
 
   it("prevents submission when TOTP code is not 6 digits", () => {
     // Type into the input fields
-    cy.get("#email").type(testEmail);
-    cy.get("#password").type(testPassword);
+    cy.get("#email-input").type(testEmail);
+    cy.get("#password-input").type(testPassword);
     cy.get("#totpCode").type("12345");
 
     cy.get('button[type="submit"]').should("not.be.disabled").click();
