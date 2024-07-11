@@ -27,9 +27,9 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // if (!user.verified) {
-    //   return res.status(401).json({ error: "User is not verified" });
-    // }
+    if (!user.verified) {
+      return res.status(401).json({ error: "User is not verified" });
+    }
 
     // Verify MFA totp token
     const isValid = await verifyMFA(user, totpCode);
@@ -39,7 +39,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
         .json({ error: "Invalid token, authentication failed" });
     }
 
-    let token = create_token({ userId: user.user_id });
+    const token = create_token({ userId: user.user_id });
     res.cookie("authorization", token, { httpOnly: true, sameSite: "strict" });
 
     return res.status(200).json({

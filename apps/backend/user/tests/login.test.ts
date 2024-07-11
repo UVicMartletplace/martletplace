@@ -16,6 +16,7 @@ describe('Login Endpoint', () => {
       body: {
         email: 'johndoe@example.com',
         password: 'Password123!',
+        totpCode: '123456',
       },
     } as unknown as AuthenticatedRequest;
 
