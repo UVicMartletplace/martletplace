@@ -43,16 +43,6 @@ const Login = () => {
     }
   };
 
-  // const updateTotp = (totp: string) => {
-  //   if (
-  //     totp.length >= -1 &&
-  //     totp.length <= 6 &&
-  //     (Math.abs(+totp) !== 0 ? Math.abs(+totp).toString() === totp : true)
-  //   ) {
-  //     setTotp(totp);
-  //   }
-  // };
-
   return (
     <Box sx={classes.loginAndCreateBox}>
       <img

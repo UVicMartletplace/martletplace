@@ -3,7 +3,7 @@ import { login } from '../src/login';
 import { Response } from 'express';
 import { IDatabase } from 'pg-promise';
 import bcrypt from 'bcryptjs';
-import OTPAuth from "otpauth";
+import { TOTP } from "otpauth";
 import { AuthenticatedRequest, create_token } from '../../lib/src/auth';
 
 vi.mock('bcryptjs');
@@ -14,7 +14,7 @@ vi.mock('../../lib/src/auth', () => ({
 describe('Login Endpoint', () => { 
   it('should login a user successfully', async () => {
     // Generate totp from test user secret
-    const totp = new OTPAuth.TOTP({
+    const totp = new TOTP({
       label: "Martletplace",
       algorithm: "SHA1",
       digits: 6,
@@ -55,9 +55,6 @@ describe('Login Endpoint', () => {
     (create_token as Mock).mockReturnValue('mockToken');
 
     await login(req, res, db);
-
-    // Print error
-    expect(res.json).toHaveBeenCalledWith({ error: 'Email, password and TOTP code are required' });
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({

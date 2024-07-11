@@ -1,9 +1,9 @@
 import { User } from "./models/user";
-import OTPAuth from "otpauth";
+import { TOTP } from "otpauth";
 
 const verifyMFA = async (user: User, totp_secret: string) => {
   // Create TOTP from stored secret
-  const totp = new OTPAuth.TOTP({
+  const totp = new TOTP({
     label: "Martletplace",
     algorithm: "SHA1",
     digits: 6,
