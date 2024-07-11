@@ -28,6 +28,8 @@ const getListingsByUser = async (
          seller_id = $1`,
       [userID],
     );
+  //  console.log("LISTINGS");
+//    console.log(listings);
     if (!listings.length) {
       console.error("no listings found for this user");
       return res.status(404).json({ error: "No listings found for this user" });
@@ -45,7 +47,7 @@ const getListingsByUser = async (
       dateModified: listing.dateModified,
       images: listing.images.map((url: string) => ({ url })),
     }));
-
+ //   console.log("MAPPING LISTING", responseListings);
     return res.status(200).json(responseListings);
   } catch (err) {
     console.error(err);
