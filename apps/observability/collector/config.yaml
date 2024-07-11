@@ -7,7 +7,7 @@ receivers:
 processors:
   batch:
   tail_sampling:
-    decision_wait: 10s
+    decision_wait: 5s
     policies: [{
       name: dont-sample-healthcheck,
       type: and,
@@ -36,8 +36,10 @@ processors:
 
 
 exporters:
-  otlphttp:
-    endpoint: http://jaeger:4318
+  otlp:
+    endpoint: http://jaeger:4317
+    tls:
+      insecure: true
   debug:
     verbosity: basic #detailed
 
@@ -52,13 +54,13 @@ service:
     traces:
       receivers: [otlp]
       processors: [tail_sampling,batch]
-      exporters: [otlphttp,debug]
+      exporters: [otlp,debug]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp,debug]
+      exporters: [otlp,debug]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp,debug]
+      exporters: [otlp,debug]
 

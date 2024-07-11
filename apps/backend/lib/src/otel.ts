@@ -39,7 +39,9 @@ export const setupTracing = (serviceName: string) => {
 
   registerInstrumentations({
     tracerProvider: provider,
-    instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
+    instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation({
+      ignoreLayers: ["middleware - query", "middleware - expressInit", "middleware - logger", "middleware - cookieParser"],
+    })],
   });
 
   provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
