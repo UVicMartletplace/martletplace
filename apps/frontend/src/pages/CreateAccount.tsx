@@ -230,7 +230,11 @@ const CreateAccount = () => {
           </Typography>
         </Link>
       </Box>
-      <Backdrop sx={{ color: "#fff", zIndex: 999 }} open={openBackDrop}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: 999 }}
+        id="backdrop"
+        open={openBackDrop}
+      >
         <Box
           sx={{
             display: "flex",
@@ -239,21 +243,25 @@ const CreateAccount = () => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h5">
+          <Typography variant="h5" sx={{ textAlign: "center" }}>
             Store the Below Code in your Authenticator Application
           </Typography>
-          <img src={qrCodeUrl} width="250px" alt="totp qr code auth" />
-          <Typography variant="body1">Key: {tokenCode}</Typography>
+          <Box sx={{ margin: "10px" }}>
+            <img src={qrCodeUrl} width="250px" alt="totp qr code auth" />
+          </Box>
+          <Typography variant="caption">Key: {tokenCode}</Typography>
           <Button
             variant="contained"
             id="continue-button"
-            sx={classes.button}
+            sx={{ ...classes.button, width: "auto", paddingX: "10px" }}
             onClick={() => {
               navigate("/login");
               setOpenBackDrop(false);
             }}
           >
-            Click here once you have stored this code
+            Click here AFTER you
+            <br />
+            have stored this code
           </Button>
         </Box>
       </Backdrop>
