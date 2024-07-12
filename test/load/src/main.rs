@@ -185,7 +185,15 @@ async fn main() -> Result<(), GooseError> {
             scenario!("Basic (authed)")
                 .register_transaction(transaction!(get_index))
                 .register_transaction(transaction!(signup_login))
-                .register_transaction(transaction!(get_recommendations)),
+                .register_transaction(transaction!(get_recommendations))
+                .register_transaction(transaction!(get_listing))
+                .register_transaction(transaction!(create_listing))
+                .register_transaction(transaction!(create_review))
+                .register_transaction(transaction!(get_user))
+                .register_transaction(transaction!(get_message_threads))
+                .register_transaction(transaction!(stop_recommending))
+                .register_transaction(transaction!(search_listings))
+                .register_transaction(transaction!(get_search_history)),
         )
         .set_default(GooseDefault::Host, "http://local.martletplace.ca")?
         .set_default(GooseDefault::Users, 256)?

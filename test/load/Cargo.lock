@@ -815,6 +815,7 @@ dependencies = [
  "fake",
  "goose",
  "goose-eggs",
+ "rand",
  "serde",
  "serde_json",
  "tokio",
