@@ -128,7 +128,7 @@ async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
 
 async fn stop_recommending(user: &mut GooseUser) -> TransactionResult {
     let listing_id = rand::random::<u16>() % 2000 + 1;
-    let goose = user.get("/api/recommendations/stop/{}", listing_id)).await?;
+    let goose = user.get("/api/recommendations/stop/{}", listing_id).await?;
 
     let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
