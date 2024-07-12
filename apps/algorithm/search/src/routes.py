@@ -9,6 +9,10 @@ from .database import insert_user_search
 from .enums import Status, SearchType, Sort
 from .validation import validate_search_params
 
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+
+RequestsInstrumentor().instrument()
+
 search_router = APIRouter()
 
 es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
