@@ -11,7 +11,7 @@ const getListingsByUser = async (
 
   try {
     const listings = await db.any(
-      `SELECT 
+      `SELECT
          listing_id AS "listingID",
          title,
          description,
@@ -21,9 +21,9 @@ const getListingsByUser = async (
          created_at AS "dateCreated",
          modified_at AS "dateModified",
          image_urls AS "images"
-       FROM 
+       FROM
          listings
-       WHERE 
+       WHERE
          seller_id = $1`,
       [userID],
     );
@@ -37,7 +37,10 @@ const getListingsByUser = async (
       title: listing.title,
       description: listing.description,
       price: listing.price,
-      location: listing.location,
+      location: {
+        lat: listing.location.latitude,
+        lon: listing.location.longitude,
+      },
       status: listing.status,
       dateCreated: listing.dateCreated,
       dateModified: listing.dateModified,

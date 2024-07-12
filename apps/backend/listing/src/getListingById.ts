@@ -24,7 +24,7 @@ const getListingById = async (
 
   try {
     const listingQuery = `
-      SELECT 
+      SELECT
         l.listing_id AS "listingID",
         jsonb_build_object(
           'userID', u.user_id,
@@ -41,11 +41,11 @@ const getListingById = async (
         l.created_at AS "dateCreated",
         l.modified_at AS "dateModified",
         l.image_urls
-      FROM 
+      FROM
         listings l
-      JOIN 
+      JOIN
         users u ON l.seller_id = u.user_id
-      WHERE 
+      WHERE
         l.listing_id = $1
     `;
 
@@ -63,7 +63,7 @@ const getListingById = async (
     await db.oneOrNone(insertClickQuery, [userID, id]);
 
     const reviewsQuery = `
-      SELECT 
+      SELECT
         r.review_id AS "listing_review_id",
         ru.username AS "reviewerName",
         r.rating_value AS "stars",
@@ -72,11 +72,11 @@ const getListingById = async (
         r.listing_id AS "listingID",
         r.created_at AS "dateCreated",
         r.modified_at AS "dateModified"
-      FROM 
+      FROM
         reviews r
-      JOIN 
+      JOIN
         users ru ON r.user_id = ru.user_id
-      WHERE 
+      WHERE
         r.listing_id = $1
     `;
 
@@ -85,6 +85,8 @@ const getListingById = async (
     listing.reviews = reviews;
     listing.images = listing.image_urls.map((url: string) => ({ url }));
     listing.distance = 0;
+    listing.location.latitude = listing.location.lat;
+    listing.location.longitude = listing.location.lon;
 
     delete listing.image_urls;
 

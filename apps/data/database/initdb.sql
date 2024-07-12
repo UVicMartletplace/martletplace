@@ -7,8 +7,8 @@ END; $$ LANGUAGE plpgsql;
 CREATE TYPE STATUS_TYPE AS ENUM ('AVAILABLE', 'SOLD', 'REMOVED');
 
 CREATE TYPE LOCATION_TYPE AS (
-    latitude float,
-    longitude float
+    lat float,
+    lon float
 );
 
 CREATE TABLE users (
