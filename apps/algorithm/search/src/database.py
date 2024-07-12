@@ -2,6 +2,9 @@ import asyncpg
 from fastapi import HTTPException
 
 from .config import DB_ENDPOINT
+from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
+
+AsyncPGInstrumentor().instrument()
 
 
 async def get_db_connection():
