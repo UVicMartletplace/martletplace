@@ -8,6 +8,10 @@ sqlmodel
 sqlalchemy
 asyncpg
 pyjwt[crypto]
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-exporter-otlp-proto-http
 
 ## Dev Dependencies
 ruff
