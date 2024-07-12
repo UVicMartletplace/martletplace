@@ -13,7 +13,16 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
+from sqlalchemy import insert
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches, Listings
+from src.api_models import ListingSummary
+from src.db import get_session
+from src.recommender import Recommender
+
 app = FastAPI()
+
 
 def otel_trace_init(app, name):
     trace.set_tracer_provider(
@@ -31,13 +40,6 @@ def otel_trace_init(app, name):
 
 app = otel_trace_init(app, "recommend")
 
-from sqlalchemy import insert
-from sqlmodel import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches, Listings
-from src.api_models import ListingSummary
-from src.db import get_session
-from src.recommender import Recommender
 
 recommender = Recommender()
 
