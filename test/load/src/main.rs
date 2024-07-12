@@ -1,8 +1,8 @@
 use fake::{
     faker::{
         internet::en::{Password, Username},
-        name::en::Name,
         lorem::en::{Paragraph, Sentence},
+        name::en::Name,
     },
     Fake,
 };
@@ -90,28 +90,24 @@ async fn create_review(user: &mut GooseUser) -> TransactionResult {
 }
 
 async fn get_user(user: &mut GooseUser) -> TransactionResult {
-     let goose = user.get("/api/user/1").await?;
- 
-     let validate = &Validate::builder()
-         .status(200)
-         .texts(vec!["userID", "username", "name"])
-         .build();
-     validate_page(user, goose, validate).await?;
- 
-     Ok(())
- }
+    let goose = user.get("/api/user/1").await?;
 
+    let validate = &Validate::builder()
+        .status(200)
+        .texts(vec!["userID", "username", "name"])
+        .build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
 
 async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/api/messages").await?;
 
-    let validate = &Validate::builder()
-        .status(200)
-        .build();
+    let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
     Ok(())
 }
-
 
 // ALGO
 
@@ -129,7 +125,9 @@ async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
 
 async fn stop_recommending(user: &mut GooseUser) -> TransactionResult {
     let listing_id = rand::thread_rng().gen_range(1..=2000);
-    let goose = user.get(&format!("/api/recommendations/stop/{}", listing_id)).await?;
+    let goose = user
+        .get(&format!("/api/recommendations/stop/{}", listing_id))
+        .await?;
 
     let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
@@ -158,14 +156,11 @@ async fn search_listings(user: &mut GooseUser) -> TransactionResult {
 async fn get_search_history(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/api/1/search-history").await?;
 
-    let validate = &Validate::builder()
-        .status(200)
-        .build();
+    let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
 
     Ok(())
 }
-
 
 // FRONTEND
 
