@@ -8,6 +8,8 @@ use fake::{
 use goose::prelude::*;
 use goose_eggs::{validate_page, Validate};
 
+// BACKEND
+
 async fn signup_login(user: &mut GooseUser) -> TransactionResult {
     let username = Username().fake::<String>();
     let password = format!(
@@ -37,6 +39,81 @@ async fn signup_login(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
+async fn get_listing(user: &mut GooseUser) -> TransactionResult {
+    // get random listing id between 1-2000
+    let listing_id = rand::random::<u16>() % 2000 + 1;
+    let goose = user.get(&format!("/api/listing/{}", listing_id)).await?;
+
+    let validate = &Validate::builder()
+        .status(200)
+        .texts(vec!["listingID", "seller_profile", "title"])
+        .build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+async fn create_listing(user: &mut GooseUser) -> TransactionResult {
+    let listing_json = &serde_json::json!({
+          "title": fake::faker::lorem::en::Sentence(3..5),
+          "description": fake::faker::lorem::en::Paragraph(3..5),
+          "price": rand::random::<u16>() % 1000 + 1,
+          "latitude": rand::random::<f64>() % 90.0,
+          "longitude": rand::random::<f64>() % 180.0,
+    });
+    let request_body = &serde_json::json!({
+        "listing": listing_json,
+        "images": [],
+    });
+    let goose = user.post_json("/api/listing", &request_body).await?;
+    let validate = &Validate::builder().status(201).build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+async fn create_review(user: &mut GooseUser) -> TransactionResult {
+    let listing_id = rand::random::<u16>() % 2000 + 1;
+    let review_json = &serde_json::json!({
+          "starts": rand::random::<u8>() % 5 + 1,
+          "comment": fake::faker::lorem::en::Paragraph(3..5),
+          "listingID": listing_id,
+    });
+    let goose = user.post_json("/api/review", &review_json).await?;
+
+    let validate = &Validate::builder().status(201).build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+async fn get_user(user: &mut GooseUser) -> TransactionResult {
+   // the current user gets their own profile with their user id
+    let goose = user.get("/api/user/1").await?;
+
+    let validate = &Validate::builder()
+        .status(200)
+        .texts(vec!["userID", "username", "name"])
+        .build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+
+async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
+    let goose = user.get("/api/messages").await?;
+
+    let validate = &Validate::builder()
+        .status(200)
+        .build();
+    validate_page(user, goose, validate).await?;
+    Ok(())
+}
+
+
+// ALGO
+
 async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/api/recommendations").await?;
 
@@ -48,6 +125,48 @@ async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
 
     Ok(())
 }
+
+async fn stop_recommending(user: &mut GooseUser) -> TransactionResult {
+    let listing_id = rand::random::<u16>() % 2000 + 1;
+    let goose = user.get("/api/recommendations/stop/{}", listing_id)).await?;
+
+    let validate = &Validate::builder().status(200).build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+async fn search_listings(user: &mut GooseUser) -> TransactionResult {
+    let search_body = &serde_json::json!({
+          "query": fake::faker::lorem::en::Sentence(3..5),
+          "latitude": rand::random::<f64>() % 90.0,
+          "longitude": rand::random::<f64>() % 180.0,
+    });
+
+    let goose = user.post_json("/api/search", &search_body).await?;
+
+    let validate = &Validate::builder()
+        .status(200)
+        .texts(vec!["items", "totalItems"])
+        .build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+async fn get_search_history(user: &mut GooseUser) -> TransactionResult {
+    let goose = user.get("/api/1/search-history").await?;
+
+    let validate = &Validate::builder()
+        .status(200)
+        .build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+
+// FRONTEND
 
 async fn get_index(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/").await?;
