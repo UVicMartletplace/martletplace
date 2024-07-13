@@ -10,7 +10,7 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { SEMRESATTRS_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
 import {
   NodeTracerProvider,
-  SimpleSpanProcessor,
+  BatchSpanProcessor,
 } from "@opentelemetry/sdk-trace-node";
 import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
@@ -52,7 +52,7 @@ export const setupTracing = (serviceName: string) => {
     ],
   });
 
-  provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+  provider.addSpanProcessor(new BatchSpanProcessor(exporter));
   provider.register();
 
   return trace.getTracer(serviceName);
