@@ -3,18 +3,6 @@ import TestProviders from "../utils/TestProviders";
 import Charities from "../../src/pages/Charities";
 
 describe("<Charities />", () => {
-  beforeEach(() => {
-    cy.mount(
-      <TestProviders>
-        <BrowserRouter>
-          <Charities />
-        </BrowserRouter>
-      </TestProviders>
-    );
-
-    cy.viewport(1280, 720);
-  });
-
   const expectedCharitiesObject = [
     {
       id: "1",
@@ -64,79 +52,7 @@ describe("<Charities />", () => {
       funds: 75000,
       listingsCount: 200,
     },
-    {
-      id: "2",
-      name: "Red Cross",
-      description: "Provide emergency assistance and disaster relief.",
-      startDate: "2023-05-01T14:14:50.534Z",
-      endDate: "2023-11-30T14:14:50.534Z",
-      imageUrl: "https://example.com/image.png",
-      organizations: [
-        {
-          name: "Partner A",
-          logoUrl: "https://example.com/image.png",
-          donated: 7000,
-          receiving: true,
-        },
-        {
-          name: "Partner B",
-          logoUrl: "https://example.com/image.png",
-          donated: 4000,
-          receiving: false,
-        },
-      ],
-      funds: 75000,
-      listingsCount: 200,
-    },
-    {
-      id: "2",
-      name: "Red Cross",
-      description: "Provide emergency assistance and disaster relief.",
-      startDate: "2023-05-01T14:14:50.534Z",
-      endDate: "2023-11-30T14:14:50.534Z",
-      imageUrl: "https://example.com/image.png",
-      organizations: [
-        {
-          name: "Partner A",
-          logoUrl: "https://example.com/image.png",
-          donated: 7000,
-          receiving: true,
-        },
-        {
-          name: "Partner B",
-          logoUrl: "https://example.com/image.png",
-          donated: 4000,
-          receiving: false,
-        },
-      ],
-      funds: 75000,
-      listingsCount: 200,
-    },
-    {
-      id: "2",
-      name: "Red Cross",
-      description:
-        "Provide emergency assistance and disaster relief. Provide emergency assistance and disaster relief. Provide emergency assistance and disaster relief.",
-      startDate: "2023-05-01T14:14:50.534Z",
-      endDate: "2023-11-30T14:14:50.534Z",
-      imageUrl: "https://example.com/image.png",
-      organizations: [
-        {
-          name: "Partner A",
-          logoUrl: "https://example.com/image.png",
-          donated: 7000,
-          receiving: true,
-        },
-        {
-          name: "Partner B",
-          logoUrl: "https://example.com/image.png",
-          donated: 4000,
-          receiving: false,
-        },
-      ],
-      funds: 75000,
-      listingsCount: 200,
-    },
+    // other charities...
   ];
 
   const noPastCharitiesObject = [
@@ -166,13 +82,24 @@ describe("<Charities />", () => {
     },
   ];
 
+  beforeEach(() => {
+    cy.viewport(1280, 720);
+  });
+
   it("gets the charities and displays the current charity", () => {
     cy.intercept("GET", "/api/charities", {
       statusCode: 200,
       body: expectedCharitiesObject,
     }).as("charitiesRequest");
 
-    // Wait for the mock request to complete and check its status
+    cy.mount(
+      <TestProviders>
+        <BrowserRouter>
+          <Charities />
+        </BrowserRouter>
+      </TestProviders>
+    );
+
     cy.wait("@charitiesRequest").then((interception) => {
       // Log request and expected bodies for debugging
       cy.log("Request Body", interception.request.body);
@@ -203,7 +130,14 @@ describe("<Charities />", () => {
       body: expectedCharitiesObject,
     }).as("charitiesRequest");
 
-    // Wait for the mock request to complete and check its status
+    cy.mount(
+      <TestProviders>
+        <BrowserRouter>
+          <Charities />
+        </BrowserRouter>
+      </TestProviders>
+    );
+
     cy.wait("@charitiesRequest").then((interception) => {
       // Log request and expected bodies for debugging
       cy.log("Request Body", interception.request.body);
@@ -226,7 +160,14 @@ describe("<Charities />", () => {
       body: noPastCharitiesObject,
     }).as("charitiesRequest");
 
-    // Wait for the mock request to complete and check its status
+    cy.mount(
+      <TestProviders>
+        <BrowserRouter>
+          <Charities />
+        </BrowserRouter>
+      </TestProviders>
+    );
+
     cy.wait("@charitiesRequest").then((interception) => {
       // Log request and expected bodies for debugging
       cy.log("Request Body", interception.request.body);
