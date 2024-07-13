@@ -4,8 +4,10 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Container,
   FormControl,
+  FormControlLabel,
   FormHelperText,
   Grid,
   TextField,
@@ -34,6 +36,7 @@ interface ListingObject {
   price: number;
   location: LocationObject;
   images: ImageURLObject[];
+  markedForCharity: boolean;
 }
 
 interface NewListingObject {
@@ -60,6 +63,7 @@ const EditListing = () => {
         longitude: -123.3108,
       },
       images: [],
+      markedForCharity: false,
     },
     status: "AVAILABLE",
   });
@@ -68,7 +72,8 @@ const EditListing = () => {
     _axios_instance
       .get(`/listing/${id}`)
       .then((response) => {
-        const { title, description, price, status, images } = response.data;
+        const { title, description, price, status, images, charityId } =
+          response.data;
         setNewListingObject((prevState) => ({
           ...prevState,
           listing: {
@@ -77,6 +82,7 @@ const EditListing = () => {
             description: description || "",
             price: +price || 0,
             images: images || [],
+            markedForCharity: charityId !== null,
           },
           status: status || "AVAILABLE",
         }));
@@ -89,7 +95,7 @@ const EditListing = () => {
 
   const updateNewListingPayload = (
     key: keyof ListingObject,
-    value: string | number | LocationObject,
+    value: string | number | LocationObject | boolean,
   ) => {
     setNewListingObject((prevState) => ({
       ...prevState,
@@ -173,6 +179,10 @@ const EditListing = () => {
       setPriceError("");
       updateNewListingPayload("price", priceValue ? Number(priceValue) : 0);
     }
+  };
+
+  const updateListingCharityStatus = (event: ChangeEvent<HTMLInputElement>) => {
+    updateNewListingPayload("markedForCharity", event.target.checked);
   };
 
   const isImageValid = (url: string) => {
@@ -311,6 +321,19 @@ const EditListing = () => {
                         {priceError && (
                           <FormHelperText error>{priceError}</FormHelperText>
                         )}
+                        <FormControlLabel
+                          id="charity-checkbox-label"
+                          label="Is this item for charity?"
+                          control={
+                            <Checkbox
+                              id="charity-checkbox"
+                              checked={
+                                newListingObject.listing.markedForCharity
+                              }
+                              onChange={updateListingCharityStatus}
+                            />
+                          }
+                        />
                       </FormControl>
                       <Box>
                         <Box sx={{ display: "flex" }}>

@@ -3,8 +3,10 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Container,
   FormControl,
+  FormControlLabel,
   FormHelperText,
   Grid,
   TextField,
@@ -32,6 +34,7 @@ interface ListingObject {
   price: number;
   location: LocationObject;
   images: ImageURLObject[];
+  markedForCharity: boolean;
 }
 
 interface NewListingObject {
@@ -64,6 +67,7 @@ const CreateListing = () => {
         longitude: -123.3108,
       },
       images: [],
+      markedForCharity: false,
     },
   });
 
@@ -103,9 +107,18 @@ const CreateListing = () => {
 
   const updateNewListingPayload = (
     key: keyof ListingObject,
-    value: string | number | LocationObject,
+    value: string | number | LocationObject | boolean,
   ) => {
-    if (["title", "description", "price", "location", "images"].includes(key)) {
+    if (
+      [
+        "title",
+        "description",
+        "price",
+        "location",
+        "images",
+        "markedForCharity",
+      ].includes(key)
+    ) {
       setNewListingObject((prevState) => ({
         ...prevState,
         listing: {
@@ -166,6 +179,10 @@ const CreateListing = () => {
         priceValue >= 0 ? priceValue : priceValue * -1,
       );
     }
+  };
+
+  const updateListingCharityStatus = (event: ChangeEvent<HTMLInputElement>) => {
+    updateNewListingPayload("markedForCharity", event.target.checked);
   };
 
   // Gets the user location, and adds it to the listing object
@@ -304,6 +321,17 @@ const CreateListing = () => {
                       {priceError && (
                         <FormHelperText error>{priceError}</FormHelperText>
                       )}
+                      <FormControlLabel
+                        id="charity-checkbox-label"
+                        label="Is this item for charity?"
+                        control={
+                          <Checkbox
+                            id="charity-checkbox"
+                            onChange={updateListingCharityStatus}
+                          />
+                        }
+                      />
+
                       <Button
                         variant="contained"
                         id="location-button"
