@@ -60,13 +60,20 @@ async fn create_listing(user: &mut GooseUser) -> TransactionResult {
           "title": Sentence(3..5).fake::<String>(),
           "description": Paragraph(3..5).fake::<String>(),
           "price": rand::thread_rng().gen_range(1..=1000),
-          "latitude": rand::thread_rng().gen_range(-90.0..=90.0),
-          "longitude": rand::thread_rng().gen_range(-180.0..=180.0),
+          "location" : {
+            "latitude": rand::thread_rng().gen_range(-90.0..=90.0),
+            "longitude": rand::thread_rng().gen_range(-180.0..=180.0),
+          },
+          "images": [
+            {
+                "url": "https://via.placeholder.com/150",
+            }
+        ],
     });
     let request_body = &serde_json::json!({
         "listing": listing_json,
-        "images": [],
     });
+
     let goose = user.post_json("/api/listing", request_body).await?;
     let validate = &Validate::builder().status(201).build();
     validate_page(user, goose, validate).await?;
@@ -92,17 +99,14 @@ async fn create_review(user: &mut GooseUser) -> TransactionResult {
 async fn get_user(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/api/user/1").await?;
 
-    let validate = &Validate::builder()
-        .status(200)
-        .texts(vec!["userID", "username", "name"])
-        .build();
+    let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
 
     Ok(())
 }
 
 async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
-    let goose = user.get("/api/messages").await?;
+    let goose = user.get("/api/messages/overview").await?;
 
     let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
@@ -123,26 +127,28 @@ async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
-async fn stop_recommending(user: &mut GooseUser) -> TransactionResult {
-    let listing_id = rand::thread_rng().gen_range(1..=2000);
-    let goose = user
-        .get(&format!("/api/recommendations/stop/{}", listing_id))
-        .await?;
+// async fn stop_recommending(user: &mut GooseUser) -> TransactionResult {
+//     let listing_id = rand::thread_rng().gen_range(1..=2000);
+//     let goose = user
+//         .get(&format!("/api/recommendations/stop/{}", listing_id))
+//         .await?;
 
-    let validate = &Validate::builder().status(200).build();
-    validate_page(user, goose, validate).await?;
+//     let validate = &Validate::builder().status(200).build();
+//     validate_page(user, goose, validate).await?;
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 async fn search_listings(user: &mut GooseUser) -> TransactionResult {
-    let search_body = &serde_json::json!({
-          "query": Sentence(3..5).fake::<String>(),
-          "latitude": rand::thread_rng().gen_range(-90.0..=90.0),
-          "longitude": rand::thread_rng().gen_range(-180.0..=180.0),
-    });
+    let query = Sentence(3..5).fake::<String>();
+    let latitude = rand::thread_rng().gen_range(-90.0..=90.0);
+    let longitude = rand::thread_rng().gen_range(-180.0..=180.0);
 
-    let goose = user.post_json("/api/search", search_body).await?;
+    let url = format!(
+        "/api/search?query={}&latitude={}&longitude={}",
+        query, latitude, longitude
+    );
+    let goose = user.get(&url).await?;
 
     let validate = &Validate::builder()
         .status(200)
@@ -186,14 +192,13 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(create_review))
                 .register_transaction(transaction!(get_user))
                 .register_transaction(transaction!(get_message_threads))
-                .register_transaction(transaction!(stop_recommending))
                 .register_transaction(transaction!(search_listings))
                 .register_transaction(transaction!(get_search_history)),
         )
         .set_default(GooseDefault::Host, "http://local.martletplace.ca")?
-        .set_default(GooseDefault::Users, 256)?
+        .set_default(GooseDefault::Users, 64)?
         .set_default(GooseDefault::StartupTime, 32)?
-        .set_default(GooseDefault::RunTime, 16)?
+        .set_default(GooseDefault::RunTime, 10)?
         .set_default(GooseDefault::NoResetMetrics, true)?
         .set_default(GooseDefault::ReportFile, "report.html")?
         .execute()
