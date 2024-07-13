@@ -156,6 +156,20 @@ async def get_recommendations(
 
     recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
+    seller_ids = recommended_listings["seller_id"].tolist()
+    seller_names_query = (
+            select(Users.user_id, Users.name)
+            .where(Users.user_id.in_(seller_ids))
+    )
+
+    seller_names_result = await session.exec(seller_names_query)
+    seller_names = seller_names_result.fetchall()
+
+    seller_name_dict = {}
+    for user_id, name in seller_names:
+        if user_id not in seller_name_dict:
+            seller_name_dict[user_id] = name
+
     listing_summaries = []
     for _, row in recommended_listings.iterrows():
         # this is so cursed, but since image urls are stored as a string of a python list, we gotta do this
@@ -175,7 +189,7 @@ async def get_recommendations(
             listingID=str(row["listing_id"]),
             sellerID=str(row["seller_id"]),
             # Will query for actual seller name later.
-            sellerName="Seller",
+            sellerName=str(seller_name_dict[row["seller_id"]]),
             buyerID=row["buyer_id"],
             title=str(row["title"]),
             price=row["price"],
