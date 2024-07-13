@@ -157,9 +157,8 @@ async def get_recommendations(
     recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
     seller_ids = recommended_listings["seller_id"].tolist()
-    seller_names_query = (
-            select(Users.user_id, Users.name)
-            .where(Users.user_id.in_(seller_ids))
+    seller_names_query = select(Users.user_id, Users.name).where(
+        Users.user_id.in_(seller_ids)
     )
 
     seller_names_result = await session.exec(seller_names_query)
