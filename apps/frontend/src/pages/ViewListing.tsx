@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -6,7 +7,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import _axios_instance from "../_axios_instance.tsx";
 import Carousel from "../components/Carousel.tsx";
@@ -31,6 +32,24 @@ interface ListingObject {
   images: { url: string }[];
   reviews?: Review[];
   status: string;
+  charityId: string;
+}
+
+interface CharityObject {
+  id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  imageUrl: string;
+  organizations: {
+    name: string;
+    logoUrl: string;
+    donated: number;
+    receiving: boolean;
+  }[];
+  funds: number;
+  listingsCount: number;
 }
 
 const ViewListing = () => {
@@ -49,7 +68,10 @@ const ViewListing = () => {
     distance: 0,
     images: [{ url: "https://picsum.photos/1200/400" }],
     status: "AVAILABLE",
+    charityId: "1",
   });
+
+  const [currentCharity, setCurrentCharity] = useState<CharityObject>();
 
   // Load the listing from the api given an ID
   useEffect(() => {
@@ -58,11 +80,24 @@ const ViewListing = () => {
       .then((response) => {
         setListingObject(response.data);
         setListingReceived(true);
+        if (response.data.charityId) {
+
+      _axios_instance
+        .get("/charities/current")
+      .then((response) => {
+        setCurrentCharity(response.data);
+        setListingReceived(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
       })
       .catch((error) => {
         console.log(error);
       });
   }, [id]);
+
 
   // Convert price to string
   const priceFormatter = new Intl.NumberFormat("en-CA", {
@@ -116,6 +151,16 @@ const ViewListing = () => {
             }}
           >
             <CardContent>
+              {listingObject.charityId ? (
+                <Box sx={{borderRadius: "20px", overflow: "hidden"}}> <svg  id="visual" viewBox="0 0 1080 100" width="100%" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                  <text x="5" y="15" fill="black">{currentCharity?.name}</text>
+                  <path
+                    d="M849 100L853.8 94.5C858.7 89 868.3 78 871.3 66.8C874.3 55.7 870.7 44.3 866.3 33.2C862 22 857 11 854.5 5.5L852 0L1080 0L1080 5.5C1080 11 1080 22 1080 33.2C1080 44.3 1080 55.7 1080 66.8C1080 78 1080 89 1080 94.5L1080 100Z"
+                    fill="#ffb32e"></path>
+                  <path
+                    d="M959 100L953.5 94.5C948 89 937 78 941.7 66.8C946.3 55.7 966.7 44.3 968.2 33.2C969.7 22 952.3 11 943.7 5.5L935 0L1080 0L1080 5.5C1080 11 1080 22 1080 33.2C1080 44.3 1080 55.7 1080 66.8C1080 78 1080 89 1080 94.5L1080 100Z"
+                    fill="#001647"></path>
+                </svg></Box> ) : ""}
               <Grid container spacing={2}>
                 <Grid item sm={12} md={12} lg={6}>
                   <Typography variant={"h5"}>

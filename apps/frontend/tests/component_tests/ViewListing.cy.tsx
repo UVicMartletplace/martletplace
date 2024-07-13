@@ -32,6 +32,7 @@ describe("<ViewListing/>", () => {
         dateModified: "2024-05-23T15:30:00Z",
       },
     ],
+    charityId: "1"
   };
 
   const pageJSX = (
@@ -65,6 +66,7 @@ describe("<ViewListing/>", () => {
 
     cy.mount(pageJSX);
     cy.wait("@getListing");
+    cy.pause()
 
     cy.contains(
       "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
