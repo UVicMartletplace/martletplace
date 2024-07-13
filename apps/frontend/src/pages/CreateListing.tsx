@@ -283,7 +283,7 @@ const CreateListing = () => {
           <CardContent>
             <Typography variant={"h5"}>Create Listing</Typography>
             <Grid container spacing={1}>
-              <Grid item md={6} sm={12} xs={12}>
+              <Grid item md={6} sm={6} xs={12}>
                 <Box>
                   <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                     <FormControl sx={{ width: "100%", padding: "10px" }}>
@@ -324,6 +324,7 @@ const CreateListing = () => {
                       <FormControlLabel
                         id="charity-checkbox-label"
                         label="Is this item for charity?"
+                        sx={{marginLeft: "10px"}}
                         control={
                           <Checkbox
                             id="charity-checkbox"
