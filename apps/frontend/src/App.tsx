@@ -15,6 +15,7 @@ import AuthRoute from "./components/Auth/AuthRoute";
 import ConfirmEmail from "./pages/ConfirmEmail";
 import ViewProfile from "./pages/ViewProfile";
 import Profile from "./pages/Profile";
+import Charities from "./pages/Charities";
 
 function App() {
   return (
@@ -127,6 +128,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Messages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/charities"
+            element={
+              <PrivateRoute>
+                <Charities />
               </PrivateRoute>
             }
           />
