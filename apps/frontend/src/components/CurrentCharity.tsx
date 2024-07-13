@@ -11,23 +11,26 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
   useEffect(() => {
-    const endTime = new Date(charity.endDate).getTime();
-    const interval = setInterval(() => {
+    const calculateTimeRemaining = () => {
+      const endTime = new Date(charity.endDate).getTime();
       const now = new Date().getTime();
       const distance = endTime - now;
 
       if (distance < 0) {
-        clearInterval(interval);
-        setTimeRemaining("This charity event has ended.");
+        return "This charity event has ended.";
       } else {
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
         );
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        setTimeRemaining(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
       }
+    };
+
+    const interval = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
     }, 1000);
 
     return () => clearInterval(interval);
