@@ -198,17 +198,6 @@ describe("<Charities />", () => {
   });
 
   it("gets the charities and can go to the past charities view", () => {
-    // Need to mount again otherwise test fails :(
-    cy.mount(
-      <TestProviders>
-        <BrowserRouter>
-          <Charities />
-        </BrowserRouter>
-      </TestProviders>
-    );
-
-    cy.viewport(1280, 720);
-
     cy.intercept("GET", "/api/charities", {
       statusCode: 200,
       body: expectedCharitiesObject,
@@ -232,17 +221,6 @@ describe("<Charities />", () => {
   });
 
   it("should indicate if no past charity events", () => {
-    // Need to mount again otherwise test fails :(
-    cy.mount(
-      <TestProviders>
-        <BrowserRouter>
-          <Charities />
-        </BrowserRouter>
-      </TestProviders>
-    );
-
-    cy.viewport(1280, 720);
-
     cy.intercept("GET", "/api/charities", {
       statusCode: 200,
       body: noPastCharitiesObject,
