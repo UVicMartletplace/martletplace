@@ -5,6 +5,7 @@ import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
 import { colors } from "../styles/colors.tsx";
 import imageDefault from "../images/default-listing-image.png";
+import CharityBanner from "../images/charityBanner.svg";
 
 export interface ListingObject {
   listingID: string;
@@ -15,6 +16,7 @@ export interface ListingObject {
   price: number;
   dateCreated: string;
   imageUrl: string;
+  charityId: string;
 }
 
 interface ListingCardProps {
@@ -42,7 +44,7 @@ const ListingCard = ({
 
   const handleViewProfile = (
     sellerID: string | undefined,
-    event: React.MouseEvent,
+    event: React.MouseEvent
   ) => {
     event.stopPropagation();
     navigate(`/user/profile/${sellerID}`);
@@ -92,28 +94,49 @@ const ListingCard = ({
       className="listing-card"
       onClick={handleListingClick}
     >
-      <Grid
-        item
-        sx={{
-          width: "100%",
-          maxHeight: "40vh",
-          display: "flex",
-          justifyContent: "center",
-          overflow: "hidden",
-          borderRadius: "8px",
-        }}
-      >
-        <img
-          src={listing.imageUrl !== "" ? listing.imageUrl : imageDefault}
-          alt={listing.title}
-          style={{
+      <div style={{ position: "relative", width: "100%", maxHeight: "40vh" }}>
+        {listing.charityId == "1" && (
+          <img
+            src={CharityBanner}
+            alt="charityBanner"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "160px",
+              objectFit: "cover",
+              borderRadius: "8px",
+              zIndex: 2,
+            }}
+          />
+        )}
+        <Grid
+          item
+          sx={{
             width: "100%",
-            height: "160px",
-            objectFit: "cover",
+            maxHeight: "40vh",
+            display: "flex",
+            justifyContent: "center",
+            overflow: "hidden",
             borderRadius: "8px",
+            zIndex: 1,
           }}
-        />
-      </Grid>
+        >
+          <img
+            src={listing.imageUrl !== "" ? listing.imageUrl : imageDefault}
+            alt={listing.title}
+            style={{
+              width: "100%",
+              height: "160px",
+              objectFit: "cover",
+              borderRadius: "8px",
+              position: "relative",
+              zIndex: 1,
+            }}
+          />
+        </Grid>
+      </div>
       <Grid
         item
         container

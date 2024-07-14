@@ -19,6 +19,7 @@ import _axios_instance from "../_axios_instance.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import SearchBar from "../components/searchBar.tsx";
 import Spinner from "../components/Spinner.tsx";
+import HomepageBanner from "../images/HomepageBanner.svg";
 
 interface SearchObject {
   query: string;
@@ -44,6 +45,7 @@ const Homepage = () => {
   const [sortBy, setSortBy] = React.useState<string>("RELEVANCE");
   const [totalItems, setTotalItems] = useState(0);
   const [searchCompleted, setSearchCompleted] = useState(false);
+  const [charityEvent, setCharityEvent] = useState("");
   const [searchObject, setSearchObject] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -62,7 +64,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -72,11 +74,11 @@ const Homepage = () => {
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    currentPage: number,
+    currentPage: number
   ) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
@@ -113,6 +115,15 @@ const Homepage = () => {
             console.error("Error fetching listings:", error);
           });
         setSearchPerformed(false);
+        _axios_instance
+          .get("/charities/current")
+          .then((response) => {
+            setCharityEvent(response.data.name);
+            console.log(response.data.name);
+          })
+          .catch((error) => {
+            console.error("Error getting charity event:", error);
+          });
       }
     } else {
       let match;
@@ -170,6 +181,57 @@ const Homepage = () => {
 
   return (
     <>
+      {charityEvent != "" && (
+        <div style={{ position: "relative", height: "80px" }}>
+          <Typography
+            variant="h5"
+            style={{
+              position: "relative",
+              zIndex: 4,
+              fontWeight: "bold",
+              paddingLeft: "14px",
+              height: "23px",
+            }}
+          >
+            Charity
+          </Typography>
+          <Typography
+            variant="h5"
+            style={{
+              position: "relative",
+              zIndex: 4,
+              fontWeight: "bold",
+              paddingLeft: "14px",
+            }}
+          >
+            Events:
+          </Typography>
+          <Typography
+            variant="h5"
+            style={{
+              position: "absolute",
+              zIndex: 4,
+              top: "23px",
+              left: "10%",
+            }}
+          >
+            {charityEvent}
+          </Typography>
+          <img
+            src={HomepageBanner}
+            alt="Homepage Banner"
+            style={{
+              position: "absolute",
+              top: -10,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              zIndex: 0,
+            }}
+          />
+        </div>
+      )}
       <SearchBar />
       <Box sx={classes.HomePageBox}>
         {searchPerformed ? (
