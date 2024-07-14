@@ -18,12 +18,3 @@ jobs:
       uses: trufflesecurity/trufflehog@main
       with:
         extra_args: --only-verified
-
-    - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL'
