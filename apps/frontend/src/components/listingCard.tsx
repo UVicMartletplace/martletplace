@@ -44,7 +44,7 @@ const ListingCard = ({
 
   const handleViewProfile = (
     sellerID: string | undefined,
-    event: React.MouseEvent,
+    event: React.MouseEvent
   ) => {
     event.stopPropagation();
     navigate(`/user/profile/${sellerID}`);
@@ -227,6 +227,7 @@ ListingCard.propTypes = {
     price: PropTypes.number.isRequired,
     dateCreated: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
+    charityId: PropTypes.string.isRequired,
   }).isRequired,
 };
 
