@@ -324,7 +324,7 @@ const EditListing = () => {
                         <FormControlLabel
                           id="charity-checkbox-label"
                           label="Is this item for charity?"
-                          sx={{marginLeft: "10px"}}
+                          sx={{ marginLeft: "10px" }}
                           control={
                             <Checkbox
                               id="charity-checkbox"
