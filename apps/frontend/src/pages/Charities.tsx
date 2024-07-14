@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { Typography, Grid, Switch, FormControlLabel } from "@mui/material";
+import { Typography, Grid, Switch, FormControlLabel, Box } from "@mui/material";
 import CharityCard from "../components/CharityCard";
 import SearchBar from "../components/searchBar";
 import _axios_instance from "../_axios_instance";
@@ -110,7 +110,17 @@ const Charities = () => {
           </Typography>
         )
       ) : (
-        currentCharity && <CurrentCharity charity={currentCharity} />
+        <Box>
+          <Typography
+            variant="h5"
+            component="h3"
+            gutterBottom
+            sx={{ paddingLeft: "20px", paddingTop: "20px" }}
+          >
+            Current Charity Events
+          </Typography>
+          {currentCharity && <CurrentCharity charity={currentCharity} />}
+        </Box>
       )}
     </>
   );

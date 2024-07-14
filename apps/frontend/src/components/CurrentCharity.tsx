@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Typography, Grid, Box, Avatar, Paper } from "@mui/material";
 import { colors } from "../styles/colors";
 import { Charity } from "../pages/Charities";
@@ -8,33 +8,35 @@ interface CurrentCharityProps {
 }
 
 const CurrentCharity = ({ charity }: CurrentCharityProps) => {
-  const [timeRemaining, setTimeRemaining] = useState<string>("");
+  const [timeRemaining, setTimeRemaining] = useState<string>(
+    "Calculating time remaining..."
+  );
+
+  const calculateTimeRemaining = useCallback(() => {
+    const endTime = new Date(charity.endDate).getTime();
+    const now = new Date().getTime();
+    const distance = endTime - now;
+
+    if (distance < 0) {
+      return "This charity event has ended.";
+    } else {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+  }, [charity.endDate]);
 
   useEffect(() => {
-    const calculateTimeRemaining = () => {
-      const endTime = new Date(charity.endDate).getTime();
-      const now = new Date().getTime();
-      const distance = endTime - now;
-
-      if (distance < 0) {
-        return "This charity event has ended.";
-      } else {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-        );
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-      }
-    };
-
     const interval = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining());
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [charity.endDate]);
+  }, [calculateTimeRemaining]);
 
   return (
     <Box
