@@ -80,26 +80,28 @@ const ViewListing = () => {
 
   // Load the listing from the api given an ID
   useEffect(() => {
-    _axios_instance
-      .get("/listing/" + id)
-      .then((response) => {
+    const getListing = async () => {
+      try {
+        const response = await _axios_instance.get("/listing/" + id);
         setListingObject(response.data);
         setListingReceived(true);
         if (response.data.charityId) {
-          _axios_instance
-            .get("/charities/current")
-            .then((response) => {
-              setCurrentCharity(response.data);
-              setListingReceived(true);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          try {
+            const responseCharity =
+              await _axios_instance.get("/charities/current");
+            setCurrentCharity(responseCharity.data);
+            setListingReceived(true);
+          } catch (error) {
+            console.log(error);
+          }
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    //Linter is upset if I don't have this
+    getListing().then();
   }, [id]);
 
   useEffect(() => {
