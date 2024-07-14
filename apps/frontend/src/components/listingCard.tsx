@@ -44,7 +44,7 @@ const ListingCard = ({
 
   const handleViewProfile = (
     sellerID: string | undefined,
-    event: React.MouseEvent
+    event: React.MouseEvent,
   ) => {
     event.stopPropagation();
     navigate(`/user/profile/${sellerID}`);
