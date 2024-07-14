@@ -19,8 +19,18 @@ jobs:
       with:
         extra_args: --only-verified
 
-    - name: Nuclei - Vulnerability Scan
+  vulnerability:
+    name: Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Compose Up
+        run: docker compose up
+
+      - name: Nuclei
         id: nuclei_scan
         uses: projectdiscovery/nuclei-action@main
         with:
-          target: http://local.martletplace.ca/
+          target: http://localhost/
+      
