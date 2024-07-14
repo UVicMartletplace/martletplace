@@ -74,6 +74,24 @@ describe("<ViewListing/>", () => {
     cy.viewport(1280, 720);
   });
 
+  it("Should let me test", () => {
+    cy.viewport("iphone-6");
+    // mock additional endpoints here
+    cy.intercept("GET", "/api/listing/1", {
+      statusCode: 200,
+      body: listingObject,
+    }).as("getListing");
+    cy.intercept("GET", "/api/charities/current", {
+      statusCode: 200,
+      body: charityObject,
+    }).as("getListing");
+
+    cy.mount(pageJSX);
+    cy.pause();
+    cy.viewport(1600, 900);
+    cy.pause();
+  });
+
   it("should render the listing details correctly", () => {
     cy.intercept("GET", "/api/listing/1", {
       statusCode: 200,
