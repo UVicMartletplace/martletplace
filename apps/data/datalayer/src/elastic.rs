@@ -48,11 +48,15 @@ async fn proxy_request(
         .await
         .expect("Failed to send proxied request");
 
-    // Not proxying response headers because it's surprisingly painfull
-    // and they probably don't need them. Good spot to check for bugs though
-    axum::response::Response::builder()
+    let mut response = axum::response::Response::builder()
         .status(proxied_response.status())
-        .version(proxied_response.version())
+        .version(proxied_response.version());
+
+    for (key, value) in proxied_response.headers().into_iter() {
+        response = response.header(key, value);
+    }
+
+    response
         .body(Body::from_stream(proxied_response.bytes_stream()))
         .expect("Couldn't create server response")
 }
