@@ -175,7 +175,7 @@ async fn get_index(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/").await?;
 
     let validate = &Validate::builder().status(200).build();
-    validate_and_load_static_assets(user, goose, &validate).await?;
+    validate_and_load_static_assets(user, goose, validate).await?;
     Ok(())
 }
 
