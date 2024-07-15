@@ -44,7 +44,7 @@ const ListingCard = ({
 
   const handleViewProfile = (
     sellerID: string | undefined,
-    event: React.MouseEvent,
+    event: React.MouseEvent
   ) => {
     event.stopPropagation();
     navigate(`/user/profile/${sellerID}`);
@@ -95,7 +95,7 @@ const ListingCard = ({
       onClick={handleListingClick}
     >
       <div style={{ position: "relative", width: "100%", maxHeight: "40vh" }}>
-        {listing.charityId != "0" && (
+        {listing.charityId != null && (
           <img
             src={CharityBanner}
             alt="charityBanner"
