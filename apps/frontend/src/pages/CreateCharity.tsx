@@ -1,4 +1,4 @@
-import {ChangeEvent, FormEventHandler, useState} from "react";
+import { ChangeEvent, FormEventHandler, useState } from "react";
 import {
   Avatar,
   Box,
@@ -9,13 +9,16 @@ import {
   Container,
   FormControl,
   FormControlLabel,
+  FormGroup,
   FormHelperText,
+  FormLabel,
+  Grid,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import SearchBar from "../components/searchBar";
-import {colors} from "../styles/colors";
+import { colors } from "../styles/colors";
 import _axios_instance from "../_axios_instance";
 
 interface ImageURLObject {
@@ -45,34 +48,28 @@ interface ImageObject {
 }
 
 interface ImageUploadObject {
-  image: File,
-  index: number
+  image: File;
+  index: number;
 }
 
 interface ImageUploadedObject {
-  url: string,
-  index: number
+  url: string;
+  index: number;
 }
 
 const CreateCharity = () => {
   const [sent, setSent] = useState(false);
-  const [dateError, setDateError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<string>("2024-07-15");
   const [partnerImages, setPartnerImages] = useState<ImageObject[]>([]);
   const [logoImage, setLogoImage] = useState<File | null>(null);
   const [logoImageString, setLogoImageString] = useState<string>();
-  const [logoUrlResult, setLogoUrlResult] = useState<string>();
-  const [imageUploadSuccess, setImageUploadSuccess] = useState<boolean[]>([
-    false,
-    false,
-  ]);
 
   const [newCharityObject, setNewCharityObject] = useState<CharityObject>({
-    name: "string",
-    description: "string",
-    startDate: "2024-07-13T06:58:17.461Z",
-    endDate: "2024-07-13T06:58:17.461Z",
-    imageUrl: "string",
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    imageUrl: "",
     organizations: [],
   });
 
@@ -100,12 +97,10 @@ const CreateCharity = () => {
           alert("Charity Creation Failed");
           setSent(false);
         });
+    } else {
+      alert("Images failed to upload, please try again later");
+      setSent(false);
     }
-       else {
-        alert("Images failed to upload, please try again later");
-        setSent(false);
-      }
-
   };
 
   const asyncUploadImages = async (
@@ -156,7 +151,9 @@ const CreateCharity = () => {
       // Upload logoImage
       if (!logoImage) return true;
       console.log(logoImage);
-      const logoImagesObjectArray = await asyncUploadImages([{image: logoImage, index: 0}]);
+      const logoImagesObjectArray = await asyncUploadImages([
+        { image: logoImage, index: 0 },
+      ]);
 
       if (logoImagesObjectArray) {
         const newURL = logoImagesObjectArray[0].url;
@@ -176,10 +173,12 @@ const CreateCharity = () => {
     }
   };
 
-  const asyncListingImageWrapperPartners = async (logoUrlResult: string|boolean): Promise<boolean | CharityObject> => {
+  const asyncListingImageWrapperPartners = async (
+    logoUrlResult: string | boolean,
+  ): Promise<boolean | CharityObject> => {
     try {
-      if (partnerImages.length === 0)  {
-        return {...newCharityObject, imageUrl: logoUrlResult as string};
+      if (partnerImages.length === 0) {
+        return { ...newCharityObject, imageUrl: logoUrlResult as string };
       }
 
       // Check if newCharityObject.organizations is an array
@@ -201,13 +200,18 @@ const CreateCharity = () => {
       if (partnerImagesObjectArray && partnerImagesObjectArray.length > 0) {
         const newOrganizations = [...newCharityObject.organizations];
         for (let i = 0; i < newCharityObject.organizations.length; i++) {
-          newOrganizations[partnerImagesObjectArray[i].index].logoUrl = partnerImagesObjectArray[i].url;
+          newOrganizations[partnerImagesObjectArray[i].index].logoUrl =
+            partnerImagesObjectArray[i].url;
         }
         setNewCharityObject((prevState) => ({
           ...prevState,
           organizations: newOrganizations,
         }));
-        return {...newCharityObject, organizations: newOrganizations, imageUrl: logoUrlResult as string};
+        return {
+          ...newCharityObject,
+          organizations: newOrganizations,
+          imageUrl: logoUrlResult as string,
+        };
       } else {
         console.error("No images uploaded for partnerImages.");
         return false;
@@ -269,6 +273,7 @@ const CreateCharity = () => {
 
   const updateStartDate = (event: ChangeEvent<HTMLInputElement>) => {
     const dateValue = event.target.value;
+    setStartDate(dateValue);
     if (dateValue) {
       const dateStart = new Date(dateValue);
       const dateEnd = new Date(dateStart);
@@ -394,7 +399,7 @@ const CreateCharity = () => {
         return partnerImages[i].imageString;
       }
     }
-    return "";
+    return undefined;
   };
 
   const imageBlobToBase64 = (
@@ -420,7 +425,7 @@ const CreateCharity = () => {
     <>
       <SearchBar />
       <Container>
-        <Card sx={{ marginTop: "32px" }}>
+        <Card sx={{ marginTop: "32px", padding: "10px" }}>
           <CardContent>
             <Typography variant={"h5"}>Create Charity</Typography>
             <Box>
@@ -462,86 +467,106 @@ const CreateCharity = () => {
                     value={startDate}
                   />
 
-                  {dateError && (
-                    <FormHelperText error>{dateError}</FormHelperText>
-                  )}
-                  <Paper sx={{ width: "100%", padding: "10px" }}>
+                  <Paper
+                    sx={{
+                      width: "100%",
+                      padding: "10px",
+                      margin: "10px",
+                    }}
+                  >
                     {newCharityObject.organizations.map(
                       (organization, index) => (
-                        <Box key={index} sx={{ margin: "10px" }}>
-                          <Typography>{index}</Typography>
-                          <TextField
-                            type="text"
-                            label="Organization Title"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                              updateOrganizationName(e, organization.name)
-                            }
-                            value={organization.name}
-                            sx={{ margin: "10px" }}
-                          />
-                          <TextField
-                            type="number"
-                            label="Donated Number"
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                              updateOrganizationDonated(e, organization.name)
-                            }
-                            value={organization.donated.toString()}
-                            sx={{ margin: "10px" }}
-                          />
-                          <FormControlLabel
-                            label="Charity Receiving?"
-                            sx={{ margin: "10px" }}
-                            control={
-                              <Checkbox
-                                checked={organization.receiving}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                  updateOrganizationReceiving(
-                                    e,
-                                    organization.name,
-                                  )
-                                }
-                              />
-                            }
-                          />
-                          <Avatar
-                            src={getImageFromOrgIndex(index)}
-                            alt="Profile Picture"
-                            sx={{ width: 150, height: 150, mt: 2, mb: 2 }}
-                            id={"partner-image-" + index}
-                          />
-                          <Button
-                            variant="contained"
-                            component="label"
-                            id={"upload-button-" + index}
-                          >
-                            Upload Picture
-                            <input
-                              type="file"
-                              hidden
-                              accept="image/*"
-                              onChange={(event) => {
-                                handleImageUpload(index, event).then();
-                              }}
+                        <Box key={index}>
+                          <Box key={index} sx={{ margin: "10px" }}>
+                            <TextField
+                              type="text"
+                              label="Organization Title"
+                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                updateOrganizationName(e, organization.name)
+                              }
+                              value={organization.name}
+                              sx={{ margin: "10px" }}
                             />
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              removeOrganization(index);
+                            <TextField
+                              type="number"
+                              label="Donated Number"
+                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                updateOrganizationDonated(e, organization.name)
+                              }
+                              value={organization.donated.toString()}
+                              sx={{ margin: "10px" }}
+                            />
+                            <Button
+                              variant="contained"
+                              component="label"
+                              id={"upload-button-" + index}
+                            >
+                              Upload Picture
+                              <input
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                onChange={(event) => {
+                                  handleImageUpload(index, event).then();
+                                }}
+                              />
+                            </Button>
+                            <FormControlLabel
+                              label="Charity Receiving?"
+                              sx={{ margin: "10px" }}
+                              control={
+                                <Checkbox
+                                  checked={organization.receiving}
+                                  onChange={(
+                                    e: ChangeEvent<HTMLInputElement>,
+                                  ) =>
+                                    updateOrganizationReceiving(
+                                      e,
+                                      organization.name,
+                                    )
+                                  }
+                                />
+                              }
+                            />
+
+                            <Button
+                              onClick={() => {
+                                removeOrganization(index);
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </Box>
+                          <Box
+                            sx={{
+                              width: "100%",
+                              height: "auto",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
-                            Remove
-                          </Button>
+                            <img
+                              style={{
+                                objectFit: "contain",
+                                maxWidth: "100%",
+                                maxHeight: "300px",
+                              }}
+                              src={getImageFromOrgIndex(index) ?? ""}
+                            />
+                          </Box>
                         </Box>
                       ),
                     )}
-                    <Button
-                      onClick={() => {
-                        addOrganization();
-                      }}
-                    >
-                      Add Organization
-                    </Button>
                   </Paper>
+                  <Button
+                    sx={{ flex: "12" }}
+                    onClick={() => {
+                      addOrganization();
+                    }}
+                  >
+                    Add Organization
+                  </Button>
                 </FormControl>
                 <Box sx={{ display: "flex" }}>
                   <Button
