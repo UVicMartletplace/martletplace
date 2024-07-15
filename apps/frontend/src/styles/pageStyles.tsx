@@ -185,6 +185,22 @@ export const useStyles = () => ({
     height: "80px",
   },
 
+  // Charity page styles
+  charityCard: {
+    margin: "20px",
+    padding: "20px",
+    backgroundColor: "#f9f9f9",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
+  orgLogo: {
+    margin: "5px",
+  },
+  sectionTitle: {
+    marginTop: "20px",
+    marginBottom: "10px",
+    fontWeight: "bold",
+  },
+
   // Messages page styles
   messagesConvSidebar: {
     overflowY: "auto",
