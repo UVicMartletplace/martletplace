@@ -89,6 +89,7 @@ export const useStyles = () => ({
   },
   searchBar: {
     borderColor: colors.martletplaceGrey,
+    paddingLeft: "0px",
   },
   searchGrid: {
     display: "flex",
