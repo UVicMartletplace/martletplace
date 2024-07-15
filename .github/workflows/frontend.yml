@@ -111,12 +111,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
+          docker compose up -d frontend
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          image-ref: 'frontend'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true

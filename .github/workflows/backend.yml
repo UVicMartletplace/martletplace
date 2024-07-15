@@ -115,17 +115,20 @@ jobs:
   vuln:
     name: Run Trivy vulnerability scanner
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message, lib]
     steps:
       - uses: actions/checkout@v4
 
       - name: Build Docker image
         run: |
-          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
+          docker compose up -d ${{ matrix.service }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          image-ref: ${{ matrix.service }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
