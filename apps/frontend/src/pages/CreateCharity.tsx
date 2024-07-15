@@ -65,6 +65,7 @@ const CreateCharity = () => {
     organizations: [],
   });
 
+  // Submits
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (
     submissionEvent,
   ) => {
@@ -79,50 +80,54 @@ const CreateCharity = () => {
     const newDataObject = await asyncListingImageWrapperPartners(logoURL);
     if (newDataObject) {
       console.log("Sending", newDataObject);
-      _axios_instance
-        .post("/charities", newDataObject)
-        .then(() => {
+      try {
+        const response = await _axios_instance.post(
+          "/charities",
+          newDataObject,
+        );
+        if (response) {
           alert("Charity Created!");
           setSent(true);
-        })
-        .catch(() => {
+        } else {
           alert("Charity Creation Failed");
           setSent(false);
-        });
+        }
+      } catch (error) {
+        alert("Charity Creation Failed");
+        console.error(error);
+        setSent(false);
+      }
     } else {
       alert("Images failed to upload, please try again later");
       setSent(false);
     }
   };
 
+  // Uploads an array of files to the blobstore
   const asyncUploadImages = async (
     Images: ImageUploadObject[],
   ): Promise<ImageUploadedObject[] | false> => {
     const retrievedImages: ImageUploadedObject[] = [];
-    // Create an array of promises for image uploads
     const uploadPromises = Images.map(async (image) => {
       try {
         const imageFile = image.image;
-        // Attempt to upload the image
+        // Upload the image
         const response = await _axios_instance.post("/images", imageFile, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-        // Return the URL of the uploaded image on success
+
         return { url: response.data.url, index: image.index };
       } catch (error) {
-        // Log error and return null on failure
         console.error("Error uploading image:", error);
-        return null; // Indicate failure with null
+        return null;
       }
     });
 
     try {
-      // Wait for all upload promises to resolve
       const results = await Promise.all(uploadPromises);
 
-      // Filter successful uploads and add to retrievedImages
       results.forEach((result) => {
         if (result) {
           retrievedImages.push(result);
@@ -132,15 +137,14 @@ const CreateCharity = () => {
       // Return the list of successfully uploaded images
       return retrievedImages;
     } catch (error) {
-      // Handle any errors that occurred during the uploading process
       console.error("Error in uploading image process:", error);
       return false;
     }
   };
 
+  // Uploads the main charity image to the s3 blob store
   const asyncListingImageWrapperLogo = async (): Promise<boolean | string> => {
     try {
-      // Upload logoImage
       if (!logoImage) return true;
       console.log(logoImage);
       const logoImagesObjectArray = await asyncUploadImages([
@@ -165,6 +169,7 @@ const CreateCharity = () => {
     }
   };
 
+  // Uploads the partner images to the s3 blobstore and packages the partner logos
   const asyncListingImageWrapperPartners = async (
     logoUrlResult: string | boolean,
   ): Promise<boolean | CharityObject> => {
@@ -214,6 +219,7 @@ const CreateCharity = () => {
     }
   };
 
+  // Uploads the payload
   const updateNewCharityPayload = (key: keyof CharityObject, value: string) => {
     setNewCharityObject((prevState) => ({
       ...prevState,
@@ -221,6 +227,7 @@ const CreateCharity = () => {
     }));
   };
 
+  // Updates the number of organizations or updates them if they already exist
   const updateOrganizationPayload = (
     index: number,
     key: keyof OrganizationObject,
@@ -314,6 +321,7 @@ const CreateCharity = () => {
     }
   };
 
+  // Finds the index given a key(org name)
   const indexFromKey = (key: string): number => {
     let i = 0;
     for (; i < newCharityObject.organizations.length; i++) {
@@ -321,9 +329,10 @@ const CreateCharity = () => {
         return i;
       }
     }
-    return -1; // Replace with actual logic to find index
+    return -1;
   };
 
+  // Removes an organization, and re-indexes the images
   const removeOrganization = (index: number) => {
     setNewCharityObject((prevState) => {
       const updatedOrganizations = [...prevState.organizations];
@@ -349,6 +358,7 @@ const CreateCharity = () => {
     });
   };
 
+  // Adds a blank organization to be filled by user
   const addOrganization = () => {
     setNewCharityObject((prevState) => {
       const updatedOrganizations = [...prevState.organizations];
@@ -367,6 +377,7 @@ const CreateCharity = () => {
     });
   };
 
+  // Uploads the images to memory
   const handleImageUpload = async (
     index: number,
     event: ChangeEvent<HTMLInputElement>,
@@ -382,6 +393,7 @@ const CreateCharity = () => {
     }
   };
 
+  // Get the org image from the given index
   const getImageFromOrgIndex = (index: number) => {
     for (let i = 0; i < partnerImages.length; i++) {
       if (partnerImages[i].index == index) {
@@ -391,6 +403,7 @@ const CreateCharity = () => {
     return undefined;
   };
 
+  // Converts the image file blob to base64 for preview
   const imageBlobToBase64 = (
     image: File | null,
   ): Promise<string | undefined> => {
