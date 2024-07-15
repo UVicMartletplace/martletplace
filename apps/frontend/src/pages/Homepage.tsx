@@ -10,6 +10,7 @@ import {
   InputLabel,
   useMediaQuery,
   useTheme,
+  Paper,
 } from "@mui/material";
 import { useStyles } from "../styles/pageStyles";
 import ListingCard, { ListingObject } from "../components/listingCard.tsx";
@@ -19,6 +20,8 @@ import _axios_instance from "../_axios_instance.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import SearchBar from "../components/searchBar.tsx";
 import Spinner from "../components/Spinner.tsx";
+import listingCharityFlair from "../images/large-banner.png";
+import listingCharityFlairSm from "../images/listing-charity-flair-small.png";
 
 interface SearchObject {
   query: string;
@@ -36,6 +39,7 @@ interface SearchObject {
 const Homepage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const screenWidth = window.innerWidth;
 
   // Listings per page
   const [listingObjects, setListingObjects] = useState<ListingObject[]>([]);
@@ -44,6 +48,7 @@ const Homepage = () => {
   const [sortBy, setSortBy] = React.useState<string>("RELEVANCE");
   const [totalItems, setTotalItems] = useState(0);
   const [searchCompleted, setSearchCompleted] = useState(false);
+  const [charityEvent, setCharityEvent] = useState("");
   const [searchObject, setSearchObject] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -113,6 +118,14 @@ const Homepage = () => {
             console.error("Error fetching listings:", error);
           });
         setSearchPerformed(false);
+        _axios_instance
+          .get("/charities/current")
+          .then((response) => {
+            setCharityEvent(response.data.name);
+          })
+          .catch((error) => {
+            console.error("Error getting charity event:", error);
+          });
       }
     } else {
       let match;
@@ -170,6 +183,86 @@ const Homepage = () => {
 
   return (
     <>
+      {charityEvent != "" && (
+        <Paper
+          sx={{
+            overflow: "hidden",
+            position: "relative",
+            top: -10,
+            "&:hover": { cursor: "pointer" },
+            height: "80px",
+          }}
+          onClick={() => {
+            navigate("/charities");
+          }}
+        >
+          <Box
+            sx={{
+              zIndex: 2,
+              position: "absolute",
+              top: 10,
+              left: 2,
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                textShadow: "inherit",
+                color: "inherit",
+                fontWeight: "bold",
+                height: "23px",
+                paddingLeft: "14px",
+              }}
+            >
+              Charity
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  textShadow: "inherit",
+                  color: "inherit",
+                  fontWeight: "bold",
+                  paddingLeft: "14px",
+                }}
+              >
+                Events:
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{ textShadow: "inherit", color: "inherit", paddingLeft: 1 }}
+              >
+                {charityEvent}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            id="image1"
+            sx={{
+              zIndex: 1,
+              position: "relative",
+              width: "100%",
+              overflow: "visible",
+            }}
+          >
+            <img
+              src={
+                screenWidth > 768 ? listingCharityFlair : listingCharityFlairSm
+              }
+              alt="Charity Flair"
+              style={{
+                height: "100%",
+                float: "right",
+              }}
+            />
+          </Box>
+        </Paper>
+      )}
       <SearchBar />
       <Box sx={classes.HomePageBox}>
         {searchPerformed ? (
