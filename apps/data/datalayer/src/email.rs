@@ -72,7 +72,7 @@ mod tests {
         let email = Email {
             to: String::from("me@mail.com"),
             subject: String::from("Test email"),
-            body: String::from("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+            body: String::from("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
         };
         let app = email_router();
 
