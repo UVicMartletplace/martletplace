@@ -35,7 +35,7 @@ interface ListingObject {
   images: { url: string }[];
   reviews?: Review[];
   status: string;
-  charityId: string;
+  charityId: string | null | undefined;
 }
 
 interface CharityObject {
@@ -71,7 +71,7 @@ const ViewListing = () => {
     distance: 0,
     images: [{ url: "https://picsum.photos/1200/400" }],
     status: "AVAILABLE",
-    charityId: "1",
+    charityId: null,
   });
 
   const [currentCharity, setCurrentCharity] = useState<CharityObject>();
