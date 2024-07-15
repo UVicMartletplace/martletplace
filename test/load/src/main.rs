@@ -110,11 +110,7 @@ async fn get_user(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get_named("/api/user/1", "/api/user/:id").await?;
     let validate = &Validate::builder()
         .status(200)
-        .texts(vec![
-            "username",
-            "name",
-            "bio",
-        ])
+        .texts(vec!["username", "name", "bio"])
         .build();
     validate_page(user, goose, validate).await?;
 
@@ -126,9 +122,7 @@ async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
         .get_named("/api/messages/overview", "/api/messages/overview")
         .await?;
 
-    let validate = &Validate::builder()
-        .status(200)
-        .build();
+    let validate = &Validate::builder().status(200).build();
     validate_page(user, goose, validate).await?;
     Ok(())
 }
