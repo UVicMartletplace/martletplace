@@ -13,6 +13,14 @@ describe("CreateCharity", () => {
         </MemoryRouter>
       </UserProvider>,
     );
+    cy.intercept("POST", "/api/images", {
+      statusCode: 201,
+      body: { url: "https://picsum.photos/200/300" },
+    }).as("uploadImages");
+
+    cy.intercept("POST", "/api/charities", {
+      statusCode: 201,
+    }).as("postCharity");
     cy.viewport(1280, 720);
   });
   it("renders", () => {

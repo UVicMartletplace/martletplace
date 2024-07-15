@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEventHandler, useState } from "react";
+import { ChangeEvent, FormEventHandler, useState } from "react";
 import {
   Avatar,
   Box,
@@ -49,7 +49,13 @@ const CreateCharity = () => {
   const [dateError, setDateError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [partnerImages, setPartnerImages] = useState<ImageObject[]>([]);
-  const [logoImage, setLogoImage] = useState<File>(null);
+  const [logoImage, setLogoImage] = useState<File | null>(null);
+  const [logoImageString, setLogoImageString] = useState<string>();
+  const [logoUrlResult, setLogoUrlResult] = useState<string>();
+  const [imageUploadSuccess, setImageUploadSuccess] = useState<boolean[]>([
+    false,
+    false,
+  ]);
 
   const [newCharityObject, setNewCharityObject] = useState<CharityObject>({
     name: "string",
@@ -57,15 +63,7 @@ const CreateCharity = () => {
     startDate: "2024-07-13T06:58:17.461Z",
     endDate: "2024-07-13T06:58:17.461Z",
     imageUrl: "string",
-    organizations: [
-      { name: "Google", logoUrl: "string", donated: 0, receiving: false },
-      {
-        name: "Joes Wildlife Recovery",
-        logoUrl: "string",
-        donated: 0,
-        receiving: true,
-      },
-    ],
+    organizations: [],
   });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (
@@ -78,12 +76,14 @@ const CreateCharity = () => {
       "\nNew Charity Object",
       newCharityObject,
     );
+    asyncListingImageWrapper().then();
+    asyncListingImageWrapperPartners().then();
 
-    if (!sent) {
-      const successLogos: boolean = await asyncListingImageWrapper();
-      const successPartners: boolean = await asyncListingImageWrapperPartners();
-
-      if (successLogos && successPartners) {
+    if (true) {
+      if (imageUploadSuccess[0] && imageUploadSuccess[1]) {
+        if (logoUrlResult) updateNewCharityPayload("imageUrl", logoUrlResult);
+        console.log(logoUrlResult);
+        console.log("Sending", newCharityObject);
         _axios_instance
           .post("/charities", newCharityObject)
           .then(() => {
@@ -146,12 +146,20 @@ const CreateCharity = () => {
   const asyncListingImageWrapper = async (): Promise<boolean> => {
     try {
       // Upload logoImage
+      if (!logoImage) return true;
+      console.log(logoImage);
       const logoImagesObjectArray = await asyncUploadImages([logoImage]);
-      if (logoImagesObjectArray && logoImagesObjectArray.length > 0) {
+
+      if (logoImagesObjectArray) {
+        const newURL = logoImagesObjectArray[0].url;
         setNewCharityObject((prevState) => ({
           ...prevState,
-          imageUrl: logoImagesObjectArray[0].url,
+          imageUrl: newURL,
         }));
+        setImageUploadSuccess((prevState) => {
+          prevState[0] = true;
+          return [...prevState];
+        });
         return true;
       } else {
         console.error("No images uploaded for logoImage.");
@@ -165,6 +173,17 @@ const CreateCharity = () => {
 
   const asyncListingImageWrapperPartners = async (): Promise<boolean> => {
     try {
+      if (partnerImages.length === 0) return true;
+
+      // Check if newCharityObject.organizations is an array
+      if (!Array.isArray(newCharityObject.organizations)) {
+        console.error(
+          "newCharityObject.organizations is not an array:",
+          newCharityObject.organizations,
+        );
+        return false;
+      }
+
       // Upload partnerImages
       const partnerImagesArray = partnerImages
         .filter((obj) => obj.image !== undefined)
@@ -173,7 +192,7 @@ const CreateCharity = () => {
       const partnerImagesObjectArray =
         await asyncUploadImages(partnerImagesArray);
       if (partnerImagesObjectArray && partnerImagesObjectArray.length > 0) {
-        const newOrganizations = { ...newCharityObject.organizations };
+        const newOrganizations = [...newCharityObject.organizations];
         for (let i = 0; i < newCharityObject.organizations.length; i++) {
           newOrganizations[i].logoUrl = partnerImagesObjectArray[i].url;
         }
@@ -181,6 +200,10 @@ const CreateCharity = () => {
           ...prevState,
           organizations: newOrganizations,
         }));
+        setImageUploadSuccess((prevState) => {
+          prevState[1] = true;
+          return [...prevState];
+        });
         return true;
       } else {
         console.error("No images uploaded for partnerImages.");
@@ -192,7 +215,10 @@ const CreateCharity = () => {
     }
   };
 
-  const updateNewCharityPayload = (key: keyof CharityObject, value: string) => {
+  const updateNewCharityPayload = async (
+    key: keyof CharityObject,
+    value: string,
+  ) => {
     setNewCharityObject((prevState) => ({
       ...prevState,
       [key]: value,
@@ -241,14 +267,20 @@ const CreateCharity = () => {
   const updateStartDate = (event: ChangeEvent<HTMLInputElement>) => {
     const dateValue = event.target.value;
     if (dateValue) {
-      console.log("Date Value: ", dateValue);
-      //setStartDate(dateValue);
-      //updateNewCharityPayload("startDate", dateValue.toISOString());
+      const dateStart = new Date(dateValue);
+      const dateEnd = new Date(dateStart);
+      dateEnd.setDate(dateStart.getDate() + 31);
+      updateNewCharityPayload("startDate", dateStart.toISOString());
+      updateNewCharityPayload("endDate", dateEnd.toISOString());
     }
   };
 
-  const updateCharityImage = (event: ChangeEvent<HTMLInputElement>) => {
-    updateNewCharityPayload("imageUrl", event.target.value);
+  const updateCharityImage = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setLogoImage(event.target.files[0]);
+      const imageString = await imageBlobToBase64(event.target.files[0]);
+      setLogoImageString(imageString);
+    }
   };
 
   const updateOrganizationName = (
@@ -363,7 +395,7 @@ const CreateCharity = () => {
   };
 
   const imageBlobToBase64 = (
-    image: File | undefined,
+    image: File | null,
   ): Promise<string | undefined> => {
     return new Promise((resolve, reject) => {
       if (image) {
@@ -406,12 +438,20 @@ const CreateCharity = () => {
                     onChange={updateDescription}
                     value={newCharityObject.description}
                   />
-                  <TextField
-                    type="text"
-                    label="Charity Image URL"
-                    onChange={updateCharityImage}
-                    value={newCharityObject.imageUrl}
-                  />
+                  <img src={logoImageString} alt={"isseu"} />
+                  <Button
+                    variant="contained"
+                    component="label"
+                    id="upload-logo-button"
+                  >
+                    Upload Picture
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={updateCharityImage}
+                    />
+                  </Button>
                   <TextField
                     type="date"
                     label="Charity Start Date"
@@ -464,12 +504,12 @@ const CreateCharity = () => {
                             src={getImageFromOrgIndex(index)}
                             alt="Profile Picture"
                             sx={{ width: 150, height: 150, mt: 2, mb: 2 }}
-                            id="profile_picture"
+                            id={"partner-image-" + index}
                           />
                           <Button
                             variant="contained"
                             component="label"
-                            id="upload_button"
+                            id={"upload-button-" + index}
                           >
                             Upload Picture
                             <input
@@ -477,14 +517,7 @@ const CreateCharity = () => {
                               hidden
                               accept="image/*"
                               onChange={(event) => {
-                                handleImageUpload(index, event).then(() => {
-                                  console.log(
-                                    "Partner Images",
-                                    partnerImages,
-                                    "Charity Object",
-                                    newCharityObject,
-                                  );
-                                });
+                                handleImageUpload(index, event).then();
                               }}
                             />
                           </Button>
@@ -526,6 +559,26 @@ const CreateCharity = () => {
                     id={"submit-button"}
                   >
                     Create Charity Event
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "inline",
+                      mt: 2,
+                      backgroundColor: colors.martletplaceYellow,
+                      "&:hover": {
+                        backgroundColor: colors.martletplaceYellowHover,
+                      },
+                      textTransform: "none",
+                      fontSize: "16px",
+                      padding: "10px 20px",
+                      margin: "10px",
+                    }}
+                    onClick={() => {
+                      console.log("STATUS\n", newCharityObject);
+                    }}
+                  >
+                    STATUS
                   </Button>
                 </Box>
               </form>
