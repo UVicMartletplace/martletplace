@@ -28,8 +28,7 @@ jobs:
       - name: Docker Compose Up
         run: docker compose up --build --wait
 
-      - name: Nuclei
-        id: nuclei_scan
+      - name: Nuclei - Vulnerability Scan
         uses: projectdiscovery/nuclei-action@main
         with:
           target: http://localhost/
