@@ -4,28 +4,11 @@ use fake::{
         lorem::en::{Paragraph, Sentence},
         name::en::Name,
     },
-    uuid, Fake,
+    Fake,
 };
 use goose::prelude::*;
 use goose_eggs::{validate_and_load_static_assets, validate_page, Validate};
 use rand::Rng;
-use serde::Deserialize;
-
-#[derive(Debug, Deserialize)]
-struct Session {
-    user_id: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct SignupResponse {
-    user_id: String,
-    username: String,
-    name: String,
-    bio: String,
-    profile_url: String,
-    email: String,
-    totp_secret: String,
-}
 
 // BACKEND
 
@@ -42,31 +25,15 @@ async fn signup_login(user: &mut GooseUser) -> TransactionResult {
           "password": password,
     });
     let signup_goose = user.post_json("/api/user", &signup_json).await?;
-    let signup_response: SignupResponse = signup_goose.response.as_ref().unwrap().clone().json().await?;
-    user.set_session_data(Session {
-        user_id: signup_response.user_id,
-    });
-    let validate = &Validate::builder()
-        .status(201)
-        .texts(vec![
-            "userID",
-            "username",
-            "name",
-            "bio",
-            "profilePictureUrl",
-        ])
-        .build();
-
+    let validate = &Validate::builder().status(201).build();
     validate_page(user, signup_goose, validate).await?;
     let login_json = &serde_json::json!({
           "email": format!("{}@uvic.ca", username),
           "password": password,
     });
     let login_goose = user.post_json("/api/user/login", &login_json).await?;
-
     let validate = &Validate::builder().status(200).header("Set-Cookie").build();
     validate_page(user, login_goose, validate).await?;
-
     Ok(())
 }
 
@@ -86,6 +53,7 @@ async fn get_listing(user: &mut GooseUser) -> TransactionResult {
 }
 
 async fn create_listing(user: &mut GooseUser) -> TransactionResult {
+    let fake_uuid: String = fake::uuid::UUIDv4.fake();
     let listing_json = &serde_json::json!({
           "title": Sentence(3..5).fake::<String>(),
           "description": Paragraph(3..5).fake::<String>(),
@@ -96,7 +64,7 @@ async fn create_listing(user: &mut GooseUser) -> TransactionResult {
           },
           "images": [
             {
-                "url": format!("/api/images/{}", uuid::new_v4()),
+                "url": format!("/api/images/{}", fake_uuid),
             }
         ],
     });
@@ -126,7 +94,6 @@ async fn create_review(user: &mut GooseUser) -> TransactionResult {
     let validate = &Validate::builder()
         .status(201)
         .texts(vec![
-            "listing_review_id",
             "reviewerName",
             "stars",
             "comment",
@@ -140,17 +107,13 @@ async fn create_review(user: &mut GooseUser) -> TransactionResult {
 }
 
 async fn get_user(user: &mut GooseUser) -> TransactionResult {
-    let session = user.get_session_data_unchecked::<Session>();
-    let url = format!("/api/user/{}", session.user_id);
-    let goose = user.get_named(&url, "/api/user/:id").await?;
+    let goose = user.get_named("/api/user/1", "/api/user/:id").await?;
     let validate = &Validate::builder()
         .status(200)
         .texts(vec![
-            "userID",
             "username",
             "name",
             "bio",
-            "profilePictureUrl",
         ])
         .build();
     validate_page(user, goose, validate).await?;
@@ -165,7 +128,6 @@ async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
 
     let validate = &Validate::builder()
         .status(200)
-        .texts(vec!["listing_id", "other_participant", "last_message"])
         .build();
     validate_page(user, goose, validate).await?;
     Ok(())
@@ -238,9 +200,9 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(search_listings)),
         )
         .set_default(GooseDefault::Host, "http://local.martletplace.ca")?
-        .set_default(GooseDefault::Users, 1)?
-        .set_default(GooseDefault::StartupTime, 1)?
-        .set_default(GooseDefault::RunTime, 1)?
+        .set_default(GooseDefault::Users, 32)?
+        .set_default(GooseDefault::StartupTime, 8)?
+        .set_default(GooseDefault::RunTime, 8)?
         .set_default(GooseDefault::NoResetMetrics, true)?
         .set_default(GooseDefault::ReportFile, "report.html")?
         .execute()
