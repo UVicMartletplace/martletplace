@@ -496,7 +496,7 @@ const CreateCharity = () => {
                   >
                     {newCharityObject.organizations.map(
                       (organization, index) => (
-                        <Box key={index}>
+                        <Box key={index} sx={{ marginBottom: "10px" }}>
                           <Grid container>
                             <Grid item lg={6} sm={12}>
                               <Box sx={{ margin: "10px" }}>
@@ -565,6 +565,8 @@ const CreateCharity = () => {
                                 />
 
                                 <Button
+                                  sx={{ color: "red" }}
+                                  variant="outlined"
                                   onClick={() => {
                                     removeOrganization(index);
                                   }}
