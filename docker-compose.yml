@@ -120,7 +120,7 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
       <<: *shared_env_var
-      ES_ENDPOINT: https://elastic:serxdfcghjfc@elasticsearch:8311
+      ES_ENDPOINT: http://elastic:serxdfcghjfc@datalayer:8301
 
   recommend:
     build: apps/algorithm/recommend
@@ -148,6 +148,7 @@ services:
       - POSTGRESQL_PORT=8310
       - EMAIL_ENDPOINT=smtp://mailserver/martletplace.ca
       - SEND_EMAILS=FALSE
+      - ELASTIC_ENDPOINT=https://elasticsearch:8311
 
   database:
     build: apps/data/database

@@ -16,6 +16,7 @@ import ConfirmEmail from "./pages/ConfirmEmail";
 import ViewProfile from "./pages/ViewProfile";
 import Profile from "./pages/Profile";
 import CreateCharity from "./pages/CreateCharity.tsx";
+import Charities from "./pages/Charities";
 
 function App() {
   return (
@@ -136,6 +137,14 @@ function App() {
             element={
               <PrivateRoute>
                 <CreateCharity />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/charities"
+            element={
+              <PrivateRoute>
+                <Charities />
               </PrivateRoute>
             }
           />
