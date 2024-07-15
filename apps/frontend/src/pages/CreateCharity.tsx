@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEventHandler, useState } from "react";
+import {ChangeEvent, FormEventHandler, useState} from "react";
 import {
   Avatar,
   Box,
@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import SearchBar from "../components/searchBar";
-import { colors } from "../styles/colors";
+import {colors} from "../styles/colors";
 import _axios_instance from "../_axios_instance";
 
 interface ImageURLObject {
@@ -42,6 +42,16 @@ interface ImageObject {
   image: File | undefined;
   index: number;
   imageString: string | undefined;
+}
+
+interface ImageUploadObject {
+  image: File,
+  index: number
+}
+
+interface ImageUploadedObject {
+  url: string,
+  index: number
 }
 
 const CreateCharity = () => {
@@ -76,46 +86,44 @@ const CreateCharity = () => {
       "\nNew Charity Object",
       newCharityObject,
     );
-    asyncListingImageWrapper().then();
-    asyncListingImageWrapperPartners().then();
-
-    if (true) {
-      if (imageUploadSuccess[0] && imageUploadSuccess[1]) {
-        if (logoUrlResult) updateNewCharityPayload("imageUrl", logoUrlResult);
-        console.log(logoUrlResult);
-        console.log("Sending", newCharityObject);
-        _axios_instance
-          .post("/charities", newCharityObject)
-          .then(() => {
-            alert("Charity Created!");
-            setSent(true);
-          })
-          .catch(() => {
-            alert("Charity Creation Failed");
-            setSent(false);
-          });
-      } else {
+    const logoURL = await asyncListingImageWrapperLogo();
+    const newDataObject = await asyncListingImageWrapperPartners(logoURL);
+    if (newDataObject) {
+      console.log("Sending", newDataObject);
+      _axios_instance
+        .post("/charities", newCharityObject)
+        .then(() => {
+          alert("Charity Created!");
+          setSent(true);
+        })
+        .catch(() => {
+          alert("Charity Creation Failed");
+          setSent(false);
+        });
+    }
+       else {
         alert("Images failed to upload, please try again later");
         setSent(false);
       }
-    }
+
   };
 
   const asyncUploadImages = async (
-    Images: File[],
-  ): Promise<ImageURLObject[] | false> => {
-    const retrievedImages: ImageURLObject[] = [];
+    Images: ImageUploadObject[],
+  ): Promise<ImageUploadedObject[] | false> => {
+    const retrievedImages: ImageUploadedObject[] = [];
     // Create an array of promises for image uploads
     const uploadPromises = Images.map(async (image) => {
       try {
+        const imageFile = image.image;
         // Attempt to upload the image
-        const response = await _axios_instance.post("/images", image, {
+        const response = await _axios_instance.post("/images", imageFile, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
         // Return the URL of the uploaded image on success
-        return { url: response.data.url };
+        return { url: response.data.url, index: image.index };
       } catch (error) {
         // Log error and return null on failure
         console.error("Error uploading image:", error);
@@ -143,12 +151,12 @@ const CreateCharity = () => {
     }
   };
 
-  const asyncListingImageWrapper = async (): Promise<boolean> => {
+  const asyncListingImageWrapperLogo = async (): Promise<boolean | string> => {
     try {
       // Upload logoImage
       if (!logoImage) return true;
       console.log(logoImage);
-      const logoImagesObjectArray = await asyncUploadImages([logoImage]);
+      const logoImagesObjectArray = await asyncUploadImages([{image: logoImage, index: 0}]);
 
       if (logoImagesObjectArray) {
         const newURL = logoImagesObjectArray[0].url;
@@ -156,11 +164,8 @@ const CreateCharity = () => {
           ...prevState,
           imageUrl: newURL,
         }));
-        setImageUploadSuccess((prevState) => {
-          prevState[0] = true;
-          return [...prevState];
-        });
-        return true;
+
+        return newURL;
       } else {
         console.error("No images uploaded for logoImage.");
         return false;
@@ -171,9 +176,11 @@ const CreateCharity = () => {
     }
   };
 
-  const asyncListingImageWrapperPartners = async (): Promise<boolean> => {
+  const asyncListingImageWrapperPartners = async (logoUrlResult: string|boolean): Promise<boolean | CharityObject> => {
     try {
-      if (partnerImages.length === 0) return true;
+      if (partnerImages.length === 0)  {
+        return {...newCharityObject, imageUrl: logoUrlResult as string};
+      }
 
       // Check if newCharityObject.organizations is an array
       if (!Array.isArray(newCharityObject.organizations)) {
@@ -187,24 +194,20 @@ const CreateCharity = () => {
       // Upload partnerImages
       const partnerImagesArray = partnerImages
         .filter((obj) => obj.image !== undefined)
-        .map((obj) => obj.image as File);
+        .map((obj, index) => ({ image: obj.image as File, index }));
 
       const partnerImagesObjectArray =
         await asyncUploadImages(partnerImagesArray);
       if (partnerImagesObjectArray && partnerImagesObjectArray.length > 0) {
         const newOrganizations = [...newCharityObject.organizations];
         for (let i = 0; i < newCharityObject.organizations.length; i++) {
-          newOrganizations[i].logoUrl = partnerImagesObjectArray[i].url;
+          newOrganizations[partnerImagesObjectArray[i].index].logoUrl = partnerImagesObjectArray[i].url;
         }
         setNewCharityObject((prevState) => ({
           ...prevState,
           organizations: newOrganizations,
         }));
-        setImageUploadSuccess((prevState) => {
-          prevState[1] = true;
-          return [...prevState];
-        });
-        return true;
+        return {...newCharityObject, organizations: newOrganizations, imageUrl: logoUrlResult as string};
       } else {
         console.error("No images uploaded for partnerImages.");
         return false;
