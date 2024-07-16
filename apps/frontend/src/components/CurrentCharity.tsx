@@ -66,7 +66,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
       <img
         src={charity.imageUrl}
         alt={charity.name}
-        style={{ width: "300px", height: "300px" }}
+        style={{ maxWidth: "300px" }}
       />
       <Box
         component={Paper}
