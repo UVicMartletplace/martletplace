@@ -69,12 +69,7 @@ const SearchBar = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchFocus, setSearchFocus] = useState(false);
-  //const [searchHistory, setSeachHistory] = useState<searchHistory[]>([]);
-  const [searchHistory, setSeachHistory] = useState<searchHistory[]>([
-    { searchTerm: "banana", searchID: 1 },
-    { searchTerm: "chocolate", searchID: 2 },
-    { searchTerm: "cake", searchID: 3 },
-  ]);
+  const [searchHistory, setSeachHistory] = useState<searchHistory[]>([]);
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -138,10 +133,9 @@ const SearchBar = () => {
       page: 1,
       limit: 8,
     };
-    //MAKE AN API REQUEST TO GET THE SEARCH HISTORY
     //NEED TO ADD THE TOKEN TO THE REQUEST
     _axios_instance
-      .get("/user/search-history", { params: { Token } })
+      .get("/user/search-history")
       .then((response) => {
         setSeachHistory(response.data.searches);
       })
@@ -218,7 +212,6 @@ const SearchBar = () => {
 
   const handleMenuItemClick = (searchTerm: string) => {
     setSearchInput(searchTerm);
-    setSearchFocus(false); // Close the dropdown after selection
   };
 
   return (
@@ -265,9 +258,10 @@ const SearchBar = () => {
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() => setSearchFocus(true)}
+          onClick={() => setSearchFocus(true)}
           onBlur={() => setSearchFocus(false)}
         />
-        {searchFocus && (
+        {searchFocus && searchHistory.length > 0 && (
           <Paper
             style={{
               position: "absolute",

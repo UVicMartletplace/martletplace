@@ -4,8 +4,21 @@ import Messages from "../../src/pages/messages/Messages";
 import Profile from "../../src/pages/Profile";
 import TestProviders from "../utils/TestProviders";
 
+const SearchHistory = {
+  searches: [
+    { searchTerm: "banana", searchID: 1 },
+    { searchTerm: "chocolate", searchID: 2 },
+    { searchTerm: "cake", searchID: 3 },
+  ],
+};
+
 describe("<SearchBar />", () => {
   beforeEach(() => {
+    cy.intercept("GET", "/api/user/search-history*", {
+      statusCode: 200,
+      body: SearchHistory,
+    }).as("searchHistory");
+
     cy.mount(
       <TestProviders>
         <MemoryRouter>
@@ -78,5 +91,14 @@ describe("<SearchBar />", () => {
     cy.get("#type-select").click();
     cy.contains("User").click();
     cy.get("button").contains("Search").click();
+  });
+
+  it("should have search history", () => {
+    cy.get('input[placeholder="Search"]').click();
+    cy.contains("banana").should("be.visible");
+    cy.contains("chocolate").should("be.visible");
+    cy.contains("cake").should("be.visible");
+    cy.contains("banana").click();
+    cy.get('input[placeholder="Search"]').should("have.value", "banana");
   });
 });

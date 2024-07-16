@@ -115,7 +115,7 @@ const Profile = () => {
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
+    field: string
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
     setEditMode(true);
@@ -125,7 +125,7 @@ const Profile = () => {
     if (!usernameFormat.test(profile.username)) {
       // Add or update an error state for username validation
       setUsernameError(
-        "Username must be between 1 and 20 characters and only contain letters or numbers.",
+        "Username must be between 1 and 20 characters and only contain letters or numbers."
       );
       return;
     } else {
@@ -164,6 +164,19 @@ const Profile = () => {
   const handleCancelChanges = () => {
     setProfile(originalProfile);
     setEditMode(false);
+  };
+
+  const handleClearHistory = () => {
+    _axios_instance
+      .delete("/user/search-history")
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Search history cleared successfully.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching listings:", error);
+      });
   };
 
   return (
@@ -235,6 +248,15 @@ const Profile = () => {
             onChange={(e) => handleInputChange(e, "bio")}
             id="bio"
           />
+          <Button
+            type="button"
+            variant="contained"
+            sx={classes.button}
+            onClick={handleClearHistory}
+            id="ClearHistory_button"
+          >
+            Clear Search History
+          </Button>
           <Button
             type="button"
             variant="contained"
