@@ -85,8 +85,8 @@ const getListingById = async (
     listing.reviews = reviews;
     listing.images = listing.image_urls.map((url: string) => ({ url }));
     listing.distance = 0;
-    listing.location.latitude = listing.location.lat;
-    listing.location.longitude = listing.location.lon;
+    // listing.location.latitude = listing.location.lat;
+    // listing.location.longitude = listing.location.lon;
 
     delete listing.image_urls;
 

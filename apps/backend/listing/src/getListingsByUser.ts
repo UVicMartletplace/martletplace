@@ -37,10 +37,11 @@ const getListingsByUser = async (
       title: listing.title,
       description: listing.description,
       price: listing.price,
-      location: {
-        lat: listing.location.latitude,
-        lon: listing.location.longitude,
-      },
+      location: listing.location,
+      // location: {
+      //   lat: listing.location.latitude,
+      //   lon: listing.location.longitude,
+      // },
       status: listing.status,
       dateCreated: listing.dateCreated,
       dateModified: listing.dateModified,
