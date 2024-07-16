@@ -29,8 +29,6 @@ jobs:
         run: docker compose up --build --wait
 
       - name: Nuclei - Vulnerability Scan
-        uses: projectdiscovery/nuclei-action@main
+        uses: projectdiscovery/nuclei-action@v2.0.1
         with:
           target: http://localhost/
-          sarif-export: nuclei.sarif
-          markdown-export: .
