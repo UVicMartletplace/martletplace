@@ -33,21 +33,21 @@ class Recommender:
             self.download_file(RECOMMENDER_URL + url, TRAINING_DIR_URL + url)
 
     def load_model(self, retries=5):
-        if retries < 0:
-            raise Exception("Failed to download the recommender model after a number of retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again).")
-        os.makedirs("/app/src/training", exist_ok=True)
-        # Remove the model if it exists only partially
-        if not all([os.path.exists(TRAINING_DIR_URL + url) for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]]):
-            self.remove_model()
-        self.download_model()
-        
-        try:
-            self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
-            self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
-            self.normalized_item_vectors = np.load(TRAINING_DIR_URL + ITEM_VECTORS_URL)
-        except Exception as _:
-            self.remove_model()
-            self.load_model(retries - 1)
+        for _ in range(retries):
+            try:
+                os.makedirs("/app/src/training", exist_ok=True)
+                # Remove the model if it exists only partially
+                if not all([os.path.exists(TRAINING_DIR_URL + url) for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]]):
+                    self.remove_model()
+                self.download_model()
+                self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
+                self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
+                self.normalized_item_vectors = np.load(TRAINING_DIR_URL + ITEM_VECTORS_URL)
+                return
+            except Exception as _:
+                self.remove_model()
+            
+        raise Exception(f"Failed to download the recommender model after {str(retries)} retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again).")
 
     def recommend(self, items_clicked, terms_searched, page, limit):
         """
