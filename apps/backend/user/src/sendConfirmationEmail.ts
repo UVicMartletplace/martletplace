@@ -21,7 +21,7 @@ const sendConfirmationEmail = async (
   try {
     userId = await db.oneOrNone(query, [email]);
     if (!userId) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(204).json({ error: "User not found" });
     }
   } catch (err) {
     console.error(err);
