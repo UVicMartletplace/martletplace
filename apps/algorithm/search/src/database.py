@@ -6,20 +6,18 @@ from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
 
 AsyncPGInstrumentor().instrument()
 
+DB_POOL = None
 
-async def get_db_connection():
-    return await asyncpg.connect(dsn=DB_ENDPOINT)
-
+async def initialize_db():
+    global DB_POOL
+    if not DB_POOL:
+        DB_POOL = await asyncpg.create_pool(dsn=DB_ENDPOINT)
 
 async def insert_user_search(user_id: int, search_term: str):
-    conn = await get_db_connection()
-    try:
-        insert_query = """
-            INSERT INTO user_searches (user_id, search_term)
-            VALUES ($1, $2);
-        """
+    await initialize_db()
+    insert_query = """
+        INSERT INTO user_searches (user_id, search_term)
+        VALUES ($1, $2);
+    """
+    async with DB_POOL.acquire() as conn:
         await conn.execute(insert_query, user_id, search_term)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        await conn.close()
