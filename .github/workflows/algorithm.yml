@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [search, recommend]
+        service: [search]
       fail-fast: false
     defaults:
       run:
