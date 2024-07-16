@@ -1,7 +1,7 @@
 import ViewListing from "../../src/pages/ViewListing.tsx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import Messages from "../../src/pages/Messages.tsx";
 import TestProviders from "../utils/TestProviders.tsx";
+import Messages from "../../src/pages/messages/Messages.tsx";
 
 describe("<ViewListing/>", () => {
   const listingObject = {
@@ -36,16 +36,14 @@ describe("<ViewListing/>", () => {
 
   const pageJSX = (
     <TestProviders>
-        <MemoryRouter initialEntries={[`/listing/view/1`]}>
-          <Routes>
-            <Route path="/listing/view/:id" element={<ViewListing />} />
-            <Route path="/messages" element={<Messages />} />
-          </Routes>
-        </MemoryRouter>
-      </TestProviders>
+      <MemoryRouter initialEntries={[`/listing/view/1`]}>
+        <Routes>
+          <Route path="/listing/view/:id" element={<ViewListing />} />
+          <Route path="/messages" element={<Messages />} />
+        </Routes>
+      </MemoryRouter>
+    </TestProviders>
   );
-
-
 
   const newReviewObject = {
     listing_review_id: "2",

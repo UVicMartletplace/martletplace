@@ -1,3 +1,4 @@
+import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -6,7 +7,7 @@ import Homepage from "./pages/Homepage";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import ViewListing from "./pages/ViewListing";
-import Messages from "./pages/Messages";
+import Messages from "./pages/messages/Messages";
 import MyListings from "./pages/MyListings";
 import UserProvider from "./contexts/UserProvider";
 import PrivateRoute from "./components/Auth/PrivateRoute";
@@ -14,6 +15,7 @@ import AuthRoute from "./components/Auth/AuthRoute";
 import ConfirmEmail from "./pages/ConfirmEmail";
 import ViewProfile from "./pages/ViewProfile";
 import Profile from "./pages/Profile";
+import Charities from "./pages/Charities";
 
 function App() {
   return (
@@ -126,6 +128,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Messages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/charities"
+            element={
+              <PrivateRoute>
+                <Charities />
               </PrivateRoute>
             }
           />

@@ -2,7 +2,7 @@
   "name": "martletplace-message",
   "version": "0.1.0",
   "scripts": {
-    "start": "nodemon src/index.ts",
+    "start": "nodemon --watch src --watch ../lib/src src/index.ts",
     "test": "vitest run",
     "test:ci": "vitest run",
     "lint": "eslint src/**/*.ts",

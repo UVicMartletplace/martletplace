@@ -1,25 +1,59 @@
+# ruff: noqa: E402
 import ast
 import re
 from typing import List
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, Response
 import pandas as pd
-from sqlalchemy import insert
-from sqlmodel import select
-from sqlalchemy.ext.asyncio import AsyncSession
 import jwt
 import os
 
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+
+app = FastAPI()
+
+
+def otel_trace_init(app, name):
+    trace.set_tracer_provider(
+        TracerProvider(
+            resource=Resource.create({"service.name": name}),
+        ),
+    )
+    otlp_span_exporter = OTLPSpanExporter(endpoint=os.getenv("OTEL_COLLECTOR_ENDPOINT"))
+    trace.get_tracer_provider().add_span_processor(
+        BatchSpanProcessor(otlp_span_exporter)
+    )
+    FastAPIInstrumentor.instrument_app(app)
+    return app
+
+
+app = otel_trace_init(app, "recommend")
+
+SQLAlchemyInstrumentor().instrument()
+
+from sqlalchemy import insert
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches, Listings
 from src.api_models import ListingSummary
 from src.db import get_session
 from src.recommender import Recommender
 
-app = FastAPI()
 recommender = Recommender()
 
 
 @app.middleware("http")
 async def authenticate_request(request: Request, call_next):
+    # Allow the healthcheck to pass auth
+    if request.url.path == "/.well-known/health":
+        response = await call_next(request)
+        return response
+
     auth_token = request.cookies.get("authorization")
 
     if not auth_token:
@@ -122,6 +156,19 @@ async def get_recommendations(
 
     recommended_listings = pd.DataFrame(recommended_listings, columns=columns)
 
+    seller_ids = recommended_listings["seller_id"].tolist()
+    seller_names_query = select(Users.user_id, Users.name).where(
+        Users.user_id.in_(seller_ids)
+    )
+
+    seller_names_result = await session.exec(seller_names_query)
+    seller_names = seller_names_result.fetchall()
+
+    seller_name_dict = {}
+    for user_id, name in seller_names:
+        if user_id not in seller_name_dict:
+            seller_name_dict[user_id] = name
+
     listing_summaries = []
     for _, row in recommended_listings.iterrows():
         # this is so cursed, but since image urls are stored as a string of a python list, we gotta do this
@@ -141,7 +188,7 @@ async def get_recommendations(
             listingID=str(row["listing_id"]),
             sellerID=str(row["seller_id"]),
             # Will query for actual seller name later.
-            sellerName="Seller",
+            sellerName=str(seller_name_dict[row["seller_id"]]),
             buyerID=row["buyer_id"],
             title=str(row["title"]),
             price=row["price"],
@@ -176,6 +223,11 @@ async def stop_suggesting_item(
     )
 
     return {"message": "Preference updated successfully."}
+
+
+@app.get("/.well-known/health")
+async def health():
+    return Response(status_code=200)
 
 
 # @app.put("/api/user-preferences/item-click")

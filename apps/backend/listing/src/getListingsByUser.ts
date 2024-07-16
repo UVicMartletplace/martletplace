@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IDatabase } from "pg-promise";
+import { AuthenticatedRequest } from "../../lib/src/auth";
 
 const getListingsByUser = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   db: IDatabase<object>,
 ) => {
-  // TODO: AUTHENTICATION
-  const userID = 1; // for now assuming userID is 1 until we implement authentication
+  const userID = req.user.userId;
 
   try {
     const listings = await db.any(
@@ -27,14 +27,13 @@ const getListingsByUser = async (
          seller_id = $1`,
       [userID],
     );
-
     if (!listings.length) {
       console.error("no listings found for this user");
       return res.status(404).json({ error: "No listings found for this user" });
     }
 
     const responseListings = listings.map((listing) => ({
-      listingID: listing.listingID,
+      listingID: String(listing.listingID),
       title: listing.title,
       description: listing.description,
       price: listing.price,
@@ -44,7 +43,6 @@ const getListingsByUser = async (
       dateModified: listing.dateModified,
       images: listing.images.map((url: string) => ({ url })),
     }));
-
     return res.status(200).json(responseListings);
   } catch (err) {
     console.error(err);

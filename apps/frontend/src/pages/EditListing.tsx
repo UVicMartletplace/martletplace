@@ -46,9 +46,7 @@ const EditListing = () => {
   const [listingImages, setListingImages] = useState<string[]>([]);
   const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>("");
-  const [listingImageBinaries, setListingImageBinaries] = useState<string[]>(
-    [],
-  );
+  const [imageBlobs, setImageBlobs] = useState<Blob[]>([]);
   const [listingValid, setListingValid] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -106,13 +104,12 @@ const EditListing = () => {
     try {
       const imagesObjectArray = await asyncUploadImages();
       if (imagesObjectArray) {
-        setNewListingObject((prevState) => ({
-          ...prevState,
-          listing: {
-            ...prevState.listing,
-            images: imagesObjectArray,
-          },
-        }));
+        // Why this works and the regular version where you edit only the images list doesn't I have absolutely no idea
+        const copyOfListingObject = { ...newListingObject };
+        if (imagesObjectArray.length > 0) {
+          copyOfListingObject.listing.images = imagesObjectArray;
+          setNewListingObject(copyOfListingObject);
+        }
         return true;
       }
       return false;
@@ -188,9 +185,9 @@ const EditListing = () => {
 
   const asyncUploadImages = async (): Promise<ImageURLObject[] | false> => {
     const retrievedImages: ImageURLObject[] = [];
-    const uploadPromises = listingImageBinaries.map(async (imageBinary) => {
+    const uploadPromises = imageBlobs.map(async (imageBlob) => {
       try {
-        const response = await _axios_instance.post("/images", imageBinary, {
+        const response = await _axios_instance.post("/images", imageBlob, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -219,7 +216,6 @@ const EditListing = () => {
       ...prevState,
       status: prevState.status === "AVAILABLE" ? "SOLD" : "AVAILABLE",
     }));
-    console.log("LISTING OBJECT", newListingObject);
   };
 
   const handleDelete = () => {
@@ -342,8 +338,8 @@ const EditListing = () => {
                             setPassedImages={setListingImages}
                             multipleUpload={true}
                             htmlForButton={buttonHTML}
-                            imageBinary={listingImageBinaries}
-                            setImageBinaries={setListingImageBinaries}
+                            imageFiles={imageBlobs}
+                            setImageFiles={setImageBlobs}
                           />
                         </Box>
                         <Box>

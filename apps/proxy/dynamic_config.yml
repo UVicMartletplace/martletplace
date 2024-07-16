@@ -29,6 +29,22 @@ http:
       rule: "PathPrefix(`/api/recommendations`)"
       service: recommendations
       priority: 200
+    to-image:
+      rule: "PathPrefix(`/api/images`)"
+      service: image
+      priority: 200
+    to-jaeger:
+      rule: "PathPrefix(`/admin/tracing`)"
+      service: jaeger
+      priority: 200
+      middlewares:
+        - admin-auth
+
+  middlewares:
+    admin-auth:
+      basicAuth:
+        users:
+          - admin:$2y$05$hzvNivF.d58imqlAMKkG5.iT0OSI8KfPQnSGlH8gXMQ0d4KO62me6
 
   services:
     frontend:
@@ -59,3 +75,11 @@ http:
       loadBalancer:
         servers:
           - url: http://recommend:8222/
+    image:
+      loadBalancer:
+        servers:
+          - url: http://datalayer:8303/
+    jaeger:
+      loadBalancer:
+        servers:
+          - url: http://jaeger:16686/

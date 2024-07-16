@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="visual"
+   viewBox="0 0 255 133"
+   width="255"
+   height="133"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <rect
+       x="78.806664"
+       y="6.9763274"
+       width="123.24845"
+       height="30.489136"
+       id="rect3" />
+  </defs>
+  <path
+     style="fill:#ffffff;stroke-width:0.659335;paint-order:fill markers stroke"
+     d="M 0.00152193,29.908373 68.82392,0.00390625 h 75.77764 L -0.0060822,62.929687 Z"
+     id="path4" />
+  <rect
+     style="display:none;fill:#f9f9f9;stroke-width:0.585682;paint-order:fill markers stroke"
+     id="rect2"
+     width="254.50676"
+     height="45.379265"
+     x="-36.094479"
+     y="41.218475"
+     transform="rotate(-22.867813)" />
+  <path
+     d="m 20.438455,21.003183 0.961301,0.56338 c 2.726269,1.534901 -6.561431,10.642276 7.667882,14.787374 4.919839,1.931139 6.143543,7.421408 7.407052,10.565022 L 33.230068,48.450015 4.4783083,60.995407 C 3.16823,46.569407 10.36919,45.407185 1.2350219,29.364783 Z"
+     fill="#ffb32e"
+     id="path1"
+     style="stroke-width:0.0726066" />
+  <path
+     d="m 11.430074,24.93085 -0.02524,0.627233 c -0.01829,0.61871 2.121229,4.720475 1.985385,5.995612 -0.272968,3.859666 -3.124348,4.464559 -2.533134,8.306517 2.006333,3.872828 10.585828,6.346516 10.287217,10.178304 -0.09159,1.25587 -1.522665,3.111521 -2.24011,4.034672 l -0.715537,0.927825 -18.1936799,7.927735 c 0,-7.378411 -0.01457649,-11.478973 0.005640897,-33.019366 z"
+     fill="#001647"
+     id="path2"
+     style="stroke-width:0.069782" />
+  <text
+     xml:space="preserve"
+     id="text3"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.2891px;font-family:Arial;-inkscape-font-specification:Arial;white-space:pre;shape-inside:url(#rect3);display:inline;fill:#000000;paint-order:fill markers stroke"
+     transform="matrix(0.59788545,-0.2603477,0.25216099,0.61729652,-24.058757,40.161273)"><tspan
+       x="78.806641"
+       y="30.656586"
+       id="tspan1">Charity</tspan></text>
+</svg>

@@ -4,6 +4,15 @@ elasticsearch
 uvicorn[standard]
 asyncpg
 pyjwt[crypto]
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-asyncpg
+opentelemetry-exporter-otlp-proto-http
+
+## For healthcheck
+requests
 
 ## Dev Dependencies
 ruff

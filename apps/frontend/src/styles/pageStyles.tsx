@@ -1,5 +1,9 @@
 import { colors } from "./colors";
 
+export const vars = Object.freeze({
+  messagesSendBoxHeight: "4rem",
+});
+
 export const useStyles = () => ({
   // Login and Create Account page styles
   loginAndCreateBox: {
@@ -89,6 +93,7 @@ export const useStyles = () => ({
   },
   searchBar: {
     borderColor: colors.martletplaceGrey,
+    paddingLeft: "0px",
   },
   searchGrid: {
     display: "flex",
@@ -178,5 +183,121 @@ export const useStyles = () => ({
     "&:hover": { backgroundColor: colors.martletplaceBlueHover },
     fontSize: "16px",
     height: "80px",
+  },
+
+  // Charity page styles
+  charityCard: {
+    margin: "20px",
+    padding: "20px",
+    backgroundColor: "#f9f9f9",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
+  orgLogo: {
+    margin: "5px",
+  },
+  sectionTitle: {
+    marginTop: "20px",
+    marginBottom: "10px",
+    fontWeight: "bold",
+  },
+
+  // Messages page styles
+  messagesConvSidebar: {
+    overflowY: "auto",
+    width: "20rem",
+    height: "100%",
+    "@media (max-width: 740px)": {
+      width: "100%",
+      maxHeight: "300px",
+      "&::-webkit-scrollbar": {
+        width: "4px",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        backgroundColor: colors.martletplaceGrey,
+        borderRadius: "2px",
+      },
+      "&::-webkit-scrollbar-track": {
+        backgroundColor: "white",
+      },
+    },
+  },
+  messagesMessagesBox: {
+    height: "100%",
+    overflowY: "scroll",
+
+    display: "flex",
+    borderBottom: "1px",
+    borderColor: colors.martletplaceGrey,
+    flexDirection: "column-reverse" as const,
+    alignItems: "center",
+    gap: "1rem",
+    "&::-webkit-scrollbar": {
+      width: "4px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: colors.martletplaceGrey,
+      borderRadius: "2px",
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "white",
+    },
+    "& :first-of-type": {
+      marginBottom: "0.25rem",
+    },
+  },
+  messagesSendBox: {
+    height: vars.messagesSendBoxHeight,
+    color: colors.martletplaceGrey,
+  },
+  messagesSendButton: {},
+  messageFromUser: {
+    alignSelf: "flex-end",
+    backgroundColor: colors.martletplaceSkyBlue,
+    padding: "10px",
+    maxWidth: "80vw",
+    borderRadius: "10px",
+    textAlign: "right",
+    borderBottomRightRadius: "2px",
+    marginInline: "1rem",
+  },
+  messageFromOther: {
+    alignSelf: "flex-start",
+    backgroundColor: colors.martletplaceGrey,
+    color: colors.martletplaceWhite,
+    padding: "10px",
+    maxWidth: "80vw",
+    borderRadius: "10px",
+    textAlign: "left",
+    borderBottomLeftRadius: "2px",
+    marginInline: "1rem",
+  },
+  messagesConvBox: {
+    display: "flex",
+    flexDirection: "row" as const,
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "10px",
+    border: "none",
+    backgroundColor: "#fcfcfc",
+  },
+  messagesConvImg: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+  },
+  messagesConvPreviewText: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  messagesHideThreadButton: {
+    position: "absolute",
+    top: "0.5rem",
+    left: "0.5rem",
+    backgroundColor: colors.martletplaceNavyBlue,
+    color: colors.martletplaceWhite,
+    "&:hover": {
+      backgroundColor: colors.martletplaceBlueHover,
+    },
   },
 });

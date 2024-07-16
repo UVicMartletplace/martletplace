@@ -1,6 +1,8 @@
+import { setupTracing, connectDB } from "../../lib/src/otel";
+setupTracing("user");
+
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
-import pgPromise from "pg-promise";
 import { createUser } from "./createUser";
 import { getUser } from "./getUser";
 import { patchUser } from "./patchUser";
@@ -17,7 +19,6 @@ import cookieParser from "cookie-parser";
 const PORT = 8211;
 
 const app = express();
-const pgp = pgPromise();
 const DB_ENDPOINT = process.env.DB_ENDPOINT;
 
 if (!DB_ENDPOINT) {
@@ -25,7 +26,7 @@ if (!DB_ENDPOINT) {
   process.exit(1);
 }
 
-const db = pgp(DB_ENDPOINT);
+const db = connectDB(DB_ENDPOINT);
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -89,6 +90,11 @@ app.post("/api/user/send-confirmation-email", (req: Request, res: Response) =>
 app.post("/api/user/confirm-email", (req: Request, res: Response) =>
   confirmEmail(req, res, db),
 );
+
+// Healthcheck
+app.get("/.well-known/health", (_: Request, res: Response) => {
+  return res.sendStatus(200);
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://0.0.0.0:${PORT}`);
