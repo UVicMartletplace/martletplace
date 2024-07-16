@@ -4,6 +4,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+
+SQLAlchemyInstrumentor().instrument()
 
 engine = AsyncEngine(create_engine(DB_ENDPOINT, future=True))
 
