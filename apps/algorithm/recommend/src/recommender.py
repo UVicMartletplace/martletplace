@@ -4,6 +4,12 @@ import tensorflow as tf
 import requests
 import os
 
+RECOMMENDER_VERSION = "1.0.1"
+RECOMMENDER_URL = f"https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v{RECOMMENDER_VERSION}/"
+PROCESSED_DATA_URL = "processed_data.csv"
+COSINE_URL = "cosine_similarity_matrix.npy"
+ITEM_VECTORS_URL = "normalized_item_vectors.npy"
+TRAINING_DIR_URL = "/app/src/training/"
 
 class Recommender:
     def __init__(self):
@@ -15,34 +21,32 @@ class Recommender:
         with open(destination, "wb") as f:
             f.write(response.content)
 
-    def load_model(self, retries=3):
+    def remove_model(self):
+        for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]:
+            if os.path.exists(TRAINING_DIR_URL + url):
+                os.remove(TRAINING_DIR_URL + url)
+
+    def download_model(self):
+        for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]:
+            if os.path.exists(TRAINING_DIR_URL + url):
+                os.remove(TRAINING_DIR_URL + url)
+            self.download_file(RECOMMENDER_URL + url, TRAINING_DIR_URL + url)
+
+    def load_model(self, retries=5):
         if retries < 0:
-            exit(1)
+            raise Exception("Failed to download the recommender model after a number of retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again).")
+        os.makedirs("/app/src/training", exist_ok=True)
+        # Remove the model if it exists only partially
+        if not all([os.path.exists(TRAINING_DIR_URL + url) for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]]):
+            self.remove_model()
+        self.download_model()
+        
         try:
-            self.data = pd.read_csv("/app/src/training/processed_data.csv")
-            self.cosine_similarity_matrix = np.load(
-                "/app/src/training/cosine_similarity_matrix.npy"
-            )
-            self.normalized_item_vectors = np.load(
-                "/app/src/training/normalized_item_vectors.npy"
-            )
-        except FileNotFoundError:
-            os.makedirs("/app/src/training", exist_ok=True)
-            data_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.1/processed_data.csv"
-            cosine_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.1/cosine_similarity_matrix.npy"
-            item_vectors_url = "https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v1.0.1/normalized_item_vectors.npy"
-
-            self.download_file(data_url, "/app/src/training/processed_data.csv")
-            self.download_file(
-                cosine_url, "/app/src/training/cosine_similarity_matrix.npy"
-            )
-            self.download_file(
-                item_vectors_url, "/app/src/training/normalized_item_vectors.npy"
-            )
-
-            self.load_model(retries - 1)
-            return
+            self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
+            self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
+            self.normalized_item_vectors = np.load(TRAINING_DIR_URL + ITEM_VECTORS_URL)
         except Exception as _:
+            self.remove_model()
             self.load_model(retries - 1)
 
     def recommend(self, items_clicked, terms_searched, page, limit):
