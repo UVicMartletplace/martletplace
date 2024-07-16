@@ -24,13 +24,13 @@ describe("<Login />", () => {
 
   const testEmail = "testEmail@uvic.ca";
   const testPassword = "testPassword";
-  const testTotpCode = "123456";
+  const testTotpCode = "145058";
 
   it("allows typing into the input fields", () => {
     // Type into the input fields
     cy.get("#email-input").type(testEmail).should("have.value", testEmail);
     cy.get("#password-input").type(testPassword).should("have.value", testPassword);
-    cy.get("#totpCode").type("123456").should("have.value", testTotpCode);
+    cy.get("#totpCode").type("145058").should("have.value", testTotpCode);
   });
 
   it("submits the form and navigates on successful login", () => {
@@ -69,7 +69,7 @@ describe("<Login />", () => {
     // Type into the input fields
     cy.get("#email-input").type("wronguser");
     cy.get("#password-input").type("wrongpassword");
-    cy.get("#totpCode").type(testTotpCode);
+    cy.get("#totpCode").type("000000");
 
     // Ensure the button is not disabled
     cy.get('button[type="submit"]').should("not.be.disabled").click();
