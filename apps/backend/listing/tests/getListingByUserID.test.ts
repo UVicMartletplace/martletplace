@@ -72,7 +72,7 @@ describe('Get Listings by User Endpoint', () => {
 
     await getListingsByUser(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(204);
     expect(res.json).toHaveBeenCalledWith({ error: 'No listings found for this user' });
   });
 });

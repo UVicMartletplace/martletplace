@@ -29,7 +29,7 @@ const getListingsByUser = async (
     );
     if (!listings.length) {
       console.error("no listings found for this user");
-      return res.status(404).json({ error: "No listings found for this user" });
+      return res.status(204).json({ error: "No listings found for this user" });
     }
 
     const responseListings = listings.map((listing) => ({
