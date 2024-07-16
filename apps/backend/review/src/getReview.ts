@@ -36,7 +36,7 @@ const getReview = async (
     const review = await db.oneOrNone(reviewQuery, [id]);
 
     if (!review) {
-      console.error("review not found")
+      console.error("review not found");
       return res.status(204).json({ error: "Review not found" });
     }
 
