@@ -11,6 +11,7 @@ COSINE_URL = "cosine_similarity_matrix.npy"
 ITEM_VECTORS_URL = "normalized_item_vectors.npy"
 TRAINING_DIR_URL = "/app/src/training/"
 
+
 class Recommender:
     def __init__(self):
         self.load_model()
@@ -37,17 +38,26 @@ class Recommender:
             try:
                 os.makedirs("/app/src/training", exist_ok=True)
                 # Remove the model if it exists only partially
-                if not all([os.path.exists(TRAINING_DIR_URL + url) for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]]):
+                if not all(
+                    [
+                        os.path.exists(TRAINING_DIR_URL + url)
+                        for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]
+                    ]
+                ):
                     self.remove_model()
                 self.download_model()
                 self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
                 self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
-                self.normalized_item_vectors = np.load(TRAINING_DIR_URL + ITEM_VECTORS_URL)
+                self.normalized_item_vectors = np.load(
+                    TRAINING_DIR_URL + ITEM_VECTORS_URL
+                )
                 return
             except Exception as _:
                 self.remove_model()
-            
-        raise Exception(f"Failed to download the recommender model after {str(retries)} retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again).")
+
+        raise Exception(
+            f"Failed to download the recommender model after {str(retries)} retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again)."
+        )
 
     def recommend(self, items_clicked, terms_searched, page, limit):
         """
