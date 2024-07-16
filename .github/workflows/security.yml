@@ -32,4 +32,5 @@ jobs:
         uses: projectdiscovery/nuclei-action@main
         with:
           target: http://localhost/
-      
+          sarif-export: nuclei.sarif
+          markdown-export: .
