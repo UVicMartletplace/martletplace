@@ -58,7 +58,7 @@ describe('Get Review Endpoint', () => {
 
     await getReview(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(204);
     expect(res.json).toHaveBeenCalledWith({ error: 'Review not found' });
   });
 });

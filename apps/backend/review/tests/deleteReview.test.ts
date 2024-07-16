@@ -41,7 +41,7 @@ describe('Delete Review Endpoint', () => {
 
     await deleteReview(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(204);
     expect(res.json).toHaveBeenCalledWith({ error: 'Review not found' });
   });
 });
