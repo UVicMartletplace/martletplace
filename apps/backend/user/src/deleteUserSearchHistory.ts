@@ -26,11 +26,13 @@ const deleteUserSearchHistory = async (
       `;
 
   try {
-    const result = await db.result(query, [userID], r => r.rowCount);
+    const result = await db.result(query, [userID], (r) => r.rowCount);
 
     if (result === 0) {
       console.error("no search history found for this user");
-      return res.status(404).json({ error: "No search history found for this user" });
+      return res
+        .status(404)
+        .json({ error: "No search history found for this user" });
     }
 
     return res

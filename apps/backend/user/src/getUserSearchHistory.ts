@@ -12,7 +12,7 @@ const getUserSearchHistory = async (
     console.error("missing user id parameter in request");
     return res.status(400).json({ error: "User ID is required" });
   }
-  
+
   const query = `
         SELECT search_id, search_term
         FROM user_searches
@@ -26,17 +26,15 @@ const getUserSearchHistory = async (
     if (data.length === 0) {
       console.error("no user found in database");
       return res.status(200).json({
-        searches: []
+        searches: [],
       });
     }
 
     if (data[0].search_id === null) {
       console.error("no search history found for this user");
-      return res
-        .status(200)
-        .json({
-          searches: []
-        });
+      return res.status(200).json({
+        searches: [],
+      });
     }
 
     const response = {
