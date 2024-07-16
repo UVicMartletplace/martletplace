@@ -6,7 +6,7 @@ import { getUser } from "./getUser";
 import { patchUser } from "./patchUser";
 import { deleteUser } from "./deleteUser";
 import { getUserSearchHistory } from "./getUserSearchHistory";
-import { deleteUserSearch } from "./deleteUserSearch";
+import { deleteUserSearchHistory } from "./deleteUserSearchHistory";
 import { login } from "./login";
 import { logout } from "./logout";
 import { sendConfirmationEmail } from "./sendConfirmationEmail";
@@ -77,7 +77,7 @@ app.get("/api/user/search-history/:id", (req: Request, res: Response) =>
 
 // Delete user
 app.delete("/api/user/search-history/:id", (req: Request, res: Response) =>
-  deleteUserSearch(req as unknown as AuthenticatedRequest, res, db),
+  deleteUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
 );
 
 // Send Confirmation Email
