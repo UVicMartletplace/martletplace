@@ -63,6 +63,11 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
       >
         {charity.description}
       </Typography>
+      <img
+        src={charity.imageUrl}
+        alt={charity.name}
+        style={{ width: "300px", height: "300px" }}
+      />
       <Box
         component={Paper}
         elevation={2}
