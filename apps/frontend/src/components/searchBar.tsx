@@ -19,7 +19,6 @@ import React from "react";
 import useUser from "../hooks/useUser";
 import { colors } from "../styles/colors";
 import _axios_instance from "../_axios_instance.tsx";
-import { Token } from "@mui/icons-material";
 
 interface SearchObject {
   query: string;
