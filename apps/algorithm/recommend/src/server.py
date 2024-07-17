@@ -100,9 +100,14 @@ async def get_recommendations(
     )
     terms_searched = [term.search_term for term in terms_searched]
 
+    items_disliked = await session.exec(
+        select(User_Preferences).where(User_Preferences.user_id == user_id)
+    )
+    items_disliked = [item.listing_id for item in items_disliked]
+
     await session.close()
     recommended_listings = recommender.recommend(
-        items_clicked, terms_searched, page, limit
+        items_clicked, terms_searched, page, limit, items_disliked
     )
     columns = [
         "listing_id",
@@ -218,9 +223,10 @@ async def stop_suggesting_item(
     await session.exec(
         insert(
             User_Preferences,
-            values={"user_id": user_id, "listing_id": id, "weight": 1.0},
+            values={"user_id": user_id, "listing_id": id, "weight": -1.0},
         )
     )
+    await session.close()
 
     return {"message": "Preference updated successfully."}
 
