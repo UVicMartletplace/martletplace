@@ -13,7 +13,7 @@ import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import * as OTPAuth from "otpauth";
+import { TOTP } from "otpauth";
 import QRCode from "qrcode";
 
 const CreateAccount = () => {
@@ -32,7 +32,7 @@ const CreateAccount = () => {
   const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   const generateCode = (totp_secret: string, email: string) => {
-    const totp = new OTPAuth.TOTP({
+    const totp = new TOTP({
       issuer: "MartletPlace",
       label: email,
       algorithm: "SHA1",

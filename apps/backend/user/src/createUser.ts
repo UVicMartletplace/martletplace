@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import bcrypt from "bcryptjs";
-import { totpSecretGen } from "./totpSecretGen";
+import { encode } from "hi-base32";
+import crypto from "crypto";
 
 // createUser route
 const createUser = async (
@@ -62,6 +63,20 @@ const createUser = async (
     console.log(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
+};
+
+const totpSecretGen = async () => {
+  // Generate secret key for user
+  const secret_key = generateBase32Secret();
+
+  // Return secret key
+  return secret_key;
+};
+
+const generateBase32Secret = () => {
+  const buffer = crypto.randomBytes(15);
+  const base32secret = encode(buffer).toString().replace(/=/g, "");
+  return base32secret.substring(0, 24);
 };
 
 export { createUser };

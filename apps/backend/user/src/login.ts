@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
 import { User } from "./models/user";
 import bcrypt from "bcryptjs";
-import { verifyMFA } from "./verifyMFA";
+import { TOTP } from "otpauth";
 import { create_token } from "../../lib/src/auth";
 
 const login = async (req: Request, res: Response, db: IDatabase<object>) => {
@@ -54,6 +54,20 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
     console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
+};
+
+const verifyMFA = async (user: User, totp_secret: string) => {
+  // Create TOTP from stored secret
+  const totp = new TOTP({
+    label: "MartletPlace",
+    algorithm: "SHA1",
+    digits: 6,
+    secret: user.totp_secret,
+  });
+
+  const tokenDelta = totp.validate({ token: totp_secret });
+
+  return tokenDelta === 0;
 };
 
 export { login };

@@ -15,7 +15,7 @@ describe('Login Endpoint', () => {
   it('should login a user successfully', async () => {
     // Generate totp from test user secret
     const totp = new TOTP({
-      label: "Martletplace",
+      label: "MartletPlace",
       algorithm: "SHA1",
       digits: 6,
       secret: 'NICESTRONGSECRET',
