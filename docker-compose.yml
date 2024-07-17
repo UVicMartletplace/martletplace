@@ -213,6 +213,7 @@ services:
     volumes: []
     environment:
       - DFLY_port=8313
+    command: "--proactor_threads=4"
 
   collector:
     build: apps/observability/collector
