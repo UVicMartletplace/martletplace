@@ -76,7 +76,7 @@ const Login = () => {
         >
           Login
         </Button>
-        <Link href="/user/resetpassword" underline="hover" sx={classes.link}>
+        <Link href="/user/reset-password" underline="hover" sx={classes.link}>
           Forgot Password?
         </Link>
         <Link href="/user/signup" underline="hover" sx={classes.link}>
