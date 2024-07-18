@@ -29,7 +29,7 @@ const updateReview = async (
 
     if (!updatedReview) {
       console.error("review not found");
-      return res.status(204).json({ error: "Review not found" });
+      return res.status(200).json({ error: "Review not found" });
     }
 
     return res.status(200).json({ message: "Review edited successfully" });

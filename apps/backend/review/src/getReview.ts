@@ -37,7 +37,7 @@ const getReview = async (
 
     if (!review) {
       console.error("review not found");
-      return res.status(204).json({ error: "Review not found" });
+      return res.status(200).json({});
     }
 
     return res.status(200).json(review);
