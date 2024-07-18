@@ -16,9 +16,7 @@ import {
 import SearchBar from "../components/searchBar";
 import { colors } from "../styles/colors";
 import _axios_instance from "../_axios_instance";
-import { CharityObject, OrganizationObject } from "../types.ts"
-
-
+import { CharityObject, OrganizationObject } from "../types.ts";
 
 interface ImageObject {
   image: File | undefined;
