@@ -39,20 +39,7 @@ interface ListingObject {
 }
 
 interface CharityObject {
-  id: string;
   name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-  organizations: {
-    name: string;
-    logoUrl: string;
-    donated: number;
-    receiving: boolean;
-  }[];
-  funds: number;
-  listingsCount: number;
 }
 
 const ViewListing = () => {
@@ -173,7 +160,7 @@ const ViewListing = () => {
                     overflow: "hidden",
                     position: "relative",
                     "&:hover": { cursor: "pointer" },
-                    marginBottom: "10px",
+                    marginBottom: "20px",
                   }}
                   onClick={() => {
                     navigate("/charities");
