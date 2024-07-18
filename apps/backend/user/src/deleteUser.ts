@@ -50,7 +50,7 @@ const deleteUser = async (
 
     await db.oneOrNone(query2, [id]).then((deletedUser) => {
       if (!deletedUser) {
-        return res.status(204).json({ error: "User not found" });
+        return res.status(200).json({ error: "User not found" });
       }
 
       return res.status(200).json({ message: "User deleted successfully" });

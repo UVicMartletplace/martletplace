@@ -12,7 +12,7 @@ const getUser = async (req: Request, res: Response, db: IDatabase<object>) => {
   try {
     await db.oneOrNone(query, [id]).then((data: User) => {
       if (!data) {
-        return res.status(204).json({ error: "User not found" });
+        return res.status(200).json({ error: "User not found" });
       }
 
       const returnObject = {

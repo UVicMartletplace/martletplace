@@ -55,7 +55,7 @@ describe('Get User Endpoint', () => {
 
     await getUser(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
   });
 

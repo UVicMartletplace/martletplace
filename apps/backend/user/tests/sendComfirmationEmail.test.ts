@@ -81,7 +81,7 @@ describe('Send Confirmation Email Endpoint', () => {
     await sendConfirmationEmail(req, res, db);
 
     expect(db.oneOrNone).toHaveBeenCalledWith('SELECT user_id FROM users WHERE email = $1', ['user5@uvic.ca']);
-    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
   });
 
