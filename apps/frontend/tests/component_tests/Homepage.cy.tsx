@@ -36,6 +36,7 @@ describe("<Homepage />", () => {
         price: 50,
         dateCreated: "2024-05-23T15:30:00Z",
         imageUrl: "https://picsum.photos/200/300",
+        charityId: "1",
       },
       {
         listingID: "B34G67039C24",
@@ -46,6 +47,7 @@ describe("<Homepage />", () => {
         price: 60,
         dateCreated: "2024-04-15T14:30:00Z",
         imageUrl: "https://picsum.photos/200/301",
+        charityId: "1",
       },
       {
         listingID: "C45H89049D25",
@@ -56,6 +58,7 @@ describe("<Homepage />", () => {
         price: 70,
         dateCreated: "2024-03-20T13:30:00Z",
         imageUrl: "https://picsum.photos/200/302",
+        charityId: "0",
       },
       {
         listingID: "D56I90159E26",
@@ -66,6 +69,7 @@ describe("<Homepage />", () => {
         price: 65,
         dateCreated: "2024-02-10T12:30:00Z",
         imageUrl: "https://picsum.photos/200/303",
+        charityId: "0",
       },
       {
         listingID: "E67J01269F27",
@@ -76,6 +80,7 @@ describe("<Homepage />", () => {
         price: 55,
         dateCreated: "2024-01-05T11:30:00Z",
         imageUrl: "https://picsum.photos/200/304",
+        charityId: "0",
       },
       {
         listingID: "F78K12379G28",
@@ -86,10 +91,12 @@ describe("<Homepage />", () => {
         price: 45,
         dateCreated: "2023-12-15T10:30:00Z",
         imageUrl: "https://picsum.photos/200/305",
+        charityId: "0",
       },
     ],
     totalItems: 6,
   };
+  const charityObject = { name: "Save the Whales" };
 
   beforeEach(() => {
     cy.intercept("GET", "/api/search*", {
@@ -101,6 +108,11 @@ describe("<Homepage />", () => {
       statusCode: 200,
       body: recomendationsObject,
     }).as("recomendations");
+
+    cy.intercept("GET", "/api/charities/current", {
+      statusCode: 200,
+      body: charityObject,
+    }).as("charities/current");
 
     cy.mount(
       <UserProvider>
@@ -115,6 +127,7 @@ describe("<Homepage />", () => {
   it("renders the Welcome message when no search has been performed", () => {
     cy.contains("Welcome!").should("be.visible");
     cy.contains("Recommended for you").should("be.visible");
+    cy.contains("Save the Whales").should("be.visible"); //the charity banner
   });
 
   it("renders the Recomendations", () => {
