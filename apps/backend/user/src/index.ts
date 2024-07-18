@@ -73,7 +73,7 @@ app.delete("/api/user", (req: Request, res: Response) =>
 
 // Get user search history
 app.get("/api/user/search-history", (req: Request, res: Response) =>
-  getUserSearchHistory(req, res, db),
+  getUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
 );
 
 // Delete user
