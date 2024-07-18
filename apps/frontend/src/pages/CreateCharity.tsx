@@ -16,27 +16,14 @@ import {
 import SearchBar from "../components/searchBar";
 import { colors } from "../styles/colors";
 import _axios_instance from "../_axios_instance";
+import { CharityObject, OrganizationObject } from "../types.ts"
 
-interface OrganizationObject {
-  name: string;
-  logoUrl: string;
-  donated: number;
-  receiving: boolean;
-}
 
-interface CharityObject {
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-  organizations: OrganizationObject[];
-}
 
 interface ImageObject {
   image: File | undefined;
-  index: number;
   imageString: string | undefined;
+  index: number;
 }
 
 interface ImageUploadObject {
@@ -76,10 +63,8 @@ const CreateCharity = () => {
       alert("Image failed to upload");
       return;
     }
-    console.log("LOGO URL", logoURL);
     const newDataObject = await asyncListingImageWrapperPartners(logoURL);
     if (newDataObject) {
-      console.log("Sending", newDataObject);
       try {
         const response = await _axios_instance.post(
           "/charities",
@@ -146,7 +131,6 @@ const CreateCharity = () => {
   const asyncListingImageWrapperLogo = async (): Promise<boolean | string> => {
     try {
       if (!logoImage) return true;
-      console.log(logoImage);
       const logoImagesObjectArray = await asyncUploadImages([
         { image: logoImage, index: 0 },
       ]);
@@ -247,9 +231,7 @@ const CreateCharity = () => {
           donated: 0,
           receiving: false,
         };
-        console.log(updatedOrganizations);
         updatedOrganizations.push(newOrganization);
-        console.log("Added", updatedOrganizations);
       }
 
       return {
