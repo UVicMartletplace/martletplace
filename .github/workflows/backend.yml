@@ -117,7 +117,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [user, listing, review, message, lib]
+        service: [user, listing, review, message]
+        fail-fast: false
     steps:
       - uses: actions/checkout@v4
 
