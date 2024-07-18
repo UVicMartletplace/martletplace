@@ -48,7 +48,7 @@ const CreateNewPassword = () => {
     }
 
     try {
-      if (user === null) {
+      if (!user) {
         alert("An error occurred. Please try again.");
         return;
       }
@@ -63,7 +63,7 @@ const CreateNewPassword = () => {
 
       navigate("/login");
     } catch (error) {
-      alert("Failed to create account. Please try again.");
+      alert("Failed to create new password. Please try again.");
     }
   };
 
