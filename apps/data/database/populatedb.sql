@@ -47,23 +47,19 @@ INSERT INTO user_searches (user_id, search_term) VALUES
 (4, 'FUNNY THING'),
 (5, 'Unverified User');
 
-INSERT INTO organizations (name, logo_url, donated, receiving) VALUES
-('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE),
-('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE),
-('Organs-i-ate-em', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationThree', 300, TRUE),
-('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, FALSE),
-('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE);
-
 INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
 ('Charity One', 'A nice clever description for a drab default charity', '2021-01-01', '2021-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
-('Charity Two', 'Description for charity two', '2024-01-01', '2025-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
+('ScottMagic', 'We will make sure Scott never forgets his Magic cards again', '2024-01-01', '2025-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
 ('Bikes4Kids', 'Buying little bicycles for poor little children', '2023-01-01', '2024-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
 ('Little Treat', 'Fundraise so Anika can afford to have a little treat :-) <3', '2020-01-01', '2026-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
-('Charity Five', 'Description for charity five', '2023-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
+('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
 
-INSERT INTO charity_organization (charity_id, organization_id) VALUES
-(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), -- first charity has all organizations attached
-(2, 2), (2, 3), (2, 4), (2, 5),
-(3, 3), (3, 4), (3, 5),
-(4, 4), (4, 5),
-(5, 5);
+INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
+-- charity 1 has no linked organizations
+-- charity 2 has one donor
+('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 2),
+-- charity 3 has one receiver
+('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 3),
+-- charity 4 has one donor and one receiver
+('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 4),
+('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);
