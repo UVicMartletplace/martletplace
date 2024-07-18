@@ -7,7 +7,6 @@ import { AuthenticatedRequest } from "../../lib/src/auth";
 describe('Get User Search History Endpoint', () => {
   it('should return the top 5 search history successfully in order', async () => {
     const req = {
-      params: { userID: '1' },
       user: { userId: '1' }
     } as unknown as AuthenticatedRequest;
 
@@ -40,9 +39,8 @@ describe('Get User Search History Endpoint', () => {
     });
   });
 
-  it('should return an error if no search history found', async () => {
+  it('should return an empty list if no search history is found', async () => {
     const req = {
-      params: { userID: '1' },
       user: { userId: '1' }
     } as unknown as AuthenticatedRequest;
 
@@ -57,13 +55,12 @@ describe('Get User Search History Endpoint', () => {
 
     await getUserSearchHistory(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ error: "No search history found for this user" });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ searches: [] });
   });
 
   it('should return an error if there is a server error', async () => {
     const req = {
-      params: { userID: '1' },
       user: { userId: '1' }
     } as unknown as AuthenticatedRequest;
 
@@ -80,43 +77,5 @@ describe('Get User Search History Endpoint', () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ error: 'Something went wrong' });
-  });
-
-  it('should return an error if user ID is not provided', async () => {
-    const req = {
-      params: { userID: '' },
-      user: { userId: '1' }
-    } as unknown as AuthenticatedRequest;
-
-    const res = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
-    } as unknown as Response;
-
-    const db = {} as unknown as IDatabase<object>;
-
-    await getUserSearchHistory(req, res, db);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'User ID is required' });
-  });
-
-  it('should return an error if user ID does not match authenticated user', async () => {
-    const req = {
-      params: { userID: '2' },
-      user: { userId: '1' }
-    } as unknown as AuthenticatedRequest;
-
-    const res = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
-    } as unknown as Response;
-
-    const db = {} as unknown as IDatabase<object>;
-
-    await getUserSearchHistory(req, res, db);
-
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Unauthorized action' });
   });
 });

@@ -7,18 +7,7 @@ const getUserSearchHistory = async (
   res: Response,
   db: IDatabase<object>,
 ) => {
-  const { userID } = req.params;
   const id = req.user.userId;
-
-  if (!userID) {
-    console.error("missing user id parameter in request");
-    return res.status(400).json({ error: "User ID is required" });
-  }
-
-  if (userID !== id.toString()) {
-    console.error("user id does not match authenticated user");
-    return res.status(403).json({ error: "Unauthorized action" });
-  }
 
   const query = `
         SELECT search_id, search_term, created_at
@@ -29,14 +18,7 @@ const getUserSearchHistory = async (
       `;
 
   try {
-    const data = await db.any(query, [userID]);
-
-    if (data.length === 0) {
-      console.error("no search history found for this user");
-      return res
-        .status(404)
-        .json({ error: "No search history found for this user" });
-    }
+    const data = await db.any(query, [id]);
 
     const response = {
       searches: data.map((search) => ({
