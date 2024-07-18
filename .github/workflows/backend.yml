@@ -128,7 +128,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: ${{ matrix.service }}
+          image-ref: "martletplace-${{ matrix.service }}"
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
