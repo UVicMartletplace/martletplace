@@ -16,7 +16,7 @@ describe('Delete User Search History Endpoint', () => {
     } as unknown as Response;
 
     const db = {
-      result: vi.fn().mockResolvedValueOnce({ rowCount: 5 }), // mocking the deletion operation
+      result: vi.fn().mockResolvedValueOnce({ rowCount: 5 }),
     } as unknown as IDatabase<object>;
 
     await deleteUserSearchHistory(req, res, db);
@@ -38,7 +38,7 @@ describe('Delete User Search History Endpoint', () => {
     } as unknown as Response;
 
     const db = {
-      result: vi.fn().mockResolvedValueOnce({ rowCount: 0 }), // mocking the deletion operation
+      result: vi.fn().mockResolvedValueOnce({ rowCount: 0 }),
     } as unknown as IDatabase<object>;
 
     await deleteUserSearchHistory(req, res, db);
