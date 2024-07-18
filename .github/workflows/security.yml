@@ -31,4 +31,4 @@ jobs:
       - name: Nuclei - Vulnerability Scan
         uses: projectdiscovery/nuclei-action@v2.0.1
         with:
-          target: http://localhost/
+          target: http://127.0.0.1/
