@@ -16,6 +16,7 @@ import ConfirmEmail from "./pages/ConfirmEmail";
 import ViewProfile from "./pages/ViewProfile";
 import Profile from "./pages/Profile";
 import Charities from "./pages/Charities";
+import CreateNewPassword from "./pages/CreateNewPassword";
 
 function App() {
   return (
@@ -31,6 +32,14 @@ function App() {
               </AuthRoute>
             }
           />
+          <Route
+            path="/user/create-new-password/:token"
+            element={
+              <AuthRoute>
+                <CreateNewPassword />
+              </AuthRoute>
+            }
+          />
           {/* Auth Routes */}
           <Route
             path="/user/login"
@@ -41,7 +50,7 @@ function App() {
             }
           />
           <Route
-            path="/user/resetpassword"
+            path="/user/reset-password"
             element={
               <AuthRoute>
                 <ForgotPassword />

@@ -90,7 +90,7 @@ describe("<Login />", () => {
   it("shows forget password link", () => {
     cy.contains("Forgot Password?")
       .should("be.visible")
-      .and("have.attr", "href", "/user/resetpassword");
+      .and("have.attr", "href", "/user/reset-password");
   });
 
   it("shows create account link", () => {
