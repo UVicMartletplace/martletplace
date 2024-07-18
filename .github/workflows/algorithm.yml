@@ -64,6 +64,7 @@ jobs:
     strategy:
       matrix:
         service: [search, recommend]
+        fail-fast: false
     defaults:
       run:
         working-directory: apps/algorithm/${{ matrix.service }}
