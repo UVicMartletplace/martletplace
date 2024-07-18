@@ -124,7 +124,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker compose up -d ${{ matrix.service }}
+          docker compose build ${{ matrix.service }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.20.0
