@@ -24,6 +24,7 @@ describe("<Profile />", () => {
     cy.get("#username").should("be.visible");
     cy.get("#name").should("be.visible");
     cy.get("#bio").should("be.visible");
+    cy.get("#ClearHistory_button").should("be.visible");
   });
 
   const testUsername = "theboywholived";

@@ -5,6 +5,8 @@ import {
   Menu,
   MenuItem,
   useMediaQuery,
+  Paper,
+  MenuList,
 } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import message from "../images/message.png";
@@ -16,6 +18,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import React from "react";
 import useUser from "../hooks/useUser";
 import { colors } from "../styles/colors";
+import _axios_instance from "../_axios_instance.tsx";
 
 interface SearchObject {
   query: string;
@@ -28,6 +31,11 @@ interface SearchObject {
   sort: string;
   page: number;
   limit: number;
+}
+
+interface searchHistory {
+  searchTerm: string;
+  searchID: number;
 }
 
 const SearchBar = () => {
@@ -59,6 +67,8 @@ const SearchBar = () => {
 
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [searchFocus, setSearchFocus] = useState(false);
+  const [searchHistory, setSeachHistory] = useState<searchHistory[]>([]);
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -122,6 +132,14 @@ const SearchBar = () => {
       page: 1,
       limit: 8,
     };
+    _axios_instance
+      .get("/user/search-history")
+      .then((response) => {
+        setSeachHistory(response.data.searches);
+      })
+      .catch((error) => {
+        console.error("Error getting search history:", error);
+      });
     if (location.pathname === "/query") {
       //Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
@@ -190,6 +208,10 @@ const SearchBar = () => {
   const isDesktop = useMediaQuery("(min-width:1240px)");
   const isSmallPage = useMediaQuery("(min-width:740px)");
 
+  const handleMenuItemClick = (searchTerm: string) => {
+    setSearchInput(searchTerm);
+  };
+
   return (
     <Grid
       container
@@ -223,7 +245,7 @@ const SearchBar = () => {
           </Button>
         )}
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={6} style={{ position: "relative" }}>
         <TextField
           id="outlined-basic"
           placeholder="Search"
@@ -233,7 +255,34 @@ const SearchBar = () => {
           value={searchInput}
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyDown}
+          onFocus={() => setSearchFocus(true)}
+          onClick={() => setSearchFocus(true)}
+          onBlur={() => setSearchFocus(false)}
         />
+        {searchFocus && searchHistory.length > 0 && (
+          <Paper
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: 14,
+              width: "98%",
+              zIndex: 10,
+            }}
+            onMouseDown={(event) => event.preventDefault()}
+          >
+            <MenuList>
+              {Array.isArray(searchHistory) &&
+                searchHistory.map((searchTerm) => (
+                  <MenuItem
+                    key={searchTerm.searchID}
+                    onClick={() => handleMenuItemClick(searchTerm.searchTerm)}
+                  >
+                    {searchTerm.searchTerm}
+                  </MenuItem>
+                ))}
+            </MenuList>
+          </Paper>
+        )}
       </Grid>
       <Grid item>
         <Button

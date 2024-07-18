@@ -166,6 +166,19 @@ const Profile = () => {
     setEditMode(false);
   };
 
+  const handleClearHistory = () => {
+    _axios_instance
+      .delete("/user/search-history")
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Search history cleared successfully.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching listings:", error);
+      });
+  };
+
   return (
     <>
       {isDesktop ? <AccountSidebar selectedItem="My Profile" /> : <SearchBar />}
@@ -235,6 +248,15 @@ const Profile = () => {
             onChange={(e) => handleInputChange(e, "bio")}
             id="bio"
           />
+          <Button
+            type="button"
+            variant="contained"
+            sx={classes.button}
+            onClick={handleClearHistory}
+            id="ClearHistory_button"
+          >
+            Clear Search History
+          </Button>
           <Button
             type="button"
             variant="contained"
