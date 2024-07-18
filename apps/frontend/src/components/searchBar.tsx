@@ -132,7 +132,6 @@ const SearchBar = () => {
       page: 1,
       limit: 8,
     };
-    //NEED TO ADD THE TOKEN TO THE REQUEST
     _axios_instance
       .get("/user/search-history")
       .then((response) => {
