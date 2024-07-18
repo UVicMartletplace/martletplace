@@ -24,7 +24,7 @@ const deleteListing = async (
 
     if (result.rowCount === 0) {
       console.error("listing not found");
-      return res.status(404).json({ error: "Listing not found" });
+      return res.status(200).json({ error: "Listing not found" });
     }
 
     return res.status(200).json({ message: "Listing deleted successfully" });

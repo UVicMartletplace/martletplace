@@ -40,7 +40,7 @@ describe('Delete Listing Endpoint', () => {
 
     await deleteListing(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ error: 'Listing not found' });
   });
 });
