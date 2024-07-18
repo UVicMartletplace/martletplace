@@ -29,7 +29,7 @@ const getUserSearchHistory = async (
 
     return res.status(200).json(response);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };

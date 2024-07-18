@@ -21,7 +21,7 @@ const deleteUserSearchHistory = async (
       .status(200)
       .json({ message: "All search history deleted successfully" });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
