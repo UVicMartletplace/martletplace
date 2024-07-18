@@ -108,7 +108,7 @@ describe('Get Listing by ID Endpoint', () => {
 
     await getListingById(req, res, db);
 
-    expect(res.status).toHaveBeenCalledWith(204);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Listing not found' });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ listing: {} });
   });
 });

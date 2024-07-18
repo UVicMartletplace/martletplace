@@ -57,7 +57,7 @@ const updateListing = async (
 
     if (!updatedListing) {
       console.error("listing not found");
-      return res.status(204).json({ error: "Listing not found" });
+      return res.status(200).json({ error: "Listing not found" });
     }
 
     const responseListing = {
