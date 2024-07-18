@@ -111,3 +111,27 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - run: npm audit --audit-level high
+
+  vuln:
+    name: Run Trivy vulnerability scanner
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user, listing, review, message]
+        fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker compose build ${{ matrix.service }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "martletplace-${{ matrix.service }}"
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

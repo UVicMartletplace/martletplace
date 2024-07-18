@@ -64,7 +64,7 @@ jobs:
     strategy:
       matrix:
         service: [search, recommend]
-      fail-fast: false
+        fail-fast: false
     defaults:
       run:
         working-directory: apps/algorithm/${{ matrix.service }}
@@ -92,3 +92,26 @@ jobs:
       - uses: pypa/gh-action-pip-audit@v1.0.8
         with:
           inputs: apps/algorithm/${{ matrix.service }}/requirements.txt
+  vuln:
+    name: Run Trivy vulnerability scanner
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [search, recommend]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker compose up -d ${{ matrix.service }} datalayer database elasticsearch 
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "martletplace-${{ matrix.service }}"
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
