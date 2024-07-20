@@ -9,4 +9,5 @@ goose = "^0.16"
 goose-eggs = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-fake = { version = "2.9.2", features = ["derive"] }
+fake = { version = "2.9.2", features = ["derive", "uuid"] }
+rand = "0.8.4"

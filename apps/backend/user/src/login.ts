@@ -24,7 +24,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    if (!user.verified) {
+    if (!user.verified && process.env.SKIP_USER_VERIFICATION != "TRUE") {
       return res.status(401).json({ error: "User is not verified" });
     }
 
