@@ -24,14 +24,18 @@ async fn signup_login(user: &mut GooseUser) -> TransactionResult {
     });
     let signup_goose = user.post_json("/api/user", &signup_json).await?;
     let validate = &Validate::builder().status(201).build();
-    validate_page(user, signup_goose, validate).await?;
+    validate_page(user, signup_goose, validate)
+        .await
+        .expect("to be able to signup");
     let login_json = &serde_json::json!({
           "email": format!("{}@uvic.ca", username),
           "password": password,
     });
     let login_goose = user.post_json("/api/user/login", &login_json).await?;
     let validate = &Validate::builder().status(200).header("Set-Cookie").build();
-    validate_page(user, login_goose, validate).await?;
+    validate_page(user, login_goose, validate)
+        .await
+        .expect("to be able to login");
     Ok(())
 }
 
