@@ -63,7 +63,6 @@ describe("CreateCharity", () => {
     cy.get("#upload-input-0").attachFile(["../../src/images/test_image2.jpg"]);
     cy.get("#add-organization").click();
     cy.get("#org-title-1").type("Jim's Wildlife Rescue");
-    cy.get("#org-donation-1").type("0");
     cy.get("#upload-input-1").attachFile(["../../src/images/test_image3.jpg"]);
     cy.get("#org-received-1").click();
     cy.get("#submit-button").click();
