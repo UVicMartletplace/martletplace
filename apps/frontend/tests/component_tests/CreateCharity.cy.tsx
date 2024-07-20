@@ -6,7 +6,7 @@ const expectedBody = {
   name: "Save the whales",
   description: "This charity saves whales",
   startDate: "2024-07-20T00:00:00.000Z",
-  endDate: "2024-08-20T00:00:00.000Z",
+  endDate: "2024-07-31T00:00:00.000Z",
   imageUrl: "https://picsum.photos/200/300",
   organizations: [
     {

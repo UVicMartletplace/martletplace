@@ -47,8 +47,8 @@ const CreateCharity = () => {
   const [newCharityObject, setNewCharityObject] = useState<CharityObject>({
     name: "",
     description: "",
-    startDate: "",
-    endDate: "",
+    startDate: "2024-07-01T00:00:00.000Z",
+    endDate: "2024-07-31T00:00:00.000Z",
     imageUrl: "",
     organizations: [],
   });
@@ -58,7 +58,7 @@ const CreateCharity = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    if (!dateError) return;
+    if (dateError) return;
     const logoURL = await asyncListingImageWrapperLogo();
     if (!logoURL) {
       alert("Image failed to upload");
@@ -73,7 +73,14 @@ const CreateCharity = () => {
         );
         if (response) {
           alert("Charity Created!");
-          window.location.reload();
+          setNewCharityObject({
+            name: "",
+            description: "",
+            startDate: "2024-07-01T00:00:00.000Z",
+            endDate: "2024-07-31T00:00:00.000Z",
+            imageUrl: "",
+            organizations: [],
+          });
         } else {
           alert("Charity Creation Failed");
         }
@@ -266,6 +273,7 @@ const CreateCharity = () => {
     if (dateValue) {
       const dateEnd = new Date(dateValue);
       const dateStart = new Date(startDate);
+      console.log(dateEnd.toISOString());
       updateNewCharityPayload("endDate", dateEnd.toISOString());
       setDateError(
         dateEnd > dateStart ? "" : "End Date must be after Start Date",
@@ -284,8 +292,9 @@ const CreateCharity = () => {
   const updateOrganizationName = (
     event: ChangeEvent<HTMLInputElement>,
     key: string,
+    listingIndex: number,
   ) => {
-    const index = indexFromKey(key);
+    const index = indexFromKey(key, listingIndex);
     if (index !== -1) {
       updateOrganizationPayload(index, "name", event.target.value);
     }
@@ -294,8 +303,9 @@ const CreateCharity = () => {
   const updateOrganizationDonated = (
     event: ChangeEvent<HTMLInputElement>,
     key: string,
+    listingIndex: number,
   ) => {
-    const index = indexFromKey(key);
+    const index = indexFromKey(key, listingIndex);
     if (index !== -1) {
       updateOrganizationPayload(
         index,
@@ -308,22 +318,19 @@ const CreateCharity = () => {
   const updateOrganizationReceiving = (
     event: ChangeEvent<HTMLInputElement>,
     key: string,
+    listingIndex: number,
   ) => {
-    const index = indexFromKey(key);
+    const index = indexFromKey(key, listingIndex);
     if (index !== -1) {
       updateOrganizationPayload(index, "receiving", event.target.checked);
     }
   };
 
   // Finds the index given a key(org name)
-  const indexFromKey = (key: string): number => {
-    let i = 0;
-    for (; i < newCharityObject.organizations.length; i++) {
-      if (newCharityObject.organizations[i].name == key) {
-        return i;
-      }
-    }
-    return -1;
+  const indexFromKey = (key: string, listingIndex: number): number => {
+    return newCharityObject.organizations[listingIndex].name == key
+      ? listingIndex
+      : -1;
   };
 
   // Removes an organization, and re-indexes the images
@@ -434,6 +441,10 @@ const CreateCharity = () => {
     });
   };
 
+  const getOrgRecievingByIndex = (index: number) => {
+    return newCharityObject.organizations[index].receiving;
+  };
+
   return (
     <>
       <SearchBar />
@@ -533,12 +544,16 @@ const CreateCharity = () => {
                                   onChange={(
                                     e: ChangeEvent<HTMLInputElement>,
                                   ) =>
-                                    updateOrganizationName(e, organization.name)
+                                    updateOrganizationName(
+                                      e,
+                                      organization.name,
+                                      index,
+                                    )
                                   }
                                   value={organization.name}
                                   sx={{ margin: "10px" }}
                                 />
-                                {!organization.receiving ? (
+                                {!getOrgRecievingByIndex(index) ? (
                                   <TextField
                                     type="number"
                                     label="Donated Number"
@@ -549,6 +564,7 @@ const CreateCharity = () => {
                                       updateOrganizationDonated(
                                         e,
                                         organization.name,
+                                        index,
                                       )
                                     }
                                     value={organization.donated.toString()}
@@ -590,6 +606,7 @@ const CreateCharity = () => {
                                         updateOrganizationReceiving(
                                           e,
                                           organization.name,
+                                          index,
                                         )
                                       }
                                     />
