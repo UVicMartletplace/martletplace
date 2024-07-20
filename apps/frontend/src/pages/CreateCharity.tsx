@@ -8,6 +8,7 @@ import {
   Container,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   Paper,
   TextField,
@@ -35,8 +36,10 @@ interface ImageUploadedObject {
 }
 
 const CreateCharity = () => {
-  const [sent, setSent] = useState(false);
-  const [startDate, setStartDate] = useState<string>("2024-07-15");
+  const [startDate, setStartDate] = useState<string>("2024-07-01");
+  const [endDate, setEndDate] = useState<string>("2024-07-31");
+  const [dateError, setDateError] = useState<string>("");
+
   const [partnerImages, setPartnerImages] = useState<ImageObject[]>([]);
   const [logoImage, setLogoImage] = useState<File | null>(null);
   const [logoImageString, setLogoImageString] = useState<string>();
@@ -55,7 +58,6 @@ const CreateCharity = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    if (sent) return;
     const logoURL = await asyncListingImageWrapperLogo();
     if (!logoURL) {
       alert("Image failed to upload");
@@ -70,19 +72,16 @@ const CreateCharity = () => {
         );
         if (response) {
           alert("Charity Created!");
-          setSent(true);
+          window.location.reload();
         } else {
           alert("Charity Creation Failed");
-          setSent(false);
         }
       } catch (error) {
         alert("Charity Creation Failed");
         console.error(error);
-        setSent(false);
       }
     } else {
       alert("Images failed to upload, please try again later");
-      setSent(false);
     }
   };
 
@@ -252,10 +251,24 @@ const CreateCharity = () => {
     setStartDate(dateValue);
     if (dateValue) {
       const dateStart = new Date(dateValue);
-      const dateEnd = new Date(dateStart);
-      dateEnd.setDate(dateStart.getDate() + 31);
+      const dateEnd = new Date(endDate);
       updateNewCharityPayload("startDate", dateStart.toISOString());
+      setDateError(
+        dateEnd > dateStart ? "" : "End Date must be after Start Date",
+      );
+    }
+  };
+
+  const updateEndDate = (event: ChangeEvent<HTMLInputElement>) => {
+    const dateValue = event.target.value;
+    setEndDate(dateValue);
+    if (dateValue) {
+      const dateEnd = new Date(dateValue);
+      const dateStart = new Date(startDate);
       updateNewCharityPayload("endDate", dateEnd.toISOString());
+      setDateError(
+        dateEnd > dateStart ? "" : "End Date must be after Start Date",
+      );
     }
   };
 
@@ -318,11 +331,10 @@ const CreateCharity = () => {
       const updatedOrganizations = [...prevState.organizations];
 
       updatedOrganizations.splice(index, 1);
-
+      let updatedPartnerImages;
       for (let i = 0; i < partnerImages.length; i++) {
-        console.log("index", i, partnerImages);
         if (partnerImages[i].index == index) {
-          const updatedPartnerImages = partnerImages;
+          updatedPartnerImages = partnerImages;
           updatedPartnerImages.splice(i, 1);
           for (i = 0; i < updatedPartnerImages.length; i++) {
             updatedPartnerImages[i].index = i;
@@ -409,7 +421,7 @@ const CreateCharity = () => {
       <Container>
         <Card sx={{ marginTop: "32px", padding: "10px" }}>
           <CardContent>
-            <Typography variant={"h5"}>Create Charity</Typography>
+            <Typography variant="h5">Create Charity</Typography>
             <Box>
               <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                 <FormControl
@@ -430,17 +442,18 @@ const CreateCharity = () => {
                     onChange={updateDescription}
                     value={newCharityObject.description}
                   />
-                  <img
-                    src={logoImageString}
-                    style={{
-                      display: logoImageString ? "block" : "none",
-                      maxHeight: "300px",
-                      width: "auto",
-                      aspectRatio: "auto",
-                      objectFit: "contain",
-                    }}
-                    alt={"Charity Event Logo"}
-                  />
+                  {logoImageString ?? (
+                    <img
+                      src={logoImageString}
+                      style={{
+                        maxHeight: "300px",
+                        width: "auto",
+                        aspectRatio: "auto",
+                        objectFit: "contain",
+                      }}
+                      alt="Charity Event Logo"
+                    />
+                  )}
                   <Button
                     variant="contained"
                     component="label"
@@ -461,8 +474,20 @@ const CreateCharity = () => {
                     id="charity-date"
                     onChange={updateStartDate}
                     value={startDate}
+                    error={!!dateError}
                   />
 
+                  <TextField
+                    type="date"
+                    label="Charity End Date"
+                    id="charity-date-end"
+                    onChange={updateEndDate}
+                    value={endDate}
+                    error={!!dateError}
+                  />
+                  {dateError && (
+                    <FormHelperText error>{dateError}</FormHelperText>
+                  )}
                   <Paper
                     sx={{
                       width: "100%",
@@ -483,7 +508,7 @@ const CreateCharity = () => {
                                 <TextField
                                   type="text"
                                   label="Organization Title"
-                                  id={"org-title-" + index}
+                                  id={"org-title-${index}"}
                                   onChange={(
                                     e: ChangeEvent<HTMLInputElement>,
                                   ) =>
@@ -495,7 +520,7 @@ const CreateCharity = () => {
                                 <TextField
                                   type="number"
                                   label="Donated Number"
-                                  id={"org-donation-" + index}
+                                  id={"org-donation-${index}"}
                                   onChange={(
                                     e: ChangeEvent<HTMLInputElement>,
                                   ) =>
@@ -512,14 +537,14 @@ const CreateCharity = () => {
                                 <Button
                                   variant="contained"
                                   component="label"
-                                  id={"upload-button-" + index}
+                                  id={"upload-button-${index}"}
                                 >
                                   Upload Picture
                                   <input
                                     type="file"
                                     hidden
                                     accept="image/*"
-                                    id={"upload-input-" + index}
+                                    id={"upload-input-${index}"}
                                     onChange={(event) => {
                                       handleImageUpload(index, event).then();
                                     }}
@@ -527,7 +552,7 @@ const CreateCharity = () => {
                                 </Button>
                                 <FormControlLabel
                                   label="Charity Receiving?"
-                                  id={"org-received-" + index}
+                                  id={"org-received-${index}"}
                                   sx={{ margin: "10px" }}
                                   control={
                                     <Checkbox
