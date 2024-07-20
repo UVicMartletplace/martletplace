@@ -702,7 +702,6 @@ const CreateCharity = () => {
                         "The Following Object Will be Submitted(Files are uploaded at the end)\n" +
                           JSON.stringify(newCharityObject, null, 2),
                       );
-                      console.log("STATUS\n", newCharityObject);
                     }}
                   >
                     STATUS
