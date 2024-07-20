@@ -47,6 +47,7 @@ describe("CreateCharity", () => {
   });
   it("renders", () => {
     cy.contains("Create Charity").should("be.visible");
+    cy.pause();
   });
   it("submits a charity correctly", () => {
     cy.get("#charity-title").type("Save the whales");

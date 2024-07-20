@@ -58,6 +58,7 @@ const CreateCharity = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
+    if (!dateError) return;
     const logoURL = await asyncListingImageWrapperLogo();
     if (!logoURL) {
       alert("Image failed to upload");
@@ -376,12 +377,30 @@ const CreateCharity = () => {
   ) => {
     if (event.target.files?.[0]) {
       const imageString = await imageBlobToBase64(event.target.files?.[0]);
-      const newImage: ImageObject = {
-        index: index,
-        image: event.target.files?.[0],
-        imageString: imageString,
-      };
-      setPartnerImages((prevState) => [...prevState, newImage]);
+      if (partnerImages.some((obj) => obj.index === index)) {
+        for (let i = 0; i < partnerImages.length; i++) {
+          if (partnerImages[i].index === index) {
+            setPartnerImages((prevList) =>
+              prevList.map((obj) =>
+                obj.index === index
+                  ? {
+                      ...obj,
+                      image: event.target.files?.[0],
+                      imageString: imageString,
+                    }
+                  : obj,
+              ),
+            );
+          }
+        }
+      } else {
+        const newImage: ImageObject = {
+          index: index,
+          image: event.target.files?.[0],
+          imageString: imageString,
+        };
+        setPartnerImages((prevState) => [...prevState, newImage]);
+      }
     }
   };
 
@@ -433,6 +452,7 @@ const CreateCharity = () => {
                     id="charity-title"
                     onChange={updateCharityName}
                     value={newCharityObject.name}
+                    required
                   />
                   <TextField
                     type="text"
@@ -442,18 +462,19 @@ const CreateCharity = () => {
                     onChange={updateDescription}
                     value={newCharityObject.description}
                   />
-                  {logoImageString ?? (
-                    <img
-                      src={logoImageString}
-                      style={{
-                        maxHeight: "300px",
-                        width: "auto",
-                        aspectRatio: "auto",
-                        objectFit: "contain",
-                      }}
-                      alt="Charity Event Logo"
-                    />
-                  )}
+
+                  <img
+                    src={logoImageString}
+                    style={{
+                      display: logoImageString ? "block" : "none",
+                      maxHeight: "300px",
+                      width: "auto",
+                      aspectRatio: "auto",
+                      objectFit: "contain",
+                    }}
+                    alt="Charity Event Logo"
+                  />
+
                   <Button
                     variant="contained"
                     component="label"
@@ -508,7 +529,7 @@ const CreateCharity = () => {
                                 <TextField
                                   type="text"
                                   label="Organization Title"
-                                  id={"org-title-${index}"}
+                                  id={`org-title-${index}`}
                                   onChange={(
                                     e: ChangeEvent<HTMLInputElement>,
                                   ) =>
@@ -517,34 +538,40 @@ const CreateCharity = () => {
                                   value={organization.name}
                                   sx={{ margin: "10px" }}
                                 />
-                                <TextField
-                                  type="number"
-                                  label="Donated Number"
-                                  id={"org-donation-${index}"}
-                                  onChange={(
-                                    e: ChangeEvent<HTMLInputElement>,
-                                  ) =>
-                                    updateOrganizationDonated(
-                                      e,
-                                      organization.name,
-                                    )
-                                  }
-                                  value={organization.donated.toString()}
-                                  sx={{ margin: "10px" }}
-                                />
+                                {!organization.receiving ? (
+                                  <TextField
+                                    type="number"
+                                    label="Donated Number"
+                                    id={`org-donation-${index}`}
+                                    onChange={(
+                                      e: ChangeEvent<HTMLInputElement>,
+                                    ) =>
+                                      updateOrganizationDonated(
+                                        e,
+                                        organization.name,
+                                      )
+                                    }
+                                    value={organization.donated.toString()}
+                                    sx={{ margin: "10px" }}
+                                  />
+                                ) : (
+                                  <Typography sx={{ display: "inline" }}>
+                                    Receiving Charities cant donate
+                                  </Typography>
+                                )}
                               </Box>
                               <Box sx={{ marginLeft: "20px" }}>
                                 <Button
                                   variant="contained"
                                   component="label"
-                                  id={"upload-button-${index}"}
+                                  id={`upload-button-${index}`}
                                 >
                                   Upload Picture
                                   <input
                                     type="file"
                                     hidden
                                     accept="image/*"
-                                    id={"upload-input-${index}"}
+                                    id={`upload-input-${index}`}
                                     onChange={(event) => {
                                       handleImageUpload(index, event).then();
                                     }}
@@ -552,7 +579,7 @@ const CreateCharity = () => {
                                 </Button>
                                 <FormControlLabel
                                   label="Charity Receiving?"
-                                  id={"org-received-${index}"}
+                                  id={`org-received-${index}`}
                                   sx={{ margin: "10px" }}
                                   control={
                                     <Checkbox
