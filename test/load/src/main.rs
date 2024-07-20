@@ -108,6 +108,17 @@ async fn create_review(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
+async fn get_review(user: &mut GooseUser) -> TransactionResult {
+    let goose = user.get_named("/api/review/1", "/api/review/:id").await?;
+    let validate = &Validate::builder()
+        .status(200)
+        .texts(vec!["review_id", "stars", "listingID"])
+        .build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
 async fn get_user(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get_named("/api/user/1", "/api/user/:id").await?;
     let validate = &Validate::builder()
@@ -181,9 +192,10 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(get_recommendations))
                 .register_transaction(transaction!(get_listing).set_weight(20)?)
                 .register_transaction(transaction!(create_listing))
+                .register_transaction(transaction!(get_review).set_weight(10)?)
                 .register_transaction(transaction!(create_review))
-                .register_transaction(transaction!(get_user).set_weight(10)?)
-                .register_transaction(transaction!(get_message_threads).set_weight(5)?)
+                .register_transaction(transaction!(get_user).set_weight(5)?)
+                .register_transaction(transaction!(get_message_threads).set_weight(10)?)
                 .register_transaction(transaction!(search_listings).set_weight(20)?),
         )
         .set_default(GooseDefault::Host, "http://local.martletplace.ca")?
