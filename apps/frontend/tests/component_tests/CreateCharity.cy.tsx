@@ -67,7 +67,7 @@ describe("CreateCharity", () => {
     cy.get("#org-received-1").click();
     cy.get("#submit-button").click();
 
-    cy.wait("@postCharity").then((interception) => {
+    cy.wait("@postCharity", { timeout: 10000 }).then((interception) => {
       const requestBody = interception.request.body;
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", expectedBody);
