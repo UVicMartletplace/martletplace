@@ -10,8 +10,6 @@ use goose::prelude::*;
 use goose_eggs::{validate_and_load_static_assets, validate_page, Validate};
 use rand::Rng;
 
-// BACKEND
-
 async fn signup_login(user: &mut GooseUser) -> TransactionResult {
     let username = Username().fake::<String>();
     let password = format!(
@@ -127,8 +125,6 @@ async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
-// ALGO
-
 async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
     let goose = user
         .get_named("/api/recommendations", "/api/recommendations")
@@ -152,7 +148,7 @@ async fn search_listings(user: &mut GooseUser) -> TransactionResult {
         "/api/search?query={}&latitude={}&longitude={}",
         query, latitude, longitude
     );
-    let goose = user.get(&url).await?;
+    let goose = user.get_named(&url, "/api/search").await?;
 
     let validate = &Validate::builder()
         .status(200)
@@ -162,8 +158,6 @@ async fn search_listings(user: &mut GooseUser) -> TransactionResult {
 
     Ok(())
 }
-
-// FRONTEND
 
 async fn get_index(user: &mut GooseUser) -> TransactionResult {
     let goose = user.get("/").await?;
@@ -178,20 +172,20 @@ async fn main() -> Result<(), GooseError> {
     GooseAttack::initialize()?
         .register_scenario(
             scenario!("Basic (authed)")
-                .register_transaction(transaction!(get_index))
+                .register_transaction(transaction!(get_index).set_weight(20)?)
                 .register_transaction(transaction!(signup_login).set_on_start())
-                .register_transaction(transaction!(get_recommendations).set_weight(3)?)
-                .register_transaction(transaction!(get_listing).set_weight(4)?)
+                .register_transaction(transaction!(get_recommendations))
+                .register_transaction(transaction!(get_listing).set_weight(20)?)
                 .register_transaction(transaction!(create_listing))
                 .register_transaction(transaction!(create_review))
-                .register_transaction(transaction!(get_user))
-                .register_transaction(transaction!(get_message_threads))
-                .register_transaction(transaction!(search_listings)),
+                .register_transaction(transaction!(get_user).set_weight(10)?)
+                .register_transaction(transaction!(get_message_threads).set_weight(5)?)
+                .register_transaction(transaction!(search_listings).set_weight(20)?),
         )
         .set_default(GooseDefault::Host, "http://local.martletplace.ca")?
-        .set_default(GooseDefault::Users, 32)?
-        .set_default(GooseDefault::StartupTime, 8)?
-        .set_default(GooseDefault::RunTime, 8)?
+        .set_default(GooseDefault::Users, 64)?
+        .set_default(GooseDefault::StartupTime, 32)?
+        .set_default(GooseDefault::RunTime, 32)?
         .set_default(GooseDefault::NoResetMetrics, true)?
         .set_default(GooseDefault::ReportFile, "report.html")?
         .execute()
