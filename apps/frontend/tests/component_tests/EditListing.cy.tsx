@@ -40,6 +40,7 @@ const listingObject = {
     { url: "https://picsum.photos/200/300" },
   ],
   distance: 4.2,
+  charityId: "123",
 };
 
 describe("<EditListing />", () => {
@@ -79,6 +80,7 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
+        markedForCharity: false,
       },
       status: "AVAILABLE",
     };
@@ -105,6 +107,9 @@ describe("<EditListing />", () => {
       .should("be.visible")
       .type("{selectAll}0")
       .should("have.value", "0");
+
+    cy.get("#charity-checkbox-label")
+      .should("be.visible").click()
 
     cy.get("#submit-button").should("be.visible").click();
 
@@ -165,6 +170,7 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
+        markedForCharity: true
       },
       status: "SOLD",
     };

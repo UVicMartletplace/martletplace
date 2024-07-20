@@ -24,6 +24,7 @@ describe("<CreateListing />", () => {
     cy.get("#field-price").should("be.visible");
     cy.get("#field-price").should("be.visible");
     cy.get("#submit-button").should("be.visible");
+    cy.get("#charity-checkbox-label").should("be.visible");
   });
 
   it("Clicks the submit button and is successful", () => {
@@ -107,6 +108,7 @@ describe("<CreateListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
+        markedForCharity: false,
       },
     };
 
@@ -131,6 +133,8 @@ describe("<CreateListing />", () => {
       .type("No wear and tear, drop-off available.")
       .should("have.value", "No wear and tear, drop-off available.");
     cy.get("#field-price").type("50").should("have.value", "50");
+
+    cy.get("#charity-checkbox-label").click();
 
     // Attach image files (if this is necessary for your test)
     cy.get("#image-input").attachFile([
@@ -159,12 +163,13 @@ describe("<CreateListing />", () => {
             { url: "https://picsum.photos/200/300" },
             { url: "https://picsum.photos/200/300" },
           ],
+          markedForCharity: true,
         },
       });
     });
   });
 
-  it("Creates a valid listing, and the post request is invalid", () => {
+  it("Creates a invalid listing, and the post request is invalid", () => {
     const listingObject = {
       listing: {
         title: "Used Calculus Textbook",
@@ -176,6 +181,7 @@ describe("<CreateListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
+        markedForCharity: false,
       },
     };
 
@@ -224,6 +230,7 @@ describe("<CreateListing />", () => {
           price: 50,
           location: { latitude: 48.463302, longitude: -123.3108 },
           images: [],
+          markedForCharity: false
         },
       });
     });
