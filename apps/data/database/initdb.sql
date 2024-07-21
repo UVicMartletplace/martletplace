@@ -23,6 +23,7 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_users_email ON users(email);
 
 CREATE TRIGGER users_modified_at BEFORE UPDATE ON users
 FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
@@ -40,6 +41,9 @@ CREATE TABLE listings (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_listings_seller_id ON listings(seller_id);
+CREATE INDEX idx_listings_buyer_id ON listings(buyer_id);
+CREATE INDEX idx_listings_status ON listings(status);
 
 CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings
 FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
@@ -52,6 +56,9 @@ CREATE TABLE messages (
     message_body TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_messages_sender_id ON messages(sender_id);
+CREATE INDEX idx_messages_receiver_id ON messages(receiver_id);
+CREATE INDEX idx_messages_listing_id ON messages(listing_id);
 
 CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
@@ -62,6 +69,8 @@ CREATE TABLE reviews (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_reviews_listing_id ON reviews(listing_id);
+CREATE INDEX idx_reviews_user_id ON reviews(user_id);
 
 CREATE TRIGGER reviews_modified_at BEFORE UPDATE ON reviews
 FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
@@ -74,6 +83,7 @@ CREATE TABLE user_preferences (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);
 
 CREATE TRIGGER user_preferences_modified_at BEFORE UPDATE ON user_preferences
 FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
@@ -84,6 +94,7 @@ CREATE TABLE user_searches (
     search_term VARCHAR NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_user_searches_user_id ON user_searches(user_id);
 
 CREATE TABLE user_clicks (
     click_id SERIAL PRIMARY KEY,
@@ -91,3 +102,4 @@ CREATE TABLE user_clicks (
     listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+CREATE INDEX idx_users_clicks_user_id ON user_clicks(user_id);
