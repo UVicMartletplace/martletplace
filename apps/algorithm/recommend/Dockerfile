@@ -21,4 +21,5 @@ ENV PROCESSED_DATA_URL=https://github.com/UVicMartletplace/martletplace/releases
 
 HEALTHCHECK CMD curl -f http://localhost:8222/.well-known/health
 
-CMD uvicorn src.server:app --host 0.0.0.0 --port 8222 --reload
+CMD gunicorn src.server:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8222
+#CMD uvicorn src.server:app --host 0.0.0.0 --port 8222 --reload
