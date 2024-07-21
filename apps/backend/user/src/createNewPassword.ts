@@ -90,9 +90,7 @@ const createNewPassword = async (
       return res.status(500).json({ error: "User not updated" });
     }
 
-    return res
-      .status(200)
-      .json({ message: "User updated successfully"});
+    return res.status(200).json({ message: "User updated successfully" });
   } catch (err: any) {
     return res.status(500).json({ error: "Something went wrong" });
   }
