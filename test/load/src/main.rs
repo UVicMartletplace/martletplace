@@ -184,6 +184,10 @@ async fn get_index(user: &mut GooseUser) -> TransactionResult {
 
 #[tokio::main]
 async fn main() -> Result<(), GooseError> {
+    const MAX_USERS: usize = 768;
+    const STARTUP_TIME: usize = MAX_USERS / 6;
+    const RUN_TIME: usize = MAX_USERS;
+
     GooseAttack::initialize()?
         .register_scenario(
             scenario!("Basic (authed)")
@@ -199,10 +203,10 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(search_listings).set_weight(20)?),
         )
         .set_default(GooseDefault::Host, "http://local.martletplace.ca")?
-        .set_default(GooseDefault::Users, 64)?
-        .set_default(GooseDefault::StartupTime, 32)?
-        .set_default(GooseDefault::RunTime, 32)?
-        .set_default(GooseDefault::NoResetMetrics, true)?
+        .set_default(
+            GooseDefault::TestPlan,
+            format!("0,0s;{MAX_USERS},{STARTUP_TIME}s;{MAX_USERS},{RUN_TIME};0,0s").as_str(),
+        )?
         .set_default(GooseDefault::ReportFile, "report.html")?
         .execute()
         .await?;
