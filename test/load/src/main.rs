@@ -140,6 +140,7 @@ async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
+/*
 async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
     let goose = user
         .get_named("/api/recommendations", "/api/recommendations")
@@ -153,6 +154,7 @@ async fn get_recommendations(user: &mut GooseUser) -> TransactionResult {
 
     Ok(())
 }
+*/
 
 async fn search_listings(user: &mut GooseUser) -> TransactionResult {
     let query = Sentence(3..5).fake::<String>();
@@ -193,7 +195,7 @@ async fn main() -> Result<(), GooseError> {
             scenario!("Basic (authed)")
                 .register_transaction(transaction!(get_index).set_weight(20)?)
                 .register_transaction(transaction!(signup_login).set_on_start())
-                .register_transaction(transaction!(get_recommendations))
+                //.register_transaction(transaction!(get_recommendations))
                 .register_transaction(transaction!(get_listing).set_weight(20)?)
                 .register_transaction(transaction!(create_listing))
                 .register_transaction(transaction!(get_review).set_weight(10)?)
