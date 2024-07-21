@@ -2,6 +2,7 @@ FROM python:3.12-slim
 
 # No way to disable status logs
 ENV LOG_INTERVAL=999999
+ENV CONSOLE_LOGGING_HANDLER_MIN_LEVEL=WARNING
 
 WORKDIR /app
 
