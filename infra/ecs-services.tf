@@ -15,8 +15,8 @@ module "ecs" {
   fargate_cpu        = var.fargate_cpu
   fargate_memory     = var.fargate_memory
   app_count          = var.app_count
-  app_port           = 3000
-  app_image          = "registry.gitlab.com/architect-io/artifacts/nodejs-hello-world:latest"
+  app_port           = 80
+  app_image          = "ealen/echo-server"
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
