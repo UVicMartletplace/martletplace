@@ -41,6 +41,16 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Define endpoints
 
+// Get user search history
+app.get("/api/user/search-history", (req: Request, res: Response) =>
+  getUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
+);
+
+// Delete user
+app.delete("/api/user/search-history", (req: Request, res: Response) =>
+  deleteUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
+);
+
 // Login
 app.post("/api/user/login", (req: Request, res: Response) =>
   login(req, res, db),
@@ -69,16 +79,6 @@ app.patch("/api/user", (req: Request, res: Response) =>
 // Delete user
 app.delete("/api/user", (req: Request, res: Response) =>
   deleteUser(req as unknown as AuthenticatedRequest, res, db),
-);
-
-// Get user search history
-app.get("/api/user/search-history", (req: Request, res: Response) =>
-  getUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
-);
-
-// Delete user
-app.delete("/api/user/search-history", (req: Request, res: Response) =>
-  deleteUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
 );
 
 // Send Confirmation Email
