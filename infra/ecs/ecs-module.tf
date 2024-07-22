@@ -1,10 +1,6 @@
-resource "aws_ecs_cluster" "main" {
-  name = "martletplace-cluster"
-}
-
 resource "aws_ecs_task_definition" "app" {
   family             = "martletplace-${var.app_name}-task"
-  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn = var.execution_role_arn
   network_mode       = "awsvpc"
   cpu                = var.fargate_cpu
   memory             = var.fargate_memory
@@ -35,13 +31,13 @@ resource "aws_ecs_task_definition" "app" {
 
 resource "aws_ecs_service" "main" {
   name            = "martletplace-${var.app_name}"
-  cluster         = aws_ecs_cluster.main.id
+  cluster         = var.ecs_cluster.id
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = var.app_count
 
   network_configuration {
-    security_groups = [aws_security_group.ecs_tasks.id]
-    subnets         = aws_subnet.private.*.id
+    security_groups = [var.security_group_id]
+    subnets         = var.subnet_ids
   }
 
   load_balancer {
@@ -68,16 +64,50 @@ resource "aws_ecs_service" "main" {
   #depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs-task-execution-role-policy-attachment]
 }
 
+####
+# Loadbalancer
+####
+resource "aws_alb_target_group" "app" {
+  name        = "martletplace-target-group"
+  port        = var.lb_port
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
+    path                = var.health_check_path
+    unhealthy_threshold = "2"
+  }
+}
+
+# Redirect all traffic from the ALB to the target group
+resource "aws_alb_listener" "front_end" {
+  load_balancer_arn = var.alb_id
+  port              = var.lb_port
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = aws_alb_target_group.app.id
+    type             = "forward"
+  }
+}
 
 ####
 # Autoscaling
 ####
 resource "aws_appautoscaling_target" "target" {
   service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.main.name}"
+  resource_id        = "service/${var.ecs_cluster.name}/${aws_ecs_service.main.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   min_capacity       = 1
   max_capacity       = 6
+
+  depends_on = [aws_ecs_service.main]
 }
 
 resource "aws_appautoscaling_policy" "ecs_target_cpu" {
