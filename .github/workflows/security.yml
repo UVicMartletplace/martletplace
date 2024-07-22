@@ -7,7 +7,7 @@ on:
 
 jobs:
   security:
-    name: Secret Detection
+    name: Checkout
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -18,3 +18,11 @@ jobs:
       uses: trufflesecurity/trufflehog@main
       with:
         extra_args: --only-verified
+
+    - name: OWASP ZAP
+      steps:
+      uses: zaproxy/action-baseline@v0.12.0
+      with:
+        target: 'http://local.martletplace.ca'
+        allow_issue_writing: false
+        fail_action: true
