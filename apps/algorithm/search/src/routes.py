@@ -83,6 +83,18 @@ async def search(
             price_range["lte"] = maxPrice
         search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
 
+<<<<<<< HEAD
+=======
+    search_body["query"]["bool"]["filter"].append(
+        {
+            "geo_distance": {
+                "distance": DISTANCE_TO_SEARCH_WITHIN,
+                "location": {"lat": latitude, "lon": longitude},
+            }
+        }
+    )
+
+>>>>>>> 4107f93 (Updated search endpoint to only return listings within 5km of the input location)
     if "DISTANCE" in sort:
         search_body["sort"].append(
             {
