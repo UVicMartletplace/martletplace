@@ -2,6 +2,14 @@ variable "app_name" {
   type = string
 }
 
+variable "app_route" {
+  type = string
+}
+
+variable "app_priority" {
+  type = number
+}
+
 variable "ecs_cluster" {
   type = object({
     name = string
