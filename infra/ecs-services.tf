@@ -26,4 +26,3 @@ module "ecs" {
   health_check_path  = var.health_check_path
   lb_port            = var.lb_port
 }
-#  app_image          = "ealen/echo-server"
