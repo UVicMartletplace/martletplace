@@ -4,7 +4,7 @@ from typing import Dict, Any
 from elasticsearch import Elasticsearch, NotFoundError
 from fastapi import APIRouter, HTTPException, Request, Response
 
-from .config import DEFAULT_INDEX, ES_ENDPOINT
+from .config import DEFAULT_INDEX, ES_ENDPOINT, DISTANCE_TO_SEARCH_WITHIN
 from .database import insert_user_search
 from .enums import Status, SearchType, Sort
 from .validation import validate_search_params
@@ -64,28 +64,25 @@ async def search(
             price_range["lte"] = maxPrice
         search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
 
-    # Commenting out the location-based filtering
-    # search_body["query"]["bool"]["filter"].append(
-    #     {
-    #         "geo_distance": {
-    #             "distance": DISTANCE_TO_SEARCH_WITHIN,
-    #             "location": {"lat": latitude, "lon": longitude},
-    #         }
-    #     }
-    # )
+    search_body["query"]["bool"]["filter"].append(
+        {
+            "geo_distance": {
+                "distance": DISTANCE_TO_SEARCH_WITHIN,
+                "location": {"lat": latitude, "lon": longitude},
+            }
+        }
+    )
 
-    # Commenting out the location-based sorting
     if "DISTANCE" in sort:
-        pass
-        # search_body["sort"].append(
-        #     {
-        #         "_geo_distance": {
-        #             "location": {"lat": latitude, "lon": longitude},
-        #             "order": "asc" if sort == "DISTANCE_ASC" else "desc",
-        #             "unit": "km",
-        #         }
-        #     }
-        # )
+        search_body["sort"].append(
+            {
+                "_geo_distance": {
+                    "location": {"lat": latitude, "lon": longitude},
+                    "order": "asc" if sort == "DISTANCE_ASC" else "desc",
+                    "unit": "km",
+                }
+            }
+        )
     else:
         sort_options = {
             "RELEVANCE": "_score",
