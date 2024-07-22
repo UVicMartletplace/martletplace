@@ -9,6 +9,7 @@ resource "aws_rds_cluster" "db_cluster" {
   storage_encrypted      = true
   vpc_security_group_ids = [aws_security_group.rds_security_group.id]
   db_subnet_group_name   = aws_db_subnet_group.database_subnet_group.name
+  skip_final_snapshot    = true
 
   serverlessv2_scaling_configuration {
     max_capacity = 1.0

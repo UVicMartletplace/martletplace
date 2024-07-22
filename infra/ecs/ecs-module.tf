@@ -24,6 +24,12 @@ resource "aws_ecs_task_definition" "app" {
           containerPort = var.app_port,
           hostPort      = var.app_port
         }
+      ],
+      secrets = [
+        {
+          name      = DB_ENDPOINT,
+          valueFrom = var.database_secret_arn
+        }
       ]
     }
   ])
