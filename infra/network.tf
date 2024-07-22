@@ -21,3 +21,8 @@ resource "aws_route" "internet_access" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.gw.id
 }
+
+resource "aws_db_subnet_group" "database_subnet_group" {
+  subnet_ids = [for subnet in aws_subnet.public : subnet.id]
+  name       = "database_subnet_group"
+}

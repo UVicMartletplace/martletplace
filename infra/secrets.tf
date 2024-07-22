@@ -5,7 +5,8 @@ resource "random_password" "database_password" {
 }
 
 resource "aws_secretsmanager_secret" "database_password_secret" {
-  name = "/martletplace/database_password"
+  name                    = "/martletplace/database_password"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "database_password_version" {
