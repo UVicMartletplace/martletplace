@@ -20,7 +20,16 @@ def setup_and_teardown_index(monkeypatch):
     monkeypatch.setenv("ES_INDEX", TEST_INDEX)
 
     es.options(ignore_status=[404]).indices.delete(index=TEST_INDEX)
-    es.options(ignore_status=[400]).indices.create(index=TEST_INDEX)
+    es.options(ignore_status=[400]).indices.create(
+        index=TEST_INDEX,
+        body={
+            "mappings": {
+                "properties": {
+                    "location": {"type": "geo_point"},
+                }
+            }
+        },
+    )
 
     es.indices.refresh(index=TEST_INDEX)
 
@@ -65,7 +74,7 @@ def test_search_for_existing_listing(auth_headers, mock_insert_user_search):
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -111,7 +120,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -127,7 +136,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 45.4528, "longitude": -75.7060},
+            "location": {"lat": 45.4528, "lon": -75.7060},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -213,7 +222,7 @@ def test_search_with_price_range(auth_headers, mock_insert_user_search):
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -261,7 +270,7 @@ def test_search_with_too_low_price_range_fail(auth_headers, mock_insert_user_sea
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -295,7 +304,7 @@ def test_search_with_too_high_price_range_fail(auth_headers, mock_insert_user_se
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -380,7 +389,7 @@ def test_search_with_status(auth_headers, mock_insert_user_search):
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -396,7 +405,7 @@ def test_search_with_status(auth_headers, mock_insert_user_search):
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 40.7128, "longitude": -74.0060},
+            "location": {"lat": 40.7128, "lon": -74.0060},
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -443,7 +452,7 @@ def test_search_with_status_sold(auth_headers, mock_insert_user_search):
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -459,7 +468,7 @@ def test_search_with_status_sold(auth_headers, mock_insert_user_search):
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -532,7 +541,7 @@ def test_search_with_user_search(auth_headers, mock_insert_user_search):
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -548,7 +557,7 @@ def test_search_with_user_search(auth_headers, mock_insert_user_search):
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 40.7128, "longitude": -74.0060},
+            "location": {"lat": 40.7128, "lon": -74.0060},
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -595,7 +604,7 @@ def test_search_with_user_search_negative(auth_headers, mock_insert_user_search)
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -611,7 +620,7 @@ def test_search_with_user_search_negative(auth_headers, mock_insert_user_search)
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -660,66 +669,66 @@ def test_search_with_invalid_search_type(auth_headers, mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-# def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_user_search):
-#     es.index(
-#         index=TEST_INDEX,
-#         id="abc123",
-#         body={
-#             "listingId": "abc123",
-#             "sellerId": 456,
-#             "title": "High-Performance Laptop",
-#             "description": "A powerful laptop suitable for gaming and professional use.",
-#             "price": 450.00,
-#             "location": {"latitude": 45.4215, "longitude": -75.6972},
-#             "status": "AVAILABLE",
-#             "dateCreated": "2024-05-22T10:30:00Z",
-#             "image_urls": ["https://example.com/image1.jpg"],
-#             "users": {"name": "billybobjoe"}
-#         },
-#     )
-#     es.index(
-#         index=TEST_INDEX,
-#         id="def456",
-#         body={
-#             "listingId": "def456",
-#             "sellerId": 789,
-#             "title": "Used Laptop",
-#             "description": "Lightly used laptop for sale.",
-#             "price": 200.00,
-#             "location": {"latitude": 40.7128, "longitude": -74.0060},
-#             "status": "AVAILABLE",
-#             "dateCreated": "2024-06-01T12:00:00Z",
-#             "image_urls": ["https://example.com/image2.jpg"],
-#             "users": {"name": "janedoe"}
-#         },
-#     )
-#     es.indices.refresh(index=TEST_INDEX)
-#     response = client.get(
-#         "/api/search",
-#         headers=auth_headers,
-#         params={
-#             "query": "laptop",
-#             "latitude": 45.4315,
-#             "longitude": -75.6972,
-#         },
-#     )
-#     assert response.status_code == 200
-#     assert response.json() == {
-#         "items": [
-#             {
-#                 "listingID": "abc123",
-#                 "sellerID": 456,
-#                 "sellerName": "billybobjoe",
-#                 "title": "High-Performance Laptop",
-#                 "description": "A powerful laptop suitable for gaming and professional use.",
-#                 "price": 450,
-#                 "dateCreated": "2024-05-22T10:30:00Z",
-#                 "imageUrl": "https://example.com/image1.jpg",
-#             }
-#         ],
-#         "totalItems": 1,
-#     }
-#     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
+def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_user_search):
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": 456,
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "image_urls": ["https://example.com/image1.jpg"],
+            "users": {"name": "billybobjoe"}
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": 789,
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"lat": 40.7128, "lon": -74.0060},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "image_urls": ["https://example.com/image2.jpg"],
+            "users": {"name": "janedoe"}
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        headers=auth_headers,
+        params={
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": '456',
+                "sellerName": "billybobjoe",
+                "title": "High-Performance Laptop",
+                "description": "A powerful laptop suitable for gaming and professional use.",
+                "price": 450.00,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
 def test_search_with_missing_latitude(auth_headers, mock_insert_user_search):
@@ -808,7 +817,7 @@ def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search)
             "title": "Used Textbook",
             "description": "Lightly used laptop textbook for sale.",
             "price": 300.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image3.jpg"],
@@ -824,7 +833,7 @@ def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search)
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable laptop for laptop gaming laptop and professional laptop use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -840,7 +849,7 @@ def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search)
             "title": "Used Textbook ",
             "description": "Lightly used laptop laptop laptop textbook for sale.",
             "price": 30.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -880,7 +889,7 @@ def test_search_with_sorting_by_price_asc(auth_headers, mock_insert_user_search)
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -896,7 +905,7 @@ def test_search_with_sorting_by_price_asc(auth_headers, mock_insert_user_search)
             "title": "Used Textbook",
             "description": "Lightly used textbook for sale.",
             "price": 30.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -935,7 +944,7 @@ def test_search_with_sorting_by_price_desc(auth_headers, mock_insert_user_search
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -951,7 +960,7 @@ def test_search_with_sorting_by_price_desc(auth_headers, mock_insert_user_search
             "title": "Used Textbook",
             "description": "Lightly used textbook for sale.",
             "price": 30.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -990,7 +999,7 @@ def test_search_with_sorting_by_listed_time_asc(auth_headers, mock_insert_user_s
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -1006,7 +1015,7 @@ def test_search_with_sorting_by_listed_time_asc(auth_headers, mock_insert_user_s
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 45.4528, "longitude": -75.7060},
+            "location": {"lat": 45.4528, "lon": -75.7060},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -1046,7 +1055,7 @@ def test_search_with_sorting_by_listed_time_desc(auth_headers, mock_insert_user_
             "title": "High-Performance Laptop",
             "description": "A powerful laptop suitable for gaming and professional use.",
             "price": 450.00,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
@@ -1062,7 +1071,7 @@ def test_search_with_sorting_by_listed_time_desc(auth_headers, mock_insert_user_
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"latitude": 45.4528, "longitude": -75.7060},
+            "location": {"lat": 45.4528, "lon": -75.7060},
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
@@ -1092,116 +1101,116 @@ def test_search_with_sorting_by_listed_time_desc(auth_headers, mock_insert_user_
     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
-# def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_search):
-#     es.index(
-#         index=TEST_INDEX,
-#         id="abc123",
-#         body={
-#             "listingId": "abc123",
-#             "sellerId": 456,
-#             "title": "High-Performance Laptop",
-#             "description": "A powerful laptop suitable for gaming and professional use.",
-#             "price": 450.00,
-#             "location": {"latitude": 45.4215, "longitude": -75.6972},
-#             "status": "AVAILABLE",
-#             "dateCreated": "2024-05-22T10:30:00Z",
-#             "image_urls": ["https://example.com/image1.jpg"],
-#             "users": {"name": "billybobjoe"}
-#         },
-#     )
-#     es.index(
-#         index=TEST_INDEX,
-#         id="def456",
-#         body={
-#             "listingId": "def456",
-#             "sellerId": 789,
-#             "title": "Used Laptop",
-#             "description": "Lightly used laptop for sale.",
-#             "price": 200.00,
-#             "location": {"latitude": 45.4528, "longitude": -75.7060},
-#             "status": "AVAILABLE",
-#             "dateCreated": "2024-06-01T12:00:00Z",
-#             "image_urls": ["https://example.com/image2.jpg"],
-#             "users": {"name": "janedoe"}
-#         },
-#     )
-#     es.indices.refresh(index=TEST_INDEX)
-#     response = client.get(
-#         "/api/search",
-#         headers=auth_headers,
-#         params={
-#             "query": "laptop",
-#             "latitude": 45.4315,
-#             "longitude": -75.6972,
-#             "sort": "DISTANCE_ASC",
-#         },
-#     )
-#     assert response.status_code == 200
-#     results = response.json()
-#     assert isinstance(results, dict)
-#     assert "items" in results
-#     assert "totalItems" in results
-#     assert len(results["items"]) > 0
-#     assert results["items"][0]["listingID"] == "abc123"
-#     assert results["items"][1]["listingID"] == "def456"
-#     assert results["totalItems"] == 2
-#     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
-#
-#
-# def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_search):
-#     es.index(
-#         index=TEST_INDEX,
-#         id="abc123",
-#         body={
-#             "listingId": "abc123",
-#             "sellerId": 456,
-#             "title": "High-Performance Laptop",
-#             "description": "A powerful laptop suitable for gaming and professional use.",
-#             "price": 450.00,
-#             "location": {"latitude": 45.4215, "longitude": -75.6972},
-#             "status": "AVAILABLE",
-#             "dateCreated": "2024-05-22T10:30:00Z",
-#             "image_urls": ["https://example.com/image1.jpg"],
-#             "users": {"name": "billybobjoe"}
-#         },
-#     )
-#     es.index(
-#         index=TEST_INDEX,
-#         id="def456",
-#         body={
-#             "listingId": "def456",
-#             "sellerId": 789,
-#             "title": "Used Laptop",
-#             "description": "Lightly used laptop for sale.",
-#             "price": 200.00,
-#             "location": {"latitude": 45.4528, "longitude": -75.7060},
-#             "status": "AVAILABLE",
-#             "dateCreated": "2024-06-01T12:00:00Z",
-#             "image_urls": ["https://example.com/image2.jpg"],
-#             "users": {"name": "janedoe"}
-#         },
-#     )
-#     es.indices.refresh(index=TEST_INDEX)
-#     response = client.get(
-#         "/api/search",
-#         headers=auth_headers,
-#         params={
-#             "query": "laptop",
-#             "latitude": 45.4315,
-#             "longitude": -75.6972,
-#             "sort": "DISTANCE_DESC",
-#         },
-#     )
-#     assert response.status_code == 200
-#     results = response.json()
-#     assert isinstance(results, dict)
-#     assert "items" in results
-#     assert "totalItems" in results
-#     assert len(results["items"]) > 0
-#     assert results["items"][0]["listingID"] == "def456"
-#     assert results["items"][1]["listingID"] == "abc123"
-#     assert results["totalItems"] == 2
-#     mock_insert_user_search.assert_awaited_once_with(5, "laptop")
+def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_search):
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": 456,
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "image_urls": ["https://example.com/image1.jpg"],
+            "users": {"name": "billybobjoe"}
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": 789,
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"lat": 45.4528, "lon": -75.7060},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "image_urls": ["https://example.com/image2.jpg"],
+            "users": {"name": "janedoe"}
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        headers=auth_headers,
+        params={
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "DISTANCE_ASC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["listingID"] == "abc123"
+    assert results["items"][1]["listingID"] == "def456"
+    assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
+
+
+def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_search):
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": 456,
+            "title": "High-Performance Laptop",
+            "description": "A powerful laptop suitable for gaming and professional use.",
+            "price": 450.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "image_urls": ["https://example.com/image1.jpg"],
+            "users": {"name": "billybobjoe"}
+        },
+    )
+    es.index(
+        index=TEST_INDEX,
+        id="def456",
+        body={
+            "listingId": "def456",
+            "sellerId": 789,
+            "title": "Used Laptop",
+            "description": "Lightly used laptop for sale.",
+            "price": 200.00,
+            "location": {"lat": 45.4528, "lon": -75.7060},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-06-01T12:00:00Z",
+            "image_urls": ["https://example.com/image2.jpg"],
+            "users": {"name": "janedoe"}
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        headers=auth_headers,
+        params={
+            "query": "laptop",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+            "sort": "DISTANCE_DESC",
+        },
+    )
+    assert response.status_code == 200
+    results = response.json()
+    assert isinstance(results, dict)
+    assert "items" in results
+    assert "totalItems" in results
+    assert len(results["items"]) > 0
+    assert results["items"][0]["listingID"] == "def456"
+    assert results["items"][1]["listingID"] == "abc123"
+    assert results["totalItems"] == 2
+    mock_insert_user_search.assert_awaited_once_with(5, "laptop")
 
 
 def test_search_with_invalid_sorting_criteria(auth_headers, mock_insert_user_search):
@@ -1243,7 +1252,7 @@ def test_search_with_pagination(auth_headers, mock_insert_user_search):
             "title": f"Item {i}",
             "description": f"Description of item {i}",
             "price": 100 + i,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
@@ -1338,7 +1347,7 @@ def test_search_with_missing_pagination_parameters(
             "title": f"Item {i}",
             "description": f"Description of item {i}",
             "price": 100 + i,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
@@ -1452,7 +1461,7 @@ def test_total_items_count_with_multiple_listings(
             "title": f"Item {i}",
             "description": f"Description of item {i}",
             "price": 100 + i,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
@@ -1496,7 +1505,7 @@ def test_total_items_count_with_filter(auth_headers, mock_insert_user_search):
             "title": f"Item {i}",
             "description": f"Description of item {i}",
             "price": 100 + i,
-            "location": {"latitude": 45.4215, "longitude": -75.6972},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "AVAILABLE" if i % 2 == 0 else "SOLD",
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
