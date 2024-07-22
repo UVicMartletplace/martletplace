@@ -36,8 +36,9 @@ resource "aws_ecs_service" "main" {
   desired_count   = var.app_count
 
   network_configuration {
-    security_groups = [var.security_group_id]
-    subnets         = var.subnet_ids
+    security_groups  = [var.security_group_id]
+    subnets          = var.subnet_ids
+    assign_public_ip = true
   }
 
   load_balancer {

@@ -22,7 +22,7 @@ module "ecs" {
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
-  subnet_ids         = aws_subnet.private.*.id
+  subnet_ids         = aws_subnet.public.*.id
   health_check_path  = var.health_check_path
   lb_port            = var.lb_port
 }
