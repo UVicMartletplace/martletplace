@@ -39,7 +39,6 @@ variable "app_port" {
 
 variable "lb_port" {
   description = "Port exposed to the pubic internet for the load balancer"
-  default     = 80
 }
 
 variable "app_count" {
