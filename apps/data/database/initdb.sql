@@ -92,3 +92,21 @@ CREATE TABLE user_clicks (
     listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE charities (
+    charity_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    image_url TEXT
+);
+
+CREATE TABLE organizations (
+    organization_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    logo_url TEXT,
+    donated DECIMAL(10, 2),
+    receiving BOOLEAN,
+    charity_id INTEGER NOT NULL REFERENCES charities(charity_id) ON DELETE CASCADE
+);
