@@ -32,12 +32,10 @@ const getListingsByUser = async (
       console.error("no listings found for this user");
       return res.status(200).json({ listings: [] });
     }
-    
+
     const responseListings = listings.map((listing) => {
-      console.log(listing.location)
-      const location = listing.location.replace(/[()]/g, '');
-      const [latitude, longitude] = location.split(',').map(Number);
-      console.log(latitude, longitude)
+      const location = listing.location.replace(/[()]/g, "");
+      const [latitude, longitude] = location.split(",").map(Number);
       return {
         listingID: String(listing.listingID),
         title: listing.title,
@@ -45,7 +43,7 @@ const getListingsByUser = async (
         price: listing.price,
         location: {
           latitude: latitude,
-          longitude: longitude
+          longitude: longitude,
         },
         status: listing.status,
         dateCreated: listing.dateCreated,
