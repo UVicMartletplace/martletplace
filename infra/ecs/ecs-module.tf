@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "app" {
       ],
       secrets = [
         {
-          name      = DB_ENDPOINT,
+          name      = "DB_ENDPOINT",
           valueFrom = var.database_secret_arn
         }
       ]
