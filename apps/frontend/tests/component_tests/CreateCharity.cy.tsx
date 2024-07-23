@@ -24,17 +24,18 @@ const expectedBody = {
   ],
 };
 
+const page = (
+  <UserProvider>
+    <MemoryRouter initialEntries={[`/charity/new`]}>
+      <Routes>
+        <Route path="/charity/new" element={<CreateCharity />} />
+      </Routes>
+    </MemoryRouter>
+  </UserProvider>
+);
+
 describe("CreateCharity", () => {
   beforeEach(() => {
-    cy.mount(
-      <UserProvider>
-        <MemoryRouter initialEntries={[`/charity/new`]}>
-          <Routes>
-            <Route path="/charity/new" element={<CreateCharity />} />
-          </Routes>
-        </MemoryRouter>
-      </UserProvider>,
-    );
     cy.intercept("POST", "/api/images", {
       statusCode: 201,
       body: { url: "https://picsum.photos/200/300" },
@@ -46,10 +47,12 @@ describe("CreateCharity", () => {
     cy.viewport(1280, 720);
   });
   it("renders", () => {
+    cy.mount(page);
     cy.contains("Create Charity").should("be.visible");
     cy.pause();
   });
   it("submits a charity correctly", () => {
+    cy.mount(page);
     cy.get("#charity-title").type("Save the whales");
     cy.get("#charity-description").type("This charity saves whales");
     cy.get("#upload-logo-input").attachFile([
@@ -61,13 +64,15 @@ describe("CreateCharity", () => {
     cy.get("#org-title-0").type("Google");
     cy.get("#org-donation-0").type("10000");
     cy.get("#upload-input-0").attachFile(["../../src/images/test_image2.jpg"]);
+    cy.wait(1000);
     cy.get("#add-organization").click();
     cy.get("#org-title-1").type("Jim's Wildlife Rescue");
     cy.get("#upload-input-1").attachFile(["../../src/images/test_image3.jpg"]);
+    cy.wait(1000);
     cy.get("#org-received-1").click();
-    cy.get("#submit-button").click();
+    cy.get("#submit-button").should("be.visible").click();
 
-    cy.wait("@postCharity", { timeout: 10000 }).then((interception) => {
+    cy.wait("@postCharity", { timeout: 5000 }).then((interception) => {
       const requestBody = interception.request.body;
       cy.log("Request Body", requestBody);
       cy.log("Expected Body", expectedBody);
