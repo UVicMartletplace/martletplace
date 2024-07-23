@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "start": "nodemon --watch src --watch ../lib/src src/index.ts",
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=server.js",
     "test": "vitest run",
     "test:ci": "vitest run",
     "lint": "eslint src/**/*.ts",
@@ -20,6 +21,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.4",
+    "esbuild": "0.23.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.2",
