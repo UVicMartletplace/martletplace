@@ -17,6 +17,20 @@ variable "ecs_cluster" {
   })
 }
 
+variable "secrets" {
+  type = list(object({
+    name      = string
+    valueFrom = string
+  }))
+}
+
+variable "environment" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+}
+
 variable "alb_id" {
   type = string
 }
@@ -63,8 +77,4 @@ variable "fargate_cpu" {
 
 variable "fargate_memory" {
   description = "Fargate instance memory to provision (in MiB)"
-}
-
-variable "database_secret_arn" {
-  description = "Database password secret arn"
 }

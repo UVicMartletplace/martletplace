@@ -9,7 +9,7 @@ variable "app_count" {
 }
 
 variable "health_check_path" {
-  default = "/" #"/.well-known/health"
+  default = "/.well-known/health"
 }
 
 variable "fargate_cpu" {
