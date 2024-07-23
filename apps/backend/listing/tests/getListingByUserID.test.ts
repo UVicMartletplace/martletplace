@@ -45,7 +45,10 @@ describe('Get Listings by User Endpoint', () => {
           title: 'Sample Listing',
           description: 'This is a sample listing description',
           price: 100,
-          location: '48.4284,-123.3656',
+          location: {
+            latitude: 48.4284,
+            longitude: -123.3656,
+          },
           status: 'AVAILABLE',
           dateCreated: '2024-07-18T19:12:37.183Z',
           dateModified: '2024-07-18T19:12:37.183Z',
