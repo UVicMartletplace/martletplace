@@ -74,9 +74,7 @@ class Recommender:
         recommendations = tf.nn.l2_normalize(recommendations, axis=1)
 
         similarities = (
-            tf.matmul(
-                recommendations, tf.transpose(self.normalized_item_vectors)
-            )
+            tf.matmul(recommendations, tf.transpose(self.normalized_item_vectors))
             .numpy()
             .flatten()
         )
@@ -122,12 +120,10 @@ class Recommender:
         )
         mean_vectors = tf.reduce_mean(listing_vectors, axis=0, keepdims=True)
         return tf.nn.l2_normalize(mean_vectors, axis=1)
-    
+
     def get_vectors_by_content(self, content):
         if not content:
             return np.zeros((1, self.normalized_item_vectors.shape[1]))
         tfidf_tensor = Recommender.generate_tfidf_vector(content, self.data)
-        aggregated_vector = tf.reduce_mean(
-            tfidf_tensor, axis=0, keepdims=True
-        )
+        aggregated_vector = tf.reduce_mean(tfidf_tensor, axis=0, keepdims=True)
         return tf.nn.l2_normalize(aggregated_vector, axis=1)
