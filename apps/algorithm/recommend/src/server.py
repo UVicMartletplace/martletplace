@@ -221,7 +221,9 @@ async def stop_suggesting_item(
         raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
     await session.execute(
-        text("INSERT INTO user_preferences (user_id, listing_id, weight) VALUES (:user_id, :listing_id, :weight)"),
+        text(
+            "INSERT INTO user_preferences (user_id, listing_id, weight) VALUES (:user_id, :listing_id, :weight)"
+        ),
         {"user_id": user_id, "listing_id": id, "weight": -1.0},
     )
     await session.commit()
