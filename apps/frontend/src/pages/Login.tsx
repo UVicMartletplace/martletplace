@@ -11,25 +11,35 @@ const Login = () => {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [totpCode, setTotpCode] = useState("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-  const isFormIncomplete = !email || !password;
+  const isFormIncomplete = !email || !password || !totpCode;
   const { setUser } = useUser();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
+    if (/^\d{6}$/.test(totpCode)) {
+      setTotpCode(totpCode);
+      setError("");
+    } else {
+      setError("TOTP must be 6 numbers.");
+      return;
+    }
+
     try {
       const response = await axios.post("/api/user/login", {
         email,
         password,
+        totpCode,
       });
 
       setUser(response.data as User);
 
       navigate("/");
     } catch (error) {
-      setError("Login unsuccessful. Invalid username and password combination");
+      setError("Authentication failed.");
     }
   };
 
@@ -50,6 +60,7 @@ const Login = () => {
         <TextField
           label="Email"
           variant="outlined"
+          id="email-input"
           required
           fullWidth
           margin="normal"
@@ -59,12 +70,26 @@ const Login = () => {
         <TextField
           label="Password"
           variant="outlined"
+          id="password-input"
           required
           type="password"
           fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+        <TextField
+          label="TOTP Code"
+          variant="outlined"
+          required
+          type="text"
+          fullWidth
+          margin="normal"
+          value={totpCode}
+          onChange={(e) => {
+            setTotpCode(e.target.value);
+          }}
+          id="totpCode"
         />
         {error && <Typography color="error">{error}</Typography>}
         <Button

@@ -53,6 +53,11 @@ describe("<CreateAccount />", () => {
       body: { success: true },
     }).as("createAccountRequest");
 
+    cy.intercept("POST", "/api/user/send-confirmation-email", {
+      statusCode: 200,
+      body: { success: true },
+    })
+
     // Type into the input fields
     cy.get('input[type="email"]').type(testEmail);
     cy.get("input[name=fullName]").type(testName);
@@ -66,6 +71,12 @@ describe("<CreateAccount />", () => {
     cy.wait("@createAccountRequest")
       .its("response.statusCode")
       .should("eq", 201);
+
+    cy.get('#backdrop').should("be.visible");
+
+    cy.get("#continue-button").click()
+    // Check if navigation occurred as expected
+    cy.location("pathname").should("eq", "/login");
   });
 
   it("does not navigate on unsuccessful account creation", () => {
