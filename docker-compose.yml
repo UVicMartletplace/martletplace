@@ -16,7 +16,9 @@ x-ENV-VARS: &shared_env_var
 
 services:
   frontend:
-    build: apps/frontend
+    build:
+      context: apps/frontend
+      target: dev
     container_name: martletplace_frontend
     restart: unless-stopped
     depends_on: []
