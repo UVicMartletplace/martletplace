@@ -3,9 +3,9 @@ resource "aws_rds_cluster" "db_cluster" {
   engine                 = "aurora-postgresql"
   engine_mode            = "provisioned"
   engine_version         = "16.2"
-  database_name          = "db_name"
-  master_username        = "master_user"
-  master_password        = aws_secretsmanager_secret_version.database_password_version.secret_string
+  database_name          = "martletplace"
+  master_username        = "martletplace"
+  master_password        = random_password.database_password.result
   storage_encrypted      = true
   vpc_security_group_ids = [aws_security_group.rds_security_group.id]
   db_subnet_group_name   = aws_db_subnet_group.database_subnet_group.name
@@ -26,12 +26,9 @@ resource "aws_rds_cluster_instance" "serverless_db" {
 }
 
 resource "aws_security_group" "rds_security_group" {
-  # name = "${local.resource_name_prefix}-rds-sg"
-
   description = "RDS (terraform-managed)"
   vpc_id      = aws_vpc.main.id
 
-  # Only MySQL in
   ingress {
     from_port   = 5432
     to_port     = 5432
@@ -39,11 +36,25 @@ resource "aws_security_group" "rds_security_group" {
     cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
-  # Allow all outbound traffic.
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [aws_vpc.main.cidr_block]
   }
+}
+
+resource "random_password" "database_password" {
+  length  = 16
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "database_password_secret" {
+  name                    = "/martletplace/database_password"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "database_password_version" {
+  secret_id     = aws_secretsmanager_secret.database_password_secret.id
+  secret_string = format("postgres://%s:%s@%s/%s", aws_rds_cluster.db_cluster.master_username, random_password.database_password.result, aws_rds_cluster.db_cluster.domain, aws_rds_cluster.db_cluster.database_name)
 }
