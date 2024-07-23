@@ -56,5 +56,5 @@ resource "aws_secretsmanager_secret" "database_password_secret" {
 
 resource "aws_secretsmanager_secret_version" "database_password_version" {
   secret_id     = aws_secretsmanager_secret.database_password_secret.id
-  secret_string = format("postgres://%s:%s@%s/%s", aws_rds_cluster.db_cluster.master_username, random_password.database_password.result, aws_rds_cluster.db_cluster.domain, aws_rds_cluster.db_cluster.database_name)
+  secret_string = format("postgres://%s:%s@%s/%s", aws_rds_cluster.db_cluster.master_username, random_password.database_password.result, aws_rds_cluster.db_cluster.endpoint, aws_rds_cluster.db_cluster.database_name)
 }
