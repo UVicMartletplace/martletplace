@@ -121,7 +121,7 @@ class Recommender:
         disliked_indices = self.data.index[self.data["listing_id"].isin(items_disliked)].tolist()
         disliked_vectors = tf.gather(self.normalized_item_vectors, disliked_indices, axis=0)
         mean_dislike_vector = tf.reduce_mean(disliked_vectors, axis=0, keepdims=True)
-        return mean_dislike_vector
+        return tf.nn.l2_normalize(mean_dislike_vector, axis=1)
 
 
     def get_recommendations_by_items_clicked(self, items_clicked, mean_dislike_vector=None):
@@ -133,13 +133,14 @@ class Recommender:
         if not items_clicked:
             return np.array([])
         clicked_indices = self.data.index[self.data["listing_id"].isin(items_clicked)].tolist()
-        
 
         clicked_vectors = tf.gather(self.normalized_item_vectors, clicked_indices, axis=0)
         mean_clicked_vector = tf.reduce_mean(clicked_vectors, axis=0, keepdims=True)
+        mean_clicked_vector = tf.nn.l2_normalize(mean_clicked_vector, axis=1)
 
         if mean_dislike_vector is not None:
-            mean_clicked_vector = mean_clicked_vector - 0.5 * mean_dislike_vector
+            mean_clicked_vector = mean_clicked_vector - mean_dislike_vector
+            mean_clicked_vector = tf.nn.l2_normalize(mean_clicked_vector, axis=1)
 
         similarities = tf.matmul(mean_clicked_vector, tf.transpose(self.normalized_item_vectors)).numpy().flatten()
         top_indices = np.argsort(similarities)[::-1]
@@ -161,7 +162,8 @@ class Recommender:
             normalized_search_vectors, axis=0, keepdims=True
         )
         if mean_dislike_vector is not None:
-            aggregated_search_vector -= 0.5 * mean_dislike_vector
+            aggregated_search_vector = aggregated_search_vector - mean_dislike_vector
+            aggregated_search_vector = tf.nn.l2_normalize(aggregated_search_vector, axis=1)
         similarities = (
             tf.matmul(
                 aggregated_search_vector, tf.transpose(self.normalized_item_vectors)
