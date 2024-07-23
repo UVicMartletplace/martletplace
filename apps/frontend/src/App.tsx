@@ -15,6 +15,7 @@ import AuthRoute from "./components/Auth/AuthRoute";
 import ConfirmEmail from "./pages/ConfirmEmail";
 import ViewProfile from "./pages/ViewProfile";
 import Profile from "./pages/Profile";
+import CreateCharity from "./pages/CreateCharity.tsx";
 import Charities from "./pages/Charities";
 import CreateNewPassword from "./pages/CreateNewPassword";
 
@@ -137,6 +138,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Messages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/charity/new"
+            element={
+              <PrivateRoute>
+                <CreateCharity />
               </PrivateRoute>
             }
           />

@@ -32,6 +32,23 @@ describe("<ViewListing/>", () => {
         dateModified: "2024-05-23T15:30:00Z",
       },
     ],
+    charityId: "1",
+  };
+
+  const charityObject = {
+    name: "Save the whales",
+    description: "string",
+    startDate: "2024-07-14T18:03:42.302Z",
+    endDate: "2024-07-14T18:03:42.302Z",
+    imageUrl: "string",
+    organizations: [
+      {
+        name: "string",
+        logoUrl: "string",
+        donated: 0,
+        receiving: true,
+      },
+    ],
   };
 
   const pageJSX = (
@@ -57,20 +74,44 @@ describe("<ViewListing/>", () => {
     cy.viewport(1280, 720);
   });
 
+  it("Should let me test", () => {
+    cy.viewport("iphone-6");
+    // mock additional endpoints here
+    cy.intercept("GET", "/api/listing/1", {
+      statusCode: 200,
+      body: listingObject,
+    }).as("getListing");
+    cy.intercept("GET", "/api/charities/current", {
+      statusCode: 200,
+      body: charityObject,
+    }).as("getListing");
+
+    cy.mount(pageJSX);
+    cy.pause();
+    cy.viewport(1600, 900);
+    cy.pause();
+  });
+
   it("should render the listing details correctly", () => {
     cy.intercept("GET", "/api/listing/1", {
       statusCode: 200,
       body: listingObject,
     }).as("getListing");
 
+    cy.intercept("GET", "/api/charities/current", {
+      statusCode: 200,
+      body: charityObject,
+    }).as("getListing");
+
     cy.mount(pageJSX);
     cy.wait("@getListing");
+    cy.pause();
 
     cy.contains(
-      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!"
+      "Genuine Unicorn Tears - Guaranteed to Add Sparkle to Your Life!",
     ).should("be.visible");
     cy.contains(
-      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!"
+      "Are you tired of mundane tears? Try our premium unicorn tears sourced straight from the enchanted forest of Eldoria!",
     ).should("be.visible");
     cy.contains("Price: $20,000.00").should("be.visible");
     cy.contains("Sold by: Merlin the Wizard").should("be.visible");
@@ -120,7 +161,7 @@ describe("<ViewListing/>", () => {
 
     cy.contains("John Doe").should("be.visible");
     cy.contains("This is the best product I have ever bought!").should(
-      "be.visible"
+      "be.visible",
     );
   });
 
@@ -209,7 +250,7 @@ describe("<ViewListing/>", () => {
             <Route path="/messages" element={<Messages />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>
+      </TestProviders>,
     );
 
     cy.wait("@getListing");

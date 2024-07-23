@@ -39,3 +39,19 @@ export type ThreadType = {
     created_at: string;
   };
 };
+
+export type OrganizationObject = {
+  name: string;
+  logoUrl: string;
+  donated: number;
+  receiving: boolean;
+};
+
+export type CharityObject = {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  imageUrl: string;
+  organizations: OrganizationObject[];
+};

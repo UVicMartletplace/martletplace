@@ -1,9 +1,11 @@
 import {
+  Box,
   Button,
   Card,
   CardContent,
   Container,
   Grid,
+  Paper,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -16,6 +18,8 @@ import SearchBar from "../components/searchBar.tsx";
 import Reviews, { Review } from "../components/Reviews.tsx";
 import useUser from "../hooks/useUser.ts";
 import Spinner from "../components/Spinner.tsx";
+import listingCharityFlair from "../images/listing-charity-flair.png";
+import listingCharityFlairSm from "../images/listing-charity-flair-small.png";
 
 interface ListingObject {
   title: string;
@@ -31,6 +35,11 @@ interface ListingObject {
   images: { url: string }[];
   reviews?: Review[];
   status: string;
+  charityId: string | null | undefined;
+}
+
+interface CharityObject {
+  name: string;
 }
 
 const ViewListing = () => {
@@ -49,20 +58,48 @@ const ViewListing = () => {
     distance: 0,
     images: [{ url: "https://picsum.photos/1200/400" }],
     status: "AVAILABLE",
+    charityId: null,
   });
+
+  const [currentCharity, setCurrentCharity] = useState<CharityObject>();
+
+  const [screenWidth, setScreenSize] = useState<number>(window.innerWidth);
 
   // Load the listing from the api given an ID
   useEffect(() => {
-    _axios_instance
-      .get("/listing/" + id)
-      .then((response) => {
+    const getListing = async () => {
+      try {
+        const response = await _axios_instance.get("/listing/" + id);
         setListingObject(response.data);
         setListingReceived(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        if (response.data.charityId) {
+          try {
+            const responseCharity =
+              await _axios_instance.get("/charities/current");
+            setCurrentCharity(responseCharity.data);
+            setListingReceived(true);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    //Linter is upset if I don't have this
+    getListing().then();
   }, [id]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // Convert price to string
   const priceFormatter = new Intl.NumberFormat("en-CA", {
@@ -116,6 +153,69 @@ const ViewListing = () => {
             }}
           >
             <CardContent>
+              {listingObject.charityId ? (
+                <Paper
+                  sx={{
+                    borderRadius: "20px",
+                    overflow: "hidden",
+                    position: "relative",
+                    "&:hover": { cursor: "pointer" },
+                    marginBottom: "20px",
+                  }}
+                  onClick={() => {
+                    navigate("/charities");
+                  }}
+                >
+                  <Box
+                    id="text1"
+                    sx={{
+                      zIndex: 2,
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      padding: 2,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{ textShadow: "inherit", color: "inherit" }}
+                    >
+                      This Listing Contributes to:
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{ textShadow: "inherit", color: "inherit" }}
+                    >
+                      {currentCharity?.name}
+                    </Typography>
+                  </Box>
+                  <Box
+                    id="image1"
+                    sx={{
+                      zIndex: 1,
+                      position: "relative",
+                      width: "100%",
+                      overflow: "visible",
+                    }}
+                  >
+                    <img
+                      src={
+                        screenWidth > 768
+                          ? listingCharityFlair
+                          : listingCharityFlairSm
+                      }
+                      alt="Charity Flair"
+                      style={{
+                        height: "100%",
+                        float: "right",
+                      }}
+                    />
+                  </Box>
+                </Paper>
+              ) : (
+                ""
+              )}
               <Grid container spacing={2}>
                 <Grid item sm={12} md={12} lg={6}>
                   <Typography variant={"h5"}>
