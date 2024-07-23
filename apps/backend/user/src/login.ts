@@ -20,23 +20,30 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       [email],
     );
 
-    const maybePassword = user?.password || "";
-    const isPasswordValid = await bcrypt.compare(password, maybePassword);
+    if (process.env.SKIP_USER_VERIFICATION !== "TRUE") {
+      const maybePassword = user?.password || "";
+      const isPasswordValid = await bcrypt.compare(password, maybePassword);
 
-    if (!isPasswordValid || !user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      if (!isPasswordValid || !user) {
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+
+      if (!user.verified) {
+        return res.status(401).json({ error: "User is not verified" });
+      }
+
+      // Verify MFA totp token
+      const isValid = await verifyMFA(user, totpCode);
+      if (!isValid) {
+        return res
+          .status(401)
+          .json({ error: "Invalid token, authentication failed" });
+      }
     }
 
-    if (!user.verified && process.env.SKIP_USER_VERIFICATION != "TRUE") {
-      return res.status(401).json({ error: "User is not verified" });
-    }
-
-    // Verify MFA totp token
-    const isValid = await verifyMFA(user, totpCode);
-    if (!isValid) {
-      return res
-        .status(401)
-        .json({ error: "Invalid token, authentication failed" });
+    // This is needed because the previous user check is conditional on the skip auth flag
+    if (!user) {
+      return res.status(400).json({ error: "User could not be found" });
     }
 
     const token = create_token({ userId: user.user_id });
