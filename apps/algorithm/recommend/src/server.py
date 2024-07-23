@@ -36,7 +36,7 @@ app = otel_trace_init(app, "recommend")
 
 SQLAlchemyInstrumentor().instrument()
 
-from sqlalchemy import insert
+from sqlalchemy import text
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.sql_models import User_Preferences, Users, User_Clicks, User_Searches, Listings
@@ -105,9 +105,8 @@ async def get_recommendations(
     )
     items_disliked = [item.listing_id for item in items_disliked]
 
-    await session.close()
     recommended_listings = recommender.recommend(
-        items_clicked, terms_searched, page, limit, items_disliked
+        items_clicked, terms_searched, items_disliked, page, limit
     )
     columns = [
         "listing_id",
@@ -205,13 +204,14 @@ async def get_recommendations(
             modified_at=row["modified_at"],
         )
         listing_summaries.append(listing_summary)
+    await session.close()
     return listing_summaries
 
 
 @app.post("/api/recommendations/stop/{id}")
 async def stop_suggesting_item(
     req: Request,
-    id: str,
+    id: int,
     session: AsyncSession = Depends(get_session),
 ):
     user_id = req.state.user
@@ -220,12 +220,11 @@ async def stop_suggesting_item(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
-    await session.exec(
-        insert(
-            User_Preferences,
-            values={"user_id": user_id, "listing_id": id, "weight": -1.0},
-        )
+    await session.execute(
+        text("INSERT INTO user_preferences (user_id, listing_id, weight) VALUES (:user_id, :listing_id, :weight)"),
+        {"user_id": user_id, "listing_id": id, "weight": -1.0},
     )
+    await session.commit()
     await session.close()
 
     return {"message": "Preference updated successfully."}
@@ -234,31 +233,3 @@ async def stop_suggesting_item(
 @app.get("/.well-known/health")
 async def health():
     return Response(status_code=200)
-
-
-# @app.put("/api/user-preferences/item-click")
-# async def item_click(authorization: str, id: str):
-#     # actual logic will go here
-
-#     return {"message": "Item click recorded successfully."}
-
-
-# @app.put("/api/user-preferences/item-buy")
-# async def item_buy(authorization: str, id: str):
-#     # actual logic will go here
-
-#     return {"message": "Item purchase recorded successfully."}
-
-
-# @app.put("/api/user-preferences/search-term")
-# async def search_term(authorization: str, search_term: str):
-#     # actual logic will go here
-
-#     return {"message": "Search term recorded successfully."}
-
-
-# @app.put("/api/user-preferences/review-add")
-# async def review_add(authorization: str, review: Review):
-#     # actual logic will go here
-
-#     return {"message": "Review recorded successfully."}
