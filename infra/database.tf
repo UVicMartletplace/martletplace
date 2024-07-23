@@ -49,12 +49,12 @@ resource "random_password" "database_password" {
   special = false
 }
 
-resource "aws_secretsmanager_secret" "database_password_secret" {
-  name                    = "/martletplace/database_password"
+resource "aws_secretsmanager_secret" "database_url_secret" {
+  name                    = "/martletplace/database_url"
   recovery_window_in_days = 0
 }
 
-resource "aws_secretsmanager_secret_version" "database_password_version" {
-  secret_id     = aws_secretsmanager_secret.database_password_secret.id
+resource "aws_secretsmanager_secret_version" "database_url_version" {
+  secret_id     = aws_secretsmanager_secret.database_url_secret.id
   secret_string = format("postgres://%s:%s@%s/%s", aws_rds_cluster.db_cluster.master_username, random_password.database_password.result, aws_rds_cluster.db_cluster.endpoint, aws_rds_cluster.db_cluster.database_name)
 }

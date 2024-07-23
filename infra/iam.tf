@@ -41,7 +41,7 @@ resource "aws_iam_policy" "secrets_policy" {
       {
         "Effect" : "Allow",
         "Action" : "secretsmanager:GetSecretValue",
-        "Resource" : [aws_secretsmanager_secret.database_password_secret.arn]
+        "Resource" : [format("arn:aws:secretsmanager:%s:%s:secret:martletplace/*", data.aws_region.current.name, data.aws_caller_identity.current.account_id)]
       }
     ]
   })

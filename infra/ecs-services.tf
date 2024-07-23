@@ -42,7 +42,7 @@ module "user" {
   secrets = [
     {
       name      = "DB_ENDPOINT",
-      valueFrom = aws_secretsmanager_secret.database_password_secret.arn
+      valueFrom = aws_secretsmanager_secret.database_url_secret.arn
     }
   ]
 
