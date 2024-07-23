@@ -88,12 +88,16 @@ const getListingById = async (
 
     delete listing.image_urls;
 
-    const [latitude, longitude] = listing.location.split(',').map(Number);
+    const location = listing.location.replace(/[()]/g, '');
+    const [latitude, longitude] = location.split(',').map(Number);
+    
+    delete listing.location;
     
     listing.location = {
       latitude: latitude,
       longitude: longitude
     }
+    
 
     return res.status(200).json(listing);
   } catch (err) {

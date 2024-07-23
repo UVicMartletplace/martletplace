@@ -34,8 +34,10 @@ const getListingsByUser = async (
     }
     
     const responseListings = listings.map((listing) => {
-      const [latitude, longitude] = listing.location.split(',').map(Number);
-      
+      console.log(listing.location)
+      const location = listing.location.replace(/[()]/g, '');
+      const [latitude, longitude] = location.split(',').map(Number);
+      console.log(latitude, longitude)
       return {
         listingID: String(listing.listingID),
         title: listing.title,
