@@ -34,7 +34,7 @@ function App() {
             }
           />
           <Route
-            path="/user/create-new-password/:token"
+            path="/create-new-password/:token"
             element={
               <AuthRoute>
                 <CreateNewPassword />
