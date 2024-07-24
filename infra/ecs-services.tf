@@ -27,14 +27,6 @@ module "user" {
       value = "test"
     },
     {
-      name  = "JWT_PUBLIC_KEY",
-      value = "test"
-    },
-    {
-      name  = "JWT_PRIVATE_KEY",
-      value = "test"
-    },
-    {
       name  = "SKIP_USER_VERIFICATION",
       value = "TRUE"
     },
