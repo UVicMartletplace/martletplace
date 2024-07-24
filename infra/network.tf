@@ -1,7 +1,13 @@
 data "aws_availability_zones" "available" {}
 
+data "aws_region" "current" {}
+
+data "aws_caller_identity" "current" {}
+
 resource "aws_vpc" "main" {
-  cidr_block = "10.10.0.0/16"
+  cidr_block           = "10.10.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 }
 
 resource "aws_subnet" "public" {
