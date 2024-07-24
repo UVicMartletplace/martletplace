@@ -35,19 +35,19 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.post("/api/charities", (req, res) =>
-  createCharity(req as unknown as AuthenticatedRequest, res, db)
+  createCharity(req as unknown as AuthenticatedRequest, res, db),
 );
 
 app.get("/api/charities", (req, res) =>
-  getCharities(req as unknown as AuthenticatedRequest, res, db)
+  getCharities(req as unknown as AuthenticatedRequest, res, db),
 );
 
 app.get("/api/charities/current", (req, res) =>
-  getCurrentCharity(req as unknown as AuthenticatedRequest, res, db)
+  getCurrentCharity(req as unknown as AuthenticatedRequest, res, db),
 );
 
 app.delete("/api/charities/:id", (req, res) =>
-  deleteCharity(req as unknown as AuthenticatedRequest, res, db)
+  deleteCharity(req as unknown as AuthenticatedRequest, res, db),
 );
 
 // Healthcheck

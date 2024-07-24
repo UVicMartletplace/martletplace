@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from "../../lib/src/auth";
 export const getCharities = async (
   req: AuthenticatedRequest,
   res: Response,
-  db: IDatabase<object>
+  db: IDatabase<object>,
 ) => {
   try {
     const userID = req.user.userId;
@@ -14,7 +14,7 @@ export const getCharities = async (
       `SELECT name, description, start_date, end_date, image_url
        FROM charities 
        WHERE user_id = $1;`,
-      [userID]
+      [userID],
     );
     res.json(result);
   } catch (error) {

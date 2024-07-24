@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from "../../lib/src/auth";
 export const deleteCharity = async (
   req: AuthenticatedRequest,
   res: Response,
-  db: IDatabase<object>
+  db: IDatabase<object>,
 ) => {
   try {
     const userID = req.user.userId;
@@ -14,7 +14,7 @@ export const deleteCharity = async (
     const result = await db.oneOrNone(
       `DELETE FROM charities 
       WHERE id = $1 AND user_id = $2;`,
-      [charityID, userID]
+      [charityID, userID],
     );
     if (result) {
       res.status(204).json({ message: "Charity deleted successfully" });

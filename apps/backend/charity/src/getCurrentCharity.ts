@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from "../../lib/src/auth";
 export const getCurrentCharity = async (
   req: AuthenticatedRequest,
   res: Response,
-  db: IDatabase<object>
+  db: IDatabase<object>,
 ) => {
   try {
     const userID = req.user.userId;
@@ -17,7 +17,7 @@ export const getCurrentCharity = async (
        JOIN organizations o ON c.charity_id = o.charity_id
        WHERE user_id = $1
        GROUP BY c.charity_id;`,
-      [userID]
+      [userID],
     );
     res.json(result);
   } catch (error) {
