@@ -13,9 +13,13 @@ import { usePagination } from "../../lib/src/pagination";
 const PORT = 8214;
 
 const app = express();
-app.use(morgan('dev', {
-  skip: function(req: Request, res: Response) { return res.statusCode < 400 }
-}));
+app.use(
+  morgan("dev", {
+    skip: function (req: Request, res: Response) {
+      return res.statusCode < 400;
+    },
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(authenticate_request);

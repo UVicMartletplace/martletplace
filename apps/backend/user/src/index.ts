@@ -30,9 +30,13 @@ if (!DB_ENDPOINT) {
 
 const db = connectDB(DB_ENDPOINT);
 
-app.use(morgan('dev', {
-  skip: function(req: Request, res: Response) { return res.statusCode < 400 }
-}));
+app.use(
+  morgan("dev", {
+    skip: function (req: Request, res: Response) {
+      return res.statusCode < 400;
+    },
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(authenticate_request);
