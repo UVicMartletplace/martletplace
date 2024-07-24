@@ -16,6 +16,7 @@ CREATE TABLE users (
     username VARCHAR NOT NULL UNIQUE,
     email VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL,
+    totp_secret VARCHAR NOT NULL,
     name VARCHAR,
     bio TEXT,
     profile_pic_url TEXT,
@@ -90,4 +91,22 @@ CREATE TABLE user_clicks (
     user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE charities (
+    charity_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    image_url TEXT
+);
+
+CREATE TABLE organizations (
+    organization_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    logo_url TEXT,
+    donated DECIMAL(10, 2),
+    receiving BOOLEAN,
+    charity_id INTEGER NOT NULL REFERENCES charities(charity_id) ON DELETE CASCADE
 );

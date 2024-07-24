@@ -59,7 +59,7 @@ class Recommender:
             f"Failed to download the recommender model after {str(retries)} retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again)."
         )
 
-    def recommend(self, items_clicked, terms_searched, page, limit):
+    def recommend(self, items_clicked, terms_searched, items_disliked, page, limit):
         """
         Recommend items to the user based on the items they've clicked and the
         terms they've searched. The recommendations are sorted by relevance, and
@@ -67,26 +67,20 @@ class Recommender:
 
         Recommendations are guaranteed to be unique.
         """
-        click_recommendations = self.get_recommendations_by_items_clicked(items_clicked)
-        search_recommendations = self.get_recommendations_from_search_terms(
-            terms_searched
+        dislike_vectors = self.get_vectors_by_id(items_disliked)
+        item_clicked_vectors = self.get_vectors_by_id(items_clicked)
+        search_term_vectors = self.get_vectors_by_content(terms_searched)
+        recommendations = item_clicked_vectors + search_term_vectors - dislike_vectors
+        recommendations = tf.nn.l2_normalize(recommendations, axis=1)
+
+        similarities = (
+            tf.matmul(recommendations, tf.transpose(self.normalized_item_vectors))
+            .numpy()
+            .flatten()
         )
-        if click_recommendations.size == 0 and search_recommendations.size == 0:
-            return np.array([])
-        elif click_recommendations.size == 0:
-            return self.data.iloc[search_recommendations[:limit]]
-        elif search_recommendations.size == 0:
-            return self.data.iloc[click_recommendations[:limit]]
-        else:
-            combined_recommendations = pd.concat(
-                [
-                    self.data.iloc[click_recommendations[:limit]],
-                    self.data.iloc[search_recommendations[:limit]],
-                ]
-            )
-            # shuffle recommendations
-            combined_recommendations = combined_recommendations.sample(frac=1)
-            return combined_recommendations[:limit]
+        top_indices = np.argsort(similarities)[::-1]
+
+        return self.data.iloc[top_indices[(page - 1) * limit : page * limit]]
 
     @staticmethod
     def generate_tfidf_vector(texts, data):
@@ -114,42 +108,22 @@ class Recommender:
 
         return tf.convert_to_tensor(tfidf_matrix, dtype=tf.float32)
 
-    def get_recommendations_by_items_clicked(self, items_clicked):
-        """
-        Get recommendations based on items clicked. Works by taking the mean of
-        the cosine similarity of each of the items clicked then returning the
-        recommendations based on the highest similarities.
-        """
-        if not items_clicked:
-            return np.array([])
-        indices = self.data.index[self.data["listing_id"].isin(items_clicked)].tolist()
-        similarities = np.mean(self.cosine_similarity_matrix[indices], axis=0)
-        recommendations = np.argsort(similarities)[::-1]
-        # Remove items that have already been clicked
-        # Not sure if we want to do this or if we want to recommend stuff that has already been looked at?
-        # Needs to happen before taking the top_n, otherwise we aren't guaranteed to get top_n recommendations
-        recommendations = np.array([i for i in recommendations if i not in indices])
-        return recommendations
+    def get_vectors_by_id(self, listing_ids):
+        if not listing_ids:
+            return np.zeros((1, self.normalized_item_vectors.shape[1]))
+        listing_indices = self.data.index[
+            self.data["listing_id"].isin(listing_ids)
+        ].tolist()
 
-    def get_recommendations_from_search_terms(self, search_terms):
-        """
-        Get recommendations based on search terms. Works just like how training
-        the recommender works, by calculating the "similarity" of the search
-        terms to the items in the data, and then returning the most similar items.
-        """
-        if not search_terms:
-            return np.array([])
-        search_tfidf_tensor = Recommender.generate_tfidf_vector(search_terms, self.data)
-        normalized_search_vectors = tf.nn.l2_normalize(search_tfidf_tensor, axis=1)
-        aggregated_search_vector = tf.reduce_mean(
-            normalized_search_vectors, axis=0, keepdims=True
+        listing_vectors = tf.gather(
+            self.normalized_item_vectors, listing_indices, axis=0
         )
-        similarities = (
-            tf.matmul(
-                aggregated_search_vector, tf.transpose(self.normalized_item_vectors)
-            )
-            .numpy()
-            .flatten()
-        )
-        top_indices = np.argsort(similarities)[::-1]
-        return top_indices
+        mean_vectors = tf.reduce_mean(listing_vectors, axis=0, keepdims=True)
+        return tf.nn.l2_normalize(mean_vectors, axis=1)
+
+    def get_vectors_by_content(self, content):
+        if not content:
+            return np.zeros((1, self.normalized_item_vectors.shape[1]))
+        tfidf_tensor = Recommender.generate_tfidf_vector(content, self.data)
+        aggregated_vector = tf.reduce_mean(tfidf_tensor, axis=0, keepdims=True)
+        return tf.nn.l2_normalize(aggregated_vector, axis=1)

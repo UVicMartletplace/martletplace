@@ -15,6 +15,8 @@ import { sendConfirmationEmail } from "./sendConfirmationEmail";
 import { confirmEmail } from "./confirmEmail";
 import { AuthenticatedRequest, authenticate_request } from "../../lib/src/auth";
 import cookieParser from "cookie-parser";
+import { resetPassword } from "./resetPassword";
+import { createNewPassword } from "./createNewPassword";
 
 const PORT = 8211;
 
@@ -28,7 +30,13 @@ if (!DB_ENDPOINT) {
 
 const db = connectDB(DB_ENDPOINT);
 
-app.use(morgan("dev"));
+app.use(
+  morgan("dev", {
+    skip: function (req: Request, res: Response) {
+      return res.statusCode < 400;
+    },
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(authenticate_request);
@@ -49,6 +57,16 @@ app.get("/api/user/search-history", (req: Request, res: Response) =>
 // Delete user
 app.delete("/api/user/search-history", (req: Request, res: Response) =>
   deleteUserSearchHistory(req as unknown as AuthenticatedRequest, res, db),
+);
+
+// Send Password reset Email
+app.post("/api/user/reset-password", (req: Request, res: Response) =>
+  resetPassword(req, res, db),
+);
+
+// Update forgotten password
+app.patch("/api/user/update-password", (req: Request, res: Response) =>
+  createNewPassword(req, res, db),
 );
 
 // Login

@@ -1,9 +1,9 @@
-INSERT INTO users (username, email, password, name, bio, profile_pic_url, verified) VALUES
-('deleted_user', 'deleted@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'Deleted User', '', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper', TRUE),
-('unverified', 'unverified@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'Unverified User', 'Hi! Im an unverified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Kiki', FALSE),
-('user3', 'user3@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'User Three', 'Bio for user three', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Lucy', TRUE),
-('user4', 'user4@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'User Four', 'Bio for user four', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel', TRUE),
-('user5', 'user5@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE);
+INSERT INTO users (username, email, password, totp_secret, name, bio, profile_pic_url, verified) VALUES
+('deleted_user', 'deleted@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'Deleted User', '', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper', TRUE),
+('unverified', 'unverified@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'Unverified User', 'Hi! Im an unverified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Kiki', FALSE),
+('user3', 'user3@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Three', 'Bio for user three', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Lucy', TRUE),
+('user4', 'user4@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Four', 'Bio for user four', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel', TRUE),
+('user5', 'user5@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE);
 -- ALL PASSWORDS: Letmeinfortesting1!
 
 INSERT INTO listings (seller_id, buyer_id, title, description, price, location, status, image_urls) VALUES
@@ -46,3 +46,20 @@ INSERT INTO user_searches (user_id, search_term) VALUES
 (3, 'textbook'),
 (4, 'FUNNY THING'),
 (5, 'Unverified User');
+
+INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
+('Charity One', 'A nice clever description for a drab default charity', '2021-01-01', '2021-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
+('ScottMagic', 'We will make sure Scott never forgets his Magic cards again', '2024-01-01', '2025-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
+('Bikes4Kids', 'Buying little bicycles for poor little children', '2023-01-01', '2024-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
+('Little Treat', 'Fundraise so Anika can afford to have a little treat :-) <3', '2020-01-01', '2026-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
+('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
+
+INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
+-- charity 1 has no linked organizations
+-- charity 2 has one donor
+('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 2),
+-- charity 3 has one receiver
+('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 3),
+-- charity 4 has one donor and one receiver
+('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 4),
+('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);

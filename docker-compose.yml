@@ -16,7 +16,9 @@ x-ENV-VARS: &shared_env_var
 
 services:
   frontend:
-    build: apps/frontend
+    build:
+      context: apps/frontend
+      target: dev
     container_name: martletplace_frontend
     restart: unless-stopped
     depends_on: []
@@ -35,6 +37,7 @@ services:
   user:
     build:
       context: apps/backend/user
+      target: dev
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_user
@@ -78,6 +81,7 @@ services:
   listing:
     build:
       context: apps/backend/listing
+      target: dev
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_listing
@@ -90,6 +94,7 @@ services:
   review:
     build:
       context: apps/backend/review
+      target: dev
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_review
@@ -102,6 +107,7 @@ services:
   message:
     build:
       context: apps/backend/message
+      target: dev
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_message
