@@ -66,7 +66,10 @@ describe('Get Listing by ID Endpoint', () => {
       title: 'Listing One',
       description: 'Description for listing one',
       price: 100,
-      location: "48.4284,-123.3656",
+      location: {
+        latitude: 48.4284,
+        longitude: -123.3656,
+      },
       status: 'AVAILABLE',
       dateCreated: expect.any(Date),
       dateModified: expect.any(Date),
