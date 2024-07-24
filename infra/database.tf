@@ -23,6 +23,11 @@ resource "aws_rds_cluster_instance" "serverless_db" {
   engine               = aws_rds_cluster.db_cluster.engine
   engine_version       = aws_rds_cluster.db_cluster.engine_version
   db_subnet_group_name = aws_db_subnet_group.database_subnet_group.name
+  publicly_accessible  = true
+}
+
+data "http" "myip" {
+  url = "https://ipv4.icanhazip.com"
 }
 
 resource "aws_security_group" "rds_security_group" {
@@ -33,14 +38,14 @@ resource "aws_security_group" "rds_security_group" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    cidr_blocks = [aws_vpc.main.cidr_block, "${chomp(data.http.myip.response_body)}/32"]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    cidr_blocks = [aws_vpc.main.cidr_block, "${chomp(data.http.myip.response_body)}/32"]
   }
 }
 

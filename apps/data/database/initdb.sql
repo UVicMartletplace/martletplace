@@ -25,8 +25,7 @@ CREATE TABLE users (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER users_modified_at BEFORE UPDATE ON users
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER users_modified_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE listings (
     listing_id SERIAL PRIMARY KEY,
@@ -42,8 +41,7 @@ CREATE TABLE listings (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
@@ -64,8 +62,7 @@ CREATE TABLE reviews (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER reviews_modified_at BEFORE UPDATE ON reviews
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER reviews_modified_at BEFORE UPDATE ON reviews FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE user_preferences (
     user_pref_id SERIAL PRIMARY KEY,
@@ -76,8 +73,7 @@ CREATE TABLE user_preferences (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER user_preferences_modified_at BEFORE UPDATE ON user_preferences
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER user_preferences_modified_at BEFORE UPDATE ON user_preferences FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE user_searches (
     search_id SERIAL PRIMARY KEY,
