@@ -38,12 +38,20 @@ module "user" {
       name  = "SKIP_USER_VERIFICATION",
       value = "TRUE"
     },
+    {
+      name  = "JWT_PUBLIC_KEY",
+      value = tls_private_key.jwt_key.public_key_pem
+    }
   ]
   secrets = [
     {
       name      = "DB_ENDPOINT",
       valueFrom = aws_secretsmanager_secret.database_url_secret.arn
-    }
+    },
+    {
+      name      = "JWT_PRIVATE_KEY",
+      valueFrom = aws_secretsmanager_secret.jwt_private_key_secret.arn
+    },
   ]
 
   fargate_cpu    = var.fargate_cpu
