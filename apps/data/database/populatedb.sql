@@ -13,11 +13,6 @@ INSERT INTO listings (seller_id, buyer_id, title, description, price, location, 
 (4, NULL, 'Listing Four', 'Description for listing four', 400, ROW(29.7604, -95.3698), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Casper']),
 (5, NULL, 'Listing Five', 'Description for listing five', 500, ROW(51.5074, -0.1278), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Kiki']);
 
-COPY listings(seller_id, buyer_id, title, description, price, location, status, image_urls)
-FROM '/docker-entrypoint-initdb.d/recommender/trainingData.csv'
-DELIMITER ','
-CSV HEADER;
-
 INSERT INTO messages (sender_id, receiver_id, listing_id, message_body) VALUES
 (2, 1, 1, 'You still offering this???'),
 (1, 2, 1, 'Yep'),
@@ -55,11 +50,7 @@ INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
 ('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
 
 INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
--- charity 1 has no linked organizations
--- charity 2 has one donor
 ('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 2),
--- charity 3 has one receiver
 ('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 3),
--- charity 4 has one donor and one receiver
 ('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 4),
 ('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);
