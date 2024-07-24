@@ -35,7 +35,7 @@ module "user" {
       value = "test"
     },
     {
-      name  = "SKIP_JWT_VERIFY",
+      name  = "SKIP_USER_VERIFICATION",
       value = "TRUE"
     },
   ]
@@ -60,22 +60,17 @@ module "user" {
   health_check_path  = var.health_check_path
 }
 
-module "hello" {
+module "frontend" {
   source = "./ecs/"
 
-  app_name     = "hello"
-  app_image    = "ealen/echo-server"
-  app_port     = 80
-  app_route    = "/api/hello*"
-  app_priority = 98
+  app_name     = "frontend"
+  app_image    = aws_ecr_repository.main["frontend"].repository_url
+  app_port     = 8101
+  app_route    = "*"
+  app_priority = 1000
 
   environment = []
-  secrets = [
-    {
-      name      = "DB_ENDPOINT",
-      valueFrom = aws_secretsmanager_secret.database_password_secret.arn
-    }
-  ]
+  secrets     = []
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
