@@ -72,7 +72,11 @@ export function connectDB(connection_string: string) {
     return async function (...args: any[]) {
       if (args.length > 0) {
         const t = trace.getTracer(serviceName);
-        const s = t.startSpan("pg.query");
+        let stmt = args[0].toString().trim().split(" ")[0];
+        if (stmt === "WITH") {
+          stmt = "SELECT";
+        }
+        const s = t.startSpan(stmt);
         s.setAttribute("db.statement", args[0].toString());
         const out = await oldFn(...args);
         s.end();
