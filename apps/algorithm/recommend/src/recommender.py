@@ -7,17 +7,17 @@ import os
 PROCESSED_DATA_URL = "processed_data.csv"
 COSINE_URL = "cosine_similarity_matrix.npy"
 ITEM_VECTORS_URL = "normalized_item_vectors.npy"
-TRAINING_DIR_URL = "/app/training/"
+TRAINING_DIR = "/app/training/"
 
 class Recommender:
     def __init__(self):
         self.load_model()
 
     def load_model(self, retries=5):
-        self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
-        self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
+        self.data = pd.read_csv(TRAINING_DIR + PROCESSED_DATA_URL)
+        self.cosine_similarity_matrix = np.load(TRAINING_DIR + COSINE_URL)
         self.normalized_item_vectors = np.load(
-            TRAINING_DIR_URL + ITEM_VECTORS_URL
+            TRAINING_DIR + ITEM_VECTORS_URL
         )
 
     def recommend(self, items_clicked, terms_searched, items_disliked, page, limit):
