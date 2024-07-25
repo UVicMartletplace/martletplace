@@ -69,7 +69,7 @@ export function connectDB(connection_string: string) {
     const serviceName = SERVICENAME;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return async function (...args: any[]) {
+    return async function(...args: any[]) {
       if (args.length > 0) {
         const t = trace.getTracer(serviceName);
         let stmt = args[0].toString().trim().split(" ")[0];
@@ -109,6 +109,9 @@ export function connectDB(connection_string: string) {
 
   const oldResult = db.result;
   db.result = genericDbQuery(oldResult);
+
+  const oldQuery = db.query;
+  db.query = genericDbQuery(oldQuery);
 
   return db;
 }
