@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "start": "nodemon --watch src --watch ../lib/src src/index.ts",
-    "build": "esbuild src/index.ts --bundle --platform=node --outfile=server.js --minify",
+    "build": "tsc",
     "test": "vitest run",
     "test:ci": "vitest run",
     "lint": "eslint src/**/*.ts",
