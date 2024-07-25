@@ -182,8 +182,8 @@ module "recommend" {
   environment = concat(local.base_environment, [])
   secrets     = concat(local.base_secrets, [])
 
-  fargate_cpu    = var.fargate_cpu
-  fargate_memory = var.fargate_memory
+  fargate_cpu    = 512
+  fargate_memory = 2048
   app_count      = var.app_count
 
   ecs_cluster        = aws_ecs_cluster.main

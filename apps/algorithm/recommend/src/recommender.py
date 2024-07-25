@@ -9,8 +9,7 @@ RECOMMENDER_URL = f"https://github.com/UVicMartletplace/martletplace/releases/do
 PROCESSED_DATA_URL = "processed_data.csv"
 COSINE_URL = "cosine_similarity_matrix.npy"
 ITEM_VECTORS_URL = "normalized_item_vectors.npy"
-TRAINING_DIR_URL = "/app/src/training/"
-
+TRAINING_DIR_URL = "/app/training/"
 
 class Recommender:
     def __init__(self):
@@ -22,41 +21,11 @@ class Recommender:
         with open(destination, "wb") as f:
             f.write(response.content)
 
-    def remove_model(self):
-        for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]:
-            if os.path.exists(TRAINING_DIR_URL + url):
-                os.remove(TRAINING_DIR_URL + url)
-
-    def download_model(self):
-        for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]:
-            if os.path.exists(TRAINING_DIR_URL + url):
-                os.remove(TRAINING_DIR_URL + url)
-            self.download_file(RECOMMENDER_URL + url, TRAINING_DIR_URL + url)
-
     def load_model(self, retries=5):
-        for _ in range(retries):
-            try:
-                os.makedirs("/app/src/training", exist_ok=True)
-                # Remove the model if it exists only partially
-                if not all(
-                    [
-                        os.path.exists(TRAINING_DIR_URL + url)
-                        for url in [PROCESSED_DATA_URL, COSINE_URL, ITEM_VECTORS_URL]
-                    ]
-                ):
-                    self.remove_model()
-                self.download_model()
-                self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
-                self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
-                self.normalized_item_vectors = np.load(
-                    TRAINING_DIR_URL + ITEM_VECTORS_URL
-                )
-                return
-            except Exception as _:
-                self.remove_model()
-
-        raise Exception(
-            f"Failed to download the recommender model after {str(retries)} retries. There may be a problem with your internet connection, or perhaps you're very unlucky (and should try again)."
+        self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
+        self.cosine_similarity_matrix = np.load(TRAINING_DIR_URL + COSINE_URL)
+        self.normalized_item_vectors = np.load(
+            TRAINING_DIR_URL + ITEM_VECTORS_URL
         )
 
     def recommend(self, items_clicked, terms_searched, items_disliked, page, limit):
