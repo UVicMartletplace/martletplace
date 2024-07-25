@@ -15,6 +15,6 @@ push() {
   docker push "${REPO_PATH}/${image}:${VER_TAG}"
 }
 
-for item in user listing review message search recommend frontend; do
+for item in user listing review message search recommend frontend collector; do
   push $item
 done

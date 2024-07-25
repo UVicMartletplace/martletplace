@@ -85,6 +85,7 @@ resource "aws_alb_target_group" "app" {
     timeout             = "3"
     path                = var.health_check_path
     unhealthy_threshold = "2"
+    port                = var.healthcheck_port
   }
 }
 
