@@ -203,7 +203,7 @@ module "collector" {
   app_image        = aws_ecr_repository.main["collector"].repository_url
   app_port         = 4318
   app_route        = "/v1/traces*"
-  app_priority     = 89
+  app_priority     = 59
   healthcheck_port = 13133
 
   environment = concat(local.base_environment, [])
