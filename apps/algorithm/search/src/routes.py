@@ -15,7 +15,12 @@ RequestsInstrumentor().instrument()
 
 search_router = APIRouter()
 
+print("Connecting to ES")
 es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
+INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+print("Connected, searching...")
+es.indices.create(index=INDEX)
+print("Search done")
 
 
 @search_router.get("/api/search")
@@ -33,7 +38,9 @@ async def search(
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
 ):
-    validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
+    print("Starting search")
+    validate_search_params(latitude, longitude, page,
+                           limit, minPrice, maxPrice)
 
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
@@ -81,7 +88,8 @@ async def search(
             price_range["gte"] = minPrice
         if maxPrice is not None:
             price_range["lte"] = maxPrice
-        search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
+        search_body["query"]["bool"]["filter"].append(
+            {"range": {"price": price_range}})
 
     if "DISTANCE" in sort:
         search_body["sort"].append(
@@ -108,7 +116,9 @@ async def search(
         )
 
     try:
+        print("Searching elasticsearch")
         response = es.search(index=INDEX, body=search_body)
+        print("Done search")
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Index not found")
 

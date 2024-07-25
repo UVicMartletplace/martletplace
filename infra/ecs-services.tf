@@ -24,10 +24,6 @@ locals {
       name      = "DB_ENDPOINT",
       valueFrom = aws_secretsmanager_secret.database_url_secret.arn
     },
-    {
-      name      = "JWT_PRIVATE_KEY",
-      valueFrom = aws_secretsmanager_secret.jwt_private_key_secret.arn
-    },
   ]
 }
 
@@ -76,7 +72,12 @@ module "user" {
       value = "TRUE"
     },
   ])
-  secrets = concat(local.base_secrets, [])
+  secrets = concat(local.base_secrets, [
+    {
+      name      = "JWT_PRIVATE_KEY",
+      valueFrom = aws_secretsmanager_secret.jwt_private_key_secret.arn
+    },
+  ])
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
@@ -155,6 +156,38 @@ module "message" {
 
   environment = concat(local.base_environment, [])
   secrets     = concat(local.base_secrets, [])
+
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+  app_count      = var.app_count
+
+  ecs_cluster        = aws_ecs_cluster.main
+  alb_id             = aws_alb.main.id
+  lb_port            = var.lb_port
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  vpc_id             = aws_vpc.main.id
+  security_group_id  = aws_security_group.ecs_tasks.id
+  subnet_ids         = aws_subnet.public.*.id
+  health_check_path  = var.health_check_path
+}
+
+module "search" {
+  source = "./ecs/"
+
+  app_name     = "search"
+  app_image    = aws_ecr_repository.main["search"].repository_url
+  app_port     = 8221
+  app_route    = "/api/search*"
+  app_priority = 95
+
+  environment = concat(local.base_environment, [{
+    name  = "PYTHONUNBUFFERED",
+    value = "TRUE"
+  }])
+  secrets = concat(local.base_secrets, [{
+    name      = "ES_ENDPOINT",
+    valueFrom = aws_secretsmanager_secret.opensearch_url_secret.arn
+  }])
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
