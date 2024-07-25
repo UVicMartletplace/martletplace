@@ -15,7 +15,12 @@ RequestsInstrumentor().instrument()
 
 search_router = APIRouter()
 
+print("Connecting to ES")
 es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
+INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+print("Connected, searching...")
+es.indices.create(index=INDEX)
+print("Search done")
 
 
 @search_router.get("/api/search")
@@ -32,13 +37,16 @@ async def search(
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
 ):
-    validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
+    print("Starting search")
+    validate_search_params(latitude, longitude, page,
+                           limit, minPrice, maxPrice)
 
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
     if searchType == "LISTINGS":
         must_conditions = [
-            {"multi_match": {"query": query, "fields": ["title", "description"]}},
+            {"multi_match": {"query": query,
+                             "fields": ["title", "description"]}},
             {"match": {"status": status}},
         ]
     elif searchType == "USERS":
@@ -62,7 +70,8 @@ async def search(
             price_range["gte"] = minPrice
         if maxPrice is not None:
             price_range["lte"] = maxPrice
-        search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
+        search_body["query"]["bool"]["filter"].append(
+            {"range": {"price": price_range}})
 
     # Commenting out the location-based filtering
     # search_body["query"]["bool"]["filter"].append(
@@ -101,7 +110,9 @@ async def search(
         )
 
     try:
+        print("Searching elasticsearch")
         response = es.search(index=INDEX, body=search_body)
+        print("Done search")
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Index not found")
 
@@ -128,6 +139,7 @@ async def search(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+    print("Returning...")
     return {"items": results, "totalItems": total_items}
 
 
