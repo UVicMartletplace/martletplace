@@ -19,7 +19,14 @@ print("Connecting to ES")
 es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
 INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 print("Connected, searching...")
-es.indices.create(index=INDEX)
+try:
+    print(es.info())
+except Exception as e:
+    print(e)
+try:
+    es.indices.create(index=INDEX)
+except Exception as e:
+    print(e)
 print("Search done")
 
 

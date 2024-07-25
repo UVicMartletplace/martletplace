@@ -76,6 +76,6 @@ resource "aws_iam_role_policy_attachment" "secret_manager_policy_attachment" {
 }
 
 resource "aws_iam_role_policy_attachment" "opensearch_policy_attachment" {
-  role       = aws_iam_role.ecs_task_execution_role.name
+  role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.opensearch_policy.arn
 }

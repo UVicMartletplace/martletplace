@@ -70,7 +70,8 @@ resource "aws_opensearchserverless_access_policy" "opensearch-access-policy" {
       ],
       Principal = [
         data.aws_caller_identity.current.arn,
-        aws_iam_role.ecs_task_execution_role.arn
+        aws_iam_role.ecs_task_execution_role.arn,
+        aws_iam_role.ecs_task_role.arn,
       ]
     }
   ])
