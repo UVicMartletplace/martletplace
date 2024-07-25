@@ -10,5 +10,5 @@ resource "aws_secretsmanager_secret" "jwt_private_key_secret" {
 
 resource "aws_secretsmanager_secret_version" "jwt_secret_version" {
   secret_id     = aws_secretsmanager_secret.jwt_private_key_secret.id
-  secret_string = tls_private_key.jwt_key.private_key_pem
+  secret_string = tls_private_key.jwt_key.private_key_pem_pkcs8
 }
