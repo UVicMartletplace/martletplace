@@ -1,5 +1,7 @@
 FROM python:3.12-slim AS dev
 
+ENV PYTHONUNBUFFERED=TRUE
+
 WORKDIR /app
 
 COPY ./requirements.txt ./
@@ -13,4 +15,4 @@ CMD uvicorn src.server:app --host 0.0.0.0 --port 8221 --reload
 
 FROM dev AS prod
 
-CMD gunicorn src.server:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8221
+CMD gunicorn src.server:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8221

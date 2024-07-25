@@ -180,10 +180,7 @@ module "search" {
   app_route    = "/api/search*"
   app_priority = 95
 
-  environment = concat(local.base_environment, [{
-    name  = "PYTHONUNBUFFERED",
-    value = "TRUE"
-  }])
+  environment = concat(local.base_environment, [])
   secrets = concat(local.base_secrets, [{
     name      = "ES_ENDPOINT",
     valueFrom = aws_secretsmanager_secret.opensearch_url_secret.arn
