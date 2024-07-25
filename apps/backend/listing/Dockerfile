@@ -19,8 +19,9 @@ HEALTHCHECK CMD curl -f http://localhost:8212/.well-known/health
 CMD npm start
 
 FROM node:20-bookworm-slim AS prod
-
 WORKDIR /app/service
-COPY --from=dev /app/service/server.js .
 
-CMD node server.js
+COPY --from=dev /app/service/node_modules /app/lib/node_modules /app/service/node_modules
+COPY --from=dev /app/service/dist /app/service/dist
+
+CMD node ./dist/service/src/index.js
