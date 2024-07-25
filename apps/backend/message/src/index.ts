@@ -40,7 +40,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 app.post(
   "/api/messages",
   (req, res, next) =>
-    useValidateCreateMessage(req as unknown as AuthenticatedRequest, res, next),
+    useValidateCreateMessage(
+      req as unknown as AuthenticatedRequest,
+      res,
+      next,
+      db,
+    ),
   (req, res) => createMessage(req as unknown as AuthenticatedRequest, res, db),
 );
 
@@ -48,7 +53,12 @@ app.get(
   "/api/messages/thread/:listing_id/:receiver_id",
   usePagination,
   (req, res, next) =>
-    useValidateGetMessages(req as unknown as AuthenticatedRequest, res, next),
+    useValidateGetMessages(
+      req as unknown as AuthenticatedRequest,
+      res,
+      next,
+      db,
+    ),
   (req, res) => getMessages(req as unknown as AuthenticatedRequest, res, db),
 );
 
