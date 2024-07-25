@@ -139,8 +139,6 @@ services:
     volumes: [ ./apps/algorithm/recommend/src:/app/src ]
     environment:
       <<: *shared_env_var
-      # needs to be postgresql+asyncpg for sqlalchemy to be happy
-      DB_ENDPOINT: postgresql+asyncpg://martletplace:johuigytfrdcv@datalayer:8300/martletplace
 
   datalayer:
     build: apps/data/datalayer
