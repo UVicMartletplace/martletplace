@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 DB_DIR="${ROOT_DIR}/apps/data/database/"
-DB_ENDPOINT=$(terraform show -json | jq -r '.values.root_module.resources[] | select(.address=="aws_secretsmanager_secret_version.database_password_version") | .values.secret_string')
+DB_ENDPOINT=$(terraform show -json | jq -r '.values.root_module.resources[] | select(.address=="aws_secretsmanager_secret_version.database_url_version") | .values.secret_string')
 
 #psql "$DB_ENDPOINT"; exit
 
