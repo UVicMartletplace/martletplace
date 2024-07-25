@@ -43,7 +43,7 @@ module "user" {
   environment = concat(local.base_environment, [
     {
       name  = "EMAIL_ENDPOINT",
-      value = "test"
+      value = "http://localhost"
     },
     {
       name  = "SKIP_USER_VERIFICATION",
