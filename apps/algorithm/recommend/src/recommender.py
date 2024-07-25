@@ -4,8 +4,6 @@ import tensorflow as tf
 import requests
 import os
 
-RECOMMENDER_VERSION = "1.0.1"
-RECOMMENDER_URL = f"https://github.com/UVicMartletplace/martletplace/releases/download/recommender-v{RECOMMENDER_VERSION}/"
 PROCESSED_DATA_URL = "processed_data.csv"
 COSINE_URL = "cosine_similarity_matrix.npy"
 ITEM_VECTORS_URL = "normalized_item_vectors.npy"
@@ -14,12 +12,6 @@ TRAINING_DIR_URL = "/app/training/"
 class Recommender:
     def __init__(self):
         self.load_model()
-
-    def download_file(self, url, destination):
-        response = requests.get(url)
-        response.raise_for_status()
-        with open(destination, "wb") as f:
-            f.write(response.content)
 
     def load_model(self, retries=5):
         self.data = pd.read_csv(TRAINING_DIR_URL + PROCESSED_DATA_URL)
