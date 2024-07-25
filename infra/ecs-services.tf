@@ -31,6 +31,32 @@ locals {
   ]
 }
 
+module "frontend" {
+  source = "./ecs/"
+
+  app_name     = "frontend"
+  app_image    = aws_ecr_repository.main["frontend"].repository_url
+  app_port     = 8101
+  app_route    = "*"
+  app_priority = 1000
+
+  environment = []
+  secrets     = []
+
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+  app_count      = var.app_count
+
+  ecs_cluster        = aws_ecs_cluster.main
+  alb_id             = aws_alb.main.id
+  lb_port            = var.lb_port
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  vpc_id             = aws_vpc.main.id
+  security_group_id  = aws_security_group.ecs_tasks.id
+  subnet_ids         = aws_subnet.public.*.id
+  health_check_path  = var.health_check_path
+}
+
 module "user" {
   source = "./ecs/"
 
@@ -144,20 +170,20 @@ module "message" {
   health_check_path  = var.health_check_path
 }
 
-module "frontend" {
+module "recommend" {
   source = "./ecs/"
 
-  app_name     = "frontend"
-  app_image    = aws_ecr_repository.main["frontend"].repository_url
-  app_port     = 8101
-  app_route    = "*"
-  app_priority = 1000
+  app_name     = "recommend"
+  app_image    = aws_ecr_repository.main["recommend"].repository_url
+  app_port     = 8222
+  app_route    = "/api/recommendations*"
+  app_priority = 89
 
-  environment = []
-  secrets     = []
+  environment = concat(local.base_environment, [])
+  secrets     = concat(local.base_secrets, [])
 
-  fargate_cpu    = var.fargate_cpu
-  fargate_memory = var.fargate_memory
+  fargate_cpu    = 512
+  fargate_memory = 2048
   app_count      = var.app_count
 
   ecs_cluster        = aws_ecs_cluster.main
@@ -177,7 +203,7 @@ module "collector" {
   app_image        = aws_ecr_repository.main["collector"].repository_url
   app_port         = 4318
   app_route        = "/v1/traces*"
-  app_priority     = 89
+  app_priority     = 59
   healthcheck_port = 13133
 
   environment = concat(local.base_environment, [])
