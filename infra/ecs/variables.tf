@@ -71,6 +71,10 @@ variable "health_check_path" {
   type = string
 }
 
+variable "healthcheck_port" {
+  default = "traffic-port"
+}
+
 variable "fargate_cpu" {
   description = "Fargate instance CPU units to provision (1 vCPU = 1024 CPU units)"
 }
