@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+import { Response } from "express";
 import { IDatabase } from "pg-promise";
 import { AuthenticatedRequest } from "../../lib/src/auth";
 
@@ -8,8 +8,6 @@ export const getCurrentCharity = async (
   db: IDatabase<object>,
 ) => {
   try {
-    const userID = req.user.userId;
-
     const charityResult = await db.oneOrNone(
       `SELECT c.charity_id AS id, c.name, c.description, c.start_date AS "startDate", c.end_date AS "endDate", c.image_url AS "imageUrl", 
         jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) AS organizations
