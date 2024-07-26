@@ -27,9 +27,7 @@ export const getCharities = async (
   db: IDatabase<object>,
 ) => {
   try {
-    // Looks good. charity 1 is the only which shows funds bc listing 2 is the only sold one
-    const charities =
-      await db.manyOrNone<Charity>(` // Use the Charity interface here
+    const charities = await db.manyOrNone<Charity>(`
       SELECT c.charity_id, c.name, c.description, c.start_date, c.end_date, c.image_url,
              jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) FILTER (WHERE o.organization_id IS NOT NULL) AS organizations,
              COALESCE(SUM(l.price), 0) AS funds,
