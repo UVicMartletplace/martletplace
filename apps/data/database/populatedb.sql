@@ -15,9 +15,9 @@ INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
 ('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2023-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
 
 INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
-('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 2),
-('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 3),
-('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 4),
+('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 1),
+('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 1),
+('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 2),
 ('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);
 
 INSERT INTO listings (seller_id, buyer_id, charity_id, title, description, price, location, status, image_urls) VALUES
