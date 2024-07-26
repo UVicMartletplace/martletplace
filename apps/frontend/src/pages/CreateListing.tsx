@@ -48,11 +48,9 @@ const CreateListing = () => {
     latitude: 48.463302,
     longitude: -123.3108,
   });
-  const [priceError, setPriceError] = useState<string>("");
-  const [titleError, setTitleError] = useState<string>(
-    "This field is required",
-  );
+  const [titleError, setTitleError] = useState<string>("");
   const [sent, setSent] = useState(false);
+  const [price, setPrice] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -76,9 +74,13 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
-    if (!priceError && !titleError && !sent) {
+    if (!titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
+      if (!newListingObject.listing.title) {
+        setTitleError("Please enter a title");
+        return;
+      }
 
       if (successImages) {
         _axios_instance
@@ -166,14 +168,16 @@ const CreateListing = () => {
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     // Handle
-    const regex = /^\d+(.\d{1,2})?$/;
+    const regex = /^\d*?\.?\d{0,2}$/;
+    //const regex = /^\d/;
     if (!regex.test(event.target.value)) {
-      setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
-      );
+      if (!event.target.value) {
+        const priceValue: number = +event.target.value;
+        updateNewListingPayload("price", priceValue);
+      }
     } else {
-      setPriceError("");
       const priceValue: number = +event.target.value;
+      setPrice(event.target.value);
       updateNewListingPayload(
         "price",
         priceValue >= 0 ? priceValue : priceValue * -1,
@@ -255,6 +259,11 @@ const CreateListing = () => {
     }
   };
 
+  const clearImages = () => {
+    setListingImages([]);
+    setImageBlobs([]);
+  };
+
   // Upload button html
   const buttonHTML = (
     <span style={{ textAlign: "center" }}>
@@ -282,10 +291,10 @@ const CreateListing = () => {
         <Card sx={{ marginTop: "32px" }}>
           <CardContent>
             <Typography variant={"h5"}>Create Listing</Typography>
-            <Grid container spacing={1}>
-              <Grid item md={6} sm={6} xs={12}>
-                <Box>
-                  <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+            <Box>
+              <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+                <Grid container>
+                  <Grid item md={12}>
                     <FormControl sx={{ width: "100%", padding: "10px" }}>
                       <TextField
                         id="field-title"
@@ -311,16 +320,12 @@ const CreateListing = () => {
                       <TextField
                         id="field-price"
                         label="Price(CAD)"
-                        type="number"
                         sx={{ m: "10px" }}
                         rows={1}
                         InputProps={{ inputProps: { min: 0 } }}
                         onChange={updateListingPrice}
-                        error={!!priceError}
+                        value={price}
                       />
-                      {priceError && (
-                        <FormHelperText error>{priceError}</FormHelperText>
-                      )}
                       <FormControlLabel
                         id="charity-checkbox-label"
                         label="Is this item for charity?"
@@ -357,58 +362,84 @@ const CreateListing = () => {
                         {location.longitude} longitude
                       </Typography>
                     </FormControl>
-                    <Box sx={{ display: "flex" }}>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{
-                          display: "inline",
-                          mt: 2,
-                          backgroundColor: colors.martletplaceNavyBlue,
-                          "&:hover": {
-                            backgroundColor: colors.martletplaceBlueHover,
-                          },
-                          textTransform: "none",
-                          fontSize: "16px",
-                          padding: "10px 20px",
-                          margin: "10px",
-                        }}
-                        id={"submit-button"}
-                      >
-                        Create Listing
-                      </Button>
-                      <MultiFileUpload
-                        passedImages={listingImages}
-                        setPassedImages={setListingImages}
-                        multipleUpload={true}
-                        htmlForButton={buttonHTML}
-                        imageFiles={imageBlobs}
-                        setImageFiles={setImageBlobs}
-                      />
-                    </Box>
-                  </form>
-                </Box>
-              </Grid>
-              <Grid item lg={6} xs={12}>
-                <Box>
-                  <Typography variant={"h5"} sx={{ paddingLeft: "20px" }}>
-                    Image Preview
-                  </Typography>
-                  <Box sx={{ padding: "10px" }}>
-                    {!isImageValid(listingImages[0]) ? (
-                      <Typography
-                        sx={{ paddingLeft: "10px" }}
-                        variant={"body2"}
-                      >
-                        No images uploaded yet
+                  </Grid>
+                  <Grid item md={12}>
+                    <Box
+                      sx={{
+                        display: listingImages.length != 0 ? "block" : "none",
+                        width: "100%",
+                      }}
+                    >
+                      <Typography variant={"h5"} sx={{ paddingLeft: "20px" }}>
+                        Image Preview
                       </Typography>
-                    ) : (
-                      <Carousel imageURLs={listingImages} />
-                    )}
-                  </Box>
+                      <Box sx={{ padding: "10px", width: "100%" }}>
+                        {!isImageValid(listingImages[0]) ? (
+                          <Typography
+                            sx={{ paddingLeft: "10px" }}
+                            variant={"body2"}
+                          >
+                            No images uploaded yet
+                          </Typography>
+                        ) : (
+                          <Carousel imageURLs={listingImages} />
+                        )}
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      display: "inline",
+                      mt: 2,
+                      backgroundColor: colors.martletplaceNavyBlue,
+                      "&:hover": {
+                        backgroundColor: colors.martletplaceBlueHover,
+                      },
+                      textTransform: "none",
+                      fontSize: "16px",
+                      padding: "10px 20px",
+                      margin: "10px",
+                    }}
+                    id={"submit-button"}
+                  >
+                    Create Listing
+                  </Button>
+                  <MultiFileUpload
+                    passedImages={listingImages}
+                    setPassedImages={setListingImages}
+                    multipleUpload={true}
+                    htmlForButton={buttonHTML}
+                    imageFiles={imageBlobs}
+                    setImageFiles={setImageBlobs}
+                  />
+                  {listingImages.length != 0 ? (
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        display: "inline",
+                        mt: 2,
+                        textTransform: "none",
+                        fontSize: "16px",
+                        padding: "10px 20px",
+                        margin: "10px",
+                        borderColor: colors.martletplaceYellow,
+                        color: colors.martletplaceYellow,
+                      }}
+                      onClick={clearImages}
+                    >
+                      Clear Images
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Box>
-              </Grid>
-            </Grid>
+              </form>
+            </Box>
           </CardContent>
         </Card>
       </Container>
