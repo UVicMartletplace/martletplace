@@ -18,25 +18,27 @@ export const getCurrentCharity = async (
     );
 
     if (charityResult) {
-      const donationFunds = await db.one(
-        `SELECT COALESCE(SUM(donated), 0) AS donationFunds
+      const [donationFunds, listingStats] = await Promise.all([
+        db.one(
+          `SELECT COALESCE(SUM(donated), 0) AS donation_funds
          FROM organizations
          WHERE charity_id = $1;`,
-        [charityResult.id],
-      );
-
-      const listingStats = await db.one(
-        `SELECT 
-           COALESCE(SUM(price), 0) AS listingFunds, 
-           COUNT(*) AS listingsCount
+          [charityResult.id],
+        ),
+        db.one(
+          `SELECT 
+           COALESCE(SUM(price), 0) AS listing_funds, 
+           COUNT(*) AS listings_count
          FROM listings
          WHERE charity_id = $1;`,
-        [charityResult.id],
-      );
+          [charityResult.id],
+        ),
+      ]);
 
       charityResult.funds =
-        donationFunds.donationFunds + listingStats.listingFunds;
-      charityResult.listingsCount = listingStats.listingsCount;
+        parseFloat(donationFunds.donation_funds) +
+        parseFloat(listingStats.listing_funds);
+      charityResult.listingsCount = parseInt(listingStats.listings_count);
     }
 
     res.json(charityResult);
