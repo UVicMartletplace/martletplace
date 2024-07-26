@@ -4,9 +4,7 @@ from datetime import datetime, timezone
 
 
 class ListingSummary(BaseModel):
-    listingID: str = Field(
-        default=None, description="The primary key for the listing."
-    )
+    listingID: str = Field(default=None, description="The primary key for the listing.")
     sellerID: Optional[str] = Field(
         ..., description="The ID of the seller, foreign key to users."
     )
@@ -17,7 +15,8 @@ class ListingSummary(BaseModel):
         default={}, description="A dictionary containing location details."
     )
     description: Optional[str] = Field(
-        default="No description set", description="A detailed description of the listing."
+        default="No description set",
+        description="A detailed description of the listing.",
     )
     imageUrl: Optional[str] = Field(
         default=None,

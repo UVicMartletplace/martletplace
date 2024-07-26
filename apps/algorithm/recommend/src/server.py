@@ -1,6 +1,5 @@
 # ruff: noqa: E402
 import ast
-import re
 from typing import List
 from fastapi import FastAPI, HTTPException, Depends, Request, Response
 import pandas as pd
@@ -183,7 +182,7 @@ async def get_recommendations(
             description=str(row["description"]),
             dateCreated=row["created_at"],
         )
-        if(len(img_urls) > 0):
+        if len(img_urls) > 0:
             listing_summary.imageUrl = str(img_urls[0])
         listing_summaries.append(listing_summary)
     await session.close()
