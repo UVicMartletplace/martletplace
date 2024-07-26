@@ -25,6 +25,10 @@ http:
       rule: "PathPrefix(`/api/search`)"
       service: search
       priority: 200
+    to-charity:
+      rule: "PathPrefix(`/api/charity`)"
+      service: charity
+      priority: 200
     to-recommendations:
       rule: "PathPrefix(`/api/recommendations`)"
       service: recommendations
@@ -71,6 +75,10 @@ http:
       loadBalancer:
         servers:
           - url: http://search:8221/
+    charity:
+      loadBalancer:
+        servers:
+          - url: http://search:8225/
     recommendations:
       loadBalancer:
         servers:

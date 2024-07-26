@@ -22,15 +22,26 @@ CREATE TABLE users (
     profile_pic_url TEXT,
     verified BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    modified_at TIMESTAMP NOT NULL DEFAULT NOW()
+    modified_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    ignore_charity_listings BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TRIGGER users_modified_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+
+CREATE TABLE charities (
+    charity_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    image_url TEXT
+);
 
 CREATE TABLE listings (
     listing_id SERIAL PRIMARY KEY,
     seller_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     buyer_id INTEGER REFERENCES users(user_id),
+    charity_id INTEGER REFERENCES charities(charity_id),
     title VARCHAR NOT NULL,
     price INTEGER NOT NULL,
     location LOCATION_TYPE NOT NULL,
@@ -87,15 +98,6 @@ CREATE TABLE user_clicks (
     user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE charities (
-    charity_id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    description TEXT,
-    start_date DATE,
-    end_date DATE,
-    image_url TEXT
 );
 
 CREATE TABLE organizations (

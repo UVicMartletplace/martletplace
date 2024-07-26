@@ -34,7 +34,8 @@ const Charities = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await _axios_instance.get("/charities");
+        const response = await _axios_instance.get("/api/charities");
+        console.log("response: " + JSON.stringify(response.data));
         setCharities(response.data);
         setLoading(false);
       } catch (error) {

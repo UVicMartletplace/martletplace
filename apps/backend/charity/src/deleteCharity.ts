@@ -8,13 +8,12 @@ export const deleteCharity = async (
   db: IDatabase<object>,
 ) => {
   try {
-    const userID = req.user.userId;
     const charityID = req.params.id;
 
     const result = await db.oneOrNone(
       `DELETE FROM charities 
-      WHERE id = $1 AND user_id = $2;`,
-      [charityID, userID],
+      WHERE id = $1;`,
+      [charityID],
     );
     if (result) {
       res.status(204).json({ message: "Charity deleted successfully" });

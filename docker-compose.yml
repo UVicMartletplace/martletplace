@@ -49,7 +49,7 @@ services:
     environment:
       <<: *shared_env_var
       EMAIL_ENDPOINT: http://datalayer:8302/api/email
-      SKIP_USER_VERIFICATION: "FALSE"
+      SKIP_USER_VERIFICATION: "TRUE"
       JWT_PRIVATE_KEY: |
         -----BEGIN PRIVATE KEY-----
         MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCPzYPvUo1CZhrZ

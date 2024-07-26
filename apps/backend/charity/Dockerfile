@@ -15,7 +15,7 @@ COPY src/ ./src
 
 RUN npm run build
 
-HEALTHCHECK CMD curl -f http://localhost:8212/.well-known/health
+HEALTHCHECK CMD curl -f http://localhost:8225/.well-known/health
 CMD npm start
 
 FROM node:20-bookworm-slim AS prod
@@ -23,6 +23,6 @@ FROM node:20-bookworm-slim AS prod
 WORKDIR /app/service
 COPY --from=dev /app/service/server.js .
 
-HEALTHCHECK CMD curl -f http://localhost:8212/.well-known/health
+HEALTHCHECK CMD curl -f http://localhost:8225/.well-known/health
 
 CMD node server.js
