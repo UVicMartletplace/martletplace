@@ -1,117 +1,105 @@
-resource "aws_opensearchserverless_collection" "martletplace-collection" {
-  name = "martletplace-collection"
-  type = "SEARCH"
-
-  depends_on = [
-    aws_opensearchserverless_security_policy.opensearch-encryption-policy,
-    aws_opensearchserverless_security_policy.opensearch-network-policy,
-    aws_opensearchserverless_access_policy.opensearch-access-policy,
-  ]
+variable "domain" {
+  default = "martletplace"
 }
 
-resource "aws_opensearchserverless_security_policy" "opensearch-network-policy" {
-  name = "opensearch-network-policy"
-  type = "network"
-  policy = jsonencode([
-    {
-      Rules = [
-        {
-          ResourceType = "collection",
-          Resource     = ["collection/martletplace*"]
-        },
-      ],
-      AllowFromPublic = false,
-      SourceVPCEs     = [aws_opensearchserverless_vpc_endpoint.martetplace-opensearch-endpoint.id]
-    }
-  ])
-}
-
-resource "aws_opensearchserverless_security_policy" "opensearch-encryption-policy" {
-  name = "opensearch-encryption-policy"
-  type = "encryption"
-  policy = jsonencode({
-    "Rules" = [
-      {
-        "Resource" = [
-          "collection/martletplace*"
-        ],
-        "ResourceType" = "collection"
-      }
-    ],
-    "AWSOwnedKey" = true
-  })
-}
-
-resource "aws_opensearchserverless_access_policy" "opensearch-access-policy" {
-  name        = "opensearch-access-policy"
-  type        = "data"
-  description = "read and write permissions"
-  policy = jsonencode([
-    {
-      Rules = [
-        {
-          ResourceType = "index",
-          Resource = [
-            "index/martletplace-collection/*"
-          ],
-          Permission = [
-            "aoss:*"
-          ]
-        },
-        {
-          ResourceType = "collection",
-          Resource = [
-            "collection/martletplace-collection"
-          ],
-          Permission = [
-            "aoss:*"
-          ]
-        }
-      ],
-      Principal = [
-        data.aws_caller_identity.current.arn,
-        aws_iam_role.ecs_task_execution_role.arn,
-        aws_iam_role.ecs_task_role.arn,
-      ]
-    }
-  ])
-}
-
-resource "aws_security_group" "opensearch_security_group" {
-  name        = "opensearch_security_group"
-  description = "Security group for VPC endpoint"
-  vpc_id      = aws_vpc.main.id
+resource "aws_security_group" "example" {
+  name   = "oasdasdasd"
+  vpc_id = aws_vpc.main.id
 
   ingress {
-    from_port   = 0
-    to_port     = 65000
-    protocol    = "tcp"
-    cidr_blocks = [aws_vpc.main.cidr_block]
-    description = "Allow inbound traffic from EC2 instances in 10.0.0.0/8"
-  }
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
     cidr_blocks = [aws_vpc.main.cidr_block]
-    description = "Allow outbound traffic to EC2 instances in 10.0.0.0/8"
   }
 }
 
-resource "aws_opensearchserverless_vpc_endpoint" "martetplace-opensearch-endpoint" {
-  name               = "martetplace-opensearch-endpoint"
-  subnet_ids         = [for subnet in aws_subnet.public : subnet.id]
-  vpc_id             = aws_vpc.main.id
-  security_group_ids = [aws_security_group.opensearch_security_group.id]
+resource "aws_iam_service_linked_role" "example" {
+  aws_service_name = "opensearchservice.amazonaws.com"
 }
 
-resource "aws_secretsmanager_secret" "opensearch_url_secret" {
+data "aws_iam_policy_document" "example" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    actions   = ["es:*"]
+    resources = ["arn:aws:es:us-west-2:${data.aws_caller_identity.current.account_id}:domain/${var.domain}/*"]
+  }
+}
+
+resource "aws_opensearch_domain" "example" {
+  domain_name    = var.domain
+  engine_version = "OpenSearch_2.13"
+
+  cluster_config {
+    instance_type = "t3.small.search"
+    #instance_type          = "m4.large.search"
+    #zone_awareness_enabled = true
+    instance_count = 1
+  }
+
+  advanced_security_options {
+    enabled = true
+    #anonymous_auth_enabled         = true
+    internal_user_database_enabled = true
+    master_user_options {
+      master_user_name     = "elastic"
+      master_user_password = random_password.search_password.result
+    }
+  }
+
+  node_to_node_encryption {
+    enabled = true
+  }
+
+  encrypt_at_rest {
+    enabled = true
+  }
+
+  domain_endpoint_options {
+    enforce_https       = true
+    tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
+  }
+
+
+  vpc_options {
+    subnet_ids         = [aws_subnet.public.1.id] #TODO: Make it all four
+    security_group_ids = [aws_security_group.example.id]
+  }
+  ebs_options {
+    ebs_enabled = true
+    volume_size = 10
+  }
+
+  advanced_options = {
+    "rest.action.multi.allow_explicit_index" = "true"
+  }
+
+  access_policies = data.aws_iam_policy_document.example.json
+
+  depends_on = [aws_iam_service_linked_role.example]
+}
+
+resource "random_password" "search_password" {
+  length      = 16
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  min_special = 1
+}
+
+resource "aws_secretsmanager_secret" "opensearch_password_secret" {
   name                    = "/martletplace/opensearch_url"
   recovery_window_in_days = 0
 }
 
-resource "aws_secretsmanager_secret_version" "opensearch_url_version" {
-  secret_id     = aws_secretsmanager_secret.opensearch_url_secret.id
-  secret_string = aws_opensearchserverless_collection.martletplace-collection.collection_endpoint
+resource "aws_secretsmanager_secret_version" "opensearch_password_version" {
+  secret_id     = aws_secretsmanager_secret.opensearch_password_secret.id
+  secret_string = random_password.search_password.result
 }

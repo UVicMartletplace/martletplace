@@ -87,6 +87,7 @@ module "user" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -113,6 +114,7 @@ module "listing" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -139,6 +141,7 @@ module "review" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -165,6 +168,7 @@ module "message" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -175,15 +179,19 @@ module "search" {
   source = "./ecs/"
 
   app_name     = "search"
-  app_image    = aws_ecr_repository.main["search"].repository_url
+  app_image    = format("%s:%s", aws_ecr_repository.main["search"].repository_url, var.app_version)
   app_port     = 8221
   app_route    = "/api/search*"
   app_priority = 95
 
-  environment = concat(local.base_environment, [])
+  environment = concat(local.base_environment, [{
+    name  = "ES_ENDPOINT",
+    value = format("https://%s", aws_opensearch_domain.example.endpoint)
+  }])
+
   secrets = concat(local.base_secrets, [{
-    name      = "ES_ENDPOINT",
-    valueFrom = aws_secretsmanager_secret.opensearch_url_secret.arn
+    name      = "ES_PASSWORD",
+    valueFrom = aws_secretsmanager_secret.opensearch_password_secret.arn
   }])
 
   fargate_cpu    = var.fargate_cpu
@@ -194,6 +202,7 @@ module "search" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -220,6 +229,7 @@ module "recommend" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -247,6 +257,7 @@ module "collector" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id

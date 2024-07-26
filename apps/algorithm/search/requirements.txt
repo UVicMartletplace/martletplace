@@ -1,6 +1,6 @@
 fastapi
 pydantic
-elasticsearch
+opensearch-py
 uvicorn[standard]
 gunicorn
 asyncpg

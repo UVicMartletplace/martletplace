@@ -1,7 +1,7 @@
 import os
 from typing import Dict, Any
 
-from elasticsearch import Elasticsearch, NotFoundError
+from opensearchpy import OpenSearch, NotFoundError
 from fastapi import APIRouter, HTTPException, Request, Response, BackgroundTasks
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT, DISTANCE_TO_SEARCH_WITHIN
@@ -14,21 +14,16 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 RequestsInstrumentor().instrument()
 
 search_router = APIRouter()
+# AWS_EXECUTION_ENV
 
-print("Connecting to ES")
-es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
+es = OpenSearch(hosts=[ES_ENDPOINT], http_auth = ("elastic", os.getenv("ES_PASSWORD","")))
+print(es.info())
+
 INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-print("Connected, searching...")
-try:
-    print(es.info())
-except Exception as e:
-    print(e)
 try:
     es.indices.create(index=INDEX)
 except Exception as e:
     print(e)
-print("Search done")
-
 
 @search_router.get("/api/search")
 async def search(
@@ -45,7 +40,6 @@ async def search(
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
 ):
-    print("Starting search")
     validate_search_params(latitude, longitude, page,
                            limit, minPrice, maxPrice)
 

@@ -54,7 +54,7 @@ resource "aws_iam_policy" "opensearch_policy" {
       {
         "Effect" : "Allow",
         "Action" : "aoss:*",
-        "Resource" : [aws_opensearchserverless_collection.martletplace-collection.arn]
+        "Resource" : ["*"]
       }
     ]
   })
