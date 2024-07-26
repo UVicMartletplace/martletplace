@@ -15,9 +15,8 @@ export const getCurrentCharity = async (
         jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) AS organizations
        FROM charities c
        LEFT JOIN organizations o ON c.charity_id = o.charity_id
-       WHERE $1 BETWEEN c.start_date AND c.end_date
+       WHERE NOW() BETWEEN c.start_date AND c.end_date
        GROUP BY c.charity_id;`,
-      [new Date()],
     );
 
     if (charityResult) {
