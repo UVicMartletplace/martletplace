@@ -133,23 +133,17 @@ async def get_recommendations(
         listings_formatted = []
         for row in recommended_listings:
             try:
-                img_urls = row[0].image_urls
+                img_url = str(row[0].image_urls[0])
             except (ValueError, SyntaxError):
-                img_urls = []
+                img_url = None
             listing_summary = ListingSummary(
                 listingID=str(row[0].listing_id),
                 sellerID=str(row[0].seller_id),
                 sellerName=str(row[1]),
-                buyerID=row[0].buyer_id,
                 title=str(row[0].title),
                 price=(row[0].price),
-                location={
-                    "latitude": float(row[0].location["latitude"]),
-                    "longitude": float(row[0].location["longitude"]),
-                },
-                status=row[0].status.value,
                 description=row[0].description,
-                imageUrl=str(img_urls[0]),
+                imageUrl=img_url,
                 dateCreated=row[0].created_at,
                 modified_at=row[0].modified_at,
             )
@@ -180,29 +174,17 @@ async def get_recommendations(
             img_urls = ast.literal_eval(row["image_urls"])
         except (ValueError, SyntaxError):
             img_urls = []
-        # the locations are stored as html 💀 so parse out the longitude and latitude
-        pattern = re.compile(r"latitude=([-\d\.]+) longitude=([-\d\.]+)")
-        match = pattern.search(row["location"])
-        if match:
-            latitude, longitude = match.groups()
-            loc = {"latitude": float(latitude), "longitude": float(longitude)}
-        else:
-            loc = {"latitude": 0, "longitude": 0}
         listing_summary = ListingSummary(
             listingID=str(row["listing_id"]),
             sellerID=str(row["seller_id"]),
-            # Will query for actual seller name later.
             sellerName=str(seller_name_dict[row["seller_id"]]),
-            buyerID=row["buyer_id"],
             title=str(row["title"]),
             price=row["price"],
-            location=loc,
-            status=str(row["status"]),
             description=str(row["description"]),
-            imageUrl=str(img_urls[0]),
             dateCreated=row["created_at"],
-            modified_at=row["modified_at"],
         )
+        if(len(img_urls) > 0):
+            listing_summary.imageUrl = str(img_urls[0])
         listing_summaries.append(listing_summary)
     await session.close()
     return listing_summaries
