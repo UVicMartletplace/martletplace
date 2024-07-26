@@ -277,7 +277,7 @@ export const useStyles = () => ({
     alignItems: "center",
     justifyContent: "space-between",
     padding: "10px",
-    border: "none",
+    border: "1px Black",
     backgroundColor: "#fcfcfc",
   },
   messagesConvImg: {
