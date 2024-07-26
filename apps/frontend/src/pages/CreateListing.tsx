@@ -74,9 +74,11 @@ const CreateListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
+    console.log(newListingObject);
     if (!titleError && !sent) {
       // In order to make sure that the images are retrieved before submitting
       const successImages: boolean = await asyncListingImageWrapper();
+
       if (!newListingObject.listing.title) {
         setTitleError("Please enter a title");
         return;
@@ -291,7 +293,7 @@ const CreateListing = () => {
             <Box>
               <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                 <Grid container>
-                  <Grid item md={12}>
+                  <Grid item lg={6} xs={12}>
                     <FormControl sx={{ width: "100%", padding: "10px" }}>
                       <TextField
                         id="field-title"
@@ -360,7 +362,7 @@ const CreateListing = () => {
                       </Typography>
                     </FormControl>
                   </Grid>
-                  <Grid item md={12}>
+                  <Grid item lg={6} xs={12}>
                     <Box
                       sx={{
                         display: listingImages.length != 0 ? "block" : "none",

@@ -75,7 +75,6 @@ const EditListing = () => {
       .then((response) => {
         const { title, description, price, status, images, charityId } =
           response.data;
-        console.log(response.data);
         setNewListingObject((prevState) => ({
           ...prevState,
           listing: {
@@ -199,7 +198,7 @@ const EditListing = () => {
 
   const isImageValid = (url: string) => {
     try {
-      return url.startsWith("data:image/");
+      return url.startsWith("data:image/") || url.startsWith("/api/images/");
     } catch (error) {
       return false;
     }
@@ -300,7 +299,7 @@ const EditListing = () => {
               <Box>
                 <form autoComplete="off" onSubmit={handleSubmit}>
                   <Grid container>
-                    <Grid item lg={6} md={12}>
+                    <Grid item lg={6} xs={12}>
                       <FormControl sx={{ width: "100%", gap: "10px" }}>
                         <TextField
                           id="field-title"
@@ -349,7 +348,7 @@ const EditListing = () => {
                         />
                       </FormControl>
                     </Grid>
-                    <Grid item lg={6} md={12}>
+                    <Grid item lg={6} xs={12}>
                       <Box
                         sx={{
                           display: listingImages.length != 0 ? "block" : "none",
@@ -360,16 +359,15 @@ const EditListing = () => {
                           Image Preview
                         </Typography>
                         <Box sx={{ padding: "10px", width: "100%" }}>
-                          {!isImageValid(listingImages[0]) ||
-                          !listingImages[0].startsWith("/api/images/") ? (
+                          {isImageValid(listingImages[0]) ? (
+                            <Carousel imageURLs={listingImages} />
+                          ) : (
                             <Typography
                               sx={{ paddingLeft: "10px" }}
                               variant={"body2"}
                             >
                               No images uploaded yet
                             </Typography>
-                          ) : (
-                            <Carousel imageURLs={listingImages} />
                           )}
                         </Box>
                       </Box>
