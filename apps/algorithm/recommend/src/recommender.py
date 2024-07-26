@@ -73,6 +73,8 @@ class Recommender:
             self.data["listing_id"].isin(listing_ids)
         ].tolist()
 
+        listing_indices = tf.convert_to_tensor(listing_indices, dtype=tf.int32)
+
         listing_vectors = tf.gather(
             self.normalized_item_vectors, listing_indices, axis=0
         )
