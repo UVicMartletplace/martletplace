@@ -11,7 +11,9 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))
 
 async def main():
     session = await db.get_async_session()
-    listings = await session.exec(text("SELECT * FROM listings ORDER BY random() LIMIT 1500"))
+    listings = await session.exec(
+        text("SELECT * FROM listings ORDER BY random() LIMIT 1500")
+    )
     data = pd.DataFrame(listings)
 
     await session.close()
