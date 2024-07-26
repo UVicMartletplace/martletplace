@@ -26,7 +26,7 @@ http:
       service: search
       priority: 200
     to-charity:
-      rule: "PathPrefix(`/api/charity`)"
+      rule: "PathPrefix(`/api/charities`)"
       service: charity
       priority: 200
     to-recommendations:
