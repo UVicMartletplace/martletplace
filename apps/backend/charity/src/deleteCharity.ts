@@ -12,7 +12,7 @@ export const deleteCharity = async (
 
     const result = await db.oneOrNone(
       `DELETE FROM charities 
-      WHERE id = $1;`,
+      WHERE charity_id = $1;`,
       [charityID],
     );
     if (result) {
