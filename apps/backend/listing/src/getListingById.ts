@@ -56,11 +56,11 @@ const getListingById = async (
     }
 
     const insertClickQuery = `
-      INSERT INTO user_clicks (user_id, click_term)
-      VALUES ($1, $2)
+      INSERT INTO user_clicks (user_id, listing_id, click_term)
+      VALUES ($1, $2, $3)
     `;
 
-    await db.oneOrNone(insertClickQuery, [userID, listing.title]);
+    await db.oneOrNone(insertClickQuery, [userID, id, listing.title]);
 
     const reviewsQuery = `
       SELECT 

@@ -65,6 +65,7 @@ class User_Searches(SQLModel, table=True):
 class User_Clicks(SQLModel, table=True):
     click_id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.user_id")
+    listing_id: int = Field(foreign_key="listings.listing_id")
     click_term: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     user: Users = Relationship(back_populates="clicks")
