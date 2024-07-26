@@ -41,18 +41,11 @@ async def search(
             {
                 "multi_match": {
                     "query": query,
-                    "fields": [
-                        "title",
-                        "description"
-                    ],
-                    "fuzziness": "AUTO"
+                    "fields": ["title", "description"],
+                    "fuzziness": "AUTO",
                 }
             },
-            {
-                "match": {
-                    "status": status
-                }
-            }
+            {"match": {"status": status}},
         ]
     elif searchType == "USERS":
         must_conditions = [
@@ -75,7 +68,7 @@ async def search(
                             "location": {"lat": latitude, "lon": longitude},
                         }
                     }
-                ]
+                ],
             },
         },
         "sort": [],
