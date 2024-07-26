@@ -21,7 +21,6 @@ export const getCurrentCharity = async (
     );
 
     if (charityResult) {
-
       const donationFunds = await db.one(
         `SELECT COALESCE(SUM(donated), 0) AS donationFunds
          FROM organizations
@@ -38,7 +37,8 @@ export const getCurrentCharity = async (
         [charityResult.id],
       );
 
-      charityResult.funds = donationFunds.donationFunds + listingStats.listingFunds;
+      charityResult.funds =
+        donationFunds.donationFunds + listingStats.listingFunds;
       charityResult.listingsCount = listingStats.listingsCount;
     }
 
