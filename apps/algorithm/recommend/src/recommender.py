@@ -26,7 +26,7 @@ class Recommender:
         Recommendations are guaranteed to be unique.
         """
         dislike_vectors = self.get_vectors_by_id(items_disliked)
-        item_clicked_vectors = self.get_vectors_by_id(items_clicked)
+        item_clicked_vectors = self.get_vectors_by_content(items_clicked)
         search_term_vectors = self.get_vectors_by_content(terms_searched)
         recommendations = item_clicked_vectors + search_term_vectors - dislike_vectors
         recommendations = tf.nn.l2_normalize(recommendations, axis=1)
