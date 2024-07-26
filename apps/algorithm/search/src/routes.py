@@ -2,7 +2,7 @@ import os
 from typing import Dict, Any
 
 from elasticsearch import Elasticsearch, NotFoundError
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, HTTPException, Request, Response, BackgroundTasks
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT, DISTANCE_TO_SEARCH_WITHIN
 from .database import insert_user_search
@@ -21,6 +21,7 @@ es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
 @search_router.get("/api/search")
 async def search(
     request: Request,
+    background_tasks: BackgroundTasks,
     query: str,
     latitude: float,
     longitude: float,
@@ -119,12 +120,7 @@ async def search(
         for hit in response["hits"]["hits"]
     ]
 
-    try:
-        user_id = request.state.user
-        await insert_user_search(user_id, query)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+    background_tasks.add_task(insert_user_search, request.state.user, query)
     return {"items": results, "totalItems": total_items}
 
 

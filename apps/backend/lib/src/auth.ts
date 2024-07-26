@@ -33,6 +33,7 @@ export function authenticate_request(
   const unauthenticatedRoutes = [
     "POST /api/user",
     "POST /api/user/reset-password",
+    "PATCH /api/user/update-password",
     "POST /api/user/login",
     "POST /api/user/send-confirmation-email",
     "POST /api/user/confirm-email",

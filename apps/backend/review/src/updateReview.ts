@@ -23,7 +23,7 @@ const updateReview = async (
            rating_value = $2,
             listing_id = $3
        WHERE review_id = $4
-       RETURNING *`,
+       RETURNING review_id`,
       [comment, stars, listingID, id],
     );
 

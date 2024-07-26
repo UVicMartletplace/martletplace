@@ -37,7 +37,7 @@ const createListing = async (
     const createdListing = await db.one(
       `INSERT INTO listings (title, description, price, location, image_urls, status, created_at, modified_at, seller_id)
        VALUES ($1, $2, $3, $4, $5, 'AVAILABLE', NOW(), NOW(), $6)
-       RETURNING *`,
+       RETURNING listing_id, title, price, location, status, description, image_urls, created_at, modified_at;`,
       [
         title,
         description,
