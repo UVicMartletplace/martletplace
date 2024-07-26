@@ -7,7 +7,6 @@ import { AuthenticatedRequest } from "../../lib/src/auth";
 describe("Get all threads for user", () => {
   let res: Response;
   let next: NextFunction;
-  let db: IDatabase<object>;
 
   const content = "hi i want to buy your couch";
   const sender_id = 1;
@@ -25,9 +24,22 @@ describe("Get all threads for user", () => {
     } as Response;
     // @ts-expect-error Mock, it won't satisfy all conditions
     next = vi.fn() as NextFunction;
-    db = {
-      oneOrNone: vi.fn().mockImplementationOnce(() => Promise.resolve(1)),
-      query: vi.fn().mockImplementationOnce(() =>
+  });
+
+  it("should retrieve all messages in a thread", async () => {
+    const req = {
+      params: { receiver_id, listing_id },
+      body: { num_items: "10", offset: "0" },
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
+
+    const db = {
+      oneOrNone: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+          seller_id: receiver_id,
+        })
+      ),
+      query: vi.fn().mockImplementation(() =>
         Promise.resolve([
           {
             message_body: content,
@@ -39,15 +51,8 @@ describe("Get all threads for user", () => {
         ])
       ),
     } as unknown as IDatabase<object>;
-  });
 
-  it("should retrieve all messages in a thread", async () => {
-    const req = {
-      params: { receiver_id, listing_id },
-      body: { num_items: "10", offset: "0" },
-      user: { userId: 1 },
-    } as unknown as AuthenticatedRequest;
-    useValidateGetMessages(req, res, next);
+    await useValidateGetMessages(req, res, next, db);
     expect(next).toHaveBeenCalledTimes(1);
 
     await getMessages(req, res, db);
@@ -63,13 +68,53 @@ describe("Get all threads for user", () => {
     ]);
   });
 
-  it("should fail with invalid params", () => {
+  it("should fail with missing fields", async () => {
     const req = {
       params: { listing_id },
       body: { num_items: "10", offset: "0" },
       user: { userId: 1 },
     } as unknown as AuthenticatedRequest;
-    useValidateGetMessages(req, res, next);
+    const db = {
+      oneOrNone: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+          seller_id: 1,
+        })
+      ),
+    } as unknown as IDatabase<object>;
+
+    await useValidateGetMessages(req, res, next, db);
     expect(res.status).toHaveBeenCalledWith(400);
+  });
+
+  it("should fail when listing not found", async () => {
+    const req = {
+      params: { receiver_id, listing_id },
+      body: { num_items: "10", offset: "0" },
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
+    const db = {
+      oneOrNone: vi.fn().mockImplementation(() => Promise.resolve(null)),
+    } as unknown as IDatabase<object>;
+
+    await useValidateGetMessages(req, res, next, db);
+    expect(res.status).toHaveBeenCalledWith(400);
+  });
+
+  it("should fail when user is not authorized", async () => {
+    const req = {
+      params: { receiver_id, listing_id },
+      body: { num_items: "10", offset: "0" },
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
+    const db = {
+      oneOrNone: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+          seller_id: 100,
+        })
+      ),
+    } as unknown as IDatabase<object>;
+
+    await useValidateGetMessages(req, res, next, db);
+    expect(res.status).toHaveBeenCalledWith(401);
   });
 });

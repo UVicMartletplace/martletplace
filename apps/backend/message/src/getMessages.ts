@@ -17,7 +17,7 @@ export const useValidateGetMessages = async (
 
   // Check that either the user_id or receiver_id is the user id of the listing
   const listing = await db.oneOrNone(
-    `SELECT seller_id, buyer_id FROM listings WHERE listing_id = $1`,
+    `SELECT seller_id FROM listings WHERE listing_id = $1`,
     [listing_id],
   );
   if (!listing) {

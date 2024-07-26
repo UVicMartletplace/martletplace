@@ -23,7 +23,7 @@ export const useValidateCreateMessage = async (
 
   // Check that either the sender_id or receiver_id is the user id of the listing
   const listing = await db.oneOrNone(
-    `SELECT seller_id, buyer_id FROM listings WHERE listing_id = $1`,
+    `SELECT seller_id FROM listings WHERE listing_id = $1`,
     [listing_id],
   );
   if (!listing) {
