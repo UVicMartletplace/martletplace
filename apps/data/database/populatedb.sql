@@ -8,11 +8,11 @@ INSERT INTO users (username, email, password, totp_secret, name, bio, profile_pi
 
 
 INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
-('Charity One', 'A nice clever description for a drab default charity', '2021-01-01', '2021-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
+('Charity One', 'A nice clever description for a drab default charity', '2024-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
 ('ScottMagic', 'We will make sure Scott never forgets his Magic cards again', '2022-01-01', '2022-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
 ('Bikes4Kids', 'Buying little bicycles for poor little children', '2022-06-15', '2022-06-18', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
 ('Little Treat', 'Fundraise so Anika can afford to have a little treat :-) <3', '2022-06-19', '2022-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
-('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
+('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2023-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
 
 INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
 ('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 2),
