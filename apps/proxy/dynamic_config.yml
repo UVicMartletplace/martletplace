@@ -21,6 +21,10 @@ http:
       rule: "PathPrefix(`/api/messages`)"
       service: message
       priority: 200
+    to-charity:
+      rule: "PathPrefix(`/api/charity`)"
+      service: charity
+      priority: 200
     to-search:
       rule: "PathPrefix(`/api/search`)"
       service: search
