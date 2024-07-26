@@ -122,7 +122,7 @@ services:
   charity:
     build:
       context: apps/backend/charity
-      target: dev
+      target: *build_target
       additional_contexts:
         - lib=apps/backend/lib
     container_name: martletplace_charity
