@@ -75,18 +75,21 @@ const EditListing = () => {
       .then((response) => {
         const { title, description, price, status, images, charityId } =
           response.data;
+        console.log(response.data);
         setNewListingObject((prevState) => ({
           ...prevState,
           listing: {
             ...prevState.listing,
             title: title || "",
             description: description || "",
-            price: +price || 0,
+            price: price || 0,
             images: images || [],
             markedForCharity: charityId !== null,
           },
           status: status || "AVAILABLE",
         }));
+        setPrice(price.toString());
+        setListingImages(images.map((image: ImageURLObject) => image.url));
         setListingValid(true);
       })
       .catch(() => {
@@ -129,6 +132,7 @@ const EditListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
+    console.log(newListingObject);
 
     if (!titleError) {
       try {
@@ -185,10 +189,7 @@ const EditListing = () => {
     } else {
       const priceValue: number = +event.target.value;
       setPrice(event.target.value);
-      updateNewListingPayload(
-        "price",
-        priceValue >= 0 ? priceValue : priceValue * -1,
-      );
+      updateNewListingPayload("price", priceValue);
     }
   };
 
@@ -359,7 +360,8 @@ const EditListing = () => {
                           Image Preview
                         </Typography>
                         <Box sx={{ padding: "10px", width: "100%" }}>
-                          {!isImageValid(listingImages[0]) ? (
+                          {!isImageValid(listingImages[0]) ||
+                          !listingImages[0].startsWith("/api/images/") ? (
                             <Typography
                               sx={{ paddingLeft: "10px" }}
                               variant={"body2"}

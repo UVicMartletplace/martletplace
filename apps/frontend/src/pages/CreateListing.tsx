@@ -178,10 +178,7 @@ const CreateListing = () => {
     } else {
       const priceValue: number = +event.target.value;
       setPrice(event.target.value);
-      updateNewListingPayload(
-        "price",
-        priceValue >= 0 ? priceValue : priceValue * -1,
-      );
+      updateNewListingPayload("price", priceValue);
     }
   };
 
