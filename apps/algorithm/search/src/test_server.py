@@ -669,7 +669,9 @@ def test_search_with_invalid_search_type(auth_headers, mock_insert_user_search):
     mock_insert_user_search.assert_not_awaited()
 
 
-def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_user_search):
+def test_only_return_results_within_5km_of_location(
+    auth_headers, mock_insert_user_search
+):
     es.index(
         index=TEST_INDEX,
         id="abc123",
@@ -683,7 +685,7 @@ def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_us
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -699,7 +701,7 @@ def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_us
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -717,7 +719,7 @@ def test_only_return_results_within_5km_of_location(auth_headers, mock_insert_us
         "items": [
             {
                 "listingID": "abc123",
-                "sellerID": '456',
+                "sellerID": "456",
                 "sellerName": "billybobjoe",
                 "title": "High-Performance Laptop",
                 "description": "A powerful laptop suitable for gaming and professional use.",
@@ -1115,7 +1117,7 @@ def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_sear
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -1131,7 +1133,7 @@ def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_sear
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1171,7 +1173,7 @@ def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_sea
             "status": "AVAILABLE",
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
-            "users": {"name": "billybobjoe"}
+            "users": {"name": "billybobjoe"},
         },
     )
     es.index(
@@ -1187,7 +1189,7 @@ def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_sea
             "status": "AVAILABLE",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
-            "users": {"name": "janedoe"}
+            "users": {"name": "janedoe"},
         },
     )
     es.indices.refresh(index=TEST_INDEX)
