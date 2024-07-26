@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY ./src ./src
 
-ARG RECOMMENDER_VERSION=v1.0.1
+ARG RECOMMENDER_VERSION=v2.0.0
 ARG DATA_DIR=/app/training
 ARG COSINE_SIMILARITY_URL=https://github.com/UVicMartletplace/martletplace/releases/download/recommender-$RECOMMENDER_VERSION/cosine_similarity_matrix.npy
 ARG NORMALIZED_ITEM_VECTORS_URL=https://github.com/UVicMartletplace/martletplace/releases/download/recommender-$RECOMMENDER_VERSION/normalized_item_vectors.npy
