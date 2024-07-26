@@ -226,7 +226,7 @@ export const useStyles = () => ({
     overflowY: "scroll",
 
     display: "flex",
-    borderBottom: "1px",
+    border: "none",
     borderColor: colors.martletplaceGrey,
     flexDirection: "column-reverse" as const,
     alignItems: "center",
@@ -259,6 +259,7 @@ export const useStyles = () => ({
     textAlign: "right",
     borderBottomRightRadius: "2px",
     marginInline: "1rem",
+    color: "white",
   },
   messageFromOther: {
     alignSelf: "flex-start",
@@ -277,8 +278,9 @@ export const useStyles = () => ({
     alignItems: "center",
     justifyContent: "space-between",
     padding: "10px",
-    border: "1px Black",
-    backgroundColor: "#fcfcfc",
+    border: "none",
+    borderBottom: "1px solid lightgrey",
+    backgroundColor: "#dcdcdc",
   },
   messagesConvImg: {
     width: "40px",
