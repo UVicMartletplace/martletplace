@@ -402,7 +402,7 @@ const EditListing = () => {
                         imageFiles={imageBlobs}
                         setImageFiles={setImageBlobs}
                       />
-                      {listingImages.length != 0 ? (
+                      {listingImages.length != 0 && (
                         <Button
                           variant="outlined"
                           sx={{
@@ -419,8 +419,6 @@ const EditListing = () => {
                         >
                           Clear Images
                         </Button>
-                      ) : (
-                        <></>
                       )}
                     </Box>
 
