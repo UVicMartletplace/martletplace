@@ -39,7 +39,13 @@ async def search(
 
     if searchType == "LISTINGS":
         must_conditions = [
-            {"multi_match": {"query": query, "fields": ["title", "description"]}},
+            {
+                "multi_match": {
+                    "query": query,
+                    "fields": ["title", "description"],
+                    "fuzziness": "AUTO",
+                }
+            },
             {"match": {"status": status}},
         ]
     elif searchType == "USERS":
@@ -53,7 +59,19 @@ async def search(
     search_body: Dict[str, Any] = {
         "from": (page - 1) * limit,
         "size": limit,
-        "query": {"bool": {"must": must_conditions, "filter": []}},
+        "query": {
+            "bool": {
+                "must": must_conditions,
+                "filter": [
+                    {
+                        "geo_distance": {
+                            "distance": DISTANCE_TO_SEARCH_WITHIN,
+                            "location": {"lat": latitude, "lon": longitude},
+                        }
+                    }
+                ],
+            },
+        },
         "sort": [],
     }
 
@@ -64,15 +82,6 @@ async def search(
         if maxPrice is not None:
             price_range["lte"] = maxPrice
         search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
-
-    search_body["query"]["bool"]["filter"].append(
-        {
-            "geo_distance": {
-                "distance": DISTANCE_TO_SEARCH_WITHIN,
-                "location": {"lat": latitude, "lon": longitude},
-            }
-        }
-    )
 
     if "DISTANCE" in sort:
         search_body["sort"].append(

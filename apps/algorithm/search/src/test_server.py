@@ -1541,3 +1541,49 @@ def test_total_items_count_with_filter(auth_headers, mock_insert_user_search):
     assert len(results["items"]) == 5
     assert results["totalItems"] == 10
     mock_insert_user_search.assert_awaited_once_with(5, "Item")
+
+
+def test_fuzzy_search(auth_headers, mock_insert_user_search):
+    es.index(
+        index=TEST_INDEX,
+        id="abc123",
+        body={
+            "listingId": "abc123",
+            "sellerId": "456",
+            "title": "chocolate",
+            "description": "Very yummy dark chocolate.",
+            "price": 8.00,
+            "location": {"lat": 45.4215, "lon": -75.6972},
+            "status": "AVAILABLE",
+            "dateCreated": "2024-05-22T10:30:00Z",
+            "image_urls": ["https://example.com/image1.jpg"],
+            "users": {"name": "billybobjoe"},
+        },
+    )
+    es.indices.refresh(index=TEST_INDEX)
+    response = client.get(
+        "/api/search",
+        headers=auth_headers,
+        params={
+            "query": "chocolat",
+            "latitude": 45.4315,
+            "longitude": -75.6972,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "items": [
+            {
+                "listingID": "abc123",
+                "sellerID": "456",
+                "sellerName": "billybobjoe",
+                "title": "chocolate",
+                "description": "Very yummy dark chocolate.",
+                "price": 8.00,
+                "dateCreated": "2024-05-22T10:30:00Z",
+                "imageUrl": "https://example.com/image1.jpg",
+            }
+        ],
+        "totalItems": 1,
+    }
+    mock_insert_user_search.assert_awaited_once_with(5, "chocolat")
