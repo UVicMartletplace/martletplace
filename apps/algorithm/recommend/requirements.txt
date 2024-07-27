@@ -1,6 +1,7 @@
 fastapi
 pydantic
 uvicorn[standard]
+gunicorn
 tensorflow
 pandas
 numpy

@@ -16,6 +16,7 @@ CREATE TABLE users (
     username VARCHAR NOT NULL UNIQUE,
     email VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL,
+    totp_secret VARCHAR NOT NULL,
     name VARCHAR,
     bio TEXT,
     profile_pic_url TEXT,
@@ -24,8 +25,7 @@ CREATE TABLE users (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER users_modified_at BEFORE UPDATE ON users
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER users_modified_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE listings (
     listing_id SERIAL PRIMARY KEY,
@@ -41,8 +41,7 @@ CREATE TABLE listings (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER listings_modified_at BEFORE UPDATE ON listings FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
@@ -63,8 +62,7 @@ CREATE TABLE reviews (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER reviews_modified_at BEFORE UPDATE ON reviews
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER reviews_modified_at BEFORE UPDATE ON reviews FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE user_preferences (
     user_pref_id SERIAL PRIMARY KEY,
@@ -75,8 +73,7 @@ CREATE TABLE user_preferences (
     modified_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TRIGGER user_preferences_modified_at BEFORE UPDATE ON user_preferences
-FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
+CREATE TRIGGER user_preferences_modified_at BEFORE UPDATE ON user_preferences FOR EACH ROW EXECUTE PROCEDURE trigger_update_modified();
 
 CREATE TABLE user_searches (
     search_id SERIAL PRIMARY KEY,
@@ -90,4 +87,22 @@ CREATE TABLE user_clicks (
     user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE charities (
+    charity_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    image_url TEXT
+);
+
+CREATE TABLE organizations (
+    organization_id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    logo_url TEXT,
+    donated DECIMAL(10, 2),
+    receiving BOOLEAN,
+    charity_id INTEGER NOT NULL REFERENCES charities(charity_id) ON DELETE CASCADE
 );

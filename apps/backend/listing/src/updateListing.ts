@@ -43,7 +43,7 @@ const updateListing = async (
            image_urls = $5,
            status = $6
        WHERE listing_id = $7
-       RETURNING *`,
+       RETURNING listing_id, seller_id, buyer_id, title, price, location, status, description, image_urls, created_at, modified_at;`,
       [
         title,
         description,

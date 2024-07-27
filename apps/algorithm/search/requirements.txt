@@ -2,6 +2,7 @@ fastapi
 pydantic
 elasticsearch
 uvicorn[standard]
+gunicorn
 asyncpg
 pyjwt[crypto]
 opentelemetry-api

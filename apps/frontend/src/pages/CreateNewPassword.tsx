@@ -9,17 +9,14 @@ import {
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
-import { useNavigate } from "react-router-dom";
-import useUser from "../hooks/useUser";
+import { useNavigate, useParams } from "react-router-dom";
 import _axios_instance from "../_axios_instance";
 
 const CreateNewPassword = () => {
   const classes = useStyles();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const { user } = useUser();
-
+  const { token } = useParams();
   const [passwordError, setPasswordError] = useState("");
 
   const isFormIncomplete = !password || !confirmPassword;
@@ -48,17 +45,9 @@ const CreateNewPassword = () => {
     }
 
     try {
-      if (!user) {
-        alert("An error occurred. Please try again.");
-        return;
-      }
-      await _axios_instance.patch("/api/user", {
-        name: user.name,
-        username: user.username,
-        bio: user.bio,
-        profilePicture: user.profileUrl,
-        ignoreCharities: user.ignoreCharities,
+      await _axios_instance.patch("/user/update-password", {
         password: password,
+        code: token,
       });
 
       navigate("/login");

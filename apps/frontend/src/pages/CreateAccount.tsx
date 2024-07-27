@@ -6,12 +6,15 @@ import {
   Typography,
   FormHelperText,
   Link,
+  Backdrop,
 } from "@mui/material";
 import martletPlaceLogo from "../images/martletplace-logo.png";
 import { colors } from "../styles/colors";
 import { useStyles } from "../styles/pageStyles";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { TOTP } from "otpauth";
+import QRCode from "qrcode";
 
 const CreateAccount = () => {
   const classes = useStyles();
@@ -23,6 +26,37 @@ const CreateAccount = () => {
   const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const [openBackDrop, setOpenBackDrop] = useState(false);
+  const [tokenCode, setTokenCode] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+
+  const generateCode = (totp_secret: string, email: string) => {
+    const totp = new TOTP({
+      issuer: "MartletPlace",
+      label: email,
+      algorithm: "SHA1",
+      digits: 6,
+      secret: totp_secret,
+    });
+    setTokenCode(totp.secret.base32);
+
+    QRCode.toDataURL(
+      totp.toString(),
+      (err: Error | null | undefined, url: string) => {
+        if (err) {
+          console.error("Error generating QR code:", err);
+        } else {
+          setQrCodeUrl(url);
+        }
+      },
+    );
+  };
+
+  const handleOpen = (totp_secret: string, email: string) => {
+    generateCode(totp_secret, email);
+    setOpenBackDrop(true);
+  };
 
   const isFormIncomplete = !email || !name || !username || !password;
 
@@ -79,8 +113,7 @@ const CreateAccount = () => {
       }
 
       alert("Please check your email to verify your account.");
-
-      navigate("/login");
+      handleOpen(response.data.totp_secret, response.data.email);
     } catch (error) {
       alert("Failed to create account. Please try again.");
     }
@@ -192,9 +225,46 @@ const CreateAccount = () => {
           Your account can be customized further once you verify your account.
         </Typography>
         <Link href="/user/login" underline="hover" sx={classes.link}>
-          Already have an account? Login
+          <Typography variant="body2">
+            Already have an account? Login
+          </Typography>
         </Link>
       </Box>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: 999 }}
+        id="backdrop"
+        open={openBackDrop}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h5" sx={{ textAlign: "center" }}>
+            Store the Below Code in your Authenticator Application
+          </Typography>
+          <Box sx={{ margin: "10px" }}>
+            <img src={qrCodeUrl} width="250px" alt="totp qr code auth" />
+          </Box>
+          <Typography variant="caption">Key: {tokenCode}</Typography>
+          <Button
+            variant="contained"
+            id="continue-button"
+            sx={{ ...classes.button, width: "auto", paddingX: "10px" }}
+            onClick={() => {
+              navigate("/login");
+              setOpenBackDrop(false);
+            }}
+          >
+            Click here AFTER you
+            <br />
+            have stored this code
+          </Button>
+        </Box>
+      </Backdrop>
     </Box>
   );
 };

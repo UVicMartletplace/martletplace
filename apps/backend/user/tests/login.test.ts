@@ -3,6 +3,7 @@ import { login } from '../src/login';
 import { Response } from 'express';
 import { IDatabase } from 'pg-promise';
 import bcrypt from 'bcryptjs';
+import { TOTP } from "otpauth";
 import { AuthenticatedRequest, create_token } from '../../lib/src/auth';
 
 vi.mock('bcryptjs');
@@ -10,12 +11,23 @@ vi.mock('../../lib/src/auth', () => ({
   create_token: vi.fn(),
 }));
 
-describe('Login Endpoint', () => {
+describe('Login Endpoint', () => { 
   it('should login a user successfully', async () => {
+    // Generate totp from test user secret
+    const totp = new TOTP({
+      label: "MartletPlace",
+      algorithm: "SHA1",
+      digits: 6,
+      secret: 'NICESTRONGSECRET',
+    });
+
+    const totp_code = totp.generate();
+
     const req = {
       body: {
         email: 'johndoe@example.com',
         password: 'Password123!',
+        totpCode: totp_code,
       },
     } as unknown as AuthenticatedRequest;
 
@@ -31,6 +43,7 @@ describe('Login Endpoint', () => {
         username: 'johndoe',
         email: 'johndoe@example.com',
         password: await bcrypt.hash('Password123!', 10),
+        totp_secret: 'NICESTRONGSECRET',
         name: 'John Doe',
         bio: 'A software developer',
         profile_pic_url: 'http://example.com/profile.jpg',
@@ -63,6 +76,7 @@ describe('Login Endpoint', () => {
       body: {
         email: '',
         password: '',
+        totpCode: '',
       },
     } as unknown as AuthenticatedRequest;
 
@@ -78,7 +92,7 @@ describe('Login Endpoint', () => {
     await login(req, res, db);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Email and password are required' });
+    expect(res.json).toHaveBeenCalledWith({ error: 'Email, password and TOTP code are required' });
   });
 
   it('should return an error if email or password is invalid', async () => {
@@ -86,6 +100,7 @@ describe('Login Endpoint', () => {
       body: {
         email: 'johndoe@example.com',
         password: 'wrongPassword',
+        totpCode: '123456',
       },
     } as unknown as AuthenticatedRequest;
 
@@ -120,6 +135,7 @@ describe('Login Endpoint', () => {
       body: {
         email: 'johndoe@example.com',
         password: 'Password123!',
+        totpCode: '123456',
       },
     } as unknown as AuthenticatedRequest;
 
@@ -154,6 +170,7 @@ describe('Login Endpoint', () => {
       body: {
         email: 'johndoe@example.com',
         password: 'Password123!',
+        totpCode: '123456',
       },
     } as unknown as AuthenticatedRequest;
 

@@ -33,18 +33,24 @@ const getListingsByUser = async (
       return res.status(200).json({ listings: [] });
     }
 
-    const responseListings = listings.map((listing) => ({
-      listingID: String(listing.listingID),
-      title: listing.title,
-      description: listing.description,
-      price: listing.price,
-      location: listing.location,
-      status: listing.status,
-      dateCreated: listing.dateCreated,
-      dateModified: listing.dateModified,
-      images: listing.images.map((url: string) => ({ url })),
-    }));
-
+    const responseListings = listings.map((listing) => {
+      const location = listing.location.replace(/[()]/g, "");
+      const [latitude, longitude] = location.split(",").map(Number);
+      return {
+        listingID: String(listing.listingID),
+        title: listing.title,
+        description: listing.description,
+        price: listing.price,
+        location: {
+          latitude: latitude,
+          longitude: longitude,
+        },
+        status: listing.status,
+        dateCreated: listing.dateCreated,
+        dateModified: listing.dateModified,
+        images: listing.images.map((url: string) => ({ url })),
+      };
+    });
     return res.status(200).json({ listings: responseListings });
   } catch (err) {
     console.error(err);

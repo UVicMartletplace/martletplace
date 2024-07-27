@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { IDatabase } from "pg-promise";
-import { User } from "./models/user";
 import bcrypt from "bcryptjs";
+import { encode } from "hi-base32";
+import crypto from "crypto";
 
 // createUser route
 const createUser = async (
@@ -38,25 +39,44 @@ const createUser = async (
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  // Create MFA token prior to returning user
+  const totp_secret = await totpSecretGen();
+
   const query = `
-    INSERT INTO users (username, email, password, name, verified)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING user_id, username, email, name, bio, profile_pic_url;
+    INSERT INTO users (username, email, password, totp_secret, name, verified)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING user_id, username, email, totp_secret, name, bio, profile_pic_url;
   `;
 
-  const values = [username, email, hashedPassword, name, false];
+  const values = [username, email, hashedPassword, totp_secret, name, false];
 
+  // Insert user into database
   try {
-    const data = await db.oneOrNone(query, values);
-    if (!data) {
+    const user = await db.oneOrNone(query, values);
+
+    if (!user) {
       return res.status(500).json({ error: "User not created" });
     }
 
-    return res.status(201).send(data);
+    return res.status(201).send(user);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Something went wrong" });
   }
+};
+
+const totpSecretGen = async () => {
+  // Generate secret key for user
+  const secret_key = generateBase32Secret();
+
+  // Return secret key
+  return secret_key;
+};
+
+const generateBase32Secret = () => {
+  const buffer = crypto.randomBytes(15);
+  const base32secret = encode(buffer).toString().replace(/=/g, "");
+  return base32secret.substring(0, 24);
 };
 
 export { createUser };
