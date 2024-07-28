@@ -10,7 +10,7 @@ import { getCharities } from "./getCharities";
 import { getCurrentCharity } from "./getCurrentCharity";
 import { deleteCharity } from "./deleteCharity";
 
-const PORT = 8225;
+const PORT = 8215;
 
 const app = express();
 

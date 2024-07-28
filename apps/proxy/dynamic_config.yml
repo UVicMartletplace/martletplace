@@ -78,7 +78,7 @@ http:
     charity:
       loadBalancer:
         servers:
-          - url: http://charity:8225/
+          - url: http://charity:8215/
     recommendations:
       loadBalancer:
         servers:
