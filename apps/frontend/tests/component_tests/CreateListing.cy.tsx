@@ -11,12 +11,13 @@ describe("<CreateListing />", () => {
             <Route path="/listing/new" element={<CreateListing />} />
           </Routes>
         </MemoryRouter>
-      </UserProvider>
+      </UserProvider>,
     );
-    cy.viewport(400, 600);
+    cy.viewport(600, 900);
   });
 
   it("renders", () => {
+    cy.pause();
     // see: https://on.cypress.io/mounting-react
     cy.contains("Create Listing").should("be.visible");
     cy.get("#field-title").should("be.visible");
@@ -230,7 +231,7 @@ describe("<CreateListing />", () => {
           price: 50,
           location: { latitude: 48.463302, longitude: -123.3108 },
           images: [],
-          markedForCharity: false
+          markedForCharity: false,
         },
       });
     });
@@ -262,20 +263,33 @@ describe("<CreateListing />", () => {
     }).as("uploadImages");
 
     cy.get("#field-title")
-      .type("Used Calculus Textbook")
-      .should("have.value", "Used Calculus Textbook");
+      .type("Used Calculus Textbook 2")
+      .should("have.value", "Used Calculus Textbook 2");
     cy.get("#field-description")
       .type("No wear and tear, drop-off available.")
       .should("have.value", "No wear and tear, drop-off available.");
-    cy.get("#field-price").type("-50").should("have.value", "-50");
-    cy.contains(
-      "This price is not valid, please make sure the value is positive and in the form xx.xx"
-    ).should("be.visible");
+    cy.get("#field-price").type("-50").should("have.value", "50");
 
     cy.get("#submit-button").click();
 
-    cy.get("@createListing.all").should("have.length", 0);
+    cy.get("@createListing.all").should("have.length", 1);
 
     cy.get("@uploadImages.all").should("have.length", 0);
+
+    cy.wait("@createListing").then((interception) => {
+      const requestBody = interception.request.body;
+      cy.log("Request Body", requestBody);
+      cy.log("Expected Body", listingObject);
+      expect(requestBody).to.deep.equal({
+        listing: {
+          title: "Used Calculus Textbook 2",
+          description: "No wear and tear, drop-off available.",
+          price: 50,
+          location: { latitude: 48.463302, longitude: -123.3108 },
+          images: [],
+          markedForCharity: false,
+        },
+      });
+    });
   });
 });

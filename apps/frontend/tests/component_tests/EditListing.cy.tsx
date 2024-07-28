@@ -60,11 +60,12 @@ describe("<EditListing />", () => {
         </MemoryRouter>
       </TestProviders>,
     );
-    cy.viewport(1280, 720);
+    cy.viewport(1600, 900);
     cy.wait("@getListing");
   });
 
- it("renders", () => {
+  it("renders", () => {
+    cy.pause();
     cy.contains("Edit Listing").should("be.visible");
   });
 
@@ -101,15 +102,17 @@ describe("<EditListing />", () => {
       .should("be.visible")
       .clear()
       .type("This is a bad textbook like the one used with SENG 474")
-      .should("have.value", "This is a bad textbook like the one used with SENG 474");
+      .should(
+        "have.value",
+        "This is a bad textbook like the one used with SENG 474",
+      );
 
     cy.get("#field-price")
       .should("be.visible")
       .type("{selectAll}0")
       .should("have.value", "0");
 
-    cy.get("#charity-checkbox-label")
-      .should("be.visible").click()
+    cy.get("#charity-checkbox-label").should("be.visible").click();
 
     cy.get("#submit-button").should("be.visible").click();
 
@@ -136,7 +139,10 @@ describe("<EditListing />", () => {
       .should("be.visible")
       .clear()
       .type("This is a bad textbook like the one used with SENG 474")
-      .should("have.value", "This is a bad textbook like the one used with SENG 474");
+      .should(
+        "have.value",
+        "This is a bad textbook like the one used with SENG 474",
+      );
 
     cy.get("#field-price")
       .should("be.visible")
@@ -170,7 +176,7 @@ describe("<EditListing />", () => {
           { url: "https://picsum.photos/200/300" },
           { url: "https://picsum.photos/200/300" },
         ],
-        markedForCharity: true
+        markedForCharity: true,
       },
       status: "SOLD",
     };

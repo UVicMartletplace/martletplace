@@ -229,6 +229,7 @@ const Messages = () => {
                     // Contains both the messages and the send box
                     width: "100%",
                     height: `calc(100vh - ${vars.messagesSendBoxHeight} - ${headerHeight}px)`,
+                    borderLeft: "1px solid lightgrey",
                   }}
                 >
                   <Box sx={s.messagesMessagesBox} id="scrollable">
