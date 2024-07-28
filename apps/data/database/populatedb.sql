@@ -6,7 +6,6 @@ INSERT INTO users (username, email, password, totp_secret, name, bio, profile_pi
 ('user5', 'user5@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE, FALSE);
 -- ALL PASSWORDS: Letmeinfortesting1!
 
-
 INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
 ('Charity One', 'A nice clever description for a drab default charity', '2024-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
 ('ScottMagic', 'We will make sure Scott never forgets his Magic cards again', '2022-01-01', '2022-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
@@ -26,6 +25,7 @@ INSERT INTO listings (seller_id, buyer_id, charity_id, title, description, price
 (3, 4, 1, 'Listing Three', 'Description for listing three', 300, ROW(48.4845652, -123.3234215), 'REMOVED', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Angel']),
 (4, NULL, NULL, 'Listing Four', 'Description for listing four', 400, ROW(48.4815652, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Casper']),
 (5, NULL, NULL, 'Listing Five', 'Description for listing five', 500, ROW(48.4805652, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Kiki']);
+
 
 INSERT INTO messages (sender_id, receiver_id, listing_id, message_body) VALUES
 (2, 1, 1, 'You still offering this???'),

@@ -12,7 +12,8 @@
                 "status",
                 "description",
                 "image_urls",
-                "created_at"
+                "created_at",
+                "location"
             ],
             "children": [
                 {
@@ -42,6 +43,13 @@
                     "listing_id": "listingId",
                     "seller_id": "sellerId",
                     "created_at": "dateCreated"
+                },
+                "mapping":
+                {
+                    "location":
+                    {
+                        "type": "geo_point"
+                    }
                 }
             }
         }
