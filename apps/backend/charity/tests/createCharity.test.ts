@@ -10,12 +10,12 @@ describe('Create Charity Endpoint', () => {
       body: {
         name: 'Sample Charity',
         description: 'This is a sample charity description',
-        start_date: '2024-01-01T00:00:00.000Z',
-        end_date: '2024-12-31T23:59:59.999Z',
-        image_url: 'https://example.com/charity.png',
+        startDate: '2024-01-01T00:00:00.000Z',
+        endDate: '2024-12-31T23:59:59.999Z',
+        imageUrl: 'https://example.com/charity.png',
         organizations: [
-          { name: 'Org 1', logoUrl: 'https://example.com/logo1.png', donated: 100, receiving: 50, charity_id: 1 },
-          { name: 'Org 2', logoUrl: 'https://example.com/logo2.png', donated: 200, receiving: 150, charity_id: 1 },
+          { name: 'Org 1', logoUrl: 'https://example.com/logo1.png', donated: 100, receiving: true },
+          { name: 'Org 2', logoUrl: 'https://example.com/logo2.png', donated: 200, receiving: false },
         ],
       },
       user: { userId: 1 },
@@ -40,14 +40,30 @@ describe('Create Charity Endpoint', () => {
           name: 'Org 1',
           logo_url: 'https://example.com/logo1.png',
           donated: 100,
-          receiving: 50,
+          receiving: true,
         }))
         .mockImplementationOnce(() => Promise.resolve({
           name: 'Org 2',
           logo_url: 'https://example.com/logo2.png',
           donated: 200,
-          receiving: 150,
+          receiving: false,
         })),
+      tx: vi.fn((cb) => cb({
+        batch: vi.fn(() => Promise.resolve([
+          {
+            name: 'Org 1',
+            logo_url: 'https://example.com/logo1.png',
+            donated: 100,
+            receiving: true,
+          },
+          {
+            name: 'Org 2',
+            logo_url: 'https://example.com/logo2.png',
+            donated: 200,
+            receiving: false,
+          }
+        ]))
+      })),
     } as unknown as IDatabase<object>;
 
     await createCharity(req, res, db);
@@ -61,8 +77,8 @@ describe('Create Charity Endpoint', () => {
       endDate: '2024-12-31T23:59:59.999Z',
       imageUrl: 'https://example.com/charity.png',
       organizations: [
-        { name: 'Org 1', logo_url: 'https://example.com/logo1.png', donated: 100, receiving: 50 },
-        { name: 'Org 2', logo_url: 'https://example.com/logo2.png', donated: 200, receiving: 150 },
+        { name: 'Org 1', logo_url: 'https://example.com/logo1.png', donated: 100, receiving: true },
+        { name: 'Org 2', logo_url: 'https://example.com/logo2.png', donated: 200, receiving: false },
       ],
       funds: 300,
       listingsCount: 0,
@@ -74,10 +90,10 @@ describe('Create Charity Endpoint', () => {
       body: {
         name: 'Sample Charity',
         description: 'This is a sample charity description',
-        start_date: '2024-01-01T00:00:00.000Z',
-        end_date: '2024-12-31T23:59:59.999Z',
+        startDate: '2024-01-01T00:00:00.000Z',
+        endDate: '2024-12-31T23:59:59.999Z',
         organizations: [
-          { name: 'Org 1', logoUrl: 'https://example.com/logo1.png', donated: 100, receiving: 50, charity_id: 1 },
+          { name: 'Org 1', logoUrl: 'https://example.com/logo1.png', donated: 100, receiving: true },
         ],
       },
       user: { userId: 1 },
@@ -103,9 +119,9 @@ describe('Create Charity Endpoint', () => {
       body: {
         name: 'Sample Charity',
         description: 'This is a sample charity description',
-        start_date: '2024-01-01T00:00:00.000Z',
-        end_date: '2024-12-31T23:59:59.999Z',
-        image_url: 'https://example.com/charity.png',
+        startDate: '2024-01-01T00:00:00.000Z',
+        endDate: '2024-12-31T23:59:59.999Z',
+        imageUrl: 'https://example.com/charity.png',
         organizations: [
           { name: 'Org 1', logoUrl: 'https://example.com/logo1.png', donated: 100 },
         ],

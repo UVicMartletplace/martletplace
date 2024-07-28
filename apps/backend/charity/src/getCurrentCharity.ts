@@ -17,29 +17,31 @@ export const getCurrentCharity = async (
        GROUP BY c.charity_id;`,
     );
 
-    if (charityResult) {
-      const [donationFunds, listingStats] = await Promise.all([
-        db.one(
-          `SELECT COALESCE(SUM(donated), 0) AS donation_funds
-         FROM organizations
-         WHERE charity_id = $1;`,
-          [charityResult.id],
-        ),
-        db.one(
-          `SELECT 
-           COALESCE(SUM(price), 0) AS listing_funds, 
-           COUNT(*) AS listings_count
-         FROM listings
-         WHERE charity_id = $1;`,
-          [charityResult.id],
-        ),
-      ]);
-
-      charityResult.funds =
-        parseFloat(donationFunds.donation_funds) +
-        parseFloat(listingStats.listing_funds);
-      charityResult.listingsCount = parseInt(listingStats.listings_count);
+    if (!charityResult) {
+      return res.status(200).json({ message: "No active charity" });
     }
+
+    const [donationFunds, listingStats] = await Promise.all([
+      db.one(
+        `SELECT COALESCE(SUM(donated), 0) AS donation_funds
+        FROM organizations
+        WHERE charity_id = $1;`,
+        [charityResult.id],
+      ),
+      db.one(
+        `SELECT 
+          COALESCE(SUM(price), 0) AS listing_funds, 
+          COUNT(*) AS listings_count
+        FROM listings
+        WHERE charity_id = $1;`,
+        [charityResult.id],
+      ),
+    ]);
+
+    charityResult.funds =
+      parseFloat(donationFunds.donation_funds) +
+      parseFloat(listingStats.listing_funds);
+    charityResult.listingsCount = parseInt(listingStats.listings_count);
 
     res.json(charityResult);
   } catch (error) {

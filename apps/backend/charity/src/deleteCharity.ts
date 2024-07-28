@@ -10,12 +10,13 @@ export const deleteCharity = async (
   try {
     const charityID = req.params.id;
 
-    const result = await db.oneOrNone(
+    const result = await db.result(
       `DELETE FROM charities 
       WHERE charity_id = $1;`,
       [charityID],
     );
-    if (result) {
+
+    if (result.rowCount > 0) {
       res.status(204).json({ message: "Charity deleted successfully" });
     } else {
       res.status(400).json({ error: "Charity not found" });

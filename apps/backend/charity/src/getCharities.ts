@@ -28,7 +28,7 @@ export const getCharities = async (
 ) => {
   try {
     const charities = await db.manyOrNone<Charity>(`
-      SELECT c.charity_id, c.name, c.description, c.start_date, c.end_date, c.image_url,
+      SELECT c.charity_id AS id, c.name, c.description, c.start_date, c.end_date, c.image_url,
              jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) FILTER (WHERE o.organization_id IS NOT NULL) AS organizations,
              COALESCE(SUM(l.price), 0) AS funds,
              COUNT(l.listing_id) AS listingsCount

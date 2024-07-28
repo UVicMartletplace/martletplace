@@ -2,6 +2,13 @@ import { Response } from "express";
 import { IDatabase } from "pg-promise";
 import { AuthenticatedRequest } from "../../lib/src/auth";
 
+interface Organization {
+  name: string;
+  logoUrl: string;
+  donated: number;
+  receiving: boolean;
+}
+
 export const createCharity = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -9,21 +16,15 @@ export const createCharity = async (
 ) => {
   try {
     const charity = req.body;
-    const {
-      name,
-      description,
-      start_date,
-      end_date,
-      image_url,
-      organizations,
-    } = charity;
+    const { name, description, startDate, endDate, imageUrl, organizations } =
+      charity;
 
     if (
       !name ||
       !description ||
-      !start_date ||
-      !end_date ||
-      !image_url ||
+      !startDate ||
+      !endDate ||
+      !imageUrl ||
       !organizations
     ) {
       console.error("missing parameter in request");
@@ -31,7 +32,14 @@ export const createCharity = async (
     }
 
     for (const org of organizations) {
-      if (!org.name || !org.logoUrl || !org.donated || !org.receiving) {
+      if (
+        !org.name ||
+        !org.logoUrl ||
+        org?.donated === null ||
+        org?.donated === undefined ||
+        org?.receiving === null ||
+        org?.receiving === undefined
+      ) {
         console.error("missing parameter in request");
         return res.status(400).json({ error: "missing parameter in request" });
       }
@@ -41,30 +49,36 @@ export const createCharity = async (
       `INSERT INTO charities (name, description, start_date, end_date, image_url) 
       VALUES ($1, $2, $3, $4, $5) 
       RETURNING charity_id, name, description, start_date, end_date, image_url`,
-      [name, description, start_date, end_date, image_url],
+      [name, description, startDate, endDate, imageUrl],
     );
 
-    const createdOrganizations: Array<{
-      name: string;
-      logo_url: string;
-      donated: number;
-      receiving: number;
-    }> = [];
-    let totalFunds = 0;
-
-    for (const org of organizations) {
-      const org_result = await db.oneOrNone(
+    const queries = organizations.map((org: Organization) => {
+      return db.oneOrNone<Organization>(
         `INSERT INTO organizations (name, logo_url, donated, receiving, charity_id)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING name, logo_url, donated, receiving;`,
-        [org.name, org.logoUrl, org.donated, org.receiving, org.charity_id],
+        [
+          org.name,
+          org.logoUrl,
+          org.donated,
+          org.receiving,
+          createdCharity.charity_id,
+        ],
       );
+    });
 
-      if (org_result) {
-        createdOrganizations.push(org_result);
-        totalFunds += parseFloat(org.donated);
-      }
-    }
+    const results = await db.tx((t) => {
+      return t.batch(queries);
+    });
+
+    const createdOrganizations: Organization[] = results.filter(
+      (result) => result !== null,
+    ) as Organization[];
+
+    let totalFunds = 0;
+    createdOrganizations.forEach((org) => {
+      totalFunds += parseFloat(org.donated.toString());
+    });
 
     const charityResponse = {
       id: createdCharity.charity_id,
