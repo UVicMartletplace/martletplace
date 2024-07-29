@@ -35,20 +35,21 @@ describe('Create Charity Endpoint', () => {
           start_date: '2024-01-01T00:00:00.000Z',
           end_date: '2024-12-31T23:59:59.999Z',
           image_url: 'https://example.com/charity.png',
-        }))
-        .mockImplementationOnce(() => Promise.resolve({
-          name: 'Org 1',
-          logo_url: 'https://example.com/logo1.png',
-          donated: 100,
-          receiving: true,
-        }))
-        .mockImplementationOnce(() => Promise.resolve({
-          name: 'Org 2',
-          logo_url: 'https://example.com/logo2.png',
-          donated: 200,
-          receiving: false,
         })),
-      tx: vi.fn((cb) => cb({
+      task: vi.fn((cb) => cb({
+        oneOrNone: vi.fn()
+          .mockImplementationOnce(() => Promise.resolve({
+            name: 'Org 1',
+            logo_url: 'https://example.com/logo1.png',
+            donated: 100,
+            receiving: true,
+          }))
+          .mockImplementationOnce(() => Promise.resolve({
+            name: 'Org 2',
+            logo_url: 'https://example.com/logo2.png',
+            donated: 200,
+            receiving: false,
+          })),
         batch: vi.fn(() => Promise.resolve([
           {
             name: 'Org 1',

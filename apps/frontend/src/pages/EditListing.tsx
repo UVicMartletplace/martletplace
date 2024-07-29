@@ -47,10 +47,11 @@ interface NewListingObject {
 const EditListing = () => {
   const { id } = useParams();
   const [listingImages, setListingImages] = useState<string[]>([]);
-  const [priceError, setPriceError] = useState<string>("");
   const [titleError, setTitleError] = useState<string>("");
   const [imageBlobs, setImageBlobs] = useState<Blob[]>([]);
   const [listingValid, setListingValid] = useState<boolean>(false);
+  const [price, setPrice] = useState<string>("");
+
   const navigate = useNavigate();
 
   const [newListingObject, setNewListingObject] = useState<NewListingObject>({
@@ -80,12 +81,14 @@ const EditListing = () => {
             ...prevState.listing,
             title: title || "",
             description: description || "",
-            price: +price || 0,
+            price: price || 0,
             images: images || [],
             markedForCharity: charityId !== null,
           },
           status: status || "AVAILABLE",
         }));
+        setPrice(price.toString());
+        setListingImages(images.map((image: ImageURLObject) => image.url));
         setListingValid(true);
       })
       .catch(() => {
@@ -128,10 +131,15 @@ const EditListing = () => {
     submissionEvent,
   ) => {
     submissionEvent.preventDefault();
+    console.log(newListingObject);
 
-    if (!priceError && !titleError) {
+    if (!titleError) {
       try {
         const successImages: boolean = await asyncListingImageWrapper();
+        if (!newListingObject.listing.title) {
+          setTitleError("Please enter a title");
+          return;
+        }
 
         if (successImages) {
           try {
@@ -169,15 +177,18 @@ const EditListing = () => {
   };
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
-    const priceValue = event.target.value;
-    const regex = /^\d+(\.\d{1,2})?$/;
-    if (!regex.test(priceValue)) {
-      setPriceError(
-        "This price is not valid, please make sure the value is positive and in the form xx.xx",
-      );
+    // Handle
+    const regex = /^\d*?\.?\d{0,2}$/;
+    //const regex = /^\d/;
+    if (!regex.test(event.target.value)) {
+      if (!event.target.value) {
+        const priceValue: number = +event.target.value;
+        updateNewListingPayload("price", priceValue);
+      }
     } else {
-      setPriceError("");
-      updateNewListingPayload("price", priceValue ? Number(priceValue) : 0);
+      const priceValue: number = +event.target.value;
+      setPrice(event.target.value);
+      updateNewListingPayload("price", priceValue);
     }
   };
 
@@ -187,7 +198,7 @@ const EditListing = () => {
 
   const isImageValid = (url: string) => {
     try {
-      return url.startsWith("data:image/");
+      return url.startsWith("data:image/") || url.startsWith("/api/images/");
     } catch (error) {
       return false;
     }
@@ -253,6 +264,11 @@ const EditListing = () => {
       });
   };
 
+  const clearImages = () => {
+    setListingImages([]);
+    setImageBlobs([]);
+  };
+
   const buttonHTML = (
     <span style={{ textAlign: "center" }}>
       <Button
@@ -280,10 +296,10 @@ const EditListing = () => {
           <Card sx={{ marginTop: "32px" }}>
             <CardContent>
               <Typography variant="h5">Edit Listing</Typography>
-              <Grid container spacing={1}>
-                <Grid item md={6} sm={12} xs={12}>
-                  <Box>
-                    <form autoComplete="off" onSubmit={handleSubmit}>
+              <Box>
+                <form autoComplete="off" onSubmit={handleSubmit}>
+                  <Grid container>
+                    <Grid item lg={6} xs={12}>
                       <FormControl sx={{ width: "100%", gap: "10px" }}>
                         <TextField
                           id="field-title"
@@ -311,16 +327,11 @@ const EditListing = () => {
                         <TextField
                           id="field-price"
                           label="Price(CAD)"
-                          type="number"
                           sx={{ m: "10px" }}
                           rows={1}
                           onChange={updateListingPrice}
-                          error={!!priceError}
-                          value={newListingObject.listing.price ?? ""}
+                          value={price}
                         />
-                        {priceError && (
-                          <FormHelperText error>{priceError}</FormHelperText>
-                        )}
                         <FormControlLabel
                           id="charity-checkbox-label"
                           label="Is this item for charity?"
@@ -336,103 +347,126 @@ const EditListing = () => {
                           }
                         />
                       </FormControl>
-                      <Box>
-                        <Box sx={{ display: "flex" }}>
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            sx={{
-                              display: "inline",
-                              mt: 2,
-                              backgroundColor: colors.martletplaceNavyBlue,
-                              "&:hover": {
-                                backgroundColor: colors.martletplaceBlueHover,
-                              },
-                              textTransform: "none",
-                              fontSize: "16px",
-                              padding: "10px 20px",
-                              margin: "10px",
-                            }}
-                            id="submit-button"
-                          >
-                            Update Listing
-                          </Button>
-                          <MultiFileUpload
-                            passedImages={listingImages}
-                            setPassedImages={setListingImages}
-                            multipleUpload={true}
-                            htmlForButton={buttonHTML}
-                            imageFiles={imageBlobs}
-                            setImageFiles={setImageBlobs}
-                          />
-                        </Box>
-                        <Box>
-                          <Button
-                            sx={{
-                              display: "inline",
-                              mt: 2,
-                              backgroundColor: colors.martletplaceRed,
-                              "&:hover": {
-                                backgroundColor: colors.martletplaceRedHover,
-                              },
-                              textTransform: "none",
-                              fontSize: "16px",
-                              padding: "10px 20px",
-                              margin: "10px",
-                            }}
-                            variant="contained"
-                            id="delete-button"
-                            onClick={handleDelete}
-                          >
-                            Delete Posting
-                          </Button>
-                          <Button
-                            sx={{
-                              display: "inline",
-                              mt: 2,
-                              backgroundColor: colors.martletplaceYellow,
-                              "&:hover": {
-                                backgroundColor: colors.martletplaceYellowHover,
-                              },
-                              textTransform: "none",
-                              fontSize: "16px",
-                              padding: "10px 20px",
-                              margin: "10px",
-                            }}
-                            variant="contained"
-                            id="status-button"
-                            onClick={handleUpdateStatus}
-                          >
-                            {newListingObject.status === "AVAILABLE"
-                              ? "Mark Purchased"
-                              : "Mark Not Purchased"}
-                          </Button>
+                    </Grid>
+                    <Grid item lg={6} xs={12}>
+                      <Box
+                        sx={{
+                          display: listingImages.length != 0 ? "block" : "none",
+                          width: "100%",
+                        }}
+                      >
+                        <Typography variant={"h5"} sx={{ paddingLeft: "20px" }}>
+                          Image Preview
+                        </Typography>
+                        <Box sx={{ padding: "10px", width: "100%" }}>
+                          {isImageValid(listingImages[0]) ? (
+                            <Carousel imageURLs={listingImages} />
+                          ) : (
+                            <Typography
+                              sx={{ paddingLeft: "10px" }}
+                              variant={"body2"}
+                            >
+                              No images uploaded yet
+                            </Typography>
+                          )}
                         </Box>
                       </Box>
-                    </form>
-                  </Box>
-                </Grid>
-                <Grid item lg={6} xs={12}>
+                    </Grid>
+                  </Grid>
                   <Box>
-                    <Typography variant="h5" sx={{ paddingLeft: "20px" }}>
-                      Image Preview
-                    </Typography>
-                    <Box sx={{ padding: "10px" }}>
-                      {!isImageValid(listingImages[0]) ? (
-                        <Typography
-                          sx={{ paddingLeft: "10px" }}
-                          variant="body2"
+                    <Box sx={{ display: "flex" }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceNavyBlue,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceBlueHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        id="submit-button"
+                      >
+                        Update Listing
+                      </Button>
+                      <MultiFileUpload
+                        passedImages={listingImages}
+                        setPassedImages={setListingImages}
+                        multipleUpload={true}
+                        htmlForButton={buttonHTML}
+                        imageFiles={imageBlobs}
+                        setImageFiles={setImageBlobs}
+                      />
+                      {listingImages.length != 0 && (
+                        <Button
+                          variant="outlined"
+                          sx={{
+                            display: "inline",
+                            mt: 2,
+                            textTransform: "none",
+                            fontSize: "16px",
+                            padding: "10px 20px",
+                            margin: "10px",
+                            borderColor: colors.martletplaceYellow,
+                            color: colors.martletplaceYellow,
+                          }}
+                          onClick={clearImages}
                         >
-                          No images uploaded yet, these images will overwrite
-                          the current ones.
-                        </Typography>
-                      ) : (
-                        <Carousel imageURLs={listingImages} />
+                          Clear Images
+                        </Button>
                       )}
                     </Box>
+
+                    <Box>
+                      <Button
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceRed,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceRedHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        variant="contained"
+                        id="delete-button"
+                        onClick={handleDelete}
+                      >
+                        Delete Posting
+                      </Button>
+                      <Button
+                        sx={{
+                          display: "inline",
+                          mt: 2,
+                          backgroundColor: colors.martletplaceYellow,
+                          "&:hover": {
+                            backgroundColor: colors.martletplaceYellowHover,
+                          },
+                          textTransform: "none",
+                          fontSize: "16px",
+                          padding: "10px 20px",
+                          margin: "10px",
+                        }}
+                        variant="contained"
+                        id="status-button"
+                        onClick={handleUpdateStatus}
+                      >
+                        {newListingObject.status === "AVAILABLE"
+                          ? "Mark Purchased"
+                          : "Mark Not Purchased"}
+                      </Button>
+                    </Box>
                   </Box>
-                </Grid>
-              </Grid>
+                </form>
+              </Box>
             </CardContent>
           </Card>
         ) : (

@@ -92,7 +92,7 @@ describe("<Messages/>", () => {
             <Route path="/messages" element={<Messages />} />
           </Routes>
         </MemoryRouter>
-      </TestProviders>
+      </TestProviders>,
     );
   });
 
@@ -104,6 +104,7 @@ describe("<Messages/>", () => {
     it("should render the messages page", () => {
       // Assertions to verify the rendered content
       cy.wait("@getThreads");
+      cy.pause();
       cy.contains(threads[0].last_message.content).should("be.visible");
       cy.contains(threads[1].last_message.content).should("be.visible");
     });
@@ -149,6 +150,7 @@ describe("<Messages/>", () => {
     it("mobile: should have messages shown by default", () => {
       cy.wait("@getThreads");
       cy.wait("@getMessages2");
+      cy.pause();
       cy.wait(100);
       cy.get("form input").eq(0).should("be.visible");
     });

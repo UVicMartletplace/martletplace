@@ -30,16 +30,18 @@ const MyListings = () => {
     const fetchData = async () => {
       try {
         const response = await _axios_instance.get("/listings");
-        const modifiedListings = response.data.map((listing: MyListing) => {
-          return {
-            listingID: listing.listingID,
-            title: listing.title,
-            description: listing.description,
-            price: listing.price,
-            dateCreated: listing.dateCreated,
-            imageUrl: listing.images.length > 0 ? listing.images[0].url : "",
-          };
-        });
+        const modifiedListings = response.data.listings.map(
+          (listing: MyListing) => {
+            return {
+              listingID: listing.listingID,
+              title: listing.title,
+              description: listing.description,
+              price: listing.price,
+              dateCreated: listing.dateCreated,
+              imageUrl: listing.images.length > 0 ? listing.images[0].url : "",
+            };
+          },
+        );
         setListingObjects(modifiedListings);
       } catch (error) {
         console.error("Error fetching listings:", error);

@@ -32,8 +32,8 @@ CREATE TABLE charities (
     charity_id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     description TEXT,
-    start_date DATE,
-    end_date DATE,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     image_url TEXT
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE listings (
     buyer_id INTEGER REFERENCES users(user_id),
     charity_id INTEGER REFERENCES charities(charity_id),
     title VARCHAR NOT NULL,
-    price INTEGER NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
     location LOCATION_TYPE NOT NULL,
     status STATUS_TYPE NOT NULL,
     description VARCHAR,
