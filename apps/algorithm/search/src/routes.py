@@ -14,9 +14,10 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 RequestsInstrumentor().instrument()
 
 search_router = APIRouter()
-# AWS_EXECUTION_ENV
 
-es = OpenSearch(hosts=[ES_ENDPOINT], http_auth = ("elastic", os.getenv("ES_PASSWORD","")))
+es = OpenSearch(
+    hosts=[ES_ENDPOINT], http_auth=("elastic", os.getenv("ES_PASSWORD", ""))
+)
 INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
 if os.getenv("AWS_EXECUTION_ENV", None):
@@ -25,6 +26,7 @@ if os.getenv("AWS_EXECUTION_ENV", None):
         es.indices.create(index=INDEX)
     except Exception as e:
         print(e)
+
 
 @search_router.get("/api/search")
 async def search(
@@ -41,8 +43,7 @@ async def search(
     searchType: SearchType = "LISTINGS",
     sort: Sort = "RELEVANCE",
 ):
-    validate_search_params(latitude, longitude, page,
-                           limit, minPrice, maxPrice)
+    validate_search_params(latitude, longitude, page, limit, minPrice, maxPrice)
 
     INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
 
@@ -90,8 +91,7 @@ async def search(
             price_range["gte"] = minPrice
         if maxPrice is not None:
             price_range["lte"] = maxPrice
-        search_body["query"]["bool"]["filter"].append(
-            {"range": {"price": price_range}})
+        search_body["query"]["bool"]["filter"].append({"range": {"price": price_range}})
 
     if "DISTANCE" in sort:
         search_body["sort"].append(
