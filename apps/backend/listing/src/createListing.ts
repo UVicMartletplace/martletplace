@@ -20,8 +20,8 @@ const createListing = async (
 
   if (
     !title ||
-    !description ||
-    !price ||
+    typeof description !== "string" ||
+    price < 0 ||
     !location ||
     !images ||
     !location.latitude ||
