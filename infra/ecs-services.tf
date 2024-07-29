@@ -31,7 +31,7 @@ module "frontend" {
   source = "./ecs/"
 
   app_name     = "frontend"
-  app_image    = aws_ecr_repository.main["frontend"].repository_url
+  app_image    = format("%s:%s", aws_ecr_repository.main["frontend"].repository_url, var.app_version)
   app_port     = 8101
   app_route    = "*"
   app_priority = 1000
@@ -57,8 +57,9 @@ module "frontend" {
 module "user" {
   source = "./ecs/"
 
-  app_name     = "user"
-  app_image    = aws_ecr_repository.main["user"].repository_url
+  app_name  = "user"
+  app_image = format("%s:%s", aws_ecr_repository.main["user"].repository_url, var.app_version)
+
   app_port     = 8211
   app_route    = "/api/user*"
   app_priority = 99
@@ -98,8 +99,9 @@ module "user" {
 module "listing" {
   source = "./ecs/"
 
-  app_name     = "listing"
-  app_image    = aws_ecr_repository.main["listing"].repository_url
+  app_name  = "listing"
+  app_image = format("%s:%s", aws_ecr_repository.main["listing"].repository_url, var.app_version)
+
   app_port     = 8212
   app_route    = "/api/listing*"
   app_priority = 98
@@ -126,7 +128,7 @@ module "review" {
   source = "./ecs/"
 
   app_name     = "review"
-  app_image    = aws_ecr_repository.main["review"].repository_url
+  app_image    = format("%s:%s", aws_ecr_repository.main["review"].repository_url, var.app_version)
   app_port     = 8213
   app_route    = "/api/review*"
   app_priority = 97
@@ -153,7 +155,7 @@ module "message" {
   source = "./ecs/"
 
   app_name     = "message"
-  app_image    = aws_ecr_repository.main["message"].repository_url
+  app_image    = format("%s:%s", aws_ecr_repository.main["message"].repository_url, var.app_version)
   app_port     = 8214
   app_route    = "/api/messages*"
   app_priority = 96
@@ -214,7 +216,7 @@ module "recommend" {
   source = "./ecs/"
 
   app_name     = "recommend"
-  app_image    = aws_ecr_repository.main["recommend"].repository_url
+  app_image    = format("%s:%s", aws_ecr_repository.main["recommend"].repository_url, var.app_version)
   app_port     = 8222
   app_route    = "/api/recommendations*"
   app_priority = 89
@@ -241,7 +243,7 @@ module "collector" {
   source = "./ecs/"
 
   app_name         = "collector"
-  app_image        = aws_ecr_repository.main["collector"].repository_url
+  app_image        = format("%s:%s", aws_ecr_repository.main["collector"].repository_url, var.app_version)
   app_port         = 4318
   app_route        = "/v1/traces*"
   app_priority     = 59
