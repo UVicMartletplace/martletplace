@@ -1,17 +1,31 @@
-INSERT INTO users (username, email, password, totp_secret, name, bio, profile_pic_url, verified) VALUES
-('deleted_user', 'deleted@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'Deleted User', '', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper', TRUE),
-('unverified', 'unverified@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'Unverified User', 'Hi! Im an unverified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Kiki', FALSE),
-('user3', 'user3@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Three', 'Bio for user three', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Lucy', TRUE),
-('user4', 'user4@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Four', 'Bio for user four', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel', TRUE),
-('user5', 'user5@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE);
+INSERT INTO users (username, email, password, totp_secret, name, bio, profile_pic_url, verified, ignore_charity_listings) VALUES
+('deleted_user', 'deleted@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'Deleted User', '', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Jasper', TRUE, FALSE),
+('unverified', 'unverified@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'Unverified User', 'Hi! Im an unverified user!', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Kiki', FALSE, FALSE),
+('user3', 'user3@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Three', 'Bio for user three', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Lucy', TRUE, FALSE),
+('user4', 'user4@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Four', 'Bio for user four', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Angel', TRUE, FALSE),
+('user5', 'user5@uvic.ca', '$2y$10$lYlKQyI0mGafc1BFZQTIUuLtQCksI2d84GqPDujv/FqxWnIzhVVVy', 'NICESTRONGSECRET', 'User Five', 'Bio for user five', 'https://api.dicebear.com/8.x/adventurer/svg?seed=Casper', TRUE, FALSE);
 -- ALL PASSWORDS: Letmeinfortesting1!
 
-INSERT INTO listings (seller_id, buyer_id, title, description, price, location, status, image_urls) VALUES
-(1, NULL, 'Listing One', 'Description for listing one', 100, ROW(48.48256, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Jasper', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella']),
-(2, 3, 'Listing Two', 'Description for listing two', 200, ROW(48.4835652, -123.3234215), 'SOLD', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Lucy']),
-(3, 4, 'Listing Three', 'Description for listing three', 300, ROW(48.4845652, -123.3234215), 'REMOVED', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Angel']),
-(4, NULL, 'Listing Four', 'Description for listing four', 400, ROW(48.4815652, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Casper']),
-(5, NULL, 'Listing Five', 'Description for listing five', 500, ROW(48.4805652, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Kiki']);
+INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
+('Safe Paws', 'Rescues and rehabilitates abandoned and mistreated animals, providing them with loving homes.', '2024-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
+('Hope Haven', 'Provides shelter and resources to homeless families and individuals.', '2022-01-01', '2022-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
+('Bikes4Kids', 'Buying little bicycles for poor little children.', '2022-06-15', '2022-06-18', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
+('Green Earth Alliance', 'Focuses on environmental conservation and sustainability projects worldwide.', '2022-06-19', '2022-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
+('Wellness for All', 'Promotes mental health awareness and provides counseling services to underserved communities.', '2023-01-01', '2023-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
+
+INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
+('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 1),
+('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 1),
+('Bluesky', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 2),
+('Tesla', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);
+
+INSERT INTO listings (seller_id, buyer_id, charity_id, title, description, price, location, status, image_urls) VALUES
+(1, NULL, 1, 'Listing One', 'Description for listing one', 100, ROW(48.48256, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Jasper', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella']),
+(2, 3, 1, 'Listing Two', 'Description for listing two', 200, ROW(48.4835652, -123.3234215), 'SOLD', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Lucy']),
+(3, 4, 1, 'Listing Three', 'Description for listing three', 300, ROW(48.4845652, -123.3234215), 'REMOVED', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Angel']),
+(4, NULL, NULL, 'Listing Four', 'Description for listing four', 400, ROW(48.4815652, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Casper']),
+(5, NULL, NULL, 'Listing Five', 'Description for listing five', 500, ROW(48.4805652, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Kiki']);
+
 
 INSERT INTO messages (sender_id, receiver_id, listing_id, message_body) VALUES
 (2, 1, 1, 'You still offering this???'),
@@ -41,16 +55,3 @@ INSERT INTO user_searches (user_id, search_term) VALUES
 (3, 'textbook'),
 (4, 'FUNNY THING'),
 (5, 'Unverified User');
-
-INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
-('Charity One', 'A nice clever description for a drab default charity', '2021-01-01', '2021-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
-('ScottMagic', 'We will make sure Scott never forgets his Magic cards again', '2024-01-01', '2025-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
-('Bikes4Kids', 'Buying little bicycles for poor little children', '2023-01-01', '2024-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
-('Little Treat', 'Fundraise so Anika can afford to have a little treat :-) <3', '2020-01-01', '2026-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
-('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
-
-INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
-('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 2),
-('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 3),
-('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 4),
-('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);

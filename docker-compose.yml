@@ -119,6 +119,19 @@ services:
     environment:
       <<: *shared_env_var
 
+  charity:
+    build:
+      context: apps/backend/charity
+      target: *build_target
+      additional_contexts:
+        - lib=apps/backend/lib
+    container_name: martletplace_charity
+    restart: unless-stopped
+    depends_on: []
+    volumes: [ ./apps/backend/charity/src:/app/service/src, ./apps/backend/lib/src:/app/lib/src ]
+    environment:
+      <<: *shared_env_var
+
   search:
     build: apps/algorithm/search
     container_name: martletplace_search

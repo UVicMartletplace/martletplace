@@ -10,6 +10,7 @@ docker compose exec user npm run test:ci
 docker compose exec listing npm run test:ci
 docker compose exec review npm run test:ci
 docker compose exec message npm run test:ci
+docker compose exec charity npm run test:ci
 
 echo 'Testing algorithm services...'
 docker compose exec search pytest
