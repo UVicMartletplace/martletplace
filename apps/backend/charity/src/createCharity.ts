@@ -52,22 +52,22 @@ export const createCharity = async (
       [name, description, startDate, endDate, imageUrl],
     );
 
-    const queries = organizations.map((org: Organization) => {
-      return db.oneOrNone<Organization>(
-        `INSERT INTO organizations (name, logo_url, donated, receiving, charity_id)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING name, logo_url, donated, receiving;`,
-        [
-          org.name,
-          org.logoUrl,
-          org.donated,
-          org.receiving,
-          createdCharity.charity_id,
-        ],
+    const results = await db.task((t) => {
+      const queries = organizations.map((org: Organization) =>
+        t.oneOrNone<Organization>(
+          `INSERT INTO organizations (name, logo_url, donated, receiving, charity_id)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING name, logo_url, donated, receiving;`,
+          [
+            org.name,
+            org.logoUrl,
+            org.donated,
+            org.receiving,
+            createdCharity.charity_id,
+          ],
+        ),
       );
-    });
 
-    const results = await db.tx((t) => {
       return t.batch(queries);
     });
 
