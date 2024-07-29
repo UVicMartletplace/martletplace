@@ -17,13 +17,14 @@ search_router = APIRouter()
 # AWS_EXECUTION_ENV
 
 es = OpenSearch(hosts=[ES_ENDPOINT], http_auth = ("elastic", os.getenv("ES_PASSWORD","")))
-print(es.info())
-
 INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
-try:
-    es.indices.create(index=INDEX)
-except Exception as e:
-    print(e)
+
+if os.getenv("AWS_EXECUTION_ENV", None):
+    print(es.info())
+    try:
+        es.indices.create(index=INDEX)
+    except Exception as e:
+        print(e)
 
 @search_router.get("/api/search")
 async def search(

@@ -3,7 +3,7 @@ set -euo pipefail
 REGION="us-west-2"
 AWS_ACOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 REPO_NAME="martletplace"
-VER_TAG="$(uuidgen)" #"latest"
+VER_TAG="$(grep -E '^[a-z]{6}$' < /usr/share/dict/words | shuf -n 1)-$(tr -dc 'a-z0-9' < /dev/urandom | head -c 7)"
 REPO_URL="${AWS_ACOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
 REPO_PATH="${REPO_URL}/${REPO_NAME}"
 
