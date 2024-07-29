@@ -2,7 +2,7 @@ import os
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from elasticsearch import Elasticsearch
+from opensearchpy import OpenSearch
 from fastapi.testclient import TestClient
 
 from .server import app
@@ -12,7 +12,9 @@ TEST_INDEX = "test-index"
 client = TestClient(app)
 
 es_endpoint = os.getenv("ES_ENDPOINT")
-es = Elasticsearch([es_endpoint], verify_certs=False)
+es = OpenSearch(
+    hosts=[es_endpoint], http_auth=("elastic", os.getenv("ES_PASSWORD", ""))
+)
 
 
 @pytest.fixture(scope="function", autouse=True)
