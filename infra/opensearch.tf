@@ -1,5 +1,9 @@
+locals {
+  collection_name = "martletplace"
+}
+
 resource "aws_opensearchserverless_collection" "martletplace-collection" {
-  name = "martletplace-collection"
+  name = local.collection_name
   type = "SEARCH"
 
   depends_on = [
@@ -17,11 +21,11 @@ resource "aws_opensearchserverless_security_policy" "opensearch-network-policy" 
       Rules = [
         {
           ResourceType = "collection",
-          Resource     = ["collection/martletplace*"]
+          Resource     = ["collection/*"]
         },
       ],
-      AllowFromPublic = false,
-      SourceVPCEs     = [aws_opensearchserverless_vpc_endpoint.martetplace-opensearch-endpoint.id]
+      #SourceVPCEs     = [aws_opensearchserverless_vpc_endpoint.martetplace-opensearch-endpoint.id]
+      AllowFromPublic = true
     }
   ])
 }
@@ -33,7 +37,7 @@ resource "aws_opensearchserverless_security_policy" "opensearch-encryption-polic
     "Rules" = [
       {
         "Resource" = [
-          "collection/martletplace*"
+          "collection/${local.collection_name}"
         ],
         "ResourceType" = "collection"
       }
@@ -52,7 +56,7 @@ resource "aws_opensearchserverless_access_policy" "opensearch-access-policy" {
         {
           ResourceType = "index",
           Resource = [
-            "index/martletplace-collection/*"
+            "index/${local.collection_name}/*"
           ],
           Permission = [
             "aoss:*"
@@ -61,7 +65,7 @@ resource "aws_opensearchserverless_access_policy" "opensearch-access-policy" {
         {
           ResourceType = "collection",
           Resource = [
-            "collection/martletplace-collection"
+            "collection/${local.collection_name}"
           ],
           Permission = [
             "aoss:*"
@@ -87,7 +91,6 @@ resource "aws_security_group" "opensearch_security_group" {
     to_port     = 65000
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.main.cidr_block]
-    description = "Allow inbound traffic from EC2 instances in 10.0.0.0/8"
   }
 
   egress {
@@ -95,7 +98,6 @@ resource "aws_security_group" "opensearch_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [aws_vpc.main.cidr_block]
-    description = "Allow outbound traffic to EC2 instances in 10.0.0.0/8"
   }
 }
 
