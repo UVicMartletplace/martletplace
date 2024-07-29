@@ -22,8 +22,6 @@ FROM node:20-bookworm-slim AS prod
 WORKDIR /app/service
 
 COPY --from=dev /app/service/node_modules /app/lib/node_modules /app/service/node_modules
-COPY --from=dev /app/service/server.js .
+COPY --from=dev /app/service/dist /app/service/dist
 
-HEALTHCHECK CMD curl -f http://localhost:8215/.well-known/health
-
-CMD node server.js
+CMD node ./dist/service/src/index.js
