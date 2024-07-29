@@ -32,7 +32,7 @@ CREATE TABLE listings (
     seller_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     buyer_id INTEGER REFERENCES users(user_id),
     title VARCHAR NOT NULL,
-    price REAL NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
     location LOCATION_TYPE NOT NULL,
     status STATUS_TYPE NOT NULL,
     description VARCHAR,
