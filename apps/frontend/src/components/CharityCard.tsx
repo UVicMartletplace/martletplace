@@ -10,15 +10,15 @@ interface Organization {
 }
 
 interface CharityCardProps {
-  id: string;
+  id: number;
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-  organizations: Organization[];
+  start_date: string;
+  end_date: string;
+  image_url: string;
+  organizations?: Organization[];
   funds: number;
-  listingsCount: number;
+  listingscount: number;
 }
 
 function formatDate(dateString: string) {
@@ -33,19 +33,21 @@ function formatDate(dateString: string) {
 const CharityCard = ({
   name,
   description,
-  startDate,
-  endDate,
-  organizations,
+  start_date,
+  end_date,
+  organizations = [],
   funds,
-  listingsCount,
+  listingscount,
 }: CharityCardProps) => {
   const classes = useStyles();
 
-  const formattedStartDate = formatDate(startDate);
-  const formattedEndDate = formatDate(endDate);
+  const formattedStartDate = formatDate(start_date);
+  const formattedEndDate = formatDate(end_date);
 
-  const receivingOrganizations = organizations.filter((org) => org.receiving);
-  const partnerOrganizations = organizations.filter((org) => !org.receiving);
+  const receivingOrganizations =
+    organizations?.filter((org) => org.receiving) || [];
+  const partnerOrganizations =
+    organizations?.filter((org) => !org.receiving) || [];
 
   return (
     <Card
@@ -67,7 +69,7 @@ const CharityCard = ({
           <strong>Total Funds Donated:</strong> ${funds}
         </Typography>
         <Typography variant="body1">
-          <strong>Charity Items Sold:</strong> {listingsCount}
+          <strong>Charity Items Sold:</strong> {listingscount}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           <strong>Start Date:</strong> {formattedStartDate}
@@ -79,7 +81,9 @@ const CharityCard = ({
           Receiving Organizations:
         </Typography>
         <Typography variant="body1">
-          {receivingOrganizations.map((org) => org.name).join(", ")}
+          {receivingOrganizations.length > 0
+            ? receivingOrganizations.map((org) => org.name).join(", ")
+            : "N/A"}
         </Typography>
         <Grid container spacing={1} sx={{ marginTop: "10px" }}>
           {receivingOrganizations.map((org, index) => (
@@ -92,7 +96,9 @@ const CharityCard = ({
           Partner Organizations:
         </Typography>
         <Typography variant="body1">
-          {partnerOrganizations.map((org) => org.name).join(", ")}
+          {partnerOrganizations.length > 0
+            ? partnerOrganizations.map((org) => org.name).join(", ")
+            : "N/A"}
         </Typography>
         <Grid container spacing={1} sx={{ marginTop: "10px" }}>
           {partnerOrganizations.map((org, index) => (
