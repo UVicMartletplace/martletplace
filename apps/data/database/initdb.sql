@@ -32,8 +32,8 @@ CREATE TABLE charities (
     charity_id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     description TEXT,
-    start_date DATE,
-    end_date DATE,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     image_url TEXT
 );
 
