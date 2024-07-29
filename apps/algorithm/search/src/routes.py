@@ -118,9 +118,7 @@ async def search(
         )
 
     try:
-        print("Searching elasticsearch")
         response = es.search(index=INDEX, body=search_body)
-        print("Done search")
     except NotFoundError:
         raise HTTPException(status_code=404, detail="Index not found")
 

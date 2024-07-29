@@ -47,6 +47,7 @@ module "frontend" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -114,7 +115,7 @@ module "listing" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn = aws_iam_role.ecs_task_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -141,7 +142,7 @@ module "review" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn = aws_iam_role.ecs_task_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
@@ -168,7 +169,7 @@ module "message" {
   alb_id             = aws_alb.main.id
   lb_port            = var.lb_port
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn = aws_iam_role.ecs_task_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
