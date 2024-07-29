@@ -14,7 +14,9 @@ export const getCurrentCharity = async (
        FROM charities c
        LEFT JOIN organizations o ON c.charity_id = o.charity_id
        WHERE NOW() BETWEEN c.start_date AND c.end_date
-       GROUP BY c.charity_id;`,
+       GROUP BY c.charity_id
+       ORDER BY c.start_date DESC
+       LIMIT 1;`,
     );
 
     if (!charityResult) {
