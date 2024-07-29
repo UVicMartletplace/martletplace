@@ -56,7 +56,7 @@ const getListingById = async (
     }
 
     const insertClickQuery = `
-      INSERT INTO user_clicks (user_id, listing_id, click_term)
+      INSERT INTO user_clicks (user_id, listing_id, listing_title)
       VALUES ($1, $2, $3)
     `;
 
