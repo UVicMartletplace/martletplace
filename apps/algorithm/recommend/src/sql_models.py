@@ -22,6 +22,7 @@ class Users(SQLModel, table=True):
     verified: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     modified_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    ignore_charity_listings: bool = Field(default=False)
 
     listings: List["Listings"] = Relationship(back_populates="seller")
     searches: List["User_Searches"] = Relationship(back_populates="user")
