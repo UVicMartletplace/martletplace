@@ -7,17 +7,17 @@ INSERT INTO users (username, email, password, totp_secret, name, bio, profile_pi
 -- ALL PASSWORDS: Letmeinfortesting1!
 
 INSERT INTO charities(name, description, start_date, end_date, image_url) VALUES
-('Charity One', 'A nice clever description for a drab default charity', '2024-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
-('ScottMagic', 'We will make sure Scott never forgets his Magic cards again', '2022-01-01', '2022-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
-('Bikes4Kids', 'Buying little bicycles for poor little children', '2022-06-15', '2022-06-18', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
-('Little Treat', 'Fundraise so Anika can afford to have a little treat :-) <3', '2022-06-19', '2022-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
-('Evil Charity', 'We are going to do evil stuff muahahaha', '2023-01-01', '2023-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
+('Safe Paws', 'Rescues and rehabilitates abandoned and mistreated animals, providing them with loving homes.', '2024-01-01', '2027-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityOne'),
+('Hope Haven', 'Provides shelter and resources to homeless families and individuals.', '2022-01-01', '2022-06-14', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityTwo'),
+('Bikes4Kids', 'Buying little bicycles for poor little children.', '2022-06-15', '2022-06-18', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityThree'),
+('Green Earth Alliance', 'Focuses on environmental conservation and sustainability projects worldwide.', '2022-06-19', '2022-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFour'),
+('Wellness for All', 'Promotes mental health awareness and provides counseling services to underserved communities.', '2023-01-01', '2023-12-31', 'https://api.dicebear.com/8.x/avataaars/svg?seed=CharityFive');
 
 INSERT INTO organizations (name, logo_url, donated, receiving, charity_id) VALUES
 ('JPetStore', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationOne', 100, FALSE, 1),
 ('Costco', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationTwo', 419.68, TRUE, 1),
-('Moms Against Seedless Watermelons', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 2),
-('Seedless Watermelons Against Moms', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);
+('Bluesky', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFour', 0.01, TRUE, 2),
+('Tesla', 'https://api.dicebear.com/8.x/avataaars/svg?seed=OrganizationFive', 12345678.49, FALSE, 4);
 
 INSERT INTO listings (seller_id, buyer_id, charity_id, title, description, price, location, status, image_urls) VALUES
 (1, NULL, 1, 'Listing One', 'Description for listing one', 100, ROW(48.48256, -123.3234215), 'AVAILABLE', ARRAY['https://api.dicebear.com/8.x/bottts/svg?seed=Jasper', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella', 'https://api.dicebear.com/8.x/bottts/svg?seed=Bella']),
