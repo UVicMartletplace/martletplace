@@ -11,6 +11,7 @@ use goose_eggs::{validate_and_load_static_assets, validate_page, Validate};
 use rand::Rng;
 
 async fn signup_login(user: &mut GooseUser) -> TransactionResult {
+    // Randomize sleep
     let username = Username().fake::<String>();
     let password = format!(
         "{}aA1!",

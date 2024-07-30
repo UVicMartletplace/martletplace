@@ -238,3 +238,12 @@ services:
     depends_on: []
     volumes: []
     command: "--query.base-path /admin/tracing --query.http-server.host-port 0.0.0.0:16686 --collector.otlp.enabled --collector.otlp.grpc.host-port 0.0.0.0:4317 --collector.otlp.http.host-port 0.0.0.0:4318"
+
+  loadtest:
+    build: test/load
+    deploy:
+      replicas: 0
+    container_name: martletplace_loadtest
+    restart: unless-stopped
+    depends_on: []
+    volumes: []

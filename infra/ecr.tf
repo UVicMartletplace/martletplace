@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "main" {
-  for_each = toset(["user", "listing", "review", "message", "charity", "search", "recommend", "frontend", "collector", "pgsync"])
+  for_each = toset(["user", "listing", "review", "message", "charity", "search", "recommend", "frontend", "collector", "pgsync", "loadtest"])
 
   name                 = "martletplace/${each.value}"
   image_tag_mutability = "MUTABLE"

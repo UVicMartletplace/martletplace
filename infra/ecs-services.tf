@@ -363,3 +363,38 @@ module "collector" {
   subnet_ids         = aws_subnet.public.*.id
   health_check_path  = var.health_check_path
 }
+
+module "loadtest" {
+  source = "./ecs/"
+
+  app_name     = "loadtest"
+  app_image    = format("%s:%s", aws_ecr_repository.main["loadtest"].repository_url, var.app_version)
+  app_port     = 80
+  app_route    = "/hidden/loadtest"
+  app_priority = 55
+
+  environment = [
+    {
+      name  = "MANAGER_HOST",
+      value = "serveo.net:5115"
+    },
+  ]
+  secrets = []
+
+  fargate_cpu    = var.fargate_cpu
+  fargate_memory = var.fargate_memory
+  app_scaling = {
+    base      = 2,
+    min_count = 2,
+    max_count = 2,
+  }
+
+  ecs_cluster        = aws_ecs_cluster.main
+  alb_id             = aws_alb.main.id
+  lb_port            = var.lb_port
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
+  vpc_id             = aws_vpc.main.id
+  security_group_id  = aws_security_group.ecs_tasks.id
+  subnet_ids         = aws_subnet.public.*.id
+}
