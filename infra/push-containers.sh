@@ -16,7 +16,7 @@ push() {
   docker push "${REPO_PATH}/${image}:${VER_TAG}"
 }
 
-for item in user listing review message charity search recommend frontend pgsync collector; do
+for item in user listing review message charity search recommend frontend pgsync collector loadtest; do
   push $item
 done
 
