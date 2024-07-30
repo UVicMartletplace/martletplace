@@ -16,7 +16,8 @@ const updateListing = async (
     return res.status(400).json({ error: "missing parameter in request" });
   }
 
-  const { title, description, price, location, images, markedForCharity } = listing;
+  const { title, description, price, location, images, markedForCharity } =
+    listing;
 
   if (
     !title ||
@@ -25,7 +26,7 @@ const updateListing = async (
     !location ||
     !images ||
     !location.latitude ||
-    !location.longitude || 
+    !location.longitude ||
     typeof markedForCharity !== "boolean"
   ) {
     console.error("missing parameter in request");
@@ -35,10 +36,8 @@ const updateListing = async (
   const formattedLocation = `(${location.latitude},${location.longitude})`;
 
   try {
-
     let charity_id: number | null = null;
-    if (markedForCharity){
-      
+    if (markedForCharity) {
       const currentCharity = await db.oneOrNone(
         `SELECT c.charity_id AS id, c.name, c.description, c.start_date AS "startDate", c.end_date AS "endDate", c.image_url AS "imageUrl", 
           jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) AS organizations
