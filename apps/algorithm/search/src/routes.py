@@ -1,7 +1,7 @@
 import os
 from typing import Dict, Any
 
-from elasticsearch import Elasticsearch, NotFoundError
+from opensearchpy import OpenSearch, NotFoundError
 from fastapi import APIRouter, HTTPException, Request, Response, BackgroundTasks
 
 from .config import DEFAULT_INDEX, ES_ENDPOINT, DISTANCE_TO_SEARCH_WITHIN
@@ -15,7 +15,17 @@ RequestsInstrumentor().instrument()
 
 search_router = APIRouter()
 
-es = Elasticsearch([ES_ENDPOINT], verify_certs=False)
+es = OpenSearch(
+    hosts=[ES_ENDPOINT], http_auth=("elastic", os.getenv("ES_PASSWORD", ""))
+)
+INDEX = os.getenv("ES_INDEX", DEFAULT_INDEX)
+
+if os.getenv("AWS_EXECUTION_ENV", None):
+    print(es.info())
+    try:
+        es.indices.create(index=INDEX)
+    except Exception as e:
+        print(e)
 
 
 @search_router.get("/api/search")

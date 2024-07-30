@@ -142,7 +142,8 @@ services:
     volumes: [ ./apps/algorithm/search/src:/app/src ]
     environment:
       <<: *shared_env_var
-      ES_ENDPOINT: http://elastic:serxdfcghjfc@datalayer:8301
+      ES_ENDPOINT: http://datalayer:8301
+      ES_PASSWORD: serxdfcghjfc
 
   recommend:
     build: apps/algorithm/recommend

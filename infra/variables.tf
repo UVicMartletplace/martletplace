@@ -5,7 +5,7 @@ variable "lb_port" {
 
 variable "app_count" {
   description = "Number of containers to run"
-  default     = 2
+  default     = 1
 }
 
 variable "health_check_path" {
@@ -20,4 +20,8 @@ variable "fargate_cpu" {
 variable "fargate_memory" {
   description = "Fargate instance memory to provision (in MiB)"
   default     = 512
+}
+
+variable "app_version" {
+  default = "latest"
 }

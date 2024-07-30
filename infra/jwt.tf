@@ -1,6 +1,6 @@
 resource "tls_private_key" "jwt_key" {
   algorithm = "RSA"
-  rsa_bits = 4096
+  rsa_bits  = 4096
 }
 
 resource "aws_secretsmanager_secret" "jwt_private_key_secret" {

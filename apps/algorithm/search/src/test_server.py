@@ -11,8 +11,10 @@ TEST_INDEX = "test-index"
 
 client = TestClient(app)
 
-es_endpoint = os.getenv("ES_ENDPOINT")
-es = Elasticsearch([es_endpoint], verify_certs=False)
+ES_ENDPOINT = os.getenv("ES_ENDPOINT")
+es = Elasticsearch(
+    hosts=[ES_ENDPOINT], http_auth=("elastic", os.getenv("ES_PASSWORD", ""))
+)
 
 
 @pytest.fixture(scope="function", autouse=True)

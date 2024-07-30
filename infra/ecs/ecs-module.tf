@@ -1,6 +1,7 @@
 resource "aws_ecs_task_definition" "app" {
   family             = "martletplace-${var.app_name}-task"
   execution_role_arn = var.execution_role_arn
+  task_role_arn      = var.task_role_arn
   network_mode       = "awsvpc"
   cpu                = var.fargate_cpu
   memory             = var.fargate_memory
@@ -27,15 +28,17 @@ resource "aws_ecs_task_definition" "app" {
       ],
       environment = var.environment
       secrets     = var.secrets
+      stopTimeout = 10
     }
   ])
 }
 
 resource "aws_ecs_service" "main" {
-  name            = "martletplace-${var.app_name}"
-  cluster         = var.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = var.app_count
+  name                       = "martletplace-${var.app_name}"
+  cluster                    = var.ecs_cluster.id
+  task_definition            = aws_ecs_task_definition.app.arn
+  desired_count              = var.app_count
+  deployment_maximum_percent = 400
 
   network_configuration {
     security_groups  = [var.security_group_id]
