@@ -74,11 +74,12 @@ resource "aws_ecs_service" "main" {
 # Loadbalancer
 ####
 resource "aws_alb_target_group" "app" {
-  name        = "${var.app_name}-target-group"
-  port        = var.lb_port
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "ip"
+  name                 = "${var.app_name}-target-group"
+  port                 = var.lb_port
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  target_type          = "ip"
+  deregistration_delay = 10
 
   dynamic "health_check" {
     for_each = var.health_check_path != null ? [1] : []

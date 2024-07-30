@@ -1,15 +1,17 @@
 resource "aws_rds_cluster" "db_cluster" {
-  cluster_identifier     = "martletplace"
-  engine                 = "aurora-postgresql"
-  engine_mode            = "provisioned"
-  engine_version         = "16.2"
-  database_name          = "martletplace"
-  master_username        = "martletplace"
-  master_password        = random_password.database_password.result
-  storage_encrypted      = true
-  vpc_security_group_ids = [aws_security_group.rds_security_group.id]
-  db_subnet_group_name   = aws_db_subnet_group.database_subnet_group.name
-  skip_final_snapshot    = true
+  cluster_identifier              = "martletplace"
+  engine                          = "aurora-postgresql"
+  engine_mode                     = "provisioned"
+  engine_version                  = "16.2"
+  database_name                   = "martletplace"
+  master_username                 = "martletplace"
+  master_password                 = random_password.database_password.result
+  storage_encrypted               = true
+  vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
+  db_subnet_group_name            = aws_db_subnet_group.database_subnet_group.name
+  skip_final_snapshot             = true
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.default.name
+  depends_on                      = [aws_rds_cluster_parameter_group.default]
 
   serverlessv2_scaling_configuration {
     max_capacity = 1.0
@@ -24,6 +26,21 @@ resource "aws_rds_cluster_instance" "serverless_db" {
   engine_version       = aws_rds_cluster.db_cluster.engine_version
   db_subnet_group_name = aws_db_subnet_group.database_subnet_group.name
   publicly_accessible  = true
+}
+
+resource "aws_rds_cluster_parameter_group" "default" {
+  name   = "logical-cluster-replication"
+  family = "aurora-postgresql16"
+
+  parameter {
+    name         = "rds.logical_replication"
+    value        = "1"
+    apply_method = "pending-reboot"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 data "http" "myip" {

@@ -210,6 +210,69 @@ module "search" {
   health_check_path  = var.health_check_path
 }
 
+module "pgsync" {
+  source = "./ecs/"
+
+  app_name     = "pgsync"
+  app_image    = format("%s:%s", aws_ecr_repository.main["pgsync"].repository_url, var.app_version)
+  app_port     = 8221
+  app_route    = "/hidden/pgsync"
+  app_priority = 55
+
+  environment = concat(local.base_environment, [
+    {
+      name  = "PG_HOST",
+      value = aws_rds_cluster.db_cluster.endpoint
+    },
+    {
+      name  = "PG_PORT",
+      value = 5432
+    },
+    {
+      name  = "PG_USER",
+      value = aws_rds_cluster.db_cluster.master_username
+    },
+    {
+      name  = "PG_PASSWORD",
+      value = aws_rds_cluster.db_cluster.master_password
+    },
+    {
+      name  = "ELASTICSEARCH_HOST",
+      value = aws_opensearch_domain.example.endpoint
+    },
+    {
+      name  = "ELASTICSEARCH_PORT",
+      value = 443
+    },
+    {
+      name  = "ELASTICSEARCH_USER",
+      value = aws_opensearch_domain.example.advanced_security_options[0].master_user_options[0].master_user_name
+    },
+    {
+      name  = "ELASTICSEARCH_SCHEME",
+      value = "https"
+    },
+  ])
+
+  secrets = concat(local.base_secrets, [{
+    name      = "ELASTICSEARCH_PASSWORD",
+    valueFrom = aws_secretsmanager_secret.opensearch_password_secret.arn
+  }])
+
+  fargate_cpu    = 512
+  fargate_memory = 1024
+  app_count      = 1
+
+  ecs_cluster        = aws_ecs_cluster.main
+  alb_id             = aws_alb.main.id
+  lb_port            = var.lb_port
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
+  vpc_id             = aws_vpc.main.id
+  security_group_id  = aws_security_group.ecs_tasks.id
+  subnet_ids         = aws_subnet.public.*.id
+}
+
 module "recommend" {
   source = "./ecs/"
 
