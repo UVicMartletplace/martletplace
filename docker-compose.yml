@@ -212,8 +212,6 @@ services:
         condition: service_started
       elasticsearch:
         condition: service_healthy
-      cache:
-        condition: service_started
     environment:
       - PG_HOST=datalayer
       - PG_PORT=8300
@@ -225,19 +223,6 @@ services:
       - ELASTICSEARCH_PASSWORD=serxdfcghjfc
       - ELASTICSEARCH_SCHEME=https
       - ELASTICSEARCH_VERIFY_CERTS=False
-      - REDIS_HOST=cache
-      - REDIS_PORT=8313
-      - REDIS_DB=0
-
-  cache:
-    build: apps/data/cache
-    container_name: martletplace_cache
-    restart: unless-stopped
-    depends_on: []
-    volumes: []
-    environment:
-      - DFLY_port=8313
-    command: "--proactor_threads=4"
 
   collector:
     build: apps/observability/collector
