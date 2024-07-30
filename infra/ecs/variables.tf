@@ -67,8 +67,13 @@ variable "lb_port" {
   description = "Port exposed to the pubic internet for the load balancer"
 }
 
-variable "app_count" {
+variable "app_scaling" {
   description = "Number of containers to run"
+  type = object({
+    base      = number
+    min_count = number
+    max_count = number
+  })
 }
 
 variable "health_check_path" {
