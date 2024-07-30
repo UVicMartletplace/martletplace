@@ -227,7 +227,7 @@ ListingCard.propTypes = {
     price: PropTypes.number.isRequired,
     dateCreated: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
-    charityId: PropTypes.string.isRequired,
+    charityID: PropTypes.string.isRequired,
   }).isRequired,
 };
 
