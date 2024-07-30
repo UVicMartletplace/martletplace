@@ -18,8 +18,8 @@ const deleteReview = async (
   try {
     const result = await db.result(
       `DELETE FROM reviews
-       WHERE review_id = $1`,
-      [id],
+       WHERE review_id = $1 AND user_id = $2;`,
+      [id, req.user.userId],
     );
 
     if (result.rowCount === 0) {

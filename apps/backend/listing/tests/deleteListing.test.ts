@@ -2,12 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { deleteListing } from '../src/deleteListing';
 import { Request, Response } from 'express';
 import { IDatabase } from 'pg-promise';
+import { AuthenticatedRequest } from '../../lib/src/auth';
 
 describe('Delete Listing Endpoint', () => {
   it('should delete a listing successfully', async () => {
     const req = {
       params: { id: '3' },
-    } as unknown as Request;
+      user: { userId: 1 }
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
@@ -27,7 +29,8 @@ describe('Delete Listing Endpoint', () => {
   it('should fail to delete a non-existent listing', async () => {
     const req = {
       params: { id: '9999' },
-    } as unknown as Request;
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
