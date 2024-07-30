@@ -13,7 +13,8 @@
                 "description",
                 "image_urls",
                 "created_at",
-                "location"
+                "location",
+                "charity_id"
             ],
             "children": [
                 {
@@ -42,7 +43,8 @@
                 {
                     "listing_id": "listingId",
                     "seller_id": "sellerId",
-                    "created_at": "dateCreated"
+                    "created_at": "dateCreated",
+                    "charity_id": "charityId"
                 },
                 "mapping":
                 {

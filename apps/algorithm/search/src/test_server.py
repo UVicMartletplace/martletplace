@@ -81,6 +81,7 @@ def test_search_for_existing_listing(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": None,  # Example with charityId as None
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -105,6 +106,7 @@ def test_search_for_existing_listing(auth_headers, mock_insert_user_search):
                 "price": 450,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": None,
             }
         ],
         "totalItems": 1,
@@ -127,6 +129,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",  # Example with charityId as a string
         },
     )
     es.index(
@@ -143,6 +146,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -167,6 +171,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
                 "price": 200.0,
                 "dateCreated": "2024-06-01T12:00:00Z",
                 "imageUrl": "https://example.com/image2.jpg",
+                "charityID": None,
             },
             {
                 "listingID": "abc123",
@@ -177,6 +182,7 @@ def test_search_for_multiple_listings(auth_headers, mock_insert_user_search):
                 "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": "12345",
             },
         ],
         "totalItems": 2,
@@ -229,6 +235,7 @@ def test_search_with_price_range(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -255,6 +262,7 @@ def test_search_with_price_range(auth_headers, mock_insert_user_search):
                 "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": "12345",
             }
         ],
         "totalItems": 1,
@@ -277,6 +285,7 @@ def test_search_with_too_low_price_range_fail(auth_headers, mock_insert_user_sea
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -311,6 +320,7 @@ def test_search_with_too_high_price_range_fail(auth_headers, mock_insert_user_se
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -396,6 +406,7 @@ def test_search_with_status(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -412,6 +423,7 @@ def test_search_with_status(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -437,6 +449,7 @@ def test_search_with_status(auth_headers, mock_insert_user_search):
                 "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": "12345",
             }
         ],
         "totalItems": 1,
@@ -459,6 +472,7 @@ def test_search_with_status_sold(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -475,6 +489,7 @@ def test_search_with_status_sold(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -500,6 +515,7 @@ def test_search_with_status_sold(auth_headers, mock_insert_user_search):
                 "price": 200.0,
                 "dateCreated": "2024-06-01T12:00:00Z",
                 "imageUrl": "https://example.com/image2.jpg",
+                "charityID": None,
             }
         ],
         "totalItems": 1,
@@ -548,6 +564,7 @@ def test_search_with_user_search(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": None,
         },
     )
     es.index(
@@ -559,11 +576,12 @@ def test_search_with_user_search(auth_headers, mock_insert_user_search):
             "title": "Used Laptop",
             "description": "Lightly used laptop for sale.",
             "price": 200.00,
-            "location": {"lat": 40.7128, "lon": -74.0060},
+            "location": {"lat": 45.4215, "lon": -75.6972},
             "status": "SOLD",
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -589,6 +607,7 @@ def test_search_with_user_search(auth_headers, mock_insert_user_search):
                 "price": 450.0,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": None,
             }
         ],
         "totalItems": 1,
@@ -611,6 +630,7 @@ def test_search_with_user_search_negative(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -627,6 +647,7 @@ def test_search_with_user_search_negative(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -688,6 +709,7 @@ def test_only_return_results_within_5km_of_location(
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -704,6 +726,7 @@ def test_only_return_results_within_5km_of_location(
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -728,6 +751,7 @@ def test_only_return_results_within_5km_of_location(
                 "price": 450.00,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": "12345",
             }
         ],
         "totalItems": 1,
@@ -826,6 +850,7 @@ def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image3.jpg"],
             "users": {"name": "wally monga"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -842,6 +867,7 @@ def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": None,
         },
     )
     es.index(
@@ -858,6 +884,7 @@ def test_search_with_sorting_by_relevance(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": "54321",
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -898,6 +925,7 @@ def test_search_with_sorting_by_price_asc(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -914,6 +942,7 @@ def test_search_with_sorting_by_price_asc(auth_headers, mock_insert_user_search)
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -953,6 +982,7 @@ def test_search_with_sorting_by_price_desc(auth_headers, mock_insert_user_search
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -969,6 +999,7 @@ def test_search_with_sorting_by_price_desc(auth_headers, mock_insert_user_search
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1008,6 +1039,7 @@ def test_search_with_sorting_by_listed_time_asc(auth_headers, mock_insert_user_s
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -1024,6 +1056,7 @@ def test_search_with_sorting_by_listed_time_asc(auth_headers, mock_insert_user_s
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1064,6 +1097,7 @@ def test_search_with_sorting_by_listed_time_desc(auth_headers, mock_insert_user_
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -1080,6 +1114,7 @@ def test_search_with_sorting_by_listed_time_desc(auth_headers, mock_insert_user_
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1120,6 +1155,7 @@ def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_sear
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -1136,6 +1172,7 @@ def test_search_with_sorting_by_distance_asc(auth_headers, mock_insert_user_sear
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1176,6 +1213,7 @@ def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_sea
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": "12345",
         },
     )
     es.index(
@@ -1192,6 +1230,7 @@ def test_search_with_sorting_by_distance_desc(auth_headers, mock_insert_user_sea
             "dateCreated": "2024-06-01T12:00:00Z",
             "image_urls": ["https://example.com/image2.jpg"],
             "users": {"name": "janedoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1261,6 +1300,7 @@ def test_search_with_pagination(auth_headers, mock_insert_user_search):
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
             "users": {"name": f"seller_name{i}"},
+            "charityId": None if i % 2 == 0 else str(i),
         }
         for i in range(15)
     ]
@@ -1356,6 +1396,7 @@ def test_search_with_missing_pagination_parameters(
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
             "users": {"name": f"seller_name{i}"},
+            "charityId": None if i % 2 == 0 else str(i),
         }
         for i in range(21)
     ]
@@ -1470,6 +1511,7 @@ def test_total_items_count_with_multiple_listings(
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
             "users": {"name": f"seller_name{i}"},
+            "charityId": None if i % 2 == 0 else str(i),
         }
         for i in range(10)
     ]
@@ -1514,6 +1556,7 @@ def test_total_items_count_with_filter(auth_headers, mock_insert_user_search):
             "dateCreated": f"2024-06-{i + 1:02d}T12:00:00Z",
             "image_urls": [f"https://example.com/image{i}.jpg"],
             "users": {"name": f"seller_name{i}"},
+            "charityId": None if i % 2 == 0 else str(i),
         }
         for i in range(20)
     ]
@@ -1560,6 +1603,7 @@ def test_fuzzy_search(auth_headers, mock_insert_user_search):
             "dateCreated": "2024-05-22T10:30:00Z",
             "image_urls": ["https://example.com/image1.jpg"],
             "users": {"name": "billybobjoe"},
+            "charityId": None,
         },
     )
     es.indices.refresh(index=TEST_INDEX)
@@ -1584,6 +1628,7 @@ def test_fuzzy_search(auth_headers, mock_insert_user_search):
                 "price": 8.00,
                 "dateCreated": "2024-05-22T10:30:00Z",
                 "imageUrl": "https://example.com/image1.jpg",
+                "charityID": None,
             }
         ],
         "totalItems": 1,

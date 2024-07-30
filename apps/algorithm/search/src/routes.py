@@ -132,6 +132,9 @@ async def search(
             "description": hit["_source"]["description"],
             "price": hit["_source"]["price"],
             "dateCreated": hit["_source"]["dateCreated"],
+            "charityID": str(hit["_source"]["charityId"])
+            if hit["_source"]["charityId"]
+            else None,
             "imageUrl": hit["_source"]["image_urls"][0]
             if hit["_source"]["image_urls"]
             else None,
