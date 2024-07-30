@@ -13,7 +13,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
   );
 
   const calculateTimeRemaining = useCallback(() => {
-    const endTime = new Date(charity.endDate).getTime();
+    const endTime = new Date(charity.end_date).getTime();
     const now = new Date().getTime();
     const distance = endTime - now;
 
@@ -28,7 +28,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
       return `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
-  }, [charity.endDate]);
+  }, [charity.end_date]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,7 +64,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
         {charity.description}
       </Typography>
       <img
-        src={charity.imageUrl}
+        src={charity.image_url}
         alt={charity.name}
         style={{ maxWidth: "300px" }}
       />
@@ -85,47 +85,51 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
           <strong>Total Funds Donated:</strong> ${charity.funds}
         </Typography>
         <Typography variant="h6">
-          <strong>Charity Items Sold:</strong> {charity.listingsCount}
+          <strong>Charity Items Sold:</strong> {charity.listingscount}
         </Typography>
         <Typography variant="h6" sx={{ marginTop: "20px" }}>
           <strong>Charity event ends in:</strong> {timeRemaining}
         </Typography>
-        <Typography variant="h6" sx={{ marginTop: "20px" }}>
-          <strong>Receiving Organizations:</strong>
-        </Typography>
-        <Typography variant="body1">
-          {charity.organizations
-            .filter((org) => org.receiving)
-            .map((org) => org.name)
-            .join(", ")}
-        </Typography>
-        <Grid container spacing={1} sx={{ marginTop: "10px" }}>
-          {charity.organizations
-            .filter((org) => org.receiving)
-            .map((org, index) => (
-              <Grid item key={index}>
-                <Avatar src={org.logoUrl} alt={org.name} />
-              </Grid>
-            ))}
-        </Grid>
-        <Typography variant="h6" sx={{ marginTop: "20px" }}>
-          <strong>Partner Organizations:</strong>
-        </Typography>
-        <Typography variant="body1">
-          {charity.organizations
-            .filter((org) => !org.receiving)
-            .map((org) => org.name)
-            .join(", ")}
-        </Typography>
-        <Grid container spacing={1} sx={{ marginTop: "10px" }}>
-          {charity.organizations
-            .filter((org) => !org.receiving)
-            .map((org, index) => (
-              <Grid item key={index}>
-                <Avatar src={org.logoUrl} alt={org.name} />
-              </Grid>
-            ))}
-        </Grid>
+        {charity.organizations && (
+          <>
+            <Typography variant="h6" sx={{ marginTop: "20px" }}>
+              <strong>Receiving Organizations:</strong>
+            </Typography>
+            <Typography variant="body1">
+              {charity.organizations
+                .filter((org) => org.receiving)
+                .map((org) => org.name)
+                .join(", ")}
+            </Typography>
+            <Grid container spacing={1} sx={{ marginTop: "10px" }}>
+              {charity.organizations
+                .filter((org) => org.receiving)
+                .map((org, index) => (
+                  <Grid item key={index}>
+                    <Avatar src={org.logoUrl} alt={org.name} />
+                  </Grid>
+                ))}
+            </Grid>
+            <Typography variant="h6" sx={{ marginTop: "20px" }}>
+              <strong>Partner Organizations:</strong>
+            </Typography>
+            <Typography variant="body1">
+              {charity.organizations
+                .filter((org) => !org.receiving)
+                .map((org) => org.name)
+                .join(", ")}
+            </Typography>
+            <Grid container spacing={1} sx={{ marginTop: "10px" }}>
+              {charity.organizations
+                .filter((org) => !org.receiving)
+                .map((org, index) => (
+                  <Grid item key={index}>
+                    <Avatar src={org.logoUrl} alt={org.name} />
+                  </Grid>
+                ))}
+            </Grid>
+          </>
+        )}
       </Box>
     </Box>
   );
