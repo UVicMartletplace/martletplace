@@ -16,7 +16,7 @@ export interface ListingObject {
   price: number;
   dateCreated: string;
   imageUrl: string;
-  charityId: string;
+  charityID?: string;
 }
 
 interface ListingCardProps {
@@ -95,7 +95,7 @@ const ListingCard = ({
       onClick={handleListingClick}
     >
       <div style={{ position: "relative", width: "100%", maxHeight: "40vh" }}>
-        {listing.charityId != null && (
+        {listing.charityID != null && (
           <img
             src={CharityBanner}
             alt="charityBanner"
