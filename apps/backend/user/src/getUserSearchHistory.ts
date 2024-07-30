@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { IDatabase } from "pg-promise";
 import { AuthenticatedRequest } from "../../lib/src/auth";
 
@@ -10,10 +10,10 @@ const getUserSearchHistory = async (
   const id = req.user.userId;
 
   const query = `
-        SELECT search_id, search_term, created_at
+        SELECT DISTINCT ON (search_term) search_id, search_term, created_at
         FROM user_searches
         WHERE user_id = $1
-        ORDER BY created_at DESC
+        ORDER BY search_term, created_at DESC
         LIMIT 5
       `;
 

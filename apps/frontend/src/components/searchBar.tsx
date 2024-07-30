@@ -68,7 +68,7 @@ const SearchBar = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchFocus, setSearchFocus] = useState(false);
-  const [searchHistory, setSeachHistory] = useState<searchHistory[]>([]);
+  const [searchHistory, setSearchHistory] = useState<searchHistory[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
@@ -100,9 +100,10 @@ const SearchBar = () => {
       ...filters,
       query: searchInput,
     };
-    //Put search object in the URL
+
+    // Put search object in the URL
     const params = new URLSearchParams({
-      query: searchObject.query,
+      query: encodeURIComponent(searchObject.query),
       minPrice: searchObject.minPrice?.toString() ?? "",
       maxPrice: searchObject.maxPrice?.toString() ?? "",
       status: searchObject.status,
@@ -133,16 +134,8 @@ const SearchBar = () => {
       page: 1,
       limit: 8,
     };
-    _axios_instance
-      .get("/user/search-history")
-      .then((response) => {
-        setSeachHistory(response.data.searches);
-      })
-      .catch((error) => {
-        console.error("Error getting search history:", error);
-      });
     if (location.pathname === "/query") {
-      //Something was searched
+      // Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
       const searchString = location.search.slice(1);
       let match;
@@ -151,7 +144,7 @@ const SearchBar = () => {
         const value = decodeURIComponent(match[2]); // Decode value
         switch (key) {
           case "query":
-            searchObject.query = value;
+            searchObject.query = decodeURIComponent(value);
             break;
           case "minPrice":
             searchObject.minPrice = isNaN(+value) ? null : +value;
@@ -187,7 +180,7 @@ const SearchBar = () => {
         }
       }
     }
-    setSearchInput(searchObject.query);
+    setSearchInput(decodeURIComponent(searchObject.query));
     setFilters(searchObject);
   }, [location, query]);
 
@@ -201,15 +194,30 @@ const SearchBar = () => {
   };
 
   const handelFocus = () => {
-    _axios_instance
-      .get("/user/search-history")
-      .then((response) => {
-        setSeachHistory(response.data.searches);
-      })
-      .catch((error) => {
-        console.error("Error getting search history:", error);
-      });
-    setSearchFocus(true);
+    if (!searchFocus) {
+      _axios_instance
+        .get("/user/search-history")
+        .then((response) => {
+          // Decode search terms before setting the state
+          const decodedSearchHistory = response.data.searches.map(
+            (search: searchHistory) => ({
+              ...search,
+              searchTerm: decodeURIComponent(
+                search.searchTerm.replace(/\+/g, " "),
+              ),
+            }),
+          );
+          setSearchHistory(decodedSearchHistory);
+        })
+        .catch((error) => {
+          console.error("Error getting search history:", error);
+        });
+      setSearchFocus(true);
+    }
+  };
+
+  const handleBlur = () => {
+    setSearchFocus(false);
   };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -273,7 +281,7 @@ const SearchBar = () => {
           onKeyDown={handleKeyDown}
           onFocus={handelFocus}
           onClick={() => setSearchFocus(true)}
-          onBlur={() => setSearchFocus(false)}
+          onBlur={handleBlur}
           inputRef={searchInputRef}
           autoComplete="off"
         />
