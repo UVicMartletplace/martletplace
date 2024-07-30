@@ -13,6 +13,7 @@ describe('Update Review Endpoint', () => {
         comment: 'Updated review',
         listingID: 1,
       },
+      user: { userId: 1 }
     } as unknown as AuthenticatedRequest;
 
     const res = {
@@ -46,7 +47,9 @@ describe('Update Review Endpoint', () => {
         comment: 'Updated review',
         listingID: 1,
       },
+      user: { userId: 1 }
     } as unknown as AuthenticatedRequest;
+    
 
     const res = {
       status: vi.fn().mockReturnThis(),

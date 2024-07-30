@@ -8,6 +8,7 @@ describe('Delete Review Endpoint', () => {
   it('should delete a review successfully', async () => {
     const req = {
       params: { id: '1' },
+      user: { userId: 1 }
     } as unknown as AuthenticatedRequest;
 
     const res = {
@@ -25,9 +26,10 @@ describe('Delete Review Endpoint', () => {
     expect(res.json).toHaveBeenCalledWith({ message: 'Review deleted successfully' });
   });
 
-  it('should return an error if review not found', async () => {
+  it('should return 200 if review not found', async () => {
     const req = {
       params: { id: '9999' },
+      user: { userId: 1 }
     } as unknown as AuthenticatedRequest;
 
     const res = {
