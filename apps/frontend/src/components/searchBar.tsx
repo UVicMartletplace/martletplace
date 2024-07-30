@@ -99,9 +99,10 @@ const SearchBar = () => {
       ...filters,
       query: searchInput,
     };
-    //Put search object in the URL
+
+    // Put search object in the URL
     const params = new URLSearchParams({
-      query: searchObject.query,
+      query: encodeURIComponent(searchObject.query),
       minPrice: searchObject.minPrice?.toString() ?? "",
       maxPrice: searchObject.maxPrice?.toString() ?? "",
       status: searchObject.status,
@@ -141,7 +142,7 @@ const SearchBar = () => {
         console.error("Error getting search history:", error);
       });
     if (location.pathname === "/query") {
-      //Something was searched
+      // Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
       const searchString = location.search.slice(1);
       let match;
@@ -150,7 +151,7 @@ const SearchBar = () => {
         const value = decodeURIComponent(match[2]); // Decode value
         switch (key) {
           case "query":
-            searchObject.query = value;
+            searchObject.query = decodeURIComponent(value);
             break;
           case "minPrice":
             searchObject.minPrice = isNaN(+value) ? null : +value;
@@ -186,7 +187,7 @@ const SearchBar = () => {
         }
       }
     }
-    setSearchInput(searchObject.query);
+    setSearchInput(decodeURIComponent(searchObject.query));
     setFilters(searchObject);
   }, [location, query]);
 
