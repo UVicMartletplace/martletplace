@@ -30,6 +30,7 @@ async fn signup_login(user: &mut GooseUser) -> TransactionResult {
     let login_json = &serde_json::json!({
           "email": format!("{}@uvic.ca", username),
           "password": password,
+          "totpCode": "123456",
     });
     let login_goose = user.post_json("/api/user/login", &login_json).await?;
     let validate = &Validate::builder().status(200).header("Set-Cookie").build();
@@ -130,6 +131,22 @@ async fn get_user(user: &mut GooseUser) -> TransactionResult {
     Ok(())
 }
 
+async fn get_charities(user: &mut GooseUser) -> TransactionResult {
+    let goose = user.get("/api/charities").await?;
+    let validate = &Validate::builder().status(200).text("funds").build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
+async fn get_current_charity(user: &mut GooseUser) -> TransactionResult {
+    let goose = user.get("/api/charities/current").await?;
+    let validate = &Validate::builder().status(200).text("funds").build();
+    validate_page(user, goose, validate).await?;
+
+    Ok(())
+}
+
 async fn get_message_threads(user: &mut GooseUser) -> TransactionResult {
     let goose = user
         .get_named("/api/messages/overview", "/api/messages/overview")
@@ -201,6 +218,8 @@ async fn main() -> Result<(), GooseError> {
                 .register_transaction(transaction!(get_review).set_weight(10)?)
                 .register_transaction(transaction!(create_review))
                 .register_transaction(transaction!(get_user).set_weight(5)?)
+                .register_transaction(transaction!(get_charities).set_weight(5)?)
+                .register_transaction(transaction!(get_current_charity).set_weight(20)?)
                 .register_transaction(transaction!(get_message_threads).set_weight(10)?)
                 .register_transaction(transaction!(search_listings).set_weight(20)?),
         )
