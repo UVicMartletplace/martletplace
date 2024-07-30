@@ -41,7 +41,8 @@ const getListingById = async (
         l.created_at AS "dateCreated",
         l.modified_at AS "dateModified",
         l.image_urls,
-        l.charity_id AS "charityId"
+        l.charity_id AS "charityId",
+        l.seller_id
       FROM 
         listings l
       JOIN 
@@ -56,12 +57,15 @@ const getListingById = async (
       return res.status(200).json({ listing: {} });
     }
 
-    const insertClickQuery = `
-      INSERT INTO user_clicks (user_id, listing_id, listing_title)
-      VALUES ($1, $2, $3)
-    `;
+    console.log("UserID: " + userID + "Seller ID: " + listing.seller_id);
+    if(userID !== listing.seller_id) {
+      const insertClickQuery = `
+        INSERT INTO user_clicks (user_id, listing_id, listing_title)
+        VALUES ($1, $2, $3)
+      `;
 
-    await db.oneOrNone(insertClickQuery, [userID, id, listing.title]);
+      await db.oneOrNone(insertClickQuery, [userID, id, listing.title]);
+    }
 
     const reviewsQuery = `
       SELECT 
