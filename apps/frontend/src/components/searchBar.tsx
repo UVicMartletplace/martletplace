@@ -199,10 +199,14 @@ const SearchBar = () => {
         .get("/user/search-history")
         .then((response) => {
           // Decode search terms before setting the state
-          const decodedSearchHistory = response.data.searches.map((search: any) => ({
-            ...search,
-            searchTerm: decodeURIComponent(search.searchTerm.replace(/\+/g, ' ')),
-          }));
+          const decodedSearchHistory = response.data.searches.map(
+            (search: any) => ({
+              ...search,
+              searchTerm: decodeURIComponent(
+                search.searchTerm.replace(/\+/g, " "),
+              ),
+            }),
+          );
           setSearchHistory(decodedSearchHistory);
         })
         .catch((error) => {
