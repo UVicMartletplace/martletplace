@@ -3,7 +3,7 @@ variable "domain" {
 }
 
 resource "aws_security_group" "example" {
-  name   = "oasdasdasd"
+  name   = "opensearch_sg"
   vpc_id = aws_vpc.main.id
 
   ingress {

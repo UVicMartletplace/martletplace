@@ -271,7 +271,6 @@ module "pgsync" {
   vpc_id             = aws_vpc.main.id
   security_group_id  = aws_security_group.ecs_tasks.id
   subnet_ids         = aws_subnet.public.*.id
-  health_check_path  = var.health_check_path
 }
 
 module "recommend" {
