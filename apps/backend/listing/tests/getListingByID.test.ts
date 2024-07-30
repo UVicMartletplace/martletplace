@@ -32,13 +32,13 @@ describe('Get Listing by ID Endpoint', () => {
           price: 100,
           location: '48.4284,-123.3656',
           status: 'AVAILABLE',
-          dateCreated: new Date(),
-          dateModified: new Date(),
+          dateCreated: '2024-07-30T18:17:02.944Z',
+          dateModified: '2024-07-30T18:17:02.944Z',
           image_urls: [
             'https://example.com/image1.png',
             'https://example.com/image2.png',
           ],
-          charity_id: 1,
+          charityId: 1,
         })),
       any: vi.fn().mockResolvedValue([{
         listing_review_id: 1,
@@ -47,8 +47,8 @@ describe('Get Listing by ID Endpoint', () => {
         comment: 'Great listing!',
         userID: 2,
         listingID: 1,
-        dateCreated: new Date(),
-        dateModified: new Date(),
+        dateCreated: '2024-07-30T18:17:02.944Z',
+        dateModified: '2024-07-30T18:17:02.944Z',
       }]),
     } as unknown as IDatabase<object>;
 
@@ -72,8 +72,8 @@ describe('Get Listing by ID Endpoint', () => {
         longitude: -123.3656,
       },
       status: 'AVAILABLE',
-      dateCreated: expect.any(Date),
-      dateModified: expect.any(Date),
+      dateCreated: '2024-07-30T18:17:02.944Z',
+      dateModified: '2024-07-30T18:17:02.944Z',
       reviews: [
         {
           listing_review_id: 1,
@@ -82,8 +82,8 @@ describe('Get Listing by ID Endpoint', () => {
           comment: 'Great listing!',
           userID: 2,
           listingID: 1,
-          dateCreated: expect.any(Date),
-          dateModified: expect.any(Date),
+          dateCreated: '2024-07-30T18:17:02.944Z',
+          dateModified: '2024-07-30T18:17:02.944Z',
         },
       ],
       images: [
