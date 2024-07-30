@@ -68,7 +68,7 @@ const SearchBar = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchFocus, setSearchFocus] = useState(false);
-  const [searchHistory, setSeachHistory] = useState<searchHistory[]>([]);
+  const [searchHistory, setSearchHistory] = useState<searchHistory[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
@@ -134,14 +134,6 @@ const SearchBar = () => {
       page: 1,
       limit: 8,
     };
-    _axios_instance
-      .get("/user/search-history")
-      .then((response) => {
-        setSeachHistory(response.data.searches);
-      })
-      .catch((error) => {
-        console.error("Error getting search history:", error);
-      });
     if (location.pathname === "/query") {
       // Something was searched
       const regex = /([^&=]+)=([^&]*)/g;
@@ -202,15 +194,26 @@ const SearchBar = () => {
   };
 
   const handelFocus = () => {
-    _axios_instance
-      .get("/user/search-history")
-      .then((response) => {
-        setSeachHistory(response.data.searches);
-      })
-      .catch((error) => {
-        console.error("Error getting search history:", error);
-      });
-    setSearchFocus(true);
+    if (!searchFocus) {
+      _axios_instance
+        .get("/user/search-history")
+        .then((response) => {
+          // Decode search terms before setting the state
+          const decodedSearchHistory = response.data.searches.map((search: any) => ({
+            ...search,
+            searchTerm: decodeURIComponent(search.searchTerm.replace(/\+/g, ' ')),
+          }));
+          setSearchHistory(decodedSearchHistory);
+        })
+        .catch((error) => {
+          console.error("Error getting search history:", error);
+        });
+      setSearchFocus(true);
+    }
+  };
+
+  const handleBlur = () => {
+    setSearchFocus(false);
   };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -274,7 +277,7 @@ const SearchBar = () => {
           onKeyDown={handleKeyDown}
           onFocus={handelFocus}
           onClick={() => setSearchFocus(true)}
-          onBlur={() => setSearchFocus(false)}
+          onBlur={handleBlur}
           inputRef={searchInputRef}
           autoComplete="off"
         />
