@@ -24,7 +24,7 @@ interface Organization {
 export const getCharities = async (
   req: AuthenticatedRequest,
   res: Response,
-  db: IDatabase<object>
+  db: IDatabase<object>,
 ) => {
   try {
     const charities = await db.task((t) =>
@@ -39,7 +39,7 @@ export const getCharities = async (
       LEFT JOIN organizations o ON o.charity_id = c.charity_id
       LEFT JOIN listings l ON l.charity_id = c.charity_id AND l.status = 'SOLD'
       GROUP BY c.charity_id;
-    `
+    `,
         )
         .then((charities) =>
           Promise.all(
@@ -48,7 +48,7 @@ export const getCharities = async (
                 `SELECT COALESCE(SUM(donated), 0) AS donation_funds
                 FROM organizations
                 WHERE charity_id = $1;`,
-                [charity.id]
+                [charity.id],
               );
               const listingStats = await t.one(
                 `SELECT
@@ -56,16 +56,16 @@ export const getCharities = async (
                 COUNT(*) AS listings_count
               FROM listings
               WHERE charity_id = $1;`,
-                [charity.id]
+                [charity.id],
               );
               charity.funds =
                 parseFloat(donationFunds.donation_funds) +
                 parseFloat(listingStats.listing_funds);
               charity.listingsCount = parseInt(listingStats.listings_count);
               return charity;
-            })
-          )
-        )
+            }),
+          ),
+        ),
     );
 
     res.json(charities);
