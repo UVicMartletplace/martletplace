@@ -80,15 +80,18 @@ resource "aws_alb_target_group" "app" {
   vpc_id      = var.vpc_id
   target_type = "ip"
 
-  health_check {
-    healthy_threshold   = "3"
-    interval            = "30"
-    protocol            = "HTTP"
-    matcher             = "200"
-    timeout             = "3"
-    path                = var.health_check_path
-    unhealthy_threshold = "2"
-    port                = var.healthcheck_port
+  dynamic "health_check" {
+    for_each = var.health_check_path != null ? [1] : []
+    content {
+      healthy_threshold   = "3"
+      interval            = "30"
+      protocol            = "HTTP"
+      matcher             = "200"
+      timeout             = "3"
+      path                = var.health_check_path
+      unhealthy_threshold = "2"
+      port                = var.healthcheck_port
+    }
   }
 }
 

@@ -72,7 +72,8 @@ variable "app_count" {
 }
 
 variable "health_check_path" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "healthcheck_port" {
