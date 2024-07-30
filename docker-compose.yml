@@ -162,14 +162,15 @@ services:
       - database
     volumes: []
     environment:
-      - POSTGRESQL_USERNAME=martletplace
-      - POSTGRESQL_PASSWORD=johuigytfrdcv
-      - POSTGRESQL_DATABASE=martletplace
-      - POSTGRESQL_HOST=database
-      - POSTGRESQL_PORT=8310
-      - EMAIL_ENDPOINT=smtp://mailserver/martletplace.ca
-      - SEND_EMAILS=FALSE
-      - ELASTIC_ENDPOINT=https://elasticsearch:8311
+      <<: *shared_env_var
+      POSTGRESQL_USERNAME: martletplace
+      POSTGRESQL_PASSWORD: johuigytfrdcv
+      POSTGRESQL_DATABASE: martletplace
+      POSTGRESQL_HOST: database
+      POSTGRESQL_PORT: 8310
+      EMAIL_ENDPOINT: smtp://mailserver/martletplace.ca
+      SEND_EMAILS: FALSE
+      ELASTIC_ENDPOINT: https://elasticsearch:8311
 
   database:
     build: apps/data/database
