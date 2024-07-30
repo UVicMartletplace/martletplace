@@ -40,7 +40,8 @@ const getListingById = async (
         l.status,
         l.created_at AS "dateCreated",
         l.modified_at AS "dateModified",
-        l.image_urls
+        l.image_urls,
+        l.charity_id
       FROM 
         listings l
       JOIN 

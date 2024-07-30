@@ -38,6 +38,7 @@ describe('Get Listing by ID Endpoint', () => {
             'https://example.com/image1.png',
             'https://example.com/image2.png',
           ],
+          charity_id: 1,
         })),
       any: vi.fn().mockResolvedValue([{
         listing_review_id: 1,
@@ -90,6 +91,7 @@ describe('Get Listing by ID Endpoint', () => {
         { url: 'https://example.com/image2.png' },
       ],
       distance: 0,
+      charityId: 1,
     });
   });
 
