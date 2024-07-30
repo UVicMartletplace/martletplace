@@ -94,7 +94,7 @@ async def get_recommendations(
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
     )
-    items_clicked = [item.click_term for item in items_clicked]
+    items_clicked = [item.listing_title for item in items_clicked]
 
     terms_searched = await session.exec(
         select(User_Searches).where(User_Searches.user_id == user_id)

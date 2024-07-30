@@ -52,31 +52,34 @@ export const createCharity = async (
       [name, description, startDate, endDate, imageUrl],
     );
 
-    const queries = organizations.map((org: Organization) => {
-      return db.oneOrNone<Organization>(
-        `INSERT INTO organizations (name, logo_url, donated, receiving, charity_id)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING name, logo_url, donated, receiving;`,
-        [
-          org.name,
-          org.logoUrl,
-          org.donated,
-          org.receiving,
-          createdCharity.charity_id,
-        ],
+    const results: Array<Organization | null> = await db.task((t) => {
+      const queries = organizations.map((org: Organization) =>
+        t.oneOrNone<Organization>(
+          `INSERT INTO organizations (name, logo_url, donated, receiving, charity_id)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING name, logo_url, donated, receiving;`,
+          [
+            org.name,
+            org.logoUrl,
+            org.donated,
+            org.receiving,
+            createdCharity.charity_id,
+          ],
+        ),
       );
-    });
 
-    const results = await db.tx((t) => {
       return t.batch(queries);
     });
 
-    const createdOrganizations: Organization[] = results.filter(
-      (result) => result !== null,
-    ) as Organization[];
+    if (results.includes(null)) {
+      // Throw so we can catch the error and return a 500
+      throw new Error("Failed to create at least one organization");
+    }
+
+    const createdOrgs = results as Array<Organization>;
 
     let totalFunds = 0;
-    createdOrganizations.forEach((org) => {
+    createdOrgs.forEach((org) => {
       totalFunds += parseFloat(org.donated.toString());
     });
 
@@ -87,7 +90,7 @@ export const createCharity = async (
       startDate: createdCharity.start_date,
       endDate: createdCharity.end_date,
       imageUrl: createdCharity.image_url,
-      organizations: createdOrganizations,
+      organizations: createdOrgs,
       funds: totalFunds,
       listingsCount: 0,
     };
