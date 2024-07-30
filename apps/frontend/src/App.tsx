@@ -142,7 +142,7 @@ function App() {
             }
           />
           <Route
-            path="/charity/new"
+            path="/charities/new"
             element={
               <PrivateRoute>
                 <CreateCharity />

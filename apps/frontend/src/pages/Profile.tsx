@@ -146,8 +146,9 @@ const Profile = () => {
     if (successImages) {
       profile.profilePictureUrl = successImages.url;
       try {
+        const currentUserID = user?.userID;
         const response = await _axios_instance.patch("/user", profile);
-        setUser(response.data.user as User);
+        setUser({ ...response.data.user, userID: currentUserID } as User);
         setOriginalProfile(profile);
       } catch (error) {
         alert(`Error: ${error}`);
