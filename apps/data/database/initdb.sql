@@ -96,7 +96,7 @@ CREATE TABLE user_searches (
 CREATE TABLE user_clicks (
     click_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    listing_id INTEGER NOT NULL REFERENCES listings(listing_id),
+    listing_id INTEGER NOT NULL REFERENCES listings(listing_id) ON DELETE CASCADE,
     listing_title VARCHAR NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
