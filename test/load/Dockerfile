@@ -1,4 +1,4 @@
-FROM lukemathwalker/cargo-chef:latest as chef
+FROM lukemathwalker/cargo-chef:latest AS chef
 WORKDIR /app
 
 FROM chef AS planner
@@ -17,4 +17,4 @@ RUN mv ./target/release/loadtest ./app
 FROM rust AS runtime
 WORKDIR /app
 COPY --from=builder /app/app /usr/local/bin/
-ENTRYPOINT bash -c "while true; do /usr/local/bin/app --worker --manager-host \"$MANAGER_HOST\"; sleep 1; done"
+ENTRYPOINT bash -c "while true; do /usr/local/bin/app --worker --manager-host \"$MANAGER_HOST\"; sleep 100; done"
