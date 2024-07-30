@@ -5,6 +5,16 @@ receivers:
         endpoint: 0.0.0.0:4318
 
 processors:
+  transform:
+    error_mode: ignore
+    trace_statements:
+      context: span
+      statements:
+        - replace_pattern(attributes["db.statement"], "\\$\\d(::\\w+)?", "?")
+        - replace_pattern(attributes["db.statement"], "\\n\\s*", " ")
+        - replace_pattern(attributes["db.statement"], "^\\s+", "")
+        - replace_pattern(attributes["db.statement"], "\\s+$", "")
+
   batch:
   tail_sampling:
     decision_wait: 5s
@@ -57,7 +67,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [tail_sampling,batch]
+      processors: [transform,tail_sampling,batch]
       exporters: [debug,otlp/jaeger]
     metrics:
       receivers: [otlp]
