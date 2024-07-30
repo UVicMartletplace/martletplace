@@ -57,9 +57,8 @@ module "frontend" {
 module "user" {
   source = "./ecs/"
 
-  app_name  = "user"
-  app_image = format("%s:%s", aws_ecr_repository.main["user"].repository_url, var.app_version)
-
+  app_name     = "user"
+  app_image    = format("%s:%s", aws_ecr_repository.main["user"].repository_url, var.app_version)
   app_port     = 8211
   app_route    = "/api/user*"
   app_priority = 99
@@ -99,9 +98,8 @@ module "user" {
 module "listing" {
   source = "./ecs/"
 
-  app_name  = "listing"
-  app_image = format("%s:%s", aws_ecr_repository.main["listing"].repository_url, var.app_version)
-
+  app_name     = "listing"
+  app_image    = format("%s:%s", aws_ecr_repository.main["listing"].repository_url, var.app_version)
   app_port     = 8212
   app_route    = "/api/listing*"
   app_priority = 98
