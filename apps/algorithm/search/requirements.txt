@@ -1,5 +1,6 @@
 fastapi
 pydantic
+opensearch-py
 elasticsearch
 uvicorn[standard]
 gunicorn

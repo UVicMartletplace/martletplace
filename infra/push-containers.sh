@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 REGION="us-west-2"
 AWS_ACOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 REPO_NAME="martletplace"
-VER_TAG="latest"
+VER_TAG="$(grep -E '^[a-z]{6}$' < /usr/share/dict/words | shuf -n 1)-$(uuidgen | cut -d'-' -f1)"
 REPO_URL="${AWS_ACOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
 REPO_PATH="${REPO_URL}/${REPO_NAME}"
 
@@ -18,3 +19,5 @@ push() {
 for item in user listing review message search recommend frontend collector; do
   push $item
 done
+
+echo "app_version = \"${VER_TAG}\"" > terraform.tfvars
