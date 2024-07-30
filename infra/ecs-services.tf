@@ -25,6 +25,11 @@ locals {
       valueFrom = aws_secretsmanager_secret.database_url_secret.arn
     },
   ]
+  base_scaling = {
+    base      = 1,
+    min_count = 1,
+    max_count = 2,
+  }
 }
 
 module "frontend" {
@@ -41,7 +46,7 @@ module "frontend" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -82,7 +87,7 @@ module "user" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -109,7 +114,7 @@ module "listing" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -136,7 +141,7 @@ module "review" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -163,7 +168,7 @@ module "message" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -190,7 +195,7 @@ module "charity" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -224,7 +229,7 @@ module "search" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -288,7 +293,11 @@ module "pgsync" {
 
   fargate_cpu    = 512
   fargate_memory = 1024
-  app_count      = 1
+  app_scaling = {
+    base      = 1,
+    min_count = 1,
+    max_count = 1,
+  }
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -314,7 +323,7 @@ module "recommend" {
 
   fargate_cpu    = 512
   fargate_memory = 2048
-  app_count      = var.app_count
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id
@@ -342,7 +351,7 @@ module "collector" {
 
   fargate_cpu    = var.fargate_cpu
   fargate_memory = var.fargate_memory
-  app_count      = 1
+  app_scaling    = local.base_scaling
 
   ecs_cluster        = aws_ecs_cluster.main
   alb_id             = aws_alb.main.id

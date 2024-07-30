@@ -37,7 +37,7 @@ resource "aws_ecs_service" "main" {
   name                       = "martletplace-${var.app_name}"
   cluster                    = var.ecs_cluster.id
   task_definition            = aws_ecs_task_definition.app.arn
-  desired_count              = var.app_count
+  desired_count              = var.app_scaling.base
   deployment_maximum_percent = 400
 
   network_configuration {
@@ -136,8 +136,8 @@ resource "aws_appautoscaling_target" "target" {
   service_namespace  = "ecs"
   resource_id        = "service/${var.ecs_cluster.name}/${aws_ecs_service.main.name}"
   scalable_dimension = "ecs:service:DesiredCount"
-  min_capacity       = 1
-  max_capacity       = 6
+  min_capacity       = var.app_scaling.min_count
+  max_capacity       = var.app_scaling.max_count
 
   depends_on = [aws_ecs_service.main]
 }
