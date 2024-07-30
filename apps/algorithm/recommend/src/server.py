@@ -89,6 +89,8 @@ async def get_recommendations(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
 
+    ignore_charity_listings = user.ignore_charity_listings
+
     items_clicked = await session.exec(
         select(User_Clicks).where(User_Clicks.user_id == user_id)
     )
@@ -105,11 +107,17 @@ async def get_recommendations(
     items_disliked = [item.listing_id for item in items_disliked]
 
     recommended_listings = recommender.recommend(
-        items_clicked, terms_searched, items_disliked, page, limit
+        items_clicked,
+        terms_searched,
+        items_disliked,
+        page,
+        limit,
+        ignore_charity_listings=ignore_charity_listings,
     )
     columns = [
         "listing_id",
         "seller_id",
+        "charity_id",
         "buyer_id",
         "title",
         "price",
@@ -173,12 +181,14 @@ async def get_recommendations(
             img_urls = ast.literal_eval(row["image_urls"])
         except (ValueError, SyntaxError):
             img_urls = []
+        charity_id = str(int(row["charity_id"]))
         listing_summary = ListingSummary(
             listingID=str(row["listing_id"]),
             sellerID=str(row["seller_id"]),
             sellerName=str(seller_name_dict[row["seller_id"]]),
             title=str(row["title"]),
             price=row["price"],
+            charityID=charity_id if (charity_id != "0") else None,
             description=str(row["description"]),
             dateCreated=row["created_at"],
         )

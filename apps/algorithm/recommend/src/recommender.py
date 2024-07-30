@@ -17,7 +17,15 @@ class Recommender:
         self.cosine_similarity_matrix = np.load(TRAINING_DIR + COSINE_URL)
         self.normalized_item_vectors = np.load(TRAINING_DIR + ITEM_VECTORS_URL)
 
-    def recommend(self, items_clicked, terms_searched, items_disliked, page, limit):
+    def recommend(
+        self,
+        items_clicked,
+        terms_searched,
+        items_disliked,
+        page,
+        limit,
+        ignore_charity_listings=False,
+    ):
         """
         Recommend items to the user based on the items they've clicked and the
         terms they've searched. The recommendations are sorted by relevance, and
@@ -38,7 +46,15 @@ class Recommender:
         )
         top_indices = np.argsort(similarities)[::-1]
 
-        return self.data.iloc[top_indices[(page - 1) * limit : page * limit]]
+        recommended_data = self.data.iloc[top_indices]
+
+        if ignore_charity_listings:
+            # Filter out charity listings if the user doesn't want to see them
+            recommended_data = recommended_data[recommended_data["charity_id"].isnull()]
+
+        start_index = (page - 1) * limit
+        end_index = page * limit
+        return recommended_data.iloc[start_index:end_index]
 
     @staticmethod
     def generate_tfidf_vector(texts, data):
