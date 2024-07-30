@@ -2,6 +2,7 @@ use axum::{
     body::Bytes,
     extract::{DefaultBodyLimit, Path},
     http::StatusCode,
+    middleware,
     response::IntoResponse,
     routing::{get, post},
     Json, Router,
@@ -14,6 +15,8 @@ use std::{
 use tower_http::catch_panic::CatchPanicLayer;
 use uuid::Uuid;
 
+use crate::jwt;
+
 #[derive(Serialize)]
 struct CreateImageResponse {
     url: String,
@@ -24,6 +27,7 @@ pub fn image_router() -> Router {
         .route("/api/images", post(upload_image_handler))
         .layer(DefaultBodyLimit::disable())
         .route("/api/images/:id", get(get_image_handler))
+        .layer(middleware::from_fn(jwt::jwt_middlewware))
         .layer(CatchPanicLayer::new())
 }
 
