@@ -112,6 +112,7 @@ async def get_recommendations(
     columns = [
         "listing_id",
         "seller_id",
+        "charity_id",
         "buyer_id",
         "title",
         "price",
@@ -175,12 +176,14 @@ async def get_recommendations(
             img_urls = ast.literal_eval(row["image_urls"])
         except (ValueError, SyntaxError):
             img_urls = []
+        charity_id = str(int(row["charity_id"]))
         listing_summary = ListingSummary(
             listingID=str(row["listing_id"]),
             sellerID=str(row["seller_id"]),
             sellerName=str(seller_name_dict[row["seller_id"]]),
             title=str(row["title"]),
             price=row["price"],
+            charityID =charity_id if (charity_id != "0") else None,
             description=str(row["description"]),
             dateCreated=row["created_at"],
         )

@@ -33,6 +33,7 @@ class Listings(SQLModel, table=True):
     listing_id: Optional[int] = Field(default=None, primary_key=True)
     seller_id: int = Field(foreign_key="users.user_id")
     buyer_id: Optional[int] = None
+    charity_id: Optional[int] = Field(foreign_key="charities.charity_id")
     title: str
     price: int
     location: dict = Field(sa_column=Column(JSON), default={})
