@@ -275,6 +275,7 @@ const SearchBar = () => {
           onClick={() => setSearchFocus(true)}
           onBlur={() => setSearchFocus(false)}
           inputRef={searchInputRef}
+          autoComplete="off"
         />
         {searchFocus && searchHistory.length > 0 && (
           <Paper
