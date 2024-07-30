@@ -2,11 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { updateListing } from '../src/updateListing';
 import { Request, Response } from 'express';
 import { IDatabase } from 'pg-promise';
+import { AuthenticatedRequest } from '../../lib/src/auth';
 
 describe('Update Listing Endpoint', () => {
   it('should update a listing successfully', async () => {
     const req = {
       params: { id: '1' },
+      user: { userId: 1 },
       body: {
         listing: {
           title: 'Updated Listing One',
@@ -24,7 +26,7 @@ describe('Update Listing Endpoint', () => {
         },
         status: 'AVAILABLE',
       },
-    } as unknown as Request;
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
@@ -75,6 +77,7 @@ describe('Update Listing Endpoint', () => {
   it('should fail to update a non-existent listing', async () => {
     const req = {
       params: { id: '9999' },
+      user: { userId: 1 },
       body: {
         listing: {
           title: 'Updated Listing Non-existent',
@@ -92,7 +95,7 @@ describe('Update Listing Endpoint', () => {
         },
         status: 'AVAILABLE',
       },
-    } as unknown as Request;
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
@@ -112,6 +115,7 @@ describe('Update Listing Endpoint', () => {
   it('should update a listing with markedForCharity and fetch charity id', async () => {
     const req = {
       params: { id: '1' },
+      user: { userId: 1 },
       body: {
         listing: {
           title: 'Updated Listing Two',
@@ -129,7 +133,7 @@ describe('Update Listing Endpoint', () => {
         },
         status: 'AVAILABLE',
       },
-    } as unknown as Request;
+    } as unknown as AuthenticatedRequest;
 
     const res = {
       status: vi.fn().mockReturnThis(),
