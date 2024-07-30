@@ -12,7 +12,7 @@ import martletPlaceLogo from "../images/martletplace-logo.png";
 import message from "../images/message.png";
 import filter from "../images/filter.png";
 import { useStyles } from "../styles/pageStyles";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, useRef } from "react";
 import Filters from "./filters";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import React from "react";
@@ -69,6 +69,7 @@ const SearchBar = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchFocus, setSearchFocus] = useState(false);
   const [searchHistory, setSeachHistory] = useState<searchHistory[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [filters, setFilters] = useState<SearchObject>({
     query: "",
     minPrice: null,
@@ -192,8 +193,23 @@ const SearchBar = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
+      if (searchInputRef.current) {
+        searchInputRef.current.blur();
+      }
       handleSearch();
     }
+  };
+
+  const handelFocus = () => {
+    _axios_instance
+      .get("/user/search-history")
+      .then((response) => {
+        setSeachHistory(response.data.searches);
+      })
+      .catch((error) => {
+        console.error("Error getting search history:", error);
+      });
+    setSearchFocus(true);
   };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -255,9 +271,11 @@ const SearchBar = () => {
           value={searchInput}
           onChange={handleSearchInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => setSearchFocus(true)}
+          onFocus={handelFocus}
           onClick={() => setSearchFocus(true)}
           onBlur={() => setSearchFocus(false)}
+          inputRef={searchInputRef}
+          autoComplete="off"
         />
         {searchFocus && searchHistory.length > 0 && (
           <Paper
