@@ -38,8 +38,7 @@ resource "aws_opensearch_domain" "example" {
   engine_version = "OpenSearch_2.13"
 
   cluster_config {
-    instance_type = "t3.small.search"
-    #instance_type          = "m4.large.search"
+    instance_type = "m6g.large.search"
     #zone_awareness_enabled = true
     instance_count = 1
   }
