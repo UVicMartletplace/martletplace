@@ -9,7 +9,7 @@ export const getCurrentCharity = async (
 ) => {
   try {
     const charityResult = await db.oneOrNone(
-      `SELECT c.charity_id AS id, c.name, c.description, c.start_date AS "startDate", c.end_date AS "endDate", c.image_url AS "imageUrl", 
+      `SELECT c.charity_id AS id, c.name, c.description, c.start_date AS "startDate", c.end_date AS "endDate", c.image_url AS "imageUrl",
         jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) AS organizations
        FROM charities c
        LEFT JOIN organizations o ON c.charity_id = o.charity_id
@@ -31,8 +31,8 @@ export const getCurrentCharity = async (
         [charityResult.id],
       ),
       db.one(
-        `SELECT 
-          COALESCE(SUM(price), 0) AS listing_funds, 
+        `SELECT
+          COALESCE(SUM(price), 0) AS listing_funds,
           COUNT(*) AS listings_count
         FROM listings
         WHERE charity_id = $1;`,
