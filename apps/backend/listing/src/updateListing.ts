@@ -63,8 +63,8 @@ const updateListing = async (
            location = $4,
            image_urls = $5,
            status = $6,
-           charity_id = $8
-       WHERE listing_id = $7
+           charity_id = $7
+       WHERE listing_id = $8 AND seller_id = $9
        RETURNING listing_id, seller_id, buyer_id, title, price, location, status, description, image_urls, created_at, modified_at, charity_id;`,
       [
         title,
@@ -73,8 +73,9 @@ const updateListing = async (
         formattedLocation,
         images.map((image: { url: string }) => image.url),
         status,
-        id,
         charity_id,
+        id,
+        req.user.userId,
       ],
     );
 

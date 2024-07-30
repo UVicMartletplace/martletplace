@@ -22,9 +22,9 @@ const updateReview = async (
        SET review = $1,
            rating_value = $2,
             listing_id = $3
-       WHERE review_id = $4
+       WHERE review_id = $4 AND user_id = $5
        RETURNING review_id`,
-      [comment, stars, listingID, id],
+      [comment, stars, listingID, id, req.user.userId],
     );
 
     if (!updatedReview) {

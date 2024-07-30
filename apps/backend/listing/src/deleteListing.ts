@@ -18,8 +18,8 @@ const deleteListing = async (
   try {
     const result = await db.result(
       `DELETE FROM listings
-       WHERE listing_id = $1`,
-      [id],
+       WHERE listing_id = $1 AND seller_id = $2;`,
+      [id, req.user.userId],
     );
 
     if (result.rowCount === 0) {
