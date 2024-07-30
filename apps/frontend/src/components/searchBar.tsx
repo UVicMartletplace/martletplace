@@ -200,7 +200,7 @@ const SearchBar = () => {
         .then((response) => {
           // Decode search terms before setting the state
           const decodedSearchHistory = response.data.searches.map(
-            (search: any) => ({
+            (search: searchHistory) => ({
               ...search,
               searchTerm: decodeURIComponent(
                 search.searchTerm.replace(/\+/g, " "),
