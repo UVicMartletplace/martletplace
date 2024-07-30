@@ -88,7 +88,7 @@ async def get_recommendations(
     user = users.first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found: " + str(user_id))
-    
+
     ignore_charity_listings = user.ignore_charity_listings
 
     items_clicked = await session.exec(
@@ -107,7 +107,12 @@ async def get_recommendations(
     items_disliked = [item.listing_id for item in items_disliked]
 
     recommended_listings = recommender.recommend(
-        items_clicked, terms_searched, items_disliked, page, limit, ignore_charity_listings=ignore_charity_listings
+        items_clicked,
+        terms_searched,
+        items_disliked,
+        page,
+        limit,
+        ignore_charity_listings=ignore_charity_listings,
     )
     columns = [
         "listing_id",
@@ -183,7 +188,7 @@ async def get_recommendations(
             sellerName=str(seller_name_dict[row["seller_id"]]),
             title=str(row["title"]),
             price=row["price"],
-            charityID =charity_id if (charity_id != "0") else None,
+            charityID=charity_id if (charity_id != "0") else None,
             description=str(row["description"]),
             dateCreated=row["created_at"],
         )
