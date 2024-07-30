@@ -20,6 +20,7 @@ describe('Update Listing Endpoint', () => {
             { url: 'https://example.com/image1.png' },
             { url: 'https://example.com/image2.png' },
           ],
+          markedForCharity: false,
         },
         status: 'AVAILABLE',
       },
@@ -42,8 +43,9 @@ describe('Update Listing Endpoint', () => {
           'https://example.com/image2.png',
         ],
         status: 'AVAILABLE',
-        created_at: new Date(),
-        modified_at: new Date(),
+        created_at: '2024-07-30T18:17:02.944Z',
+        modified_at: '2024-07-30T18:17:02.944Z',
+        charity_id: null,
       }),
     } as unknown as IDatabase<object>;
 
@@ -60,12 +62,13 @@ describe('Update Listing Endpoint', () => {
         longitude: -74.0060,
       },
       status: 'AVAILABLE',
-      dateCreated: expect.any(Date),
-      dateModified: expect.any(Date),
+      dateCreated: '2024-07-30T18:17:02.944Z',
+      dateModified: '2024-07-30T18:17:02.944Z',
       images: [
         { url: 'https://example.com/image1.png' },
         { url: 'https://example.com/image2.png' },
       ],
+      charityId: null,
     });
   });
 
@@ -85,6 +88,7 @@ describe('Update Listing Endpoint', () => {
             { url: 'https://example.com/image1.png' },
             { url: 'https://example.com/image2.png' },
           ],
+          markedForCharity: false,
         },
         status: 'AVAILABLE',
       },
@@ -103,5 +107,77 @@ describe('Update Listing Endpoint', () => {
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ error: 'Listing not found' });
+  });
+
+  it('should update a listing with markedForCharity and fetch charity id', async () => {
+    const req = {
+      params: { id: '1' },
+      body: {
+        listing: {
+          title: 'Updated Listing Two',
+          description: 'Updated description for listing two',
+          price: 150,
+          location: {
+            latitude: 40.7128,
+            longitude: -74.0060,
+          },
+          images: [
+            { url: 'https://example.com/image1.png' },
+            { url: 'https://example.com/image2.png' },
+          ],
+          markedForCharity: true,
+        },
+        status: 'AVAILABLE',
+      },
+    } as unknown as Request;
+
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as Response;
+
+    const db = {
+      oneOrNone: vi.fn()
+        .mockResolvedValueOnce({
+          charity_id: 1,
+        })
+        .mockResolvedValueOnce({
+          listing_id: 1,
+          title: 'Updated Listing Two',
+          description: 'Updated description for listing two',
+          price: 150,
+          location: '40.7128,-74.0060',
+          image_urls: [
+            'https://example.com/image1.png',
+            'https://example.com/image2.png',
+          ],
+          status: 'AVAILABLE',
+          created_at: '2024-07-30T18:17:02.944Z',
+          modified_at: '2024-07-30T18:17:02.944Z',
+          charity_id: 1,
+        }),
+    } as unknown as IDatabase<object>;
+
+    await updateListing(req, res, db);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      listingID: 1,
+      title: 'Updated Listing Two',
+      description: 'Updated description for listing two',
+      price: 150,
+      location: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+      },
+      status: 'AVAILABLE',
+      dateCreated: '2024-07-30T18:17:02.944Z',
+      dateModified: '2024-07-30T18:17:02.944Z',
+      images: [
+        { url: 'https://example.com/image1.png' },
+        { url: 'https://example.com/image2.png' },
+      ],
+      charityId: 1,
+    });
   });
 });

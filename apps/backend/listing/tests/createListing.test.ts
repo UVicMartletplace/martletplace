@@ -20,6 +20,7 @@ describe('Create Listing Endpoint', () => {
             { url: 'https://example.com/image1.png' },
             { url: 'https://example.com/image2.png' },
           ],
+          markedForCharity: false,
         },
       },
       user: { userId: 1 },
@@ -85,6 +86,7 @@ describe('Create Listing Endpoint', () => {
           { url: 'https://example.com/image1.png' },
           { url: 'https://example.com/image2.png' },
         ],
+        charityId: null,
       },
     });
   });
@@ -97,6 +99,7 @@ describe('Create Listing Endpoint', () => {
           description: 'This is a sample listing description',
           price: 100,
           location: {},
+          markedForCharity: false,
         },
       },
       user: { userId: 1 },
