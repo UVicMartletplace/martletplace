@@ -14,15 +14,15 @@ export interface Organization {
 }
 
 export interface Charity {
-  id: string;
+  id: number;
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  imageUrl: string;
-  organizations: Organization[];
+  start_date: string;
+  end_date: string;
+  image_url: string;
+  organizations?: Organization[];
   funds: number;
-  listingsCount: number;
+  listingscount: number;
 }
 
 const Charities = () => {
@@ -46,11 +46,11 @@ const Charities = () => {
   }, []);
 
   const currentCharity = Array.isArray(charities)
-    ? charities.find((charity) => new Date(charity.endDate) >= currentDate)
+    ? charities.find((charity) => new Date(charity.end_date) >= currentDate)
     : null;
 
   const pastCharities = Array.isArray(charities)
-    ? charities.filter((charity) => new Date(charity.endDate) < currentDate)
+    ? charities.filter((charity) => new Date(charity.end_date) < currentDate)
     : [];
 
   const handleToggleChange = (event: ChangeEvent<HTMLInputElement>) => {

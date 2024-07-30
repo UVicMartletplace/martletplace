@@ -2,15 +2,34 @@ import { BrowserRouter } from "react-router-dom";
 import TestProviders from "../utils/TestProviders";
 import Charities from "../../src/pages/Charities";
 
+interface Organization {
+  name: string;
+  logoUrl: string;
+  donated: number;
+  receiving: boolean;
+}
+
+interface Charity {
+  id: number;
+  name: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  image_url: string;
+  organizations?: Organization[];
+  funds: number;
+  listingscount: number;
+}
+
 describe("<Charities />", () => {
-  const expectedCharitiesObject = [
+  const expectedCharitiesObject: Charity[] = [
     {
-      id: "1",
+      id: 1,
       name: "Save the Children",
       description: "Help children in need around the world.",
-      startDate: "2024-06-01T14:14:50.534Z",
-      endDate: "2024-12-12T14:14:50.534Z",
-      imageUrl: "https://example.com/image.png",
+      start_date: "2024-06-01T14:14:50.534Z",
+      end_date: "2024-12-12T14:14:50.534Z",
+      image_url: "https://example.com/image.png",
       organizations: [
         {
           name: "Partner 1",
@@ -26,15 +45,15 @@ describe("<Charities />", () => {
         },
       ],
       funds: 50000,
-      listingsCount: 150,
+      listingscount: 150,
     },
     {
-      id: "2",
+      id: 2,
       name: "Red Cross",
       description: "Provide emergency assistance and disaster relief.",
-      startDate: "2023-05-01T14:14:50.534Z",
-      endDate: "2023-11-30T14:14:50.534Z",
-      imageUrl: "https://example.com/image.png",
+      start_date: "2023-05-01T14:14:50.534Z",
+      end_date: "2023-11-30T14:14:50.534Z",
+      image_url: "https://example.com/image.png",
       organizations: [
         {
           name: "Partner A",
@@ -50,19 +69,19 @@ describe("<Charities />", () => {
         },
       ],
       funds: 75000,
-      listingsCount: 200,
+      listingscount: 200,
     },
     // other charities...
   ];
 
-  const noPastCharitiesObject = [
+  const noPastCharitiesObject: Charity[] = [
     {
-      id: "1",
+      id: 1,
       name: "Save the Children",
       description: "Help children in need around the world.",
-      startDate: "2024-06-01T14:14:50.534Z",
-      endDate: "2024-12-12T14:14:50.534Z",
-      imageUrl: "https://example.com/image.png",
+      start_date: "2024-06-01T14:14:50.534Z",
+      end_date: "2024-12-12T14:14:50.534Z",
+      image_url: "https://example.com/image.png",
       organizations: [
         {
           name: "Partner 1",
@@ -78,7 +97,7 @@ describe("<Charities />", () => {
         },
       ],
       funds: 50000,
-      listingsCount: 150,
+      listingscount: 150,
     },
   ];
 
