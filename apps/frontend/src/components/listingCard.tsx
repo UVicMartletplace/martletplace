@@ -1,5 +1,4 @@
 import { Grid, Button, Typography } from "@mui/material";
-import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import _axios_instance from "../_axios_instance.tsx";
@@ -215,20 +214,6 @@ const ListingCard = ({
       </Grid>
     </Grid>
   );
-};
-
-ListingCard.propTypes = {
-  listing: PropTypes.shape({
-    listingID: PropTypes.string.isRequired,
-    sellerID: PropTypes.string.isRequired,
-    sellerName: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    dateCreated: PropTypes.string.isRequired,
-    imageUrl: PropTypes.string.isRequired,
-    charityID: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 export default ListingCard;
