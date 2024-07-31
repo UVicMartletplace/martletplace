@@ -46,23 +46,25 @@ const Profile = () => {
   // Regex for username validation
   const usernameFormat = /^[a-zA-Z0-9]{1,20}$/;
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    if (user) {
-      const userObject = {
-        name: user.name,
-        username: user.username,
-        password: "",
-        bio: user.bio,
-        profilePictureUrl: user.profileUrl,
-        ignoreCharityListings: user.ignoreCharityListings,
-      };
-      setProfile(userObject);
-      setOriginalProfile(userObject);
-      setImageURL(userObject.profilePictureUrl);
-    } else {
-      console.error("User data not found");
-    }
-  }, []);
+      if (user) {
+        const userObject = {
+          name: user.name,
+          username: user.username,
+          password: "",
+          bio: user.bio,
+          profilePictureUrl: user.profileUrl,
+          ignoreCharityListings: user.ignoreCharityListings,
+        };
+        setProfile(userObject);
+        setOriginalProfile(userObject);
+        setImageURL(userObject.profilePictureUrl);
+      } else {
+        console.error("User data not found");
+      }
+    }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   // Makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
