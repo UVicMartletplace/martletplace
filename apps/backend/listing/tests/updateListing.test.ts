@@ -143,7 +143,7 @@ describe('Update Listing Endpoint', () => {
     const db = {
       oneOrNone: vi.fn()
         .mockResolvedValueOnce({
-          charity_id: 1,
+          id: 1,
         })
         .mockResolvedValueOnce({
           listing_id: 1,
