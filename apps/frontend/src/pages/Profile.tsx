@@ -2,9 +2,9 @@ import {
   Avatar,
   Box,
   Button,
+  Checkbox,
   FormControlLabel,
   FormHelperText,
-  Switch,
   TextField,
   Typography,
   useMediaQuery,
@@ -125,9 +125,8 @@ const Profile = () => {
     setEditMode(true);
   };
 
-  const handleToggleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     setProfile({ ...profile, ignoreCharityListings: event.target.checked });
-    console.log(profile.ignoreCharityListings)
     setEditMode(true);
   };
 
@@ -261,9 +260,9 @@ const Profile = () => {
           />
           <FormControlLabel
             control={
-              <Switch
+              <Checkbox
                 checked={profile.ignoreCharityListings}
-                onChange={handleToggleChange}
+                onChange={handleCheckboxChange}
                 name="ignoreCharityListings"
                 color="primary"
               />
