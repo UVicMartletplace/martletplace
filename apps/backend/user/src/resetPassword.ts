@@ -30,9 +30,10 @@ const resetPassword = async (
 
   const subject = "MartletPlace - Reset your password";
   const token = create_token({ userId: userId }, "/api/user/update-password");
+  const host = req.headers.host || "localhost";
   const body = `
     <p>Please click the link below to reset your password</p>
-    <a href="http://localhost/create-new-password/${token}"> Reset Password </a>   
+    <a href="http://${host}/create-new-password/${token}"> Reset Password </a>
   `;
 
   try {

@@ -30,9 +30,10 @@ const sendConfirmationEmail = async (
 
   const subject = "MartletPlace - Please confirm your email";
   const token = create_token({ userId: userId }, "/api/user/confirm-email");
+  const host = req.headers.host || "localhost";
   const body = `
     <p>Please click the link below to confirm your email</p>
-    <a href="http://localhost/confirm/${token}"> Confirm Email </a>   
+    <a href="http://${host}/confirm/${token}"> Confirm Email </a>
   `;
 
   try {
