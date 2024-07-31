@@ -54,7 +54,7 @@ const Profile = () => {
         password: "",
         bio: user.bio,
         profilePictureUrl: user.profileUrl,
-        ignoreCharityListings: user.ignoreCharities,
+        ignoreCharityListings: user.ignoreCharityListings,
       };
       setProfile(userObject);
       setOriginalProfile(userObject);
@@ -62,7 +62,7 @@ const Profile = () => {
     } else {
       console.error("User data not found");
     }
-  }, [user]);
+  }, []);
 
   // Makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
@@ -258,6 +258,7 @@ const Profile = () => {
             onChange={(e) => handleInputChange(e, "bio")}
             id="bio"
           />
+          <p>{profile?.ignoreCharityListings}</p>
           <FormControlLabel
             control={
               <Checkbox
