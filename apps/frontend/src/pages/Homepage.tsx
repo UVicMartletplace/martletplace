@@ -75,10 +75,7 @@ const Homepage = () => {
   // Calculate the total number of pages
   const [totalPages, setTotalPages] = useState(0);
 
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    currentPage: number,
-  ) => {
+  const handlePageChange = (currentPage: number) => {
     setCurrentPage(currentPage);
     navigate(
       `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
@@ -95,10 +92,14 @@ const Homepage = () => {
         setListingObjects(response.data.items);
         setTotalPages(Math.ceil(response.data.totalItems / 8));
         setTotalItems(response.data.totalItems);
+        if (response.data.items.length === 0) {
+          handlePageChange(1);
+        }
       })
       .catch((error) => {
         console.error("Error fetching listings:", error);
       });
+
     setSearchPerformed(true);
     setSearchCompleted(true);
   };
@@ -354,7 +355,9 @@ const Homepage = () => {
             count={totalPages}
             shape="rounded"
             page={currentPage}
-            onChange={handlePageChange}
+            onChange={(_event, currentPage) => {
+              handlePageChange(currentPage);
+            }}
           />
         </Box>
       </Box>
