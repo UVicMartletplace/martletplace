@@ -71,6 +71,7 @@ async fn create_listing(user: &mut GooseUser) -> TransactionResult {
                 "url": format!("/api/images/{}", fake_uuid),
             }
         ],
+        "markedForCharity": false,
     });
     let request_body = &serde_json::json!({
         "listing": listing_json,
