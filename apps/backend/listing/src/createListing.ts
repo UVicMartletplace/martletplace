@@ -39,19 +39,16 @@ const createListing = async (
     let charity_id: number | null = null;
     if (markedForCharity) {
       const currentCharity = await db.oneOrNone(
-        `SELECT c.charity_id AS id, c.name, c.description, c.start_date AS "startDate", c.end_date AS "endDate", c.image_url AS "imageUrl", 
-          jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) AS organizations
+        `SELECT c.charity_id AS id, c.name, c.description, c.start_date AS "startDate", c.end_date AS "endDate", c.image_url AS "imageUrl"
         FROM charities c
-        LEFT JOIN organizations o ON c.charity_id = o.charity_id
         WHERE NOW() BETWEEN c.start_date AND c.end_date
-        GROUP BY c.charity_id
         ORDER BY c.start_date DESC
         LIMIT 1
         `,
       );
 
       if (currentCharity) {
-        charity_id = currentCharity.charity_id;
+        charity_id = currentCharity.id;
       }
     }
     const createdListing = await db.one(
