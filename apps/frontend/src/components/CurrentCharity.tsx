@@ -53,6 +53,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
         sx={{
           textAlign: "center",
           color: colors.martletplaceNavyBlue,
+          paddingBottom: "20px"
         }}
       >
         {charity.name}
@@ -85,7 +86,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
           <strong>Total Funds Donated:</strong> ${charity.funds}
         </Typography>
         <Typography variant="h6">
-          <strong>Charity Items Sold:</strong> {charity.listingscount}
+          <strong>Charity Items Sold:</strong> {charity.listingsCount}
         </Typography>
         <Typography variant="h6" sx={{ marginTop: "20px" }}>
           <strong>Charity event ends in:</strong> {timeRemaining}
@@ -106,7 +107,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
                 .filter((org) => org.receiving)
                 .map((org, index) => (
                   <Grid item key={index}>
-                    <Avatar src={org.logoUrl} alt={org.name} />
+                    <Avatar src={org.logoUrl} alt={org.name} sx={{ width: 'auto', height: 'auto', maxHeight: '96px', maxWidth: '96px' }}/>
                   </Grid>
                 ))}
             </Grid>
@@ -124,7 +125,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
                 .filter((org) => !org.receiving)
                 .map((org, index) => (
                   <Grid item key={index}>
-                    <Avatar src={org.logoUrl} alt={org.name} />
+                    <Avatar src={org.logoUrl} alt={org.name} sx={{ width: 'auto', height: 'auto', maxHeight: '96px', maxWidth: '96px' }}/>
                   </Grid>
                 ))}
             </Grid>

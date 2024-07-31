@@ -33,8 +33,7 @@ export const getCharities = async (
           `
       SELECT c.charity_id AS id, c.name, c.description, c.start_date, c.end_date, c.image_url,
              jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) FILTER (WHERE o.organization_id IS NOT NULL) AS organizations,
-             COALESCE(SUM(l.price), 0) AS funds,
-             COUNT(l.listing_id) AS listingsCount
+             COALESCE(SUM(l.price), 0) AS funds
       FROM charities c
       LEFT JOIN organizations o ON o.charity_id = c.charity_id
       LEFT JOIN listings l ON l.charity_id = c.charity_id AND l.status = 'SOLD'
@@ -55,7 +54,8 @@ export const getCharities = async (
                 COALESCE(SUM(price), 0) AS listing_funds,
                 COUNT(*) AS listings_count
               FROM listings
-              WHERE charity_id = $1;`,
+              WHERE charity_id = $1
+              AND status = 'SOLD';`,
                 [charity.id],
               );
               charity.funds =

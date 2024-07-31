@@ -22,7 +22,7 @@ export interface Charity {
   image_url: string;
   organizations?: Organization[];
   funds: number;
-  listingscount: number;
+  listingsCount: number;
 }
 
 const Charities = () => {
