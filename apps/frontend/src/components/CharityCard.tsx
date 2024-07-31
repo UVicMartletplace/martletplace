@@ -18,7 +18,7 @@ interface CharityCardProps {
   image_url: string;
   organizations?: Organization[];
   funds: number;
-  listingscount: number;
+  listingsCount: number;
 }
 
 function formatDate(dateString: string) {
@@ -37,7 +37,7 @@ const CharityCard = ({
   end_date,
   organizations = [],
   funds,
-  listingscount,
+  listingsCount,
 }: CharityCardProps) => {
   const classes = useStyles();
 
@@ -69,7 +69,7 @@ const CharityCard = ({
           <strong>Total Funds Donated:</strong> ${funds}
         </Typography>
         <Typography variant="body1">
-          <strong>Charity Items Sold:</strong> {listingscount}
+          <strong>Charity Items Sold:</strong> {listingsCount}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           <strong>Start Date:</strong> {formattedStartDate}

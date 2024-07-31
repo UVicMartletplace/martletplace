@@ -35,7 +35,8 @@ export const getCurrentCharity = async (
           COALESCE(SUM(price), 0) AS listing_funds,
           COUNT(*) AS listings_count
         FROM listings
-        WHERE charity_id = $1;`,
+        WHERE charity_id = $1
+        AND status = 'SOLD';`,
         [charityResult.id],
       ),
     ]);
