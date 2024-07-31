@@ -67,7 +67,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
+      `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -78,11 +78,12 @@ const Homepage = () => {
   const handlePageChange = (currentPage: number) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
+      `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = (searchObject: SearchObject) => {
     setSearchCompleted(false);
     setSearchObject(searchObject);
@@ -182,7 +183,7 @@ const Homepage = () => {
       setSearchObject(searchObject);
       handleSearch(searchObject);
     }
-  }, [location, searchObject, handleSearch]);
+  }, [handleSearch, location, searchObject]);
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
