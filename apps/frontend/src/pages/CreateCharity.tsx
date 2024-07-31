@@ -81,11 +81,14 @@ const CreateCharity = () => {
             imageUrl: "",
             organizations: [],
           });
+          setPartnerImages([]);
+          setLogoImage(null);
+          setLogoImageString(undefined);
         } else {
           alert("Charity Creation Failed");
         }
       } catch (error) {
-        alert("Charity Creation Failed");
+        alert("Charity Creation Failed, did you attach images to everything?");
         console.error(error);
       }
     } else {
@@ -306,7 +309,7 @@ const CreateCharity = () => {
     listingIndex: number,
   ) => {
     const index = indexFromKey(key, listingIndex);
-    if (index !== -1) {
+    if (index !== -1 && +event.target.value < 9999999) {
       updateOrganizationPayload(
         index,
         "donated",
@@ -682,29 +685,6 @@ const CreateCharity = () => {
                     id={"submit-button"}
                   >
                     Create Charity Event
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      display: "inline",
-                      mt: 2,
-                      backgroundColor: colors.martletplaceYellow,
-                      "&:hover": {
-                        backgroundColor: colors.martletplaceYellowHover,
-                      },
-                      textTransform: "none",
-                      fontSize: "16px",
-                      padding: "10px 20px",
-                      margin: "10px",
-                    }}
-                    onClick={() => {
-                      alert(
-                        "The Following Object Will be Submitted(Files are uploaded at the end)\n" +
-                          JSON.stringify(newCharityObject, null, 2),
-                      );
-                    }}
-                  >
-                    STATUS
                   </Button>
                 </Box>
               </form>
