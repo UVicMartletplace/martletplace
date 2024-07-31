@@ -83,7 +83,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
         }}
       >
         <Typography variant="h6">
-        <strong>Total Funds Donated:</strong> ${charity.funds.toFixed(2)}
+          <strong>Total Funds Donated:</strong> ${charity.funds.toFixed(2)}
         </Typography>
         <Typography variant="h6">
           <strong>Charity Items Sold:</strong> {charity.listingsCount}

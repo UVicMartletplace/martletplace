@@ -66,7 +66,7 @@ const CharityCard = ({
           {description}
         </Typography>
         <Typography variant="body1">
-        <strong>Total Funds Donated:</strong> ${funds.toFixed(2)}
+          <strong>Total Funds Donated:</strong> ${funds.toFixed(2)}
         </Typography>
         <Typography variant="body1">
           <strong>Charity Items Sold:</strong> {listingsCount}
