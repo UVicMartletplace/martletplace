@@ -56,7 +56,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       email: user.email,
       bio: user.bio,
       profileUrl: user.profile_pic_url,
-      ignoreCharityListings: user.ignore_charity_listings
+      ignoreCharityListings: user.ignore_charity_listings,
     });
   } catch (err) {
     console.error(err);

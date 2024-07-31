@@ -10,7 +10,14 @@ const patchUser = async (
 ) => {
   const id = req.user.userId;
 
-  const { username, password, name, bio, profilePictureUrl, ignoreCharityListings } = req.body;
+  const {
+    username,
+    password,
+    name,
+    bio,
+    profilePictureUrl,
+    ignoreCharityListings,
+  } = req.body;
 
   if (!id) {
     return res.status(400).json({ error: "User ID is required" });
@@ -63,7 +70,8 @@ const patchUser = async (
       bio: bio || originalUser.bio,
       profile_pic_url: profilePictureUrl || originalUser.profile_pic_url,
       password: hashedPassword || originalUser.password,
-      ignore_charity_listings: ignoreCharityListings || originalUser.ignore_charity_listings, 
+      ignore_charity_listings:
+        ignoreCharityListings || originalUser.ignore_charity_listings,
     };
 
     const patchUserQuery = `
@@ -80,7 +88,7 @@ const patchUser = async (
       patchedUser.profile_pic_url,
       patchedUser.password,
       id,
-      patchedUser.ignore_charity_listings
+      patchedUser.ignore_charity_listings,
     ]);
 
     if (!updated_user) {
@@ -94,7 +102,7 @@ const patchUser = async (
       bio: updated_user.bio,
       profileUrl: updated_user.profile_pic_url,
       id: updated_user.user_id,
-      ignoreCharityListings: updated_user.ignore_charity_listings
+      ignoreCharityListings: updated_user.ignore_charity_listings,
     };
 
     return res
