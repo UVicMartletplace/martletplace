@@ -123,7 +123,11 @@ const ListingCard = ({
           }}
         >
           <img
-            src={listing.imageUrl == "" ? imageDefault : listing.imageUrl}
+            src={
+              listing.imageUrl === "" || !listing.imageUrl
+                ? imageDefault
+                : listing.imageUrl
+            }
             alt={listing.title}
             style={{
               width: "100%",
