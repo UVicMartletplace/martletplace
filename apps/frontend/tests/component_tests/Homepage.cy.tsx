@@ -98,11 +98,25 @@ describe("<Homepage />", () => {
   };
   const charityObject = { name: "Save the Whales" };
 
+  const searchHistoryObject = {
+    searches: [
+      {
+        searchTerm: "athletic shorts",
+        searchID: "A12334B345",
+      },
+    ],
+  };
+
   beforeEach(() => {
     cy.intercept("GET", "/api/search*", {
       statusCode: 200,
       body: listingObjects,
     }).as("searchListings");
+
+    cy.intercept("GET", "/api/user/search-history", {
+      statusCode: 200,
+      body: searchHistoryObject,
+    }).as("searchHistory");
 
     cy.intercept("GET", "/api/recommendations*", {
       statusCode: 200,

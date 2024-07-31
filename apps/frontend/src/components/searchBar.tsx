@@ -180,6 +180,11 @@ const SearchBar = () => {
         }
       }
     }
+    try {
+      searchObject.query = decodeURIComponent(searchObject.query);
+    } catch (error) {
+      console.error("Error decoding search query:", error);
+    }
     setSearchInput(decodeURIComponent(searchObject.query));
     setFilters(searchObject);
   }, [location, query]);

@@ -67,7 +67,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -75,17 +75,15 @@ const Homepage = () => {
   // Calculate the total number of pages
   const [totalPages, setTotalPages] = useState(0);
 
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    currentPage: number,
-  ) => {
+  const handlePageChange = (currentPage: number) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
+      `/query?query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = (searchObject: SearchObject) => {
     setSearchCompleted(false);
     setSearchObject(searchObject);
@@ -95,20 +93,28 @@ const Homepage = () => {
         setListingObjects(response.data.items);
         setTotalPages(Math.ceil(response.data.totalItems / 8));
         setTotalItems(response.data.totalItems);
+        if (
+          response.data.items.length === 0 &&
+          response.data.totalItems !== 0
+        ) {
+          handlePageChange(1);
+        }
       })
       .catch((error) => {
         console.error("Error fetching listings:", error);
       });
+
     setSearchPerformed(true);
     setSearchCompleted(true);
   };
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     //called on page load
     if (location.pathname === "/") {
-      // nothing is being searched
       if (initialRender.current) {
         initialRender.current = false;
+        // nothing is being searched
         _axios_instance
           .get("/recommendations", { params: { page: 1, limit: 24 } })
           .then((response) => {
@@ -127,6 +133,8 @@ const Homepage = () => {
             console.error("Error getting charity event:", error);
           });
       }
+    } else if (initialRender.current) {
+      initialRender.current = false;
     } else {
       let match;
       const regex = /([^&=]+)=([^&]*)/g;
@@ -352,7 +360,9 @@ const Homepage = () => {
             count={totalPages}
             shape="rounded"
             page={currentPage}
-            onChange={handlePageChange}
+            onChange={(_event, currentPage) => {
+              handlePageChange(currentPage);
+            }}
           />
         </Box>
       </Box>
