@@ -51,6 +51,7 @@ const EditListing = () => {
   const [imageBlobs, setImageBlobs] = useState<Blob[]>([]);
   const [listingValid, setListingValid] = useState<boolean>(false);
   const [price, setPrice] = useState<string>("");
+  const [priceError, setPriceError] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -178,17 +179,19 @@ const EditListing = () => {
 
   const updateListingPrice = (event: ChangeEvent<HTMLInputElement>) => {
     // Handle
-    const regex = /^\d*?\.?\d{0,2}$/;
+    const regex = /^\d{0,8}?\.?\d{0,2}$/;
     //const regex = /^\d/;
     if (!regex.test(event.target.value)) {
       if (!event.target.value) {
         const priceValue: number = +event.target.value;
         updateNewListingPayload("price", priceValue);
       }
+      setPriceError("Invalid price, your price may be too long");
     } else {
       const priceValue: number = +event.target.value;
       setPrice(event.target.value);
       updateNewListingPayload("price", priceValue);
+      setPriceError("");
     }
   };
 
@@ -331,7 +334,11 @@ const EditListing = () => {
                           rows={1}
                           onChange={updateListingPrice}
                           value={price}
+                          error={!!priceError}
                         />
+                        {priceError && (
+                          <FormHelperText error>{priceError}</FormHelperText>
+                        )}
                         <FormControlLabel
                           id="charity-checkbox-label"
                           label="Is this item for charity?"
