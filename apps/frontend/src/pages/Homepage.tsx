@@ -181,7 +181,7 @@ const Homepage = () => {
         }
       }
       setSearchObject(searchObject);
-      handleSearch(searchObject);
+      () => handleSearch(searchObject);
     }
   }, [handleSearch, location, searchObject]);
 
