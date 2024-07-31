@@ -2,7 +2,9 @@ import {
   Avatar,
   Box,
   Button,
+  FormControlLabel,
   FormHelperText,
+  Switch,
   TextField,
   Typography,
   useMediaQuery,
@@ -27,6 +29,7 @@ const Profile = () => {
     password: "",
     bio: "",
     profilePictureUrl: "",
+    ignoreCharityListings: false,
   });
   const [originalProfile, setOriginalProfile] = useState(profile);
   const [editMode, setEditMode] = useState(false);
@@ -51,6 +54,7 @@ const Profile = () => {
         password: "",
         bio: user.bio,
         profilePictureUrl: user.profileUrl,
+        ignoreCharityListings: user.ignoreCharities,
       };
       setProfile(userObject);
       setOriginalProfile(userObject);
@@ -118,6 +122,12 @@ const Profile = () => {
     field: string,
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
+    setEditMode(true);
+  };
+
+  const handleToggleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setProfile({ ...profile, ignoreCharityListings: event.target.checked });
+    console.log(profile.ignoreCharityListings)
     setEditMode(true);
   };
 
@@ -248,6 +258,18 @@ const Profile = () => {
             value={profile.bio}
             onChange={(e) => handleInputChange(e, "bio")}
             id="bio"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={profile.ignoreCharityListings}
+                onChange={handleToggleChange}
+                name="ignoreCharityListings"
+                color="primary"
+              />
+            }
+            label="Ignore Charity Listings"
+            sx={{ marginTop: 2 }}
           />
           <Button
             type="button"
