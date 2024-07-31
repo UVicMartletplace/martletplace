@@ -10,21 +10,24 @@ const getUserSearchHistory = async (
   const id = req.user.userId;
 
   const query = `
-        SELECT DISTINCT ON (search_term) search_id, search_term, created_at
+        SELECT search_term, search_id
         FROM user_searches
         WHERE user_id = $1
-        ORDER BY search_term, created_at DESC
-        LIMIT 5
+        ORDER BY created_at DESC
+        LIMIT 15
       `;
 
   try {
     const data = await db.any(query, [id]);
 
     const response = {
-      searches: data.map((search) => ({
-        searchTerm: search.search_term,
-        searchID: search.search_id,
-      })),
+      searches: Array.from(new Set(data.map((search) => search.search_term)))
+        .slice(0, 5)
+        .map((term) => ({
+          searchTerm: term,
+          searchID: data.find((search) => search.search_term === term)
+            .search_id,
+        })),
     };
 
     return res.status(200).json(response);
