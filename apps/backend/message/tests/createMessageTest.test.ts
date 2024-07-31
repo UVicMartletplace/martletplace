@@ -27,8 +27,23 @@ describe("Create Message", () => {
     const listing_id = 1;
     const created_at = new Date();
 
-    const db = {
-      oneOrNone: vi.fn().mockImplementationOnce(() =>
+    const req = {
+      body: { sender_id, receiver_id, listing_id, content },
+      user: { userId: 1 },
+    } as unknown as AuthenticatedRequest;
+
+    let db = {
+      oneOrNone: vi.fn().mockImplementation(() =>
+        Promise.resolve({
+          seller_id: receiver_id,
+        })
+      ),
+    } as unknown as IDatabase<object>;
+    await useValidateCreateMessage(req, res, next, db);
+    expect(next).toHaveBeenCalledTimes(1);
+
+    db = {
+      oneOrNone: vi.fn().mockImplementation(() =>
         Promise.resolve({
           message_body: content,
           sender_id,
@@ -38,16 +53,7 @@ describe("Create Message", () => {
         })
       ),
     } as unknown as IDatabase<object>;
-
-    const req = {
-      body: { sender_id, receiver_id, listing_id, content },
-      user: { userId: 1 },
-    } as unknown as AuthenticatedRequest;
-    useValidateCreateMessage(req, res, next);
-    expect(next).toHaveBeenCalledTimes(1);
-
     await createMessage(req, res, db);
-    console.log("create message res", res);
     expect(res.json).toHaveBeenCalledWith({
       message_body: content,
       sender_id,
@@ -66,7 +72,11 @@ describe("Create Message", () => {
       user: { userId: 1 },
     } as unknown as AuthenticatedRequest;
 
-    useValidateCreateMessage(req, res, next);
+    const db = {
+      oneOrNone: vi.fn().mockImplementation(() => Promise.resolve()),
+    } as unknown as IDatabase<object>;
+
+    await useValidateCreateMessage(req, res, next, db);
     expect(res.status).toHaveBeenCalledWith(400);
   });
 });

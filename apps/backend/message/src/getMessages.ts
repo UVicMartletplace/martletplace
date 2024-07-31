@@ -6,12 +6,27 @@ export const useValidateGetMessages = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
+  db: IDatabase<object>,
 ) => {
   const sender_id = req.user.userId;
   const { listing_id, receiver_id } = req.params;
+
   if (!sender_id || !listing_id || !receiver_id) {
     return res.status(400).json({ error: "Missing required fields" });
   }
+
+  // Check that either the user_id or receiver_id is the user id of the listing
+  const listing = await db.oneOrNone(
+    `SELECT seller_id FROM listings WHERE listing_id = $1`,
+    [listing_id],
+  );
+  if (!listing) {
+    return res.status(400).json({ error: "Listing not found" });
+  }
+  if (sender_id != listing.seller_id && receiver_id != listing.seller_id) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   next();
 };
 
