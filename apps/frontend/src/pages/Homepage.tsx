@@ -67,7 +67,7 @@ const Homepage = () => {
   const handleSortBy = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value as string);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${event.target.value}&page=${searchObject.page}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, sort: event.target.value });
   };
@@ -77,11 +77,11 @@ const Homepage = () => {
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    currentPage: number,
+    currentPage: number
   ) => {
     setCurrentPage(currentPage);
     navigate(
-      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`,
+      `/query=${searchObject.query}&minPrice=${searchObject.minPrice}&maxPrice=${searchObject.maxPrice}&status=${searchObject.status}&searchType=${searchObject.searchType}&latitude=${searchObject.latitude}&longitude=${searchObject.longitude}&sort=${searchObject.sort}&page=${currentPage}&limit=${searchObject.limit}`
     );
     setSearchObject({ ...searchObject, page: currentPage });
   };
@@ -105,10 +105,10 @@ const Homepage = () => {
 
   useEffect(() => {
     //called on page load
-    if (location.pathname === "/") {
-      // nothing is being searched
-      if (initialRender.current) {
-        initialRender.current = false;
+    if (initialRender.current) {
+      initialRender.current = false;
+      if (location.pathname === "/") {
+        // nothing is being searched
         _axios_instance
           .get("/recommendations", { params: { page: 1, limit: 24 } })
           .then((response) => {
@@ -128,6 +128,8 @@ const Homepage = () => {
           });
       }
     } else {
+      console.log("searching");
+      console.log(location);
       let match;
       const regex = /([^&=]+)=([^&]*)/g;
       const searchString = location.search.slice(1);
@@ -176,7 +178,7 @@ const Homepage = () => {
       setSearchObject(searchObject);
       handleSearch(searchObject);
     }
-  }, [location, searchObject]);
+  }, [location]);
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
