@@ -180,7 +180,11 @@ const SearchBar = () => {
         }
       }
     }
-    setSearchInput(decodeURIComponent(searchObject.query));
+    try {
+      searchObject.query = decodeURIComponent(searchObject.query);
+    } catch (error) {
+      console.error("Error decoding search query:", error);
+    }
     setFilters(searchObject);
   }, [location, query]);
 
@@ -203,9 +207,9 @@ const SearchBar = () => {
             (search: searchHistory) => ({
               ...search,
               searchTerm: decodeURIComponent(
-                search.searchTerm.replace(/\+/g, " "),
+                search.searchTerm.replace(/\+/g, " ")
               ),
-            }),
+            })
           );
           setSearchHistory(decodedSearchHistory);
         })
