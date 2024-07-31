@@ -57,8 +57,7 @@ const getListingById = async (
       return res.status(200).json({ listing: {} });
     }
 
-    console.log("UserID: " + userID + "Seller ID: " + listing.seller_id);
-    if(userID !== listing.seller_id) {
+    if (userID !== listing.seller_id) {
       const insertClickQuery = `
         INSERT INTO user_clicks (user_id, listing_id, listing_title)
         VALUES ($1, $2, $3)
