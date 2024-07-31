@@ -32,7 +32,7 @@ export const getCharities = async (
         .manyOrNone<Charity>(
           `
       SELECT c.charity_id AS id, c.name, c.description, c.start_date, c.end_date, c.image_url,
-             jsonb_agg(jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) FILTER (WHERE o.organization_id IS NOT NULL) AS organizations,
+             jsonb_agg(DISTINCT jsonb_build_object('name', o.name, 'logoUrl', o.logo_url, 'donated', o.donated, 'receiving', o.receiving)) FILTER (WHERE o.organization_id IS NOT NULL) AS organizations,
              COALESCE(SUM(l.price), 0) AS funds
       FROM charities c
       LEFT JOIN organizations o ON o.charity_id = c.charity_id
