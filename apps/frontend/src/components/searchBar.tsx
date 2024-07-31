@@ -208,9 +208,9 @@ const SearchBar = () => {
             (search: searchHistory) => ({
               ...search,
               searchTerm: decodeURIComponent(
-                search.searchTerm.replace(/\+/g, " ")
+                search.searchTerm.replace(/\+/g, " "),
               ),
-            })
+            }),
           );
           setSearchHistory(decodedSearchHistory);
         })
