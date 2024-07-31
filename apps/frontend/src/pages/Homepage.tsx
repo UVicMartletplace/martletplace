@@ -180,9 +180,9 @@ const Homepage = () => {
         }
       }
       setSearchObject(searchObject);
-      handleSearch(searchObject);
+      () => handleSearch(searchObject);
     }
-  }, [location, searchObject, handleSearch]);
+  }, [location, searchObject]);
 
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
