@@ -98,11 +98,25 @@ describe("<Homepage />", () => {
   };
   const charityObject = { name: "Save the Whales" };
 
+  const searchHistoryObject = {
+    searches: [
+      {
+        searchTerm: "athletic shorts",
+        searchID: "A12334B345",
+      },
+    ],
+  };
+
   beforeEach(() => {
     cy.intercept("GET", "/api/search*", {
       statusCode: 200,
       body: listingObjects,
     }).as("searchListings");
+
+    cy.intercept("GET", "/api/user/search-history", {
+      statusCode: 200,
+      body: searchHistoryObject,
+    }).as("searchHistory");
 
     cy.intercept("GET", "/api/recommendations*", {
       statusCode: 200,
@@ -143,39 +157,39 @@ describe("<Homepage />", () => {
     cy.contains("Search").should("be.visible");
   });
 
-  // it("sorts listings by Price Ascending", () => {
-  //   cy.get('input[placeholder="Search"]').type("Textbook{enter}");
-  //   cy.wait("@searchListings");
-  //   cy.contains("Sort By").should("be.visible");
-  //   cy.contains("Relevance").click();
-  //   cy.contains("Price Ascending").should("be.visible");
-  //   cy.contains("Price Descending").should("be.visible");
-  //   cy.contains("Relevance").should("be.visible");
-  //   cy.contains("Listed Time Ascending").should("be.visible");
-  //   cy.contains("Listed Time Descending").should("be.visible");
-  //   cy.contains("Distance Ascending").should("be.visible");
-  //   cy.contains("Distance Descending").should("be.visible");
-  //   cy.contains("Price Ascending").click();
-  //   cy.contains("Price Ascending").should("be.visible");
-  // });
+  it("sorts listings by Price Ascending", () => {
+    cy.get('input[placeholder="Search"]').type("Textbook{enter}");
+    cy.wait("@searchListings");
+    cy.contains("Sort By").should("be.visible");
+    cy.contains("Relevance").click();
+    cy.contains("Price Ascending").should("be.visible");
+    cy.contains("Price Descending").should("be.visible");
+    cy.contains("Relevance").should("be.visible");
+    cy.contains("Listed Time Ascending").should("be.visible");
+    cy.contains("Listed Time Descending").should("be.visible");
+    cy.contains("Distance Ascending").should("be.visible");
+    cy.contains("Distance Descending").should("be.visible");
+    cy.contains("Price Ascending").click();
+    cy.contains("Price Ascending").should("be.visible");
+  });
 
-  // it("Performs a search and displays listings", () => {
-  //   cy.get('input[placeholder="Search"]').type("Textbook{enter}");
+  it("Performs a search and displays listings", () => {
+    cy.get('input[placeholder="Search"]').type("Textbook{enter}");
 
-  //   cy.wait("@searchListings");
+    cy.wait("@searchListings");
 
-  //   // Verify that listings are displayed
-  //   cy.get(".listing-card").should("have.length", listingObjects.items.length);
+    // Verify that listings are displayed
+    cy.get(".listing-card").should("have.length", listingObjects.items.length);
 
-  //   // Verify the contents of the first listing
-  //   cy.get(".listing-card")
-  //     .first()
-  //     .within(() => {
-  //       cy.contains(listingObjects.items[0].title).should("be.visible");
-  //       cy.contains(listingObjects.items[0].sellerName).should("be.visible");
-  //       cy.contains(listingObjects.items[0].price).should("be.visible");
-  //     });
-  // });
+    // Verify the contents of the first listing
+    cy.get(".listing-card")
+      .first()
+      .within(() => {
+        cy.contains(listingObjects.items[0].title).should("be.visible");
+        cy.contains(listingObjects.items[0].sellerName).should("be.visible");
+        cy.contains(listingObjects.items[0].price).should("be.visible");
+      });
+  });
 
   it("Test not interested button", () => {
     cy.get(".listing-card")
