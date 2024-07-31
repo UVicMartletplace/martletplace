@@ -5,7 +5,7 @@ export interface User {
   email: string;
   bio: string;
   profileUrl: string;
-  ignoreCharities: boolean;
+  ignoreCharityListings: boolean;
 }
 
 export interface UserContextType {

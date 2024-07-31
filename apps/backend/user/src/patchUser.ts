@@ -10,7 +10,14 @@ const patchUser = async (
 ) => {
   const id = req.user.userId;
 
-  const { username, password, name, bio, profilePictureUrl } = req.body;
+  const {
+    username,
+    password,
+    name,
+    bio,
+    profilePictureUrl,
+    ignoreCharityListings,
+  } = req.body;
 
   if (!id) {
     return res.status(400).json({ error: "User ID is required" });
@@ -63,13 +70,15 @@ const patchUser = async (
       bio: bio || originalUser.bio,
       profile_pic_url: profilePictureUrl || originalUser.profile_pic_url,
       password: hashedPassword || originalUser.password,
+      ignore_charity_listings:
+        ignoreCharityListings || originalUser.ignore_charity_listings,
     };
 
     const patchUserQuery = `
         UPDATE users
-        SET username = $1, name = $2, bio = $3, profile_pic_url = $4, password = $5
+        SET username = $1, name = $2, bio = $3, profile_pic_url = $4, password = $5, ignore_charity_listings = $7
         WHERE user_id = $6
-        RETURNING user_id, username, email, name, bio, profile_pic_url;
+        RETURNING user_id, username, email, name, bio, profile_pic_url, ignore_charity_listings;
       `;
 
     const updated_user = await db.oneOrNone(patchUserQuery, [
@@ -79,6 +88,7 @@ const patchUser = async (
       patchedUser.profile_pic_url,
       patchedUser.password,
       id,
+      patchedUser.ignore_charity_listings,
     ]);
 
     if (!updated_user) {
@@ -92,6 +102,7 @@ const patchUser = async (
       bio: updated_user.bio,
       profileUrl: updated_user.profile_pic_url,
       id: updated_user.user_id,
+      ignoreCharityListings: updated_user.ignore_charity_listings,
     };
 
     return res

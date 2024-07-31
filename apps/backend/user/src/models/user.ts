@@ -10,4 +10,5 @@ export interface User {
   verified: boolean;
   created_at: Date;
   modified_at: Date;
+  ignore_charity_listings: boolean;
 }

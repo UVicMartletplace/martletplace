@@ -2,6 +2,8 @@ import {
   Avatar,
   Box,
   Button,
+  Checkbox,
+  FormControlLabel,
   FormHelperText,
   TextField,
   Typography,
@@ -27,6 +29,7 @@ const Profile = () => {
     password: "",
     bio: "",
     profilePictureUrl: "",
+    ignoreCharityListings: false,
   });
   const [originalProfile, setOriginalProfile] = useState(profile);
   const [editMode, setEditMode] = useState(false);
@@ -43,6 +46,7 @@ const Profile = () => {
   // Regex for username validation
   const usernameFormat = /^[a-zA-Z0-9]{1,20}$/;
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (user) {
       const userObject = {
@@ -51,6 +55,7 @@ const Profile = () => {
         password: "",
         bio: user.bio,
         profilePictureUrl: user.profileUrl,
+        ignoreCharityListings: user.ignoreCharityListings,
       };
       setProfile(userObject);
       setOriginalProfile(userObject);
@@ -58,7 +63,8 @@ const Profile = () => {
     } else {
       console.error("User data not found");
     }
-  }, [user]);
+  }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   // Makes sure that the passed in url is a base64 data string
   const isImageValid = (url: string) => {
@@ -118,6 +124,11 @@ const Profile = () => {
     field: string,
   ) => {
     setProfile({ ...profile, [field]: e.target.value });
+    setEditMode(true);
+  };
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setProfile({ ...profile, ignoreCharityListings: event.target.checked });
     setEditMode(true);
   };
 
@@ -248,6 +259,19 @@ const Profile = () => {
             value={profile.bio}
             onChange={(e) => handleInputChange(e, "bio")}
             id="bio"
+          />
+          <p>{profile?.ignoreCharityListings}</p>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={profile.ignoreCharityListings}
+                onChange={handleCheckboxChange}
+                name="ignoreCharityListings"
+                color="primary"
+              />
+            }
+            label="Ignore Charity Listings"
+            sx={{ marginTop: 2 }}
           />
           <Button
             type="button"

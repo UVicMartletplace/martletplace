@@ -16,7 +16,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
 
   try {
     const user = await db.oneOrNone<User>(
-      "SELECT user_id, username, email, password, totp_secret, name, bio, profile_pic_url, verified FROM users WHERE email = $1",
+      "SELECT user_id, username, email, password, totp_secret, name, bio, profile_pic_url, verified, ignore_charity_listings FROM users WHERE email = $1",
       [email],
     );
 
@@ -56,6 +56,7 @@ const login = async (req: Request, res: Response, db: IDatabase<object>) => {
       email: user.email,
       bio: user.bio,
       profileUrl: user.profile_pic_url,
+      ignoreCharityListings: user.ignore_charity_listings,
     });
   } catch (err) {
     console.error(err);
