@@ -53,7 +53,7 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
         sx={{
           textAlign: "center",
           color: colors.martletplaceNavyBlue,
-          paddingBottom: "20px"
+          paddingBottom: "20px",
         }}
       >
         {charity.name}
@@ -107,7 +107,16 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
                 .filter((org) => org.receiving)
                 .map((org, index) => (
                   <Grid item key={index}>
-                    <Avatar src={org.logoUrl} alt={org.name} sx={{ width: 'auto', height: 'auto', maxHeight: '96px', maxWidth: '96px' }}/>
+                    <Avatar
+                      src={org.logoUrl}
+                      alt={org.name}
+                      sx={{
+                        width: "auto",
+                        height: "auto",
+                        maxHeight: "96px",
+                        maxWidth: "96px",
+                      }}
+                    />
                   </Grid>
                 ))}
             </Grid>
@@ -125,7 +134,16 @@ const CurrentCharity = ({ charity }: CurrentCharityProps) => {
                 .filter((org) => !org.receiving)
                 .map((org, index) => (
                   <Grid item key={index}>
-                    <Avatar src={org.logoUrl} alt={org.name} sx={{ width: 'auto', height: 'auto', maxHeight: '96px', maxWidth: '96px' }}/>
+                    <Avatar
+                      src={org.logoUrl}
+                      alt={org.name}
+                      sx={{
+                        width: "auto",
+                        height: "auto",
+                        maxHeight: "96px",
+                        maxWidth: "96px",
+                      }}
+                    />
                   </Grid>
                 ))}
             </Grid>
