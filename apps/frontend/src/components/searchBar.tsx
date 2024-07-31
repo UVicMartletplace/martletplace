@@ -185,6 +185,7 @@ const SearchBar = () => {
     } catch (error) {
       console.error("Error decoding search query:", error);
     }
+    setSearchInput(decodeURIComponent(searchObject.query));
     setFilters(searchObject);
   }, [location, query]);
 
