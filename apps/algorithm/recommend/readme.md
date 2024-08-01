@@ -2,7 +2,7 @@
 
 The recommender is built using TensorFlow, with its API in FastAPI.
 
-## Testing Instructions
+## Running Instructions
 
 1. Clone the repository
 
